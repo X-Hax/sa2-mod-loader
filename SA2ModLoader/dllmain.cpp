@@ -130,44 +130,14 @@ const char *_ReplaceFile(const char *lpFileName)
 	transform(path.begin(), path.end(), path.begin(), ::tolower);
 	if (path.length() > sa2dir.length() && path.compare(0, sa2dir.length(), sa2dir) == 0)
 		path = path.substr(sa2dir.length(), path.length() - sa2dir.length());
+	unordered_map<string, string>::iterator replIter = filereplaces.find(path);
+	if (replIter != filereplaces.end())
+		path = replIter->second;
 	unordered_map<string, char *>::iterator fileIter = filemap.find(path);
 	if (fileIter != filemap.end())
 		lpFileName = fileIter->second;
-	else if (path.length() > resourcedir.length() && path.compare(0, resourcedir.length(), resourcedir) == 0)
-		if (path.length() < savedatadir.length() || path.compare(0, savedatadir.length(), savedatadir) != 0)
-		{
-			string finalpath = path;
-			string replacepath = "";
-			unordered_map<string, string>::iterator replIter = filereplaces.find(path);
-			if (replIter != filereplaces.end())
-			{
-				finalpath = replIter->second;
-				replacepath = finalpath;
-			}
-			char key[8];
-			for (int i = 1; i < 999; i++)
-			{
-				sprintf_s(key, "Mod%d", i);
-				if (settings.find(key) == settings.end())
-					break;
-				string dir = ".\\mods\\" + settings[key] + "\\gd_PC\\" + finalpath.substr(resourcedir.length(), finalpath.length() - resourcedir.length());
-				int attr = GetFileAttributesA(dir.c_str());
-				if (attr != INVALID_FILE_ATTRIBUTES && !(attr & FILE_ATTRIBUTE_DIRECTORY))
-					replacepath = dir;
-			}
-			if (!replacepath.empty())
-			{
-				transform(replacepath.begin(), replacepath.end(), replacepath.begin(), ::tolower);
-				char *buf = new char[replacepath.length() + 1];
-				filemap[path] = buf;
-				replacepath.copy(buf, replacepath.length());
-				buf[replacepath.length()] = 0;
-				printf("Replaced file: \"%s\" = \"%s\"\n", lpFileName, buf);
-				lpFileName = buf;
-			}
-		}
-		LeaveCriticalSection(&filereplacesection);
-		return lpFileName;
+	LeaveCriticalSection(&filereplacesection);
+	return lpFileName;
 }
 
 HANDLE __stdcall MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
@@ -267,6 +237,43 @@ string NormalizePath(string path)
 	return pathlower;
 }
 
+bool IsDirectory(char *path)
+{
+	return (GetFileAttributesA(path) & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
+}
+
+void ScanFolder(string path, int length)
+{
+	_WIN32_FIND_DATAA data;
+	HANDLE hfind = FindFirstFileA((path + "\\*").c_str(), &data);
+	if (hfind == INVALID_HANDLE_VALUE)
+		return;
+	do
+	{
+		if (data.cFileName[0] == '.')
+			continue;
+		else if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			ScanFolder(path + "\\" + data.cFileName, length);
+		else
+		{
+			string filebase = path + "\\" + data.cFileName;
+			transform(filebase.begin(), filebase.end(), filebase.begin(), ::tolower);
+			string modfile = filebase;
+			filebase = filebase.substr(length);
+			string origfile = resourcedir + filebase;
+			char *buf = new char[modfile.length() + 1];
+			if (filemap.find(origfile) != filemap.end())
+				delete[] filemap[origfile];
+			filemap[origfile] = buf;
+			modfile.copy(buf, modfile.length());
+			buf[modfile.length()] = 0;
+			printf("Replaced file: \"%s\" = \"%s\"\n", origfile.c_str(), buf);
+		}
+	}
+	while (FindNextFileA(hfind, &data) != 0);
+	FindClose(hfind);
+}
+
 void __cdecl InitMods(void)
 {
 	datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -355,6 +362,10 @@ void __cdecl InitMods(void)
 				filereplaces[NormalizePath(it->second)] = NormalizePath(it->first);
 			}
 		}
+		string sysfol = dir + "\\gd_pc";
+		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
+		if (IsDirectory((char *)sysfol.c_str()))
+			ScanFolder(sysfol, sysfol.length() + 1);
 		if (modinfo.find("EXEFile") != modinfo.end())
 		{
 			string modexe = modinfo["EXEFile"];
@@ -393,7 +404,7 @@ void __cdecl InitMods(void)
 							for (int i = 0; i < info->ExportCount; i++)
 								dataoverrides[info->Exports[i].name] = info->Exports[i].data;
 					if (info->Init)
-						info->Init();
+						info->Init(dir.c_str());
 				}
 				else if (console)
 					printf("File \"%s\" is not a valid mod file.\n", filename.c_str());
