@@ -1,8 +1,10 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
+#include <cstdint>
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <list>
 #include <algorithm>
 #include <DbgHelp.h>
 #include <cstdio>
@@ -203,6 +205,266 @@ void HookTheAPI()
     }
 }
 
+enum CodeType : uint8_t
+{
+	write8, write16, write32, writefloat,
+	and8, and16, and32,
+	or8, or16, or32,
+	xor8, xor16, xor32,
+	ifeq8, ifeq16, ifeq32, ifeqfloat,
+	ifne8, ifne16, ifne32, ifnefloat,
+	ifltu8, ifltu16, ifltu32, ifltfloat,
+	iflts8, iflts16, iflts32,
+	ifltequ8, ifltequ16, ifltequ32, iflteqfloat,
+	iflteqs8, iflteqs16, iflteqs32,
+	ifgtu8, ifgtu16, ifgtu32, ifgtfloat,
+	ifgts8, ifgts16, ifgts32,
+	ifgtequ8, ifgtequ16, ifgtequ32, ifgteqfloat,
+	ifgteqs8, ifgteqs16, ifgteqs32,
+	ifmask8, ifmask16, ifmask32,
+	ifkbkey,
+	_else,
+	endif
+};
+
+struct Code
+{
+	CodeType type;
+	void *address;
+	bool pointer;
+	int offsetcount;
+	int32_t *offsets;
+	uint32_t value;
+	list<Code> trueCodes;
+	list<Code> falseCodes;
+};
+
+list<Code> codes = list<Code>();
+
+void *GetAddress(Code &code)
+{
+	if (!code.pointer)
+		return code.address;
+	void *addr = code.address;
+	addr = *(void **)addr;
+	if (code.offsetcount == 0 || addr == nullptr)
+		return addr;
+	for (int i = 0; i < code.offsetcount - 1; i++)
+	{
+		addr = (void *)((uint32_t)addr + code.offsets[i]);
+		addr = *(void **)addr;
+		if (addr == nullptr)
+			return nullptr;
+	}
+	addr = (void *)((uint32_t)addr + code.offsets[code.offsetcount - 1]);
+	return addr;
+}
+
+#define ifcode(size,op) if (*(uint##size##_t *)address op (uint##size##_t)it->value) \
+	ProcessCodeList(it->trueCodes); \
+else \
+	ProcessCodeList(it->falseCodes);
+
+#define ifcodes(size,op) if (*(int##size##_t *)address op (int##size##_t)it->value) \
+	ProcessCodeList(it->trueCodes); \
+else \
+	ProcessCodeList(it->falseCodes);
+
+#define ifcodef(op) if (*(float *)address op *(float *)&it->value) \
+	ProcessCodeList(it->trueCodes); \
+else \
+	ProcessCodeList(it->falseCodes);
+
+void ProcessCodeList(list<Code> &codes)
+{
+	for (list<Code>::iterator it = codes.begin(); it != codes.end(); it++)
+	{
+		void *address = GetAddress(*it);
+		if (it->type != ifkbkey && address == nullptr)
+		{
+			if (distance(it->falseCodes.begin(), it->falseCodes.end()) > 0)
+				ProcessCodeList(it->falseCodes);
+			continue;
+		}
+		switch (it->type)
+		{
+		case write8:
+			WriteData(address, (uint8_t)it->value);
+			break;
+		case write16:
+			WriteData(address, (uint16_t)it->value);
+			break;
+		case write32:
+		case writefloat:
+			WriteData(address, (uint32_t)it->value);
+			break;
+		case and8:
+			WriteData(address, (uint8_t)(*(uint8_t *)address & it->value));
+			break;
+		case and16:
+			WriteData(address, (uint16_t)(*(uint16_t *)address & it->value));
+			break;
+		case and32:
+			WriteData(address, (uint32_t)(*(uint32_t *)address & it->value));
+			break;
+		case or8:
+			WriteData(address, (uint8_t)(*(uint8_t *)address | it->value));
+			break;
+		case or16:
+			WriteData(address, (uint16_t)(*(uint16_t *)address | it->value));
+			break;
+		case or32:
+			WriteData(address, (uint32_t)(*(uint32_t *)address | it->value));
+			break;
+		case xor8:
+			WriteData(address, (uint8_t)(*(uint8_t *)address ^ it->value));
+			break;
+		case xor16:
+			WriteData(address, (uint16_t)(*(uint16_t *)address ^ it->value));
+			break;
+		case xor32:
+			WriteData(address, (uint32_t)(*(uint32_t *)address ^ it->value));
+			break;
+		case ifeq8:
+			ifcode(8,==)
+			break;
+		case ifeq16:
+			ifcode(16,==)
+			break;
+		case ifeq32:
+			ifcode(32,==)
+			break;
+		case ifeqfloat:
+			ifcodef(==)
+			break;
+		case ifne8:
+			ifcode(8,!=)
+			break;
+		case ifne16:
+			ifcode(16,!=)
+			break;
+		case ifne32:
+			ifcode(32,!=)
+			break;
+		case ifnefloat:
+			ifcodef(!=)
+			break;
+		case ifltu8:
+			ifcode(8,<)
+			break;
+		case ifltu16:
+			ifcode(16,<)
+			break;
+		case ifltu32:
+			ifcode(32,<)
+			break;
+		case ifltfloat:
+			ifcodef(<)
+			break;
+		case iflts8:
+			ifcodes(8,<)
+			break;
+		case iflts16:
+			ifcodes(16,<)
+			break;
+		case iflts32:
+			ifcodes(32,<)
+			break;
+		case ifltequ8:
+			ifcode(8,<=)
+			break;
+		case ifltequ16:
+			ifcode(16,<=)
+			break;
+		case ifltequ32:
+			ifcode(32,<=)
+			break;
+		case iflteqfloat:
+			ifcodef(<=)
+			break;
+		case iflteqs8:
+			ifcodes(8,<=)
+			break;
+		case iflteqs16:
+			ifcodes(16,<=)
+			break;
+		case iflteqs32:
+			ifcodes(32,<=)
+			break;
+		case ifgtu8:
+			ifcode(8,>)
+			break;
+		case ifgtu16:
+			ifcode(16,>)
+			break;
+		case ifgtu32:
+			ifcode(32,>)
+			break;
+		case ifgtfloat:
+			ifcodef(>)
+			break;
+		case ifgts8:
+			ifcodes(8,>)
+			break;
+		case ifgts16:
+			ifcodes(16,>)
+			break;
+		case ifgts32:
+			ifcodes(32,>)
+			break;
+		case ifgtequ8:
+			ifcode(8,>=)
+			break;
+		case ifgtequ16:
+			ifcode(16,>=)
+			break;
+		case ifgtequ32:
+			ifcode(32,>=)
+			break;
+		case ifgteqfloat:
+			ifcodef(>=)
+			break;
+		case ifgteqs8:
+			ifcodes(8,>=)
+			break;
+		case ifgteqs16:
+			ifcodes(16,>=)
+			break;
+		case ifgteqs32:
+			ifcodes(32,>=)
+			break;
+		case ifmask8:
+			if ((*(uint8_t *)address & (uint8_t)it->value) == (uint8_t)it->value)
+				ProcessCodeList(it->trueCodes);
+			else
+				ProcessCodeList(it->falseCodes);
+			break;
+		case ifmask16:
+			if ((*(uint16_t *)address & (uint16_t)it->value) == (uint16_t)it->value)
+				ProcessCodeList(it->trueCodes);
+			else
+				ProcessCodeList(it->falseCodes);
+			break;
+		case ifmask32:
+			if ((*(uint32_t *)address & it->value) == it->value)
+				ProcessCodeList(it->trueCodes);
+			else
+				ProcessCodeList(it->falseCodes);
+			break;
+		case ifkbkey:
+			if (GetAsyncKeyState(it->value))
+				ProcessCodeList(it->trueCodes);
+			else
+				ProcessCodeList(it->falseCodes);
+			break;
+		}
+	}
+}
+
+void __cdecl ProcessCodes()
+{
+	ProcessCodeList(codes);
+}
 
 int __cdecl SA2DebugOutput_i(const char *Format, ...)
 {
@@ -237,11 +499,6 @@ string NormalizePath(string path)
 	return pathlower;
 }
 
-bool IsDirectory(char *path)
-{
-	return (GetFileAttributesA(path) & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY;
-}
-
 void ScanFolder(string path, int length)
 {
 	_WIN32_FIND_DATAA data;
@@ -272,6 +529,40 @@ void ScanFolder(string path, int length)
 	}
 	while (FindNextFileA(hfind, &data) != 0);
 	FindClose(hfind);
+}
+
+unsigned char ReadCodes(istream &stream, list<Code> &list)
+{
+	while (true)
+	{
+		uint8_t t = stream.get();
+		if (t == 0xFF || t == _else || t == endif)
+			return t;
+		Code code = { };
+		code.pointer = (t & 0x80) == 0x80;
+		code.type = (CodeType)(t & 0x7F);
+		stream.read((char *)&code.address, sizeof(void *));
+		if (code.pointer)
+		{
+			code.offsetcount = stream.get();
+			code.offsets = new int[code.offsetcount];
+			for (int i = 0; i < code.offsetcount; i++)
+				stream.read((char *)&code.offsets[i], sizeof(int32_t));
+		}
+		stream.read((char *)&code.value, sizeof(uint32_t));
+		if (code.type >= ifeq8 && code.type <= ifkbkey)
+			switch (ReadCodes(stream, code.trueCodes))
+			{
+			case _else:
+				if (ReadCodes(stream, code.falseCodes) == 0xFF)
+					return 0xFF;
+				break;
+			case 0xFF:
+				return 0xFF;
+			}
+		list.push_back(code);
+	}
+	return 0;
 }
 
 void __cdecl InitMods(void)
@@ -364,7 +655,7 @@ void __cdecl InitMods(void)
 		}
 		string sysfol = dir + "\\gd_pc";
 		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
-		if (IsDirectory((char *)sysfol.c_str()))
+		if (GetFileAttributesA(sysfol.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
 			ScanFolder(sysfol, sysfol.length() + 1);
 		if (modinfo.find("EXEFile") != modinfo.end())
 		{
@@ -414,6 +705,16 @@ void __cdecl InitMods(void)
 		}
 	}
 	printf("Mod loading finished.\n");
+	str = ifstream("mods\\Codes.dat", ifstream::binary);
+	if (str.is_open())
+	{
+		int32_t codecount;
+		str.read((char *)&codecount, sizeof(int32_t));
+		printf("Loading %d codes...\n", codecount);
+		ReadCodes(str, codes);
+	}
+	str.close();
+	WriteJump((void *)0x77E897, ProcessCodes);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
