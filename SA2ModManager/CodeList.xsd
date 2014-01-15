@@ -32,6 +32,7 @@
       </xs:element>
       <xs:element name="Value" type="xs:string" />
       <xs:element name="ValueType" type="ValueType" />
+      <xs:element name="RepeatCount" type="xs:unsignedInt" minOccurs="0" default="1" />
       <xs:element name="TrueLines" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
@@ -54,6 +55,49 @@
       <xs:enumeration value="write16" />
       <xs:enumeration value="write32" />
       <xs:enumeration value="writefloat" />
+      <xs:enumeration value="add8" />
+      <xs:enumeration value="add16" />
+      <xs:enumeration value="add32" />
+      <xs:enumeration value="addfloat" />
+      <xs:enumeration value="sub8" />
+      <xs:enumeration value="sub16" />
+      <xs:enumeration value="sub32" />
+      <xs:enumeration value="subfloat" />
+      <xs:enumeration value="mulu8" />
+      <xs:enumeration value="mulu16" />
+      <xs:enumeration value="mulu32" />
+      <xs:enumeration value="mulfloat" />
+      <xs:enumeration value="muls8" />
+      <xs:enumeration value="muls16" />
+      <xs:enumeration value="muls32" />
+      <xs:enumeration value="divu8" />
+      <xs:enumeration value="divu16" />
+      <xs:enumeration value="divu32" />
+      <xs:enumeration value="divfloat" />
+      <xs:enumeration value="divs8" />
+      <xs:enumeration value="divs16" />
+      <xs:enumeration value="divs32" />
+      <xs:enumeration value="modu8" />
+      <xs:enumeration value="modu16" />
+      <xs:enumeration value="modu32" />
+      <xs:enumeration value="mods8" />
+      <xs:enumeration value="mods16" />
+      <xs:enumeration value="mods32" />
+      <xs:enumeration value="shl8" />
+      <xs:enumeration value="shl16" />
+      <xs:enumeration value="shl32" />
+      <xs:enumeration value="shru8" />
+      <xs:enumeration value="shru16" />
+      <xs:enumeration value="shru32" />
+      <xs:enumeration value="shrs8" />
+      <xs:enumeration value="shrs16" />
+      <xs:enumeration value="shrs32" />
+      <xs:enumeration value="rol8" />
+      <xs:enumeration value="rol16" />
+      <xs:enumeration value="rol32" />
+      <xs:enumeration value="ror8" />
+      <xs:enumeration value="ror16" />
+      <xs:enumeration value="ror32" />
       <xs:enumeration value="and8" />
       <xs:enumeration value="and16" />
       <xs:enumeration value="and32" />

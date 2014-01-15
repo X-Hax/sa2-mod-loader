@@ -132,8 +132,9 @@ namespace SA2ModManager
                 codes.Codes[i].Enabled = codesCheckedListBox.GetItemChecked(i);
             codes.Save(codexmlpath);
             using (FileStream fs = File.Create(codedatpath))
-            using (BinaryWriter bw = new BinaryWriter(fs))
+            using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
             {
+                bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '2' });
                 bw.Write(codes.Codes.Count((a) => a.Enabled));
                 foreach (Code item in codes.Codes.Where((a) => a.Enabled))
                     WriteCodes(item.Lines, bw);
@@ -165,6 +166,10 @@ namespace SA2ModManager
                             switch (line.Type)
                             {
                                 case CodeType.writefloat:
+                                case CodeType.addfloat:
+                                case CodeType.subfloat:
+                                case CodeType.mulfloat:
+                                case CodeType.divfloat:
                                 case CodeType.ifeqfloat:
                                 case CodeType.ifnefloat:
                                 case CodeType.ifltfloat:
@@ -182,6 +187,7 @@ namespace SA2ModManager
                             writer.Write(uint.Parse(line.Value, System.Globalization.NumberStyles.HexNumber, System.Globalization.NumberFormatInfo.InvariantInfo));
                             break;
                     }
+                writer.Write(line.RepeatCount ?? 1);
                 if (line.IsIf)
                 {
                     WriteCodes(line.TrueLines, writer);
@@ -235,7 +241,7 @@ namespace SA2ModManager
             else
             {
                 codeUpButton.Enabled = codesCheckedListBox.SelectedIndices[0] > 0;
-                codeDownButton.Enabled = codesCheckedListBox.SelectedIndices[0] < modListView.Items.Count - 1;
+                codeDownButton.Enabled = codesCheckedListBox.SelectedIndices[0] < codesCheckedListBox.Items.Count - 1;
             }
         }
 
@@ -348,6 +354,9 @@ namespace SA2ModManager
         [XmlElement(IsNullable = false)]
         public string Value { get; set; }
         public ValueType ValueType { get; set; }
+        public uint? RepeatCount { get; set; }
+        [XmlIgnore]
+        public bool RepeatCountSpecified { get { return RepeatCount.HasValue; } set { } }
         [XmlArray]
         public List<CodeLine> TrueLines { get; set; }
         [XmlIgnore]
@@ -366,6 +375,19 @@ namespace SA2ModManager
     public enum CodeType
     {
         write8, write16, write32, writefloat,
+        add8, add16, add32, addfloat,
+        sub8, sub16, sub32, subfloat,
+        mulu8, mulu16, mulu32, mulfloat,
+        muls8, muls16, muls32,
+        divu8, divu16, divu32, divfloat,
+        divs8, divs16, divs32,
+        modu8, modu16, modu32,
+        mods8, mods16, mods32,
+        shl8, shl16, shl32,
+        shru8, shru16, shru32,
+        shrs8, shrs16, shrs32,
+        rol8, rol16, rol32,
+        ror8, ror16, ror32,
         and8, and16, and32,
         or8, or16, or32,
         xor8, xor16, xor32,
