@@ -33,28 +33,9 @@ namespace SA2ModManager
                 loaderini = IniFile.Deserialize<LoaderInfo>(loaderinipath);
             else
                 loaderini = new LoaderInfo();
-            mods = new Dictionary<string, ModInfo>();
-            string modfolder = Path.Combine(Environment.CurrentDirectory, "mods");
-            foreach (string filename in Directory.GetFiles(modfolder, "mod.ini", SearchOption.AllDirectories))
-                mods.Add(Path.GetDirectoryName(filename).Remove(0, modfolder.Length + 1), IniFile.Deserialize<ModInfo>(filename));
-            modListView.BeginUpdate();
-            foreach (string mod in new List<string>(loaderini.Mods))
-            {
-                if (mods.ContainsKey(mod))
-                {
-                    ModInfo inf = mods[mod];
-                    modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author }) { Checked = true, Tag = mod });
-                }
-                else
-                {
-                    MessageBox.Show(this, "Mod \"" + mod + "\" could not be found.\n\nThis mod will be removed from the list.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    loaderini.Mods.Remove(mod);
-                }
-            }
-            foreach (KeyValuePair<string, ModInfo> inf in mods)
-                if (!loaderini.Mods.Contains(inf.Key))
-                    modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author }) { Tag = inf.Key });
-            modListView.EndUpdate();
+
+			LoadModList();
+
             consoleCheckBox.Checked = loaderini.ShowConsole;
             sa2DebugCheckBox.Checked = loaderini.ShowSA2DebugOutput;
             if (!File.Exists(datadllpath))
@@ -270,6 +251,43 @@ namespace SA2ModManager
             codesCheckedListBox.Items.Insert(i + 1, item);
             codesCheckedListBox.EndUpdate();
         }
+
+		private void LoadModList()
+		{
+			mods = new Dictionary<string, ModInfo>();
+			string modfolder = Path.Combine(Environment.CurrentDirectory, "mods");
+			foreach (string filename in Directory.GetFiles(modfolder, "mod.ini", SearchOption.AllDirectories))
+				mods.Add(Path.GetDirectoryName(filename).Remove(0, modfolder.Length + 1), IniFile.Deserialize<ModInfo>(filename));
+			modListView.BeginUpdate();
+			foreach (string mod in new List<string>(loaderini.Mods))
+			{
+				if (mods.ContainsKey(mod))
+				{
+					ModInfo inf = mods[mod];
+					modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author }) { Checked = true, Tag = mod });
+				}
+				else
+				{
+					MessageBox.Show(this, "Mod \"" + mod + "\" could not be found.\n\nThis mod will be removed from the list.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					loaderini.Mods.Remove(mod);
+				}
+			}
+			foreach (KeyValuePair<string, ModInfo> inf in mods)
+				if (!loaderini.Mods.Contains(inf.Key))
+					modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author }) { Tag = inf.Key });
+			modListView.EndUpdate();
+		}
+
+		private void buttonRefreshModList_Click(object sender, EventArgs e)
+		{
+			modListView.Items.Clear();
+			LoadModList();
+		}
+
+		private void buttonModsFolder_Click(object sender, EventArgs e)
+		{
+			System.Diagnostics.Process.Start(@"mods");
+		}
     }
 
     class LoaderInfo
