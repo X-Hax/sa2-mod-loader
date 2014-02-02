@@ -686,22 +686,22 @@ struct MemManFuncs
 
 struct ControllerData
 {
-	int field_0;
-	int field_4;
-	int HeldButtons;
-	int NotHeldButtons;
-	int PressedButtons;
-	int ReleasedButtons;
-	__int16 RTriggerPressure;
-	__int16 LTriggerPressure;
-	short ControlStickY;
-	short ControlStickX;
-	__int16 CStickX;
-	__int16 CStickY;
-	int field_24;
-	int field_28;
-	int field_2C;
-	int field_30;
+	uint32_t ID;
+	uint32_t Support;
+	uint32_t HeldButtons;
+	uint32_t NotHeldButtons;
+	uint32_t PressedButtons;
+	uint32_t ReleasedButtons;
+	uint16_t RTriggerPressure;
+	uint16_t LTriggerPressure;
+	int16_t LeftStickX;
+	int16_t LeftStickY;
+	int16_t RightStickX;
+	int16_t RightStickY;
+	char *Name;
+	void *Extend;
+	uint32_t Old;
+	void *Info;
 };
 
 struct ChaoData
@@ -896,12 +896,14 @@ DataPointer(char, TimerMinutes, 0x174AFDB);
 DataPointer(char, TimerSeconds, 0x174AFDC);
 DataPointer(char, TwoPlayerMode, 0x174AFDE);
 DataPointer(char, MissionNum, 0x174AFE3);
-DataPointer(char, P1FirstSpecialAttack, 0x174AFED);
-DataPointer(char, P1SecondSpecialAttack, 0x174AFEE);
-DataPointer(char, P1ThirdSpecialAttack, 0x174AFEF);
-DataPointer(char, P2FirstSpecialAttack, 0x174AFF0);
-DataPointer(char, P2SecondSpecialAttack, 0x174AFF1);
-DataPointer(char, P2ThirdSpecialAttack, 0x174AFF2);
+DataArray(char, P1SpecialAttacks, 0x174AFED, 3);
+DataPointer(char, P1FirstSpecialAttack, &P1SpecialAttacks[0]);
+DataPointer(char, P1SecondSpecialAttack, &P1SpecialAttacks[1]);
+DataPointer(char, P1ThirdSpecialAttack, &P1SpecialAttacks[2]);
+DataArray(char, P2SpecialAttacks, 0x174AFF0, 3);
+DataPointer(char, P2FirstSpecialAttack, &P2SpecialAttacks[0]);
+DataPointer(char, P2SecondSpecialAttack, &P2SpecialAttacks[1]);
+DataPointer(char, P2ThirdSpecialAttack, &P2SpecialAttacks[2]);
 DataPointer(char, HaveChaoKey, 0x174B004);
 DataArray(char, AltCostume, 0x174B013, 2);
 DataArray(char, AltCharacter, 0x174B015, 2);
@@ -910,13 +912,22 @@ DataPointer(short, PerfectRings, 0x174B02E);
 DataPointer(int, CurrentLevel, 0x1934B70);
 DataPointer(int, CurrentCharacter, 0x1934B80);
 DataPointer(int, CurrentCharacter2P, 0x1934BE4);
+DataArray(ControllerData, ControllersRaw, 0x1A52918, 4);
+DataPointer(ControllerData, Controller1Raw, &ControllersRaw[0]);
+DataPointer(ControllerData, Controller2Raw, &ControllersRaw[0]);
+DataPointer(ControllerData, Controller3Raw, &ControllersRaw[0]);
+DataPointer(ControllerData, Controller4Raw, &ControllersRaw[0]);
 DataArray(CharObj2 *, MainCharObj2, 0x1DE9600, 2);
 DataArray(ModelIndex, CharacterModels, 0x1DE9620, 532);
 DataArray(CharObj1 *, MainCharObj1, 0x1DEA6C0, 2);
 DataArray(ObjectMaster *, MainCharacter, 0x1DEA6E0, 2);
 DataArray(AnimationIndex, CharacterAnimations, 0x1DEA700, 300);
-DataArray(ControllerData *, Controllers, 0x1DEFB60, 4);
-DataArray(int, MenuPressedButtons, 0x1DEFB10, 2);
+DataArray(uint32_t, MenuPressedButtons, 0x1DEFB10, 4);
+DataArray(ControllerData, Controllers, 0x1DEFC00, 4);
+DataPointer(ControllerData, Controller1, &Controllers[0]);
+DataPointer(ControllerData, Controller2, &Controllers[0]);
+DataPointer(ControllerData, Controller3, &Controllers[0]);
+DataPointer(ControllerData, Controller4, &Controllers[0]);
 
 // SA2 Functions
 #define FunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__cdecl *const NAME)ARGS = (RETURN_TYPE (*)ARGS)ADDRESS
