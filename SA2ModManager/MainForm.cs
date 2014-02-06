@@ -132,12 +132,15 @@ namespace SA2ModManager
                     t |= 0x80;
                 writer.Write(t);
                 writer.Write(line.Address);
-                if (line.Pointer)
-                {
-                    writer.Write((byte)line.Offsets.Count);
-                    foreach (int off in line.Offsets)
-                        writer.Write(off);
-                }
+				if (line.Pointer)
+					if (line.Offsets != null)
+					{
+						writer.Write((byte)line.Offsets.Count);
+						foreach (int off in line.Offsets)
+							writer.Write(off);
+					}
+					else
+						writer.Write((byte)0);
                 if (line.Type == CodeType.ifkbkey)
                     writer.Write((int)(Keys)Enum.Parse(typeof(Keys), line.Value));
                 else
@@ -340,6 +343,8 @@ namespace SA2ModManager
         public string Name { get; set; }
         [XmlAttribute("enabled")]
         public bool Enabled { get; set; }
+		[XmlIgnore]
+		public bool EnabledSpecified { get { return Enabled; } set { } }
         [XmlElement("CodeLine")]
         public List<CodeLine> Lines { get; set; }
     }
@@ -378,11 +383,11 @@ namespace SA2ModManager
         [XmlArray]
         public List<CodeLine> TrueLines { get; set; }
         [XmlIgnore]
-        public bool TrueLinesSpecified { get { return IsIf; } set { } }
+        public bool TrueLinesSpecified { get { return TrueLines.Count > 0 && IsIf; } set { } }
         [XmlArray]
         public List<CodeLine> FalseLines { get; set; }
         [XmlIgnore]
-        public bool FalseLinesSpecified { get { return IsIf; } set { } }
+        public bool FalseLinesSpecified { get { return FalseLines.Count > 0 && IsIf; } set { } }
 
         public bool IsIf
         {
