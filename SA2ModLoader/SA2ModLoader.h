@@ -475,6 +475,8 @@ struct CharObj2 {
 	float field_1B4;
 };
 
+typedef CharObj2 CharObj2Base;
+
 struct SonicCharObj2 : CharObj2 {
 	char field_1B8[476];
 	TexList *TextureList;
@@ -862,6 +864,23 @@ struct AnimationFileHeader
 	char *Name;
 	int ModelNum;
 };
+
+struct Loop
+{
+	__int16 Ang_X;
+	__int16 Ang_Y;
+	float Dist;
+	NJS_VECTOR Position;
+};
+
+struct LoopHead
+{
+	__int16 Unknown_0;
+	__int16 Count;
+	float TotalDist;
+	Loop *LoopList;
+	ObjectFuncPtr Object;
+};
 #pragma pack(pop)
 
 // SA2 Variables
@@ -931,66 +950,114 @@ DataPointer(ControllerData, Controller3, &Controllers[0]);
 DataPointer(ControllerData, Controller4, &Controllers[0]);
 
 // SA2 Functions
-#define FunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__cdecl *const NAME)ARGS = (RETURN_TYPE (*)ARGS)ADDRESS
-#define StdcallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__stdcall *const NAME)ARGS = (RETURN_TYPE (*)ARGS)ADDRESS
+#define FunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__cdecl *const NAME)ARGS = (RETURN_TYPE (__cdecl *)ARGS)ADDRESS
+#define StdcallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__stdcall *const NAME)ARGS = (RETURN_TYPE (__stdcall *)ARGS)ADDRESS
 #define FastcallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__fastcall *const NAME)ARGS = (RETURN_TYPE (__fastcall *)ARGS)ADDRESS
 #define ThiscallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__thiscall *const NAME)ARGS = (RETURN_TYPE (__thiscall *)ARGS)ADDRESS
-#define VoidFunc(name,address) FunctionPointer(void,name,(void),address)
-#define ObjectFunc(name,address) FunctionPointer(void,name,(ObjectMaster *obj),address)
-#define CharLoadFunc(name,address) FunctionPointer(void,name,(int playerNum),address)
+#define VoidFunc(NAME, ADDRESS) FunctionPointer(void,NAME,(void),ADDRESS)
+#define ObjectFunc(NAME, ADDRESS) FunctionPointer(void,NAME,(ObjectMaster *obj),ADDRESS)
+
 FunctionPointer(int, PrintDebug, (char *format, ...), 0x426740);
-CharLoadFunc(LoadSonic, 0x716E00);
-CharLoadFunc(LoadAmy, 0x7170E0);
-CharLoadFunc(LoadShadow, 0x717360);
-CharLoadFunc(LoadMetalSonic, 0x717640);
-CharLoadFunc(LoadKnuckles, 0x728110);
-CharLoadFunc(LoadTikal, 0x7288B0);
-CharLoadFunc(LoadRouge, 0x728460);
-CharLoadFunc(LoadChaos, 0x728B60);
-CharLoadFunc(LoadMechEggman, 0x740C50);
-CharLoadFunc(LoadDarkChaoWalker, 0x7412F0);
-CharLoadFunc(LoadMechTails, 0x740EB0);
-CharLoadFunc(LoadChaoWalker, 0x741110);
 FunctionPointer(signed int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 VoidFunc(LoadCharacters, 0x43D630);
-FastcallFunctionPointer(signed int, LoadTexturePack, (char *filename, NJS_TEXLIST *texlist), 0x44C350);
-ThiscallFunctionPointer(NJS_TEXLIST *, LoadCharTextures, (char *filename), 0x44C510);
-ObjectFunc(DeathZoneObject, 0x459740);
+FastcallFunctionPointer(signed int, LoadTexturePack, (char *filename, TexList *texlist), 0x44C350);
+ThiscallFunctionPointer(TexList *, LoadCharTextures, (char *filename), 0x44C510);
+ObjectFunc(DeathZoneObject, 0x46AD50);
+FunctionPointer(bool, CheckBreakObject, (ObjectMaster *obj, ObjectMaster *other), 0x46EC00);
 ObjectFunc(DeleteObject_, 0x46F720);
-FunctionPointer(CharObj1 *, LoadCharObj1, (void), 0x470B40);
+FunctionPointer(CharObj1 *, AllocCharObj1, (void), 0x470B40);
+FunctionPointer(ObjectMaster *, LoadChildObject, (int a3, void (__cdecl *a4)(ObjectMaster *), ObjectMaster *parent), 0x470C00);
 FunctionPointer(signed int, LoadLandManager, (LandTable *a1), 0x47BD30);
+ObjectFunc(LandManager_Main, 0x47C180);
 FunctionPointer(signed int, LoadSetObject, (ObjectListHead *list, void *setfile), 0x487E40);
-ObjectFunc(SETObject_Main, 0x487F60);
+ObjectFunc(SetObject_Main, 0x487F60);
+VoidFunc(ReadSET_2P, 0x4883D0);
+VoidFunc(ReadSET_1P, 0x488630);
 ThiscallFunctionPointer(void *, LoadStageSETFile, (char *filename, int a2), 0x488F60);
 VoidFunc(CountPerfectRings, 0x4890E0);
+ThiscallFunctionPointer(unsigned int, PRSDec, (uint8_t *src, uint8_t *dst), 0x48F980);
+FunctionPointer(signed int, LoadStagePaths, (LoopHead **a1), 0x490110);
+FunctionPointer(void, LoadPathObjects, (LoopHead **a1), 0x490180);
 VoidFunc(LoadSuperSonic, 0x49A950);
 VoidFunc(LoadSuperShadow, 0x49ABB0);
 ObjectFunc(SuperSonic_Main, 0x49AE10);
+ObjectFunc(SuperSonic_Display, 0x49CA60);
 ObjectFunc(LastBossPlayerManager_Main, 0x49E520);
-VoidFunc(LoadLastBossPlayerManager, 0x49ECE0);
-VoidFunc(LoadAquaticMineCharAnims, 0x4D4C30);
 VoidFunc(LoadEggGolemECharAnims, 0x4A6DC0);
+ObjectFunc(ControlShadow_Main, 0x4C7ED0);
+VoidFunc(LoadAquaticMineCharAnims, 0x4D4C30);
 VoidFunc(LoadCannonsCoreRCharAnims, 0x4DDA70);
 VoidFunc(LoadDryLagoon2PPoolQuestCharAnims, 0x4E63D0);
+ObjectFunc(Beetle_Main, 0x501530);
+FunctionPointer(void, Bomb_Main, (ObjectMaster *), 0x513830);
 VoidFunc(LoadSandOcean2PCharAnims, 0x51D020);
+VoidFunc(LoadChaomainModule, 0x52AB10);
+ObjectFunc(Chao_Main, 0x54FE20);
+FunctionPointer(ObjectMaster *, CreateChao, (ChaoData *chaoData, int a2, void *a3, Vertex *position, int yrot), 0x5501D0);
+FunctionPointer(ObjectMaster *, CreateChaoEgg, (const void *a1, ChaoData *chaoData, int a3, Vertex *position, int a5), 0x57B9C0);
+VoidFunc(CityEscapeInit, 0x5DCD50);
+VoidFunc(LoadCityEscapeCharAnims, 0x5DDCF0);
+ObjectFunc(MusicChanger_Main, 0x5E2D70);
+VoidFunc(LoadGreenForestCharAnims, 0x5EE920);
+FunctionPointer(ObjectMaster *, LoadCartExecuter, (const void *a1), 0x61C520);
+ObjectFunc(CartExecuter_Main, 0x61CD60);
 VoidFunc(LoadDryLagoonCharAnims, 0x647830);
 VoidFunc(LoadSandOceanCharAnims, 0x658A10);
 VoidFunc(LoadCannonsCoreKCharAnims, 0x65EF70);
+ObjectFunc(StageMapExec_Main, 0x677350);
+VoidFunc(LoadStageMapExec, 0x6779A0);
+VoidFunc(LoadEggQuartersCharAnims, 0x693570);
+ObjectFunc(Omochao_Main, 0x6C0780);
+FunctionPointer(void, HurtPlayer, (int playerNum), 0x6C1AF0);
+ObjectFunc(GoalRing_Main, 0x6C63C0);
+ObjectFunc(ItemBoxAir_Main, 0x6C8EF0);
+ObjectFunc(WoodenCrate_Main, 0x6CD7F0);
+ObjectFunc(EmeraldPiece_Main, 0x6D00C0);
+ObjectFunc(IronCrate_Main, 0x6D63F0);
+ObjectFunc(SampleS_Main, 0x6D6EE0);
+VoidFunc(LoadMetalHarborCharAnims, 0x6F36A0);
+VoidFunc(LoadPyramidCaveCharAnims, 0x6FC640);
+FunctionPointer(void, nullsub_1, (ObjectMaster *), 0x6FE430);
 VoidFunc(LoadHiddenBaseCharAnims, 0x711C30);
-VoidFunc(LoadEmeraldManager, 0x73AA70);
+FunctionPointer(void, LoadSonic, (int playerNum), 0x716E00);
+FunctionPointer(void, LoadAmy, (int playerNum), 0x7170E0);
+FunctionPointer(void, LoadShadow, (int playerNum), 0x717360);
+FunctionPointer(void, Sonic_Main, (ObjectMaster *), 0x717840);
+ObjectFunc(Sonic_Display, 0x720090);
+ThiscallFunctionPointer(signed int, Sonic_CheckSpecial, (SonicCharObj2 *a1, CharObj1 *a2), 0x724250);
+FunctionPointer(void, LoadKnuckles, (int playerNum), 0x728110);
+FunctionPointer(void, LoadRouge, (int playerNum), 0x728460);
+FunctionPointer(void, LoadTikal, (int playerNum), 0x7288B0);
+FunctionPointer(void, LoadChaos, (int playerNum), 0x728B60);
+ObjectFunc(Knuckles_Main, 0x728D70);
+ObjectFunc(Knuckles_Display, 0x72EF20);
+ObjectFunc(Tikal_Display, 0x72FB10);
+ObjectFunc(Rouge_Display, 0x730970);
+ObjectFunc(Chaos_Display, 0x731A30);
+ObjectFunc(EmeraldManager_Main, 0x739570);
+ObjectFunc(Eggman_Main, 0x73C380);
+ObjectFunc(Eggman_Display, 0x73EF20);
+FunctionPointer(void, LoadMechEggman, (int playerNum), 0x740C50);
+FunctionPointer(void, LoadMechTails, (int playerNum), 0x740EB0);
+FunctionPointer(void, LoadChaoWalker, (int playerNum), 0x741110);
+FunctionPointer(void, LoadDarkChaoWalker, (int playerNum), 0x7412F0);
+ObjectFunc(MechEggman_Main, 0x741530);
+ObjectFunc(MechEggman_Delete, 0x743E90);
+ObjectFunc(MechEggman_Display, 0x7444F0);
+ObjectFunc(ChaoWalker_Display, 0x746290);
+ObjectFunc(DarkChaoWalker_Display, 0x7470D0);
+ObjectFunc(MechTails_Display, 0x747DD0);
+ObjectFunc(Tails_Main, 0x74D170);
+ObjectFunc(Tails_Display, 0x7507D0);
+FunctionPointer(ObjectMaster *, LoadInvincibility, (char player), 0x7532F0);
+ObjectFunc(Invincibility_Main, 0x754150);
+ObjectFunc(LightAttackParticle_Render, 0x757B30);
+ObjectFunc(BossPowerGuageExec_Main, 0x761C30);
+VoidFunc(UpdateControllers, 0x77E780);
 
-static const void *InitPlayerPtr = (void*)0x43DA40;
-static void InitPlayer(int playerNum)
-{
-	__asm
-	{
-		mov eax, [playerNum]
-		call InitPlayerPtr
-	}
-}
-
-static const void *IsByteswappedPtr = (void*)0x429840;
-static char IsByteswapped(void *a1)
+// char __usercall<al>(_DWORD *a1<esi>)
+static const void *const IsByteswappedPtr = (void*)0x429840;
+static inline char IsByteswapped(void *a1)
 {
 	char result;
 	__asm
@@ -1002,15 +1069,16 @@ static char IsByteswapped(void *a1)
 	return result;
 }
 
-static const void *LoadStartPositionPtr = (void*)0x43D8E0;
-static signed int LoadStartPosition(int playerNum, NJS_VECTOR *position, int *rotation)
+// signed int __usercall<eax>(int character<ecx>, Vertex *position<edi>, Rotation *rotation)
+static const void *const LoadStartPositionPtr = (void*)0x43D8E0;
+static inline signed int LoadStartPosition(int character, Vertex *position, Rotation *rotation)
 {
 	signed int result;
 	__asm
 	{
-		mov ecx, [playerNum]
-		mov edi, [position]
 		push [rotation]
+		mov edi, [position]
+		mov ecx, [character]
 		call LoadStartPositionPtr
 		add esp, 4
 		mov result, eax
@@ -1018,20 +1086,33 @@ static signed int LoadStartPosition(int playerNum, NJS_VECTOR *position, int *ro
 	return result;
 }
 
-static const void *Load2PIntroPosPtr = (void*)0x43DBD0;
-static void Load2PIntroPos(int playerNum)
+// void __usercall(int a1<eax>)
+static const void *const InitPlayerPtr = (void*)0x43DA40;
+static inline void InitPlayer(int a1)
 {
 	__asm
 	{
-		mov eax, [playerNum]
+		mov eax, [a1]
+		call InitPlayerPtr
+	}
+}
+
+// void __usercall(int a1<eax>)
+static const void *const Load2PIntroPosPtr = (void*)0x43DBD0;
+static inline void Load2PIntroPos(int a1)
+{
+	__asm
+	{
+		mov eax, [a1]
 		call Load2PIntroPosPtr
 	}
 }
 
-static const void *LoadEndPositionPtr = (void*)0x43DD50;
-static signed int LoadEndPosition(int playerNum)
+// signed int __usercall<eax>(int playerNum<eax>)
+static const void *const LoadEndPositionPtr = (void*)0x43DD50;
+static inline signed int LoadEndPosition(int playerNum)
 {
-	int result;
+	signed int result;
 	__asm
 	{
 		mov eax, [playerNum]
@@ -1041,8 +1122,9 @@ static signed int LoadEndPosition(int playerNum)
 	return result;
 }
 
-static const void *PlayMusicPtr = (void*)0x442CF0;
-static void PlayMusic(const char *song)
+// void __usercall(const char *song<edi>)
+static const void *const PlayMusicPtr = (void*)0x442CF0;
+static inline void PlayMusic(const char *song)
 {
 	__asm
 	{
@@ -1051,36 +1133,51 @@ static void PlayMusic(const char *song)
 	}
 }
 
-static const void *PlaySoundPtr = (void*)0x443130;
-static signed int PlayVoice(int a1, int a2)
+// signed int __usercall<eax>(int a1<edx>, int a2)
+static const void *const PlayVoicePtr = (void*)0x443130;
+static inline signed int PlayVoice(int a1, int a2)
 {
-	int result;
+	signed int result;
 	__asm
 	{
-		mov edx, [a1]
 		push [a2]
-		call PlaySoundPtr
+		mov edx, [a1]
+		call PlayVoicePtr
 		add esp, 4
 		mov result, eax
 	}
 	return result;
 }
 
-static const void *AddRingsPtr = (void*)0x44CE10;
-static void AddRings(char playerNum, int numRings)
+// void __usercall(char a1<al>, __int16 a2<bx>)
+static const void *const AddLivesPtr = (void*)0x44CB10;
+static inline void AddLives(char a1, __int16 a2)
 {
 	__asm
 	{
-		mov al, [playerNum]
+		mov bx, [a2]
+		mov al, [a1]
+		call AddLivesPtr
+	}
+}
+
+// void __usercall(char playerNum<al>, int numRings<edx>)
+static const void *const AddRingsPtr = (void*)0x44CE10;
+static inline void AddRings(char playerNum, int numRings)
+{
+	__asm
+	{
 		mov edx, [numRings]
+		mov al, [playerNum]
 		call AddRingsPtr
 	}
 }
 
-static const void *LoadMDLFilePtr = (void*)0x459590;
-static ModelIndex *LoadMDLFile(char *filename)
+// ModelIndex *__usercall<eax>(char *filename<eax>)
+static const void *const LoadMDLFilePtr = (void*)0x459590;
+static inline ModelIndex * LoadMDLFile(char *filename)
 {
-	ModelIndex *result;
+	ModelIndex * result;
 	__asm
 	{
 		mov eax, [filename]
@@ -1090,10 +1187,11 @@ static ModelIndex *LoadMDLFile(char *filename)
 	return result;
 }
 
-static const void *LoadMTNFilePtr = (void*)0x459740;
-static AnimationIndex *LoadMTNFile(char *filename)
+// AnimationIndex *__usercall<eax>(char *filename<eax>)
+static const void *const LoadMTNFilePtr = (void*)0x459740;
+static inline AnimationIndex * LoadMTNFile(char *filename)
 {
-	AnimationIndex *result;
+	AnimationIndex * result;
 	__asm
 	{
 		mov eax, [filename]
@@ -1103,10 +1201,11 @@ static AnimationIndex *LoadMTNFile(char *filename)
 	return result;
 }
 
-static const void *LoadDeathZonesPtr = (void*)0x46B090;
-static signed int LoadDeathZones(DeathZone *a1)
+// signed int __usercall<eax>(DeathZone *a1<ebx>)
+static const void *const LoadDeathZonesPtr = (void*)0x46B090;
+static inline signed int LoadDeathZones(DeathZone *a1)
 {
-	int result;
+	signed int result;
 	__asm
 	{
 		mov ebx, [a1]
@@ -1116,8 +1215,9 @@ static signed int LoadDeathZones(DeathZone *a1)
 	return result;
 }
 
-static const void *KillCharacterPtr = (void*)0x46B110;
-static void KillCharacter(int playerNum)
+// void __usercall(int playerNum<ebx>)
+static const void *const KillCharacterPtr = (void*)0x46B110;
+static inline void KillCharacter(int playerNum)
 {
 	__asm
 	{
@@ -1126,18 +1226,19 @@ static void KillCharacter(int playerNum)
 	}
 }
 
-static const void *LoadObject2Ptr = (void*)0x46F610;
-static ObjectMaster *LoadObject2(int list, char *name, ObjectFuncPtr mainSub, char flags)
+// ObjectMaster *__usercall<eax>(int list<ecx>, char *name<eax>, void (__cdecl *mainSub)(ObjectMaster *)<edi>, char flags)
+static const void *const LoadObject2Ptr = (void*)0x46F610;
+static inline ObjectMaster * LoadObject2(int list, char *name, void (__cdecl *mainSub)(ObjectMaster *), char flags)
 {
-	ObjectMaster *result;
+	ObjectMaster * result;
 	__asm
 	{
 		xor eax, eax
 		mov al, [flags]
 		push eax
-		mov ecx, [list]
-		mov eax, [name]
 		mov edi, [mainSub]
+		mov eax, [name]
+		mov ecx, [list]
 		call LoadObject2Ptr
 		add esp, 4
 		mov result, eax
@@ -1145,15 +1246,16 @@ static ObjectMaster *LoadObject2(int list, char *name, ObjectFuncPtr mainSub, ch
 	return result;
 }
 
-static const void *LoadObjectPtr = (void*)0x46F680;
-static ObjectMaster * LoadObject(ObjectFuncPtr mainSub, int list, char *name)
+// ObjectMaster *__usercall<eax>(void (__cdecl *mainSub)(ObjectMaster *)<edi>, int list<esi>, char *name)
+static const void *const LoadObjectPtr = (void*)0x46F680;
+static inline ObjectMaster * LoadObject(void (__cdecl *mainSub)(ObjectMaster *), int list, char *name)
 {
-	ObjectMaster *result;
+	ObjectMaster * result;
 	__asm
 	{
-		mov edi, [mainSub]
-		mov esi, [list]
 		push [name]
+		mov esi, [list]
+		mov edi, [mainSub]
 		call LoadObjectPtr
 		add esp, 4
 		mov result, eax
@@ -1161,24 +1263,127 @@ static ObjectMaster * LoadObject(ObjectFuncPtr mainSub, int list, char *name)
 	return result;
 }
 
-static const void * LoadSetFilePtr = (void*)0x488DD0;
-static void *LoadSETFile(int a1, char *filename_s, char *filename_u)
+// signed int __usercall<eax>(ObjectMaster *a1<eax>, CollisionData *a2, int count, unsigned __int8 a4)
+static const void *const InitCollisionPtr = (void*)0x47E520;
+static inline signed int InitCollision(ObjectMaster *a1, void *a2, int count, unsigned __int8 a4)
 {
-	void *result;
+	signed int result;
 	__asm
 	{
+		xor eax, eax
+		mov al, [a4]
+		push eax
+		push [count]
+		push [a2]
 		mov eax, [a1]
-		mov ecx, [filename_s]
-		push [filename_u]
-		call LoadSetFilePtr
+		call InitCollisionPtr
+		add esp, 12
+		mov result, eax
+	}
+	return result;
+}
+
+// void *__usercall<eax>(int a1<eax>, char *name_s<ecx>, char *name_u)
+static const void *const LoadSETFilePtr = (void*)0x488DD0;
+static inline void * LoadSETFile(int a1, char *name_s, char *name_u)
+{
+	void * result;
+	__asm
+	{
+		push [name_u]
+		mov ecx, [name_s]
+		mov eax, [a1]
+		call LoadSETFilePtr
 		add esp, 4
 		mov result, eax
 	}
 	return result;
 }
 
-static const void * LoadTailsPtr = (void*)0x74CF00;
-static void LoadTails(int playerNum)
+// ObjectMaster *__usercall<eax>(ObjectMaster *parent<eax>, Vertex *position<ebx>, int a1, int a2)
+static const void *const SpawnBombPtr = (void*)0x513FE0;
+static inline ObjectMaster * SpawnBomb(ObjectMaster *parent, Vertex *position, int a1, int a2)
+{
+	ObjectMaster * result;
+	__asm
+	{
+		push [a2]
+		push [a1]
+		mov ebx, [position]
+		mov eax, [parent]
+		call SpawnBombPtr
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
+// void __usercall(char *a1<esi>)
+static const void *const WriteChaoSaveChecksumPtr = (void*)0x52EEE0;
+static inline void WriteChaoSaveChecksum(char *a1)
+{
+	__asm
+	{
+		mov esi, [a1]
+		call WriteChaoSaveChecksumPtr
+	}
+}
+
+// void __usercall(Vertex *a1<ebx>, float a2, float a3)
+static const void *const LoadChaoKeyPtr = (void*)0x6E9D10;
+static inline void LoadChaoKey(Vertex *a1, float a2, float a3)
+{
+	__asm
+	{
+		push [a3]
+		push [a2]
+		mov ebx, [a1]
+		call LoadChaoKeyPtr
+		add esp, 8
+	}
+}
+
+// bool __usercall<eax>(CharObj1 *a1<eax>, SonicCharObj2 *a2<ecx>)
+static const void *const Knuckles_LevelBoundsPtr = (void*)0x737B50;
+static inline bool Knuckles_LevelBounds(CharObj1 *a1, KnucklesCharObj2 *a2)
+{
+	bool result;
+	__asm
+	{
+		mov ecx, [a2]
+		mov eax, [a1]
+		call Knuckles_LevelBoundsPtr
+		mov result, al
+	}
+	return result;
+}
+
+// void __usercall(int playerNum<eax>)
+static const void *const LoadEggmanPtr = (void*)0x73C220;
+static inline void LoadEggman(int playerNum)
+{
+	__asm
+	{
+		mov eax, [playerNum]
+		call LoadEggmanPtr
+	}
+}
+
+// void __usercall(CharObj2Base *a1<eax>, CharObj1 *a2<edi>)
+static const void *const FreeMovement_MechEggmanPtr = (void*)0x749020;
+static inline void FreeMovement_MechEggman(CharObj2Base *a1, CharObj1 *a2)
+{
+	__asm
+	{
+		mov edi, [a2]
+		mov eax, [a1]
+		call FreeMovement_MechEggmanPtr
+	}
+}
+
+// void __usercall(int playerNum<eax>)
+static const void *const LoadTailsPtr = (void*)0x74CF00;
+static inline void LoadTails(int playerNum)
 {
 	__asm
 	{
@@ -1187,13 +1392,15 @@ static void LoadTails(int playerNum)
 	}
 }
 
-static const void * LoadEggmanPtr = (void*)0x73C220;
-static void LoadEggman(int playerNum)
+// void __usercall(CharObj2Base *a1<eax>, CharObj1 *a2<edi>)
+static const void *const FreeMovement_TailsPtr = (void*)0x7519B0;
+static inline void FreeMovement_Tails(CharObj2Base *a1, CharObj1 *a2)
 {
 	__asm
 	{
-		mov eax, [playerNum]
-		call LoadEggmanPtr
+		mov edi, [a2]
+		mov eax, [a1]
+		call FreeMovement_TailsPtr
 	}
 }
 #endif
