@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
 			System.Windows.Forms.GroupBox groupBox2;
-			this.sa2DebugCheckBox = new System.Windows.Forms.CheckBox();
-			this.consoleCheckBox = new System.Windows.Forms.CheckBox();
 			this.modDescription = new System.Windows.Forms.Label();
 			this.modDownButton = new System.Windows.Forms.Button();
 			this.modUpButton = new System.Windows.Forms.Button();
@@ -51,6 +49,9 @@
 			this.editCodeButton = new System.Windows.Forms.Button();
 			this.newCodeButton = new System.Windows.Forms.Button();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
+			this.fileCheckBox = new System.Windows.Forms.CheckBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.consoleCheckBox = new System.Windows.Forms.CheckBox();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -62,7 +63,8 @@
 			// 
 			groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			groupBox2.Controls.Add(this.sa2DebugCheckBox);
+			groupBox2.Controls.Add(this.fileCheckBox);
+			groupBox2.Controls.Add(this.label2);
 			groupBox2.Controls.Add(this.consoleCheckBox);
 			groupBox2.Location = new System.Drawing.Point(12, 352);
 			groupBox2.Name = "groupBox2";
@@ -70,26 +72,6 @@
 			groupBox2.TabIndex = 2;
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Options";
-			// 
-			// sa2DebugCheckBox
-			// 
-			this.sa2DebugCheckBox.AutoSize = true;
-			this.sa2DebugCheckBox.Location = new System.Drawing.Point(148, 19);
-			this.sa2DebugCheckBox.Name = "sa2DebugCheckBox";
-			this.sa2DebugCheckBox.Size = new System.Drawing.Size(146, 17);
-			this.sa2DebugCheckBox.TabIndex = 1;
-			this.sa2DebugCheckBox.Text = "Show SA2 Debug Output";
-			this.sa2DebugCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// consoleCheckBox
-			// 
-			this.consoleCheckBox.AutoSize = true;
-			this.consoleCheckBox.Location = new System.Drawing.Point(6, 19);
-			this.consoleCheckBox.Name = "consoleCheckBox";
-			this.consoleCheckBox.Size = new System.Drawing.Size(136, 17);
-			this.consoleCheckBox.TabIndex = 0;
-			this.consoleCheckBox.Text = "Show Console Window";
-			this.consoleCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// modDescription
 			// 
@@ -345,6 +327,35 @@
 			this.codesCheckedListBox.TabIndex = 0;
 			this.codesCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.codesCheckedListBox_SelectedIndexChanged);
 			// 
+			// fileCheckBox
+			// 
+			this.fileCheckBox.AutoSize = true;
+			this.fileCheckBox.Location = new System.Drawing.Point(175, 19);
+			this.fileCheckBox.Name = "fileCheckBox";
+			this.fileCheckBox.Size = new System.Drawing.Size(42, 17);
+			this.fileCheckBox.TabIndex = 14;
+			this.fileCheckBox.Text = "File";
+			this.fileCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 20);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(93, 13);
+			this.label2.TabIndex = 12;
+			this.label2.Text = "Debug Messages:";
+			// 
+			// consoleCheckBox
+			// 
+			this.consoleCheckBox.AutoSize = true;
+			this.consoleCheckBox.Location = new System.Drawing.Point(105, 19);
+			this.consoleCheckBox.Name = "consoleCheckBox";
+			this.consoleCheckBox.Size = new System.Drawing.Size(64, 17);
+			this.consoleCheckBox.TabIndex = 11;
+			this.consoleCheckBox.Text = "Console";
+			this.consoleCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -380,12 +391,10 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Button modDownButton;
-        private System.Windows.Forms.Button modUpButton;
-        private System.Windows.Forms.CheckBox consoleCheckBox;
+		private System.Windows.Forms.Button modUpButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button saveAndPlayButton;
-        private System.Windows.Forms.Button installButton;
-        private System.Windows.Forms.CheckBox sa2DebugCheckBox;
+		private System.Windows.Forms.Button installButton;
         private System.Windows.Forms.Label modDescription;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
@@ -398,6 +407,9 @@
         private System.Windows.Forms.Button codeUpButton;
 		private System.Windows.Forms.Button buttonModsFolder;
 		private System.Windows.Forms.Button buttonRefreshModList;
+		private System.Windows.Forms.CheckBox fileCheckBox;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.CheckBox consoleCheckBox;
     }
 }
 
