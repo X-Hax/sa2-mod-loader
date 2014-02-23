@@ -1,3 +1,4 @@
+#include <cstdint>
 #include "ninja.h"
 #ifndef SA2MODLOADER_H
 #define SA2MODLOADER_H
@@ -931,11 +932,13 @@ DataPointer(ControllerData, Controller4, &Controllers[0]);
 
 // SA2 Functions
 #define FunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__cdecl *const NAME)ARGS = (RETURN_TYPE (*)ARGS)ADDRESS
+#define StdcallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__stdcall *const NAME)ARGS = (RETURN_TYPE (*)ARGS)ADDRESS
 #define FastcallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__fastcall *const NAME)ARGS = (RETURN_TYPE (__fastcall *)ARGS)ADDRESS
 #define ThiscallFunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__thiscall *const NAME)ARGS = (RETURN_TYPE (__thiscall *)ARGS)ADDRESS
 #define VoidFunc(name,address) FunctionPointer(void,name,(void),address)
-#define CharLoadFunc(name,address) FunctionPointer(void,name,(int playerNum),address)
 #define ObjectFunc(name,address) FunctionPointer(void,name,(ObjectMaster *obj),address)
+#define CharLoadFunc(name,address) FunctionPointer(void,name,(int playerNum),address)
+FunctionPointer(int, PrintDebug, (char *format, ...), 0x426740);
 CharLoadFunc(LoadSonic, 0x716E00);
 CharLoadFunc(LoadAmy, 0x7170E0);
 CharLoadFunc(LoadShadow, 0x717360);

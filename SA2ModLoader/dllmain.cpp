@@ -1,6 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 #include <cstdint>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <unordered_map>
@@ -708,28 +709,42 @@ void __cdecl ProcessCodes()
 	ProcessCodeList(codes);
 }
 
-int __cdecl SA2DebugOutput_i(const char *Format, ...)
+char * ShiftJISToUTF8(char *shiftjis)
+{
+	int cchWcs = MultiByteToWideChar(932, 0, shiftjis, -1, NULL, 0);
+	if (cchWcs <= 0) return nullptr;
+	wchar_t *wcs = new wchar_t[cchWcs];
+	MultiByteToWideChar(932, 0, shiftjis, -1, wcs, cchWcs);
+	int cbMbs = WideCharToMultiByte(CP_UTF8, 0, wcs, -1, NULL, 0, NULL, NULL);
+	if (cbMbs <= 0) { delete[] wcs; return nullptr; }
+	char *utf8 = new char[cbMbs];
+	WideCharToMultiByte(CP_UTF8, 0, wcs, -1, utf8, cbMbs, NULL, NULL);
+	delete[] wcs;
+	return utf8;
+}
+
+bool dbgConsole, dbgFile;
+ofstream dbgstr;
+int __cdecl SA2DebugOutput(const char *Format, ...)
 {
 	va_list ap;
 	va_start(ap, Format);
-	int result = vprintf(Format, ap);
+	int length = vsnprintf(NULL, 0, Format, ap) + 1;
 	va_end(ap);
-	printf("\n");
-	return result;
-}
-
-const char *addrfmt = "[0x%08X] ";
-__declspec(naked) int __cdecl SA2DebugOutput(const char *Format, ...)
-{
-	__asm
+	char *buf = new char[length];
+	va_start(ap, Format);
+	length = vsnprintf(buf, length, Format, ap);
+	va_end(ap);
+	if (dbgConsole)
+		cout << buf << "\n";
+	if (dbgFile && dbgstr.good())
 	{
-		/*mov eax, [esp]
-		push eax
-		push addrfmt
-		call printf
-		add esp, 8*/
-		jmp SA2DebugOutput_i
+		char *utf8 = ShiftJISToUTF8(buf);
+		dbgstr << utf8 << "\n";
+		delete[] utf8;
 	}
+	delete[] buf;
+	return length;
 }
 
 string NormalizePath(string path)
@@ -766,7 +781,7 @@ void ScanFolder(string path, int length)
 			filemap[origfile] = buf;
 			modfile.copy(buf, modfile.length());
 			buf[modfile.length()] = 0;
-			printf("Replaced file: \"%s\" = \"%s\"\n", origfile.c_str(), buf);
+			PrintDebug("Replaced file: \"%s\" = \"%s\"", origfile.c_str(), buf);
 		}
 	}
 	while (FindNextFileA(hfind, &data) != 0);
@@ -832,22 +847,27 @@ void __cdecl InitMods(void)
 	string exefilename = pathbuf;
 	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
-	string item = settings["ShowConsole"];
+	string item = settings["DebugConsole"];
 	transform(item.begin(), item.end(), item.begin(), ::tolower);
-	bool console = false;
 	if (item == "true")
 	{
 		AllocConsole();
 		SetConsoleTitle(L"SA2 Mod Loader output");
 		freopen("CONOUT$", "wb", stdout);
-		console = true;
-		printf("SA2 Mod Loader version %d, built %s\n", ModLoaderVer, __TIMESTAMP__);
-		printf("Loading mods...\n");
+		dbgConsole = true;
 	}
-	item = settings["ShowSA2DebugOutput"];
+	item = settings["DebugFile"];
 	transform(item.begin(), item.end(), item.begin(), ::tolower);
 	if (item == "true")
-		WriteJump((void *)0x426740, SA2DebugOutput);
+	{
+		dbgstr = ofstream("mods\\SA2ModLoader.log", ios_base::ate | ios_base::app);
+		dbgFile = dbgstr.is_open();
+	}
+	if (dbgConsole || dbgFile)
+	{
+		WriteJump(PrintDebug, SA2DebugOutput);
+		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
+	}
 	InitializeCriticalSection(&filereplacesection);
 	DWORD oldprot;
 	VirtualProtect((void *)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
@@ -862,14 +882,12 @@ void __cdecl InitMods(void)
 		str = ifstream(dir + "\\mod.ini");
 		if (!str.is_open())
 		{
-			if (console)
-				printf("Could not open file mod.ini in \"mods\\%s\".\n", settings[key].c_str());
+			PrintDebug("Could not open file mod.ini in \"mods\\%s\".", settings[key].c_str());
 			continue;
 		}
 		IniDictionary modini = LoadINI(str);
 		IniGroup modinfo = modini[""].Element;
-		if (console)
-			printf("%d. %s\n", i, modinfo["Name"].c_str());
+		PrintDebug("%d. %s", i, modinfo["Name"].c_str());
 		IniDictionary::iterator gr = modini.find("IgnoreFiles");
 		if (gr != modini.end())
 		{
@@ -877,8 +895,7 @@ void __cdecl InitMods(void)
 			for (IniGroup::iterator it = replaces.begin(); it != replaces.end(); it++)
 			{
 				filemap[NormalizePath(it->first)] = "nullfile";
-				if (console)
-					printf("Ignored file: %s\n", it->first.c_str());
+				PrintDebug("Ignored file: %s", it->first.c_str());
 			}
 		}
 		gr = modini.find("ReplaceFiles");
@@ -942,11 +959,11 @@ void __cdecl InitMods(void)
 					if (info->Init)
 						info->Init(dir.c_str());
 				}
-				else if (console)
-					printf("File \"%s\" is not a valid mod file.\n", filename.c_str());
+				else
+					PrintDebug("File \"%s\" is not a valid mod file.", filename.c_str());
 			}
-			else if (console)
-				printf("Failed loading file \"%s\".\n", filename.c_str());
+			else
+				PrintDebug("Failed loading file \"%s\".", filename.c_str());
 		}
 	}
 	for (unordered_map<string,string>::iterator it = filereplaces.begin(); it != filereplaces.end(); it++)
@@ -960,10 +977,10 @@ void __cdecl InitMods(void)
 			filemap[it->first] = buf;
 			it->second.copy(buf, it->second.length());
 			buf[it->second.length()] = 0;
-			printf("Replaced file: \"%s\" = \"%s\"\n", it->first.c_str(), buf);
+			PrintDebug("Replaced file: \"%s\" = \"%s\"", it->first.c_str(), buf);
 		}
 	}
-	printf("Mod loading finished.\n");
+	PrintDebug("Mod loading finished.");
 	str = ifstream("mods\\Codes.dat", ifstream::binary);
 	if (str.is_open())
 	{
@@ -972,12 +989,12 @@ void __cdecl InitMods(void)
 		for (int i = 0; i < 6; i++)
 			if (buf[i] != codemagic[i])
 			{
-				printf("Code file not in correct format.\n");
+				PrintDebug("Code file not in correct format.");
 				goto closecodefile;
 			}
 		int32_t codecount;
 		str.read((char *)&codecount, sizeof(int32_t));
-		printf("Loading %d codes...\n", codecount);
+		PrintDebug("Loading %d codes...", codecount);
 		ReadCodes(str, codes);
 	}
 closecodefile:
