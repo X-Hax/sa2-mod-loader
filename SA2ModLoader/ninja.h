@@ -1168,6 +1168,8 @@ struct SA2B_Model
 	float Radius;
 };
 
+struct NJS_CNK_MODEL;
+
 /*
  * NJS_OBJECT
  */
@@ -1179,6 +1181,22 @@ typedef struct obj {
 	Float           scl[3];     /* scaling                      */
 	struct obj      *child;     /* child object                 */
 	struct obj      *sibling;   /* sibling object               */
+	NJS_MODEL       *getbasicmodel() { return (NJS_MODEL*)model; }
+	void            putbasicmodel(NJS_MODEL *value) { model = value; }
+	NJS_MODEL_SADX  *getbasicdxmodel() { return (NJS_MODEL_SADX*)model; }
+	void            putbasicdxmodel(NJS_MODEL_SADX *value) { model = value; }
+	NJS_CNK_MODEL   *getchunkmodel() { return (NJS_CNK_MODEL*)model; }
+	void            putchunkmodel(NJS_CNK_MODEL *value) { model = value; }
+	SA2B_Model      *getsa2bmodel() { return (SA2B_Model*)model; }
+	void            putsa2bmodel(SA2B_Model *value) { model = value; }
+	__declspec(property(get = getbasicmodel, put = putbasicmodel))
+	NJS_MODEL       *basicmodel;
+	__declspec(property(get = getbasicdxmodel, put = putbasicdxmodel))
+	NJS_MODEL_SADX  *basicdxmodel;
+	__declspec(property(get = getchunkmodel, put = putchunkmodel))
+	NJS_CNK_MODEL   *chunkmodel;
+	__declspec(property(get = getsa2bmodel, put = putsa2bmodel))
+	SA2B_Model      *sa2bmodel;
 } NJS_OBJECT;
 
 /*
