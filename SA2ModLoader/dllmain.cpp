@@ -93,17 +93,10 @@ appendchar:
 
 HMODULE myhandle;
 HMODULE datadllhandle;
-unordered_map<string, void *> dataoverrides = unordered_map<string, void *>();
 FARPROC __stdcall MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName)
 {
 	if (hModule == myhandle)
-	{
-		unordered_map<string, void *>::iterator iter = dataoverrides.find(lpProcName);
-		if (iter != dataoverrides.end())
-			return (FARPROC)iter->second;
-		else
-			return GetProcAddress(datadllhandle, lpProcName);
-	}
+		return GetProcAddress(datadllhandle, lpProcName);
 	else
 		return GetProcAddress(hModule, lpProcName);
 }
@@ -952,10 +945,6 @@ void __cdecl InitMods(void)
 					if (info->Pointers)
 						for (int i = 0; i < info->PointerCount; i++)
 							WriteData(info->Pointers[i].address, &info->Pointers[i].data, sizeof(void*));
-					if (info->Version >= 2)
-						if (info->Exports)
-							for (int i = 0; i < info->ExportCount; i++)
-								dataoverrides[info->Exports[i].name] = info->Exports[i].data;
 					if (info->Init)
 						info->Init(dir.c_str());
 				}
