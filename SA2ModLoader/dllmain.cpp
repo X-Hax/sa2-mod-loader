@@ -359,7 +359,7 @@ else \
 else \
 	ProcessCodeList(it->falseCodes);
 
-#define ifcodefreg(op) for (uint32_t i = 0; i < it->repeatcount; i++) \
+#define ifcoderegf(op) for (uint32_t i = 0; i < it->repeatcount; i++) \
 { \
 	cond &= *addrf op regs[it->value.u8].f; \
 	addrf++; \
@@ -1063,7 +1063,7 @@ void ProcessCodeList(list<Code> &codes)
 			ifcodereg(32,==)
 				break;
 		case ifeqregfloat:
-			ifcodefreg(==)
+			ifcoderegf(==)
 				break;
 		case ifnereg8:
 			ifcodereg(8,!=)
@@ -1075,7 +1075,7 @@ void ProcessCodeList(list<Code> &codes)
 			ifcodereg(32,!=)
 				break;
 		case ifneregfloat:
-			ifcodefreg(!=)
+			ifcoderegf(!=)
 				break;
 		case ifltregu8:
 			ifcodereg(8,<)
@@ -1087,7 +1087,7 @@ void ProcessCodeList(list<Code> &codes)
 			ifcodereg(32,<)
 				break;
 		case ifltregfloat:
-			ifcodefreg(<)
+			ifcoderegf(<)
 				break;
 		case ifltregs8:
 			ifcoderegs(8,<)
@@ -1108,7 +1108,7 @@ void ProcessCodeList(list<Code> &codes)
 			ifcodereg(32,<=)
 				break;
 		case iflteqregfloat:
-			ifcodefreg(<=)
+			ifcoderegf(<=)
 				break;
 		case iflteqregs8:
 			ifcoderegs(8,<=)
@@ -1129,7 +1129,7 @@ void ProcessCodeList(list<Code> &codes)
 			ifcodereg(32,>)
 				break;
 		case ifgtregfloat:
-			ifcodefreg(>)
+			ifcoderegf(>)
 				break;
 		case ifgtregs8:
 			ifcoderegs(8,>)
@@ -1150,7 +1150,7 @@ void ProcessCodeList(list<Code> &codes)
 			ifcodereg(32,>=)
 				break;
 		case ifgteqregfloat:
-			ifcodefreg(>=)
+			ifcoderegf(>=)
 				break;
 		case ifgteqregs8:
 			ifcoderegs(8,>=)
