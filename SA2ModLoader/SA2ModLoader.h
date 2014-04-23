@@ -1014,6 +1014,7 @@ VoidFunc(LoadHiddenBaseCharAnims, 0x711C30);
 FunctionPointer(void, LoadSonic, (int playerNum), 0x716E00);
 FunctionPointer(void, LoadAmy, (int playerNum), 0x7170E0);
 FunctionPointer(void, LoadShadow, (int playerNum), 0x717360);
+FunctionPointer(void, LoadMetalSonic, (int playerNum), 0x717640);
 FunctionPointer(void, Sonic_Main, (ObjectMaster *), 0x717840);
 ObjectFunc(Sonic_Display, 0x720090);
 ThiscallFunctionPointer(signed int, Sonic_CheckSpecial, (SonicCharObj2 *a1, CharObj1 *a2), 0x724250);
