@@ -1180,6 +1180,17 @@ static inline ModelIndex * LoadMDLFile(char *filename)
 	return result;
 }
 
+// void __usercall(ModelIndex *a1<esi>)
+static const void *const ReleaseMDLFilePtr = (void*)0x4596D0;
+static inline void ReleaseMDLFile(ModelIndex *a1)
+{
+	__asm
+	{
+		mov esi, [a1]
+		call ReleaseMDLFilePtr
+	}
+}
+
 // AnimationIndex *__usercall<eax>(char *filename<eax>)
 static const void *const LoadMTNFilePtr = (void*)0x459740;
 static inline AnimationIndex * LoadMTNFile(char *filename)
@@ -1395,5 +1406,19 @@ static inline void FreeMovement_Tails(CharObj2Base *a1, CharObj1 *a2)
 		mov eax, [a1]
 		call FreeMovement_TailsPtr
 	}
+}
+
+// void *__usercall<eax>(char *filename<eax>)
+static const void *const LoadPRSFilePtr = (void*)0x4548C0;
+static inline void *LoadPRSFile(const char *filename)
+{
+	void *result;
+	__asm
+	{
+		mov eax, [filename]
+		call LoadPRSFilePtr
+		mov result, eax
+	}
+	return result;
 }
 #endif

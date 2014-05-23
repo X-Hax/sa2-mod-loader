@@ -1,6 +1,7 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
 #include <cstdint>
+#include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,8 +9,9 @@
 #include <list>
 #include <algorithm>
 #include <DbgHelp.h>
-#include <cstdio>
+#include <Shlwapi.h>
 #include "SA2ModLoader.h"
+#include "ModelInfo.h"
 using namespace std;
 
 typedef unordered_map<string, string> IniGroup;
@@ -113,11 +115,8 @@ IniGroup settings;
 unordered_map<string, char *> filemap;
 const string resourcedir = "resource\\gd_pc\\";
 string sa2dir;
-const string savedatadir = "resource\\gd_pc\\savedata\\";
-CRITICAL_SECTION filereplacesection;
 const char *_ReplaceFile(const char *lpFileName)
 {
-	EnterCriticalSection(&filereplacesection);
 	string path = lpFileName;
 	transform(path.begin(), path.end(), path.begin(), backslashes);
 	if (path.length() > 2 && (path[0] == '.' && path[1] == '\\'))
@@ -128,8 +127,243 @@ const char *_ReplaceFile(const char *lpFileName)
 	unordered_map<string, char *>::iterator fileIter = filemap.find(path);
 	if (fileIter != filemap.end())
 		lpFileName = fileIter->second;
-	LeaveCriticalSection(&filereplacesection);
 	return lpFileName;
+}
+
+unordered_map<ModelIndex *, list<ModelInfo>> modelfiles;
+
+void markobjswapped(NJS_OBJECT *obj)
+{
+	while (obj)
+	{
+		IsByteswapped(&obj->evalflags);
+		IsByteswapped(&obj->model);
+		IsByteswapped(&obj->pos[0]);
+		IsByteswapped(&obj->pos[1]);
+		IsByteswapped(&obj->pos[2]);
+		IsByteswapped(&obj->ang[0]);
+		IsByteswapped(&obj->ang[1]);
+		IsByteswapped(&obj->ang[2]);
+		IsByteswapped(&obj->scl[0]);
+		IsByteswapped(&obj->scl[1]);
+		IsByteswapped(&obj->scl[2]);
+		IsByteswapped(&obj->child);
+		IsByteswapped(&obj->sibling);
+		if (obj->chunkmodel)
+		{
+			IsByteswapped(&obj->chunkmodel->vlist);
+			IsByteswapped(&obj->chunkmodel->plist);
+			IsByteswapped(&obj->chunkmodel->center.x);
+			IsByteswapped(&obj->chunkmodel->center.y);
+			IsByteswapped(&obj->chunkmodel->center.z);
+			IsByteswapped(&obj->chunkmodel->r);
+		}
+		if (obj->child)
+			markobjswapped(obj->child);
+		obj = obj->sibling;
+	}
+}
+
+VoidFunc(sub_4297F0, 0x4297F0);
+FunctionPointer(void, sub_48FA80, (NJS_OBJECT *, void *), 0x48FA80);
+StdcallFunctionPointer(void, sub_419FC0, (void *), 0x419FC0);
+FunctionPointer(void, sub_7A5974, (void *), 0x7A5974);
+DataPointer(int, dword_1A55800, 0x1A55800);
+DataPointer(int, dword_1AF191C, 0x1AF191C);
+DataPointer(void *, dword_1AF1918, 0x1AF1918);
+ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
+{
+	ModelIndex *result;
+	char dir[MAX_PATH];
+	PathCombineA(dir, resourcedir.c_str(), filename);
+	PathRemoveExtensionA(dir);
+	char *fn = PathFindFileNameA(dir);
+	char combinedpath[MAX_PATH];
+	PathCombineA(combinedpath, dir, fn);
+	PathAddExtensionA(combinedpath, ".ini");
+	const char *repfn = _ReplaceFile(combinedpath);
+	if (PathFileExistsA(repfn))
+	{
+		ifstream str = ifstream(repfn);
+		unordered_map<string, string> indexes = LoadINI(str)[""].Element;
+		strncpy_s(dir, repfn, MAX_PATH);
+		PathRemoveFileSpecA(dir);
+		WIN32_FIND_DATAA data;
+		HANDLE hfind = FindFirstFileA((string(dir) + "\\*.sa2mdl").c_str(), &data);
+		if (hfind == INVALID_HANDLE_VALUE)
+			goto defaultmodelload;
+		list<ModelInfo> files;
+		vector<ModelIndex> modelindexes;
+		sub_4297F0();
+		do
+		{
+			PathCombineA(combinedpath, dir, data.cFileName);
+			ModelInfo modelfile(combinedpath);
+			files.push_back(modelfile);
+			markobjswapped(modelfile.getmodel());
+			for (auto i = indexes.cbegin(); i != indexes.cend(); i++)
+			{
+				void *found = modelfile.getdata(i->second);
+				if (found != nullptr)
+				{
+					int ind = stoi(i->first);
+					ModelIndex index = { ind, (NJS_OBJECT *)found };
+					if (ind >= 0 && ind < 532 && !CharacterModels[ind].Model)
+						CharacterModels[ind] = index;
+					modelindexes.push_back(index);
+				}
+			}
+		}
+		while (FindNextFileA(hfind, &data) != 0);
+		FindClose(hfind);
+		ModelIndex endmarker = { -1, (NJS_OBJECT *)-1 };
+		modelindexes.push_back(endmarker);
+		result = new ModelIndex[modelindexes.size()];
+		memcpy(result, modelindexes.data(), sizeof(ModelIndex) * modelindexes.size());
+		modelfiles[result] = files;
+		goto end;
+	}
+
+defaultmodelload:
+	int v3; // edx@3
+	int v5; // edi@5
+	unsigned int v6; // eax@5
+	unsigned int v7; // edi@5
+	int v8; // edi@6
+	ModelIndex *v9; // eax@7
+	signed int v10; // edx@8
+	NJS_OBJECT *v11; // ecx@11
+	NJS_OBJECT *v12; // ecx@15
+	void *v13; // eax@21
+	int v14; // ebx@21
+	int v15; // edi@21
+
+	result = (ModelIndex *)LoadPRSFile(filename);
+	if (result)
+	{
+		sub_4297F0();
+		v3 = 0;
+		if (result->Index != -1)
+		{
+			ModelIndex *v4 = result;
+			do
+			{
+				v5 = v4->Index;
+				v6 = (unsigned int)v4->Model;
+				v4->Index = (((v4->Index << 16) | v4->Index & 0xFF00) << 8) | ((((unsigned int)v4->Index >> 16) | v5 & 0xFF0000) >> 8);
+				v7 = v6;
+				++v3;
+				v4->Model = (NJS_OBJECT *)((((v6 << 16) | (unsigned __int16)(v6 & 0xFF00)) << 8) | (((v6 >> 16) | v7 & 0xFF0000) >> 8));
+				v4 = &result[v3];
+			}
+			while (result[v3].Index != -1);
+		}
+		v8 = 0;
+		if (result->Index != -1)
+		{
+			v9 = result;
+			do
+			{
+				v10 = v9->Index;
+				if (v9->Index >= 0 && v10 < 532 && !CharacterModels[v10].Model)
+				{
+					v11 = v9->Model;
+					if (v11 && (unsigned int)v11 <= (unsigned int)result)
+					{
+						v11 = (NJS_OBJECT *)((DWORD)result + (DWORD)v11);
+						v9->Model = v11;
+					}
+					CharacterModels[v10].Model = v11;
+				}
+				v12 = v9->Model;
+				if (v12)
+				{
+					if ((unsigned int)v12 <= (unsigned int)result)
+					{
+						v12 = (NJS_OBJECT *)((DWORD)result + (DWORD)v12);
+						v9->Model = v12;
+					}
+					sub_48FA80(v12, result);
+				}
+				++v8;
+				v9 = &result[v8];
+			}
+			while (result[v8].Index != -1);
+		}
+end:
+		--dword_1A55800;
+		if (dword_1AF191C)
+		{
+			v13 = dword_1AF1918;
+			v14 = *((DWORD *)dword_1AF1918 + 1);
+			v15 = *((DWORD *)dword_1AF1918 + 1);
+			if (!*(BYTE *)(v14 + 21))
+			{
+				do
+				{
+					sub_419FC0(*(void **)(v15 + 8));
+					v15 = *(DWORD *)v15;
+					sub_7A5974((void *)v14);
+					v14 = v15;
+				}
+				while (!*(BYTE *)(v15 + 21));
+				v13 = dword_1AF1918;
+			}
+			*((DWORD *)v13 + 1) = (DWORD)v13;
+			dword_1AF191C = 0;
+			*(DWORD *)dword_1AF1918 = (DWORD)dword_1AF1918;
+			*((DWORD *)dword_1AF1918 + 2) = (DWORD)dword_1AF1918;
+		}
+	}
+	return result;
+}
+
+__declspec(naked) void LoadMDLFile_r()
+{
+	__asm
+	{
+		push eax
+		call LoadMDLFile_ri
+		add esp, 4
+		ret
+	}
+}
+
+DataPointer(MemManFuncs *, MemoryManager, 0x1D19CAC);
+void __cdecl ReleaseMDLFile_ri(ModelIndex *a1)
+{
+	if (a1->Index != -1)
+	{
+		ModelIndex *v1 = a1;
+		do
+		{
+			if (v1->Index >= 0 && v1->Index < 532 && CharacterModels[v1->Index].Model == v1->Model)
+				CharacterModels[v1->Index].Model = 0;
+			++v1;
+		}
+		while (v1->Index != -1);
+	}
+	if (modelfiles.find(a1) != modelfiles.cend())
+	{
+		modelfiles.erase(a1);
+		delete[] a1;
+	}
+	else
+	{
+		*((DWORD *)a1 - 1) = 0x89ABCDEFu;
+		MemoryManager->Deallocate((char *)a1 - 4, "..\\..\\src\\file_ctl.c", 1091);
+	}
+}
+
+__declspec(naked) void ReleaseMDLFile_r()
+{
+	__asm
+	{
+		push esi
+		call ReleaseMDLFile_ri
+		add esp, 4
+		ret
+	}
 }
 
 HANDLE __stdcall MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
@@ -1373,9 +1607,10 @@ void __cdecl InitMods(void)
 		WriteJump(PrintDebug, SA2DebugOutput);
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
 	}
-	InitializeCriticalSection(&filereplacesection);
 	DWORD oldprot;
 	VirtualProtect((void *)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
+	WriteJump((void *)LoadMDLFilePtr, LoadMDLFile_r);
+	WriteJump((void *)ReleaseMDLFilePtr, ReleaseMDLFile_r);
 	unordered_map<string, string> filereplaces = unordered_map<string, string>();
 	char key[8];
 	for (int i = 1; i < 999; i++)
