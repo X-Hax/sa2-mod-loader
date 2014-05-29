@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
 			System.Windows.Forms.GroupBox groupBox2;
+			this.fileCheckBox = new System.Windows.Forms.CheckBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.consoleCheckBox = new System.Windows.Forms.CheckBox();
 			this.modDescription = new System.Windows.Forms.Label();
 			this.modDownButton = new System.Windows.Forms.Button();
 			this.modUpButton = new System.Windows.Forms.Button();
@@ -40,6 +43,7 @@
 			this.installButton = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.buttonNewMod = new System.Windows.Forms.Button();
 			this.buttonModsFolder = new System.Windows.Forms.Button();
 			this.buttonRefreshModList = new System.Windows.Forms.Button();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -49,9 +53,6 @@
 			this.editCodeButton = new System.Windows.Forms.Button();
 			this.newCodeButton = new System.Windows.Forms.Button();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
-			this.fileCheckBox = new System.Windows.Forms.CheckBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.consoleCheckBox = new System.Windows.Forms.CheckBox();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -73,6 +74,35 @@
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Options";
 			// 
+			// fileCheckBox
+			// 
+			this.fileCheckBox.AutoSize = true;
+			this.fileCheckBox.Location = new System.Drawing.Point(175, 19);
+			this.fileCheckBox.Name = "fileCheckBox";
+			this.fileCheckBox.Size = new System.Drawing.Size(42, 17);
+			this.fileCheckBox.TabIndex = 14;
+			this.fileCheckBox.Text = "File";
+			this.fileCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 20);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(93, 13);
+			this.label2.TabIndex = 12;
+			this.label2.Text = "Debug Messages:";
+			// 
+			// consoleCheckBox
+			// 
+			this.consoleCheckBox.AutoSize = true;
+			this.consoleCheckBox.Location = new System.Drawing.Point(105, 19);
+			this.consoleCheckBox.Name = "consoleCheckBox";
+			this.consoleCheckBox.Size = new System.Drawing.Size(64, 17);
+			this.consoleCheckBox.TabIndex = 11;
+			this.consoleCheckBox.Text = "Console";
+			this.consoleCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// modDescription
 			// 
 			this.modDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -89,9 +119,9 @@
 			this.modDownButton.AutoSize = true;
 			this.modDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modDownButton.Enabled = false;
-			this.modDownButton.Location = new System.Drawing.Point(343, 35);
+			this.modDownButton.Location = new System.Drawing.Point(350, 35);
 			this.modDownButton.Name = "modDownButton";
-			this.modDownButton.Size = new System.Drawing.Size(29, 23);
+			this.modDownButton.Size = new System.Drawing.Size(22, 23);
 			this.modDownButton.TabIndex = 2;
 			this.modDownButton.Text = "↓";
 			this.modDownButton.UseVisualStyleBackColor = true;
@@ -103,9 +133,9 @@
 			this.modUpButton.AutoSize = true;
 			this.modUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modUpButton.Enabled = false;
-			this.modUpButton.Location = new System.Drawing.Point(343, 6);
+			this.modUpButton.Location = new System.Drawing.Point(350, 6);
 			this.modUpButton.Name = "modUpButton";
-			this.modUpButton.Size = new System.Drawing.Size(29, 23);
+			this.modUpButton.Size = new System.Drawing.Size(22, 23);
 			this.modUpButton.TabIndex = 1;
 			this.modUpButton.Text = "↑";
 			this.modUpButton.UseVisualStyleBackColor = true;
@@ -125,7 +155,7 @@
 			this.modListView.Location = new System.Drawing.Point(3, 6);
 			this.modListView.MultiSelect = false;
 			this.modListView.Name = "modListView";
-			this.modListView.Size = new System.Drawing.Size(334, 240);
+			this.modListView.Size = new System.Drawing.Size(341, 240);
 			this.modListView.TabIndex = 0;
 			this.modListView.UseCompatibleStateImageBehavior = false;
 			this.modListView.View = System.Windows.Forms.View.Details;
@@ -194,6 +224,7 @@
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this.buttonNewMod);
 			this.tabPage1.Controls.Add(this.buttonModsFolder);
 			this.tabPage1.Controls.Add(this.buttonRefreshModList);
 			this.tabPage1.Controls.Add(this.modDescription);
@@ -207,6 +238,17 @@
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Mods";
 			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// buttonNewMod
+			// 
+			this.buttonNewMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonNewMod.Location = new System.Drawing.Point(269, 255);
+			this.buttonNewMod.Name = "buttonNewMod";
+			this.buttonNewMod.Size = new System.Drawing.Size(75, 23);
+			this.buttonNewMod.TabIndex = 8;
+			this.buttonNewMod.Text = "New Mod";
+			this.buttonNewMod.UseVisualStyleBackColor = true;
+			this.buttonNewMod.Click += new System.EventHandler(this.buttonNewMod_Click);
 			// 
 			// buttonModsFolder
 			// 
@@ -252,9 +294,9 @@
 			this.codeDownButton.AutoSize = true;
 			this.codeDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.codeDownButton.Enabled = false;
-			this.codeDownButton.Location = new System.Drawing.Point(343, 35);
+			this.codeDownButton.Location = new System.Drawing.Point(350, 35);
 			this.codeDownButton.Name = "codeDownButton";
-			this.codeDownButton.Size = new System.Drawing.Size(29, 23);
+			this.codeDownButton.Size = new System.Drawing.Size(22, 23);
 			this.codeDownButton.TabIndex = 5;
 			this.codeDownButton.Text = "↓";
 			this.codeDownButton.UseVisualStyleBackColor = true;
@@ -266,9 +308,9 @@
 			this.codeUpButton.AutoSize = true;
 			this.codeUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.codeUpButton.Enabled = false;
-			this.codeUpButton.Location = new System.Drawing.Point(343, 6);
+			this.codeUpButton.Location = new System.Drawing.Point(350, 6);
 			this.codeUpButton.Name = "codeUpButton";
-			this.codeUpButton.Size = new System.Drawing.Size(29, 23);
+			this.codeUpButton.Size = new System.Drawing.Size(22, 23);
 			this.codeUpButton.TabIndex = 4;
 			this.codeUpButton.Text = "↑";
 			this.codeUpButton.UseVisualStyleBackColor = true;
@@ -327,35 +369,6 @@
 			this.codesCheckedListBox.TabIndex = 0;
 			this.codesCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.codesCheckedListBox_SelectedIndexChanged);
 			// 
-			// fileCheckBox
-			// 
-			this.fileCheckBox.AutoSize = true;
-			this.fileCheckBox.Location = new System.Drawing.Point(175, 19);
-			this.fileCheckBox.Name = "fileCheckBox";
-			this.fileCheckBox.Size = new System.Drawing.Size(42, 17);
-			this.fileCheckBox.TabIndex = 14;
-			this.fileCheckBox.Text = "File";
-			this.fileCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(6, 20);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(93, 13);
-			this.label2.TabIndex = 12;
-			this.label2.Text = "Debug Messages:";
-			// 
-			// consoleCheckBox
-			// 
-			this.consoleCheckBox.AutoSize = true;
-			this.consoleCheckBox.Location = new System.Drawing.Point(105, 19);
-			this.consoleCheckBox.Name = "consoleCheckBox";
-			this.consoleCheckBox.Size = new System.Drawing.Size(64, 17);
-			this.consoleCheckBox.TabIndex = 11;
-			this.consoleCheckBox.Text = "Console";
-			this.consoleCheckBox.UseVisualStyleBackColor = true;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -410,6 +423,7 @@
 		private System.Windows.Forms.CheckBox fileCheckBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.CheckBox consoleCheckBox;
+		private System.Windows.Forms.Button buttonNewMod;
     }
 }
 

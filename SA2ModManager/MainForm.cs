@@ -296,6 +296,18 @@ namespace SA2ModManager
 		{
 			System.Diagnostics.Process.Start(@"mods");
 		}
+
+		private void buttonNewMod_Click(object sender, EventArgs e)
+		{
+			using (var ModDialog = new NewModDialog())
+			{
+				if (ModDialog.ShowDialog() == DialogResult.OK)
+				{
+					modListView.Items.Clear();
+					LoadModList();
+				}
+			}
+		}
 	}
 
 	class LoaderInfo
