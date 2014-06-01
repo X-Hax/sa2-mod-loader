@@ -61,8 +61,7 @@ static BOOL WriteData(void *writeaddress, void *data, SIZE_T datasize, SIZE_T *b
 
 static BOOL WriteData(void *writeaddress, void *data, SIZE_T datasize)
 {
-	SIZE_T written;
-	return WriteData(writeaddress, data, datasize, &written);
+	return WriteData(writeaddress, data, datasize, nullptr);
 }
 
 template<typename T> static BOOL WriteData(void *writeaddress, T data, SIZE_T *byteswritten)
@@ -72,8 +71,7 @@ template<typename T> static BOOL WriteData(void *writeaddress, T data, SIZE_T *b
 
 template<typename T> static BOOL WriteData(void *writeaddress, T data)
 {
-	SIZE_T written;
-	return WriteData(writeaddress, data, &written);
+	return WriteData(writeaddress, data, nullptr);
 }
 
 template <typename T, size_t N> static BOOL WriteData(void *writeaddress, T(&data)[N], SIZE_T *byteswritten)
@@ -83,8 +81,7 @@ template <typename T, size_t N> static BOOL WriteData(void *writeaddress, T(&dat
 
 template <typename T, size_t N> static BOOL WriteData(void *writeaddress, T(&data)[N])
 {
-	SIZE_T written;
-	return WriteData(writeaddress, data, &written);
+	return WriteData(writeaddress, data, nullptr);
 }
 
 static BOOL WriteJump(void *writeaddress, void *funcaddress)
