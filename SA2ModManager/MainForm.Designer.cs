@@ -242,7 +242,7 @@
 			// buttonNewMod
 			// 
 			this.buttonNewMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonNewMod.Location = new System.Drawing.Point(269, 255);
+			this.buttonNewMod.Location = new System.Drawing.Point(269, 252);
 			this.buttonNewMod.Name = "buttonNewMod";
 			this.buttonNewMod.Size = new System.Drawing.Size(75, 23);
 			this.buttonNewMod.TabIndex = 8;
