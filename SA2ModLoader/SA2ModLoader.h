@@ -31,13 +31,13 @@ struct ModInfo
 {
 	int Version;
 	void (*Init)(const char *path);
-	PatchInfo *Patches;
+	const PatchInfo *Patches;
 	int PatchCount;
-	PointerInfo *Jumps;
+	const PointerInfo *Jumps;
 	int JumpCount;
-	PointerInfo *Calls;
+	const PointerInfo *Calls;
 	int CallCount;
-	PointerInfo *Pointers;
+	const PointerInfo *Pointers;
 	int PointerCount;
 };
 

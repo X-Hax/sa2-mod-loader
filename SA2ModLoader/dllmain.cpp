@@ -1677,7 +1677,7 @@ void __cdecl InitMods(void)
 			HMODULE module = LoadLibraryA(filename.c_str());
 			if (module)
 			{
-				ModInfo *info = (ModInfo *)GetProcAddress(module, "SA2ModInfo");
+				const ModInfo *info = (ModInfo *)GetProcAddress(module, "SA2ModInfo");
 				if (info)
 				{
 					if (info->Patches)
@@ -1691,7 +1691,7 @@ void __cdecl InitMods(void)
 							WriteCall(info->Calls[i].address, info->Calls[i].data);
 					if (info->Pointers)
 						for (int i = 0; i < info->PointerCount; i++)
-							WriteData(info->Pointers[i].address, &info->Pointers[i].data, sizeof(void*));
+							WriteData((void**)info->Pointers[i].address, info->Pointers[i].data);
 					if (info->Init)
 						info->Init(dir.c_str());
 				}
