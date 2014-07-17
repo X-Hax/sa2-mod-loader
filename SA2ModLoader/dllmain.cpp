@@ -184,7 +184,7 @@ ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
 	const char *repfn = _ReplaceFile(combinedpath);
 	if (PathFileExistsA(repfn))
 	{
-		ifstream str = ifstream(repfn);
+		ifstream str(repfn);
 		unordered_map<string, string> indexes = LoadINI(str)[""].Element;
 		strncpy_s(dir, repfn, MAX_PATH);
 		PathRemoveFileSpecA(dir);
@@ -1572,7 +1572,7 @@ void __cdecl InitMods(void)
 		ExitProcess(1);
 	}
 	HookTheAPI();
-	ifstream str = ifstream("mods\\SA2ModLoader.ini");
+	ifstream str("mods\\SA2ModLoader.ini");
 	if (!str.is_open())
 	{
 		MessageBox(NULL, L"mods\\SA2ModLoader.ini could not be read!", L"SA2 Mod Loader", MB_ICONWARNING);
@@ -1619,13 +1619,13 @@ void __cdecl InitMods(void)
 		if (settings.find(key) == settings.end())
 			break;
 		string dir = "mods\\" + settings[key];
-		str = ifstream(dir + "\\mod.ini");
-		if (!str.is_open())
+		ifstream mstr(dir + "\\mod.ini");
+		if (!mstr.is_open())
 		{
 			PrintDebug("Could not open file mod.ini in \"mods\\%s\".", settings[key].c_str());
 			continue;
 		}
-		IniDictionary modini = LoadINI(str);
+		IniDictionary modini = LoadINI(mstr);
 		IniGroup modinfo = modini[""].Element;
 		PrintDebug("%d. %s", i, modinfo["Name"].c_str());
 		IniDictionary::iterator gr = modini.find("IgnoreFiles");
@@ -1717,23 +1717,23 @@ void __cdecl InitMods(void)
 		}
 	}
 	PrintDebug("Mod loading finished.");
-	str = ifstream("mods\\Codes.dat", ifstream::binary);
-	if (str.is_open())
+	ifstream cstr("mods\\Codes.dat", ifstream::binary);
+	if (cstr.is_open())
 	{
 		char buf[6];
-		str.read(buf, sizeof(buf));
+		cstr.read(buf, sizeof(buf));
 		if (memcmp(buf, codemagic, 6) != 0)
 		{
 			PrintDebug("Code file not in correct format.");
 			goto closecodefile;
 		}
 		int32_t codecount;
-		str.read((char *)&codecount, sizeof(int32_t));
+		cstr.read((char *)&codecount, sizeof(int32_t));
 		PrintDebug("Loading %d codes...", codecount);
-		ReadCodes(str, codes);
+		ReadCodes(cstr, codes);
 	}
 closecodefile:
-	str.close();
+	cstr.close();
 	WriteJump((void *)0x77E897, ProcessCodes);
 }
 
