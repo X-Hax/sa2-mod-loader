@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>opt_theme_on_def.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -82,6 +85,19 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="opt_theme_on_def.ico" />
+    <None Include="Resources\opt_theme_on_tl.ico" />
+    <None Include="Resources\opt_theme_on_sn.ico" />
+    <None Include="Resources\opt_theme_on_se.ico" />
+    <None Include="Resources\opt_theme_on_sd.ico" />
+    <None Include="Resources\opt_theme_on_rg.ico" />
+    <None Include="Resources\opt_theme_on_ma.ico" />
+    <None Include="Resources\opt_theme_on_kn.ico" />
+    <None Include="Resources\opt_theme_on_eg.ico" />
+    <None Include="Resources\opt_theme_on_ch.ico" />
+    <None Include="Resources\opt_theme_on_am.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

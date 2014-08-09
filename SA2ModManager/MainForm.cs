@@ -29,6 +29,42 @@ namespace SA2ModManager
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
+			Random rand = new Random();
+			if (rand.Next(2) == 1)
+				switch (rand.Next(10))
+				{
+					case 0:
+						Icon = Properties.Resources.opt_theme_on_sn;
+						break;
+					case 1:
+						Icon = Properties.Resources.opt_theme_on_tl;
+						break;
+					case 2:
+						Icon = Properties.Resources.opt_theme_on_kn;
+						break;
+					case 3:
+						Icon = Properties.Resources.opt_theme_on_sd;
+						break;
+					case 4:
+						Icon = Properties.Resources.opt_theme_on_eg;
+						break;
+					case 5:
+						Icon = Properties.Resources.opt_theme_on_rg;
+						break;
+					case 6:
+						Icon = Properties.Resources.opt_theme_on_am;
+						break;
+					case 7:
+						Icon = Properties.Resources.opt_theme_on_ch;
+						break;
+					case 8:
+						Icon = Properties.Resources.opt_theme_on_ma;
+						break;
+					case 9:
+						Icon = Properties.Resources.opt_theme_on_se;
+						break;
+				}
+
 			if (File.Exists(loaderinipath))
 				loaderini = IniFile.Deserialize<LoaderInfo>(loaderinipath);
 			else
