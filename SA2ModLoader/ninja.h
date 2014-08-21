@@ -2235,6 +2235,8 @@ typedef struct {
 
 #endif /* _NINJA_DIR_H_ */
 
+#ifndef _NINJA_HELPERS_
+#define _NINJA_HELPERS_
 static Sint16 *NextChunk(Sint16 *chunk)
 {
 	unsigned char v5 = (unsigned char)*chunk++;
@@ -2286,7 +2288,7 @@ static Sint32 *FindChunk(Sint32 *chunk, unsigned char type)
 			chunk = NextChunk(chunk);
 	return chunk;
 }
-
+#endif
 /*
  * End Of File
  */
