@@ -1067,15 +1067,6 @@ VoidFunc(ResetMusic, 0x00442D90);
 
 // TODO: Rename all of the music related functions to more clearly describe their behavior.
 
-// Immediately changes the music to the specified song.
-// Automatically calls StopMusic() and ResetMusic().
-inline void ChangeMusic(const char* song)
-{
-	StopMusic();
-	PlayMusic(song);
-	ResetMusic();
-}
-
 // char __usercall<al>(_DWORD *a1<esi>)
 static const void *const IsByteswappedPtr = (void*)0x429840;
 static inline char IsByteswapped(void *a1)
@@ -1189,6 +1180,15 @@ static inline void _PlayMusicOnce(const char *song)
 		call _PlayMusicOncePtr
 	}
 }
+// Immediately changes the music to the specified song.
+// Automatically calls StopMusic() and ResetMusic().
+inline void ChangeMusic(const char* song)
+{
+	StopMusic();
+	PlayMusic(song);
+	ResetMusic();
+}
+
 // signed int __usercall<eax>(int a1<edx>, int a2)
 static const void *const PlayVoicePtr = (void*)0x443130;
 static inline signed int PlayVoice(int a1, int a2)
