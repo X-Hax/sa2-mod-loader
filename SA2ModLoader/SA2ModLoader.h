@@ -1060,6 +1060,21 @@ ObjectFunc(Invincibility_Main, 0x754150);
 ObjectFunc(LightAttackParticle_Render, 0x757B30);
 ObjectFunc(BossPowerGuageExec_Main, 0x761C30);
 VoidFunc(UpdateControllers, 0x77E780);
+// Stops music playback
+VoidFunc(StopMusic, 0x00442F50);
+// Resets music playback to the last song as specified by PlayMusic
+VoidFunc(ResetMusic, 0x00442D90);
+
+// TODO: Rename all of the music related functions to more clearly describe their behavior.
+
+// Immediately changes the music to the specified song.
+// Automatically calls StopMusic() and ResetMusic().
+inline void ChangeMusic(const char* song)
+{
+	StopMusic();
+	PlayMusic(song);
+	ResetMusic();
+}
 
 // char __usercall<al>(_DWORD *a1<esi>)
 static const void *const IsByteswappedPtr = (void*)0x429840;
@@ -1130,6 +1145,8 @@ static inline signed int LoadEndPosition(int playerNum)
 
 // void __usercall(const char *song<edi>)
 static const void *const PlayMusicPtr = (void*)0x442CF0;
+// Sets the next song to play after the next call to StopMusic()
+// followed by ResetMusic()
 static inline void PlayMusic(const char *song)
 {
 	__asm
@@ -1138,7 +1155,40 @@ static inline void PlayMusic(const char *song)
 		call PlayMusicPtr
 	}
 }
-
+static const void *const PlayJinglePtr = (void*)0x00443480;
+// Plays specified song once, then restores previous song as set by PlayMusic.
+static inline void PlayJingle(int a1, const char *song)
+{
+	__asm
+	{
+		mov ecx, [a1]
+		mov ebx, [song]
+		call PlayJinglePtr
+	}
+}
+static const void *const PlayMusicOncePtr = (void*)0x00442EF0;
+// Plays the specified song once.
+// Takes effect immediately.
+static inline void PlayMusicOnce(void *a1, const char *song)
+{
+	__asm
+	{
+		mov ecx, [a1]
+		mov edi, [song]
+		call PlayMusicOncePtr
+	}
+}
+static const void *const _PlayMusicOncePtr = (void*)0x00442E60;
+// Plays the specified song once.
+// Requires StopMusic and ResetMusic to be called.
+static inline void _PlayMusicOnce(const char *song)
+{
+	__asm
+	{
+		mov edi, [song]
+		call _PlayMusicOncePtr
+	}
+}
 // signed int __usercall<eax>(int a1<edx>, int a2)
 static const void *const PlayVoicePtr = (void*)0x443130;
 static inline signed int PlayVoice(int a1, int a2)
