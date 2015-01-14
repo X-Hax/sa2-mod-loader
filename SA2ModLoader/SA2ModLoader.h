@@ -1,7 +1,9 @@
-#include <cstdint>
-#include "ninja.h"
 #ifndef SA2MODLOADER_H
 #define SA2MODLOADER_H
+
+#include <WTypes.h>
+#include <cstdint>
+#include "ninja.h"
 
 static const int ModLoaderVer = 2;
 
@@ -324,17 +326,17 @@ struct Rotation {
 
 struct struct_v5
 {
-  __int16 char0;
-  char gap_2[2];
-  short word4;
-  short word6;
-  float f8;
-  void *dwordC;
-  char f10[140];
-  int dword9C;
-  __int16 field_A0;
-  __int16 field_A2;
-  int field_A4;
+	__int16 char0;
+	char gap_2[2];
+	short word4;
+	short word6;
+	float f8;
+	void *dwordC;
+	char f10[140];
+	int dword9C;
+	__int16 field_A0;
+	__int16 field_A2;
+	int field_A4;
 };
 
 struct CharObj1 {
@@ -401,9 +403,9 @@ struct AnimationInfo
 struct CharAnimInfo
 {
 	__int16 AnimationFrame;
-	__int16 Animation;
-	__int16 Animation2;
-	__int16 Animation3;
+	__int16 Next;
+	__int16 Current;
+	__int16 dCurrent;
 	__int16 field_8;
 	__int16 field_A;
 	__int16 field_C;
@@ -452,7 +454,7 @@ struct CharObj2 {
 	char field_12[18];
 	Upgrades Upgrades;
 	char field_28[32];
-	int field_48;
+	float MechHP;
 	char field_4C[24];
 	float HSpeed;
 	float VSpeed;
@@ -466,13 +468,19 @@ struct CharObj2 {
 
 typedef CharObj2 CharObj2Base;
 
+// Sonic's CharObj2
+// Shared with: Shadow, Amy, MetalSonic
 struct SonicCharObj2 : CharObj2 {
-	char field_1B8[476];
+	char field_1B8[432];
+	short SpindashTimer;
+	char filler[42];
 	TexList *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 };
 
+// Knuckles's CharObj2
+// Shared with: Rouge
 struct KnucklesCharObj2 : CharObj2 {
 	char field_1B8[568];
 	TexList *TextureList;
@@ -482,6 +490,8 @@ struct KnucklesCharObj2 : CharObj2 {
 	char field_400[32];
 };
 
+// Mechless Eggman's CharObj2
+// Not Shared
 struct EggmanCharObj2 : CharObj2 {
 	char field_1B8[424];
 	TexList *TextureList;
@@ -489,6 +499,8 @@ struct EggmanCharObj2 : CharObj2 {
 	AnimationIndex *MotionList;
 };
 
+// Mech Eggman's CharObj2
+// Shared with: Tails Mech
 struct MechEggmanCharObj2 : CharObj2 {
 	char field_1B8[652];
 	TexList *CommonTextureList;
@@ -497,6 +509,8 @@ struct MechEggmanCharObj2 : CharObj2 {
 	AnimationIndex *MotionList;
 };
 
+// Mechless Tails's CharObj2
+// Not Shared
 struct TailsCharObj2 : CharObj2 {
 	char field_1B8[504];
 	TexList *TextureList;
@@ -505,6 +519,8 @@ struct TailsCharObj2 : CharObj2 {
 	char field_3BC[36];
 };
 
+// Super Sonic's CharObj2
+// Shared with: Super Shadow
 struct SuperSonicCharObj2 : CharObj2 {
 	char field_1B8[440];
 	TexList *TextureList;
@@ -923,9 +939,9 @@ DataPointer(int, CurrentCharacter, 0x1934B80);
 DataPointer(int, CurrentCharacter2P, 0x1934BE4);
 DataArray(ControllerData, ControllersRaw, 0x1A52918, 4);
 DataPointer(ControllerData, Controller1Raw, &ControllersRaw[0]);
-DataPointer(ControllerData, Controller2Raw, &ControllersRaw[0]);
-DataPointer(ControllerData, Controller3Raw, &ControllersRaw[0]);
-DataPointer(ControllerData, Controller4Raw, &ControllersRaw[0]);
+DataPointer(ControllerData, Controller2Raw, &ControllersRaw[1]);
+DataPointer(ControllerData, Controller3Raw, &ControllersRaw[2]);
+DataPointer(ControllerData, Controller4Raw, &ControllersRaw[3]);
 DataArray(CharObj2 *, MainCharObj2, 0x1DE9600, 2);
 DataArray(ModelIndex, CharacterModels, 0x1DE9620, 532);
 DataArray(CharObj1 *, MainCharObj1, 0x1DEA6C0, 2);
@@ -934,9 +950,9 @@ DataArray(AnimationIndex, CharacterAnimations, 0x1DEA700, 300);
 DataArray(uint32_t, MenuPressedButtons, 0x1DEFB10, 4);
 DataArray(ControllerData, Controllers, 0x1DEFC00, 4);
 DataPointer(ControllerData, Controller1, &Controllers[0]);
-DataPointer(ControllerData, Controller2, &Controllers[0]);
-DataPointer(ControllerData, Controller3, &Controllers[0]);
-DataPointer(ControllerData, Controller4, &Controllers[0]);
+DataPointer(ControllerData, Controller2, &Controllers[1]);
+DataPointer(ControllerData, Controller3, &Controllers[2]);
+DataPointer(ControllerData, Controller4, &Controllers[3]);
 
 // SA2 Functions
 #define FunctionPointer(RETURN_TYPE, NAME, ARGS, ADDRESS) static RETURN_TYPE (__cdecl *const NAME)ARGS = (RETURN_TYPE (__cdecl *)ARGS)ADDRESS
@@ -1418,4 +1434,5 @@ static inline void *LoadPRSFile(const char *filename)
 	}
 	return result;
 }
-#endif
+
+#endif	// SA2MODLOADER_H
