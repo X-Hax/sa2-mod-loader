@@ -93,7 +93,7 @@ namespace SA2ModManager
 			try { codes = CodeList.Load(codexmlpath); }
 			catch { codes = new CodeList() { Codes = new List<Code>() }; }
 			foreach (Code item in codes.Codes)
-				codesCheckedListBox.Items.Add(item.Name, item.Enabled);
+				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
 		}
 
 		private void modListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -144,16 +144,14 @@ namespace SA2ModManager
 				loaderini.Mods.Add((string)item.Tag);
 			loaderini.DebugConsole = consoleCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
+			loaderini.EnabledCodes = codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes.Codes[a].Name).ToList();
 			IniFile.Serialize(loaderini, loaderinipath);
-			for (int i = 0; i < codes.Codes.Count; i++)
-				codes.Codes[i].Enabled = codesCheckedListBox.GetItemChecked(i);
-			codes.Save(codexmlpath);
 			using (FileStream fs = File.Create(codedatpath))
 			using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
 			{
 				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '3' });
-				bw.Write(codes.Codes.Count((a) => a.Enabled));
-				foreach (Code item in codes.Codes.Where((a) => a.Enabled))
+				bw.Write(codesCheckedListBox.CheckedIndices.Count);
+				foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes.Codes[a]))
 				{
 					if (item.IsReg)
 						bw.Write((byte)CodeType.newregs);
@@ -355,6 +353,9 @@ namespace SA2ModManager
 		[IniName("Mod")]
 		[IniCollection(IniCollectionMode.NoSquareBrackets, StartIndex = 1)]
 		public List<string> Mods { get; set; }
+		[IniName("Code")]
+		[IniCollection(IniCollectionMode.NoSquareBrackets, StartIndex = 1)]
+		public List<string> EnabledCodes { get; set; }
 
 		public LoaderInfo()
 		{
@@ -397,10 +398,6 @@ namespace SA2ModManager
 	{
 		[XmlAttribute("name")]
 		public string Name { get; set; }
-		[XmlAttribute("enabled")]
-		public bool Enabled { get; set; }
-		[XmlIgnore]
-		public bool EnabledSpecified { get { return Enabled; } set { } }
 		[XmlElement("CodeLine")]
 		public List<CodeLine> Lines { get; set; }
 
