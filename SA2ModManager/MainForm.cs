@@ -299,16 +299,16 @@ namespace SA2ModManager
 		private void LoadModList()
 		{
 			mods = new Dictionary<string, ModInfo>();
-			string modfolder = Path.Combine(Environment.CurrentDirectory, "mods");
-			foreach (string filename in Directory.GetFiles(modfolder, "mod.ini", SearchOption.AllDirectories))
-				mods.Add(Path.GetDirectoryName(filename).Remove(0, modfolder.Length + 1), IniFile.Deserialize<ModInfo>(filename));
+			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
+			foreach (string filename in Directory.GetFiles(modDir, "mod.ini", SearchOption.AllDirectories))
+				mods.Add(Path.GetDirectoryName(filename).Substring(modDir.Length + 1), IniFile.Deserialize<ModInfo>(filename));
 			modListView.BeginUpdate();
 			foreach (string mod in new List<string>(loaderini.Mods))
 			{
 				if (mods.ContainsKey(mod))
 				{
 					ModInfo inf = mods[mod];
-					modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author }) { Checked = true, Tag = mod });
+					modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version }) { Checked = true, Tag = mod });
 				}
 				else
 				{
@@ -318,7 +318,7 @@ namespace SA2ModManager
 			}
 			foreach (KeyValuePair<string, ModInfo> inf in mods)
 				if (!loaderini.Mods.Contains(inf.Key))
-					modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author }) { Tag = inf.Key });
+					modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version }) { Tag = inf.Key });
 			modListView.EndUpdate();
 		}
 
@@ -366,6 +366,7 @@ namespace SA2ModManager
 	{
 		public string Name { get; set; }
 		public string Author { get; set; }
+		public string Version { get; set; }
 		public string Description { get; set; }
 		public string EXEFile { get; set; }
 		public string DLLFile { get; set; }

@@ -54,6 +54,7 @@
 			this.editCodeButton = new System.Windows.Forms.Button();
 			this.newCodeButton = new System.Windows.Forms.Button();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
+			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -120,9 +121,9 @@
 			this.modDownButton.AutoSize = true;
 			this.modDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modDownButton.Enabled = false;
-			this.modDownButton.Location = new System.Drawing.Point(343, 35);
+			this.modDownButton.Location = new System.Drawing.Point(350, 35);
 			this.modDownButton.Name = "modDownButton";
-			this.modDownButton.Size = new System.Drawing.Size(29, 23);
+			this.modDownButton.Size = new System.Drawing.Size(22, 23);
 			this.modDownButton.TabIndex = 2;
 			this.modDownButton.Text = "↓";
 			this.modDownButton.UseVisualStyleBackColor = true;
@@ -134,9 +135,9 @@
 			this.modUpButton.AutoSize = true;
 			this.modUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modUpButton.Enabled = false;
-			this.modUpButton.Location = new System.Drawing.Point(343, 6);
+			this.modUpButton.Location = new System.Drawing.Point(350, 6);
 			this.modUpButton.Name = "modUpButton";
-			this.modUpButton.Size = new System.Drawing.Size(29, 23);
+			this.modUpButton.Size = new System.Drawing.Size(22, 23);
 			this.modUpButton.TabIndex = 1;
 			this.modUpButton.Text = "↑";
 			this.modUpButton.UseVisualStyleBackColor = true;
@@ -150,7 +151,8 @@
 			this.modListView.CheckBoxes = true;
 			this.modListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader3});
 			this.modListView.FullRowSelect = true;
 			this.modListView.HideSelection = false;
 			this.modListView.Location = new System.Drawing.Point(3, 6);
@@ -295,9 +297,9 @@
 			this.codeDownButton.AutoSize = true;
 			this.codeDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.codeDownButton.Enabled = false;
-			this.codeDownButton.Location = new System.Drawing.Point(343, 35);
+			this.codeDownButton.Location = new System.Drawing.Point(350, 35);
 			this.codeDownButton.Name = "codeDownButton";
-			this.codeDownButton.Size = new System.Drawing.Size(29, 23);
+			this.codeDownButton.Size = new System.Drawing.Size(22, 23);
 			this.codeDownButton.TabIndex = 5;
 			this.codeDownButton.Text = "↓";
 			this.codeDownButton.UseVisualStyleBackColor = true;
@@ -309,9 +311,9 @@
 			this.codeUpButton.AutoSize = true;
 			this.codeUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.codeUpButton.Enabled = false;
-			this.codeUpButton.Location = new System.Drawing.Point(343, 6);
+			this.codeUpButton.Location = new System.Drawing.Point(350, 6);
 			this.codeUpButton.Name = "codeUpButton";
-			this.codeUpButton.Size = new System.Drawing.Size(29, 23);
+			this.codeUpButton.Size = new System.Drawing.Size(22, 23);
 			this.codeUpButton.TabIndex = 4;
 			this.codeUpButton.Text = "↑";
 			this.codeUpButton.UseVisualStyleBackColor = true;
@@ -370,6 +372,10 @@
 			this.codesCheckedListBox.TabIndex = 0;
 			this.codesCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.codesCheckedListBox_SelectedIndexChanged);
 			// 
+			// columnHeader3
+			// 
+			this.columnHeader3.Text = "Version";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -425,6 +431,7 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.CheckBox consoleCheckBox;
 		private System.Windows.Forms.Button buttonNewMod;
+		private System.Windows.Forms.ColumnHeader columnHeader3;
     }
 }
 
