@@ -360,6 +360,7 @@ namespace SA2ModManager
 		public LoaderInfo()
 		{
 			Mods = new List<string>();
+			EnabledCodes = new List<string>();
 		}
 	}
 
