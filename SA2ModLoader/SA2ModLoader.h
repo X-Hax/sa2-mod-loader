@@ -3,44 +3,6 @@
 #ifndef SA2MODLOADER_H
 #define SA2MODLOADER_H
 
-static const int ModLoaderVer = 2;
-
-#define arrayptrandlength(data) data, LengthOfArray(data)
-#define arraylengthandptr(data) LengthOfArray(data), data
-#define arrayptrandsize(data) data, SizeOfArray(data)
-#define arraysizeandptr(data) SizeOfArray(data), data
-
-struct PatchInfo
-{
-	void *address;
-	void *data;
-	int datasize;
-};
-
-#define patchdecl(address,data) { (void*)address, arrayptrandsize(data) }
-
-struct PointerInfo
-{
-	void *address;
-	void *data;
-};
-
-#define ptrdecl(address,data) { (void*)address, (void*)data }
-
-struct ModInfo
-{
-	int Version;
-	void (*Init)(const char *path);
-	const PatchInfo *Patches;
-	int PatchCount;
-	const PointerInfo *Jumps;
-	int JumpCount;
-	const PointerInfo *Calls;
-	int CallCount;
-	const PointerInfo *Pointers;
-	int PointerCount;
-};
-
 // Utility Functions
 template <typename T, size_t N>
 inline size_t LengthOfArray( const T(&)[ N ] )
@@ -54,34 +16,58 @@ inline size_t SizeOfArray( const T(&)[ N ] )
 	return N * sizeof(T);
 }
 
-static BOOL WriteData(void *writeaddress, void *data, SIZE_T datasize, SIZE_T *byteswritten)
+static BOOL WriteData(void *writeaddress, const void *data, SIZE_T datasize, SIZE_T *byteswritten)
 {
 	return WriteProcessMemory(GetCurrentProcess(), writeaddress, data, datasize, byteswritten);
 }
 
-static BOOL WriteData(void *writeaddress, void *data, SIZE_T datasize)
+static BOOL WriteData(void *writeaddress, const void *data, SIZE_T datasize)
 {
 	return WriteData(writeaddress, data, datasize, nullptr);
 }
 
-template<typename T> static BOOL WriteData(void *writeaddress, T data, SIZE_T *byteswritten)
+template<typename T> static BOOL WriteData(T const *writeaddress, const T data, SIZE_T *byteswritten)
+{
+	return WriteData((void*)writeaddress, (void*)&data, (SIZE_T)sizeof(data), byteswritten);
+}
+
+template<typename T> static BOOL WriteData(T const *writeaddress, const T data)
+{
+	return WriteData(writeaddress, data, nullptr);
+}
+
+template<typename T> static BOOL WriteData(T *writeaddress, const T &data, SIZE_T *byteswritten)
 {
 	return WriteData(writeaddress, &data, sizeof(data), byteswritten);
 }
 
-template<typename T> static BOOL WriteData(void *writeaddress, T data)
+template<typename T> static BOOL WriteData(T *writeaddress, const T &data)
 {
 	return WriteData(writeaddress, data, nullptr);
 }
 
-template <typename T, size_t N> static BOOL WriteData(void *writeaddress, T(&data)[N], SIZE_T *byteswritten)
+template <typename T, size_t N> static BOOL WriteData(void *writeaddress, const T(&data)[N], SIZE_T *byteswritten)
 {
 	return WriteData(writeaddress, data, SizeOfArray(data), byteswritten);
 }
 
-template <typename T, size_t N> static BOOL WriteData(void *writeaddress, T(&data)[N])
+template <typename T, size_t N> static BOOL WriteData(void *writeaddress, const T(&data)[N])
 {
 	return WriteData(writeaddress, data, nullptr);
+}
+
+static BOOL WriteData(void *address, const char data, int count, SIZE_T *byteswritten)
+{
+	char *buf = new char[count];
+	memset(buf, data, count);
+	int result = WriteData(address, buf, count, byteswritten);
+	delete[] buf;
+	return result;
+}
+
+static BOOL WriteData(void *address, char data, int count)
+{
+	return WriteData(address, data, count, nullptr);
 }
 
 static BOOL WriteJump(void *writeaddress, void *funcaddress)
@@ -1418,4 +1404,60 @@ static inline void *LoadPRSFile(const char *filename)
 	}
 	return result;
 }
+
+// ModInfo
+
+static const int ModLoaderVer = 3;
+
+#define arrayptrandlength(data) data, LengthOfArray(data)
+#define arraylengthandptr(data) LengthOfArray(data), data
+#define arrayptrandsize(data) data, SizeOfArray(data)
+#define arraysizeandptr(data) SizeOfArray(data), data
+
+struct PatchInfo
+{
+	void *address;
+	const void *data;
+	int datasize;
+};
+
+#define patchdecl(address,data) { (void*)address, arrayptrandsize(data) }
+
+struct PointerInfo
+{
+	void *address;
+	void *data;
+};
+
+#define ptrdecl(address,data) { (void*)address, (void*)data }
+
+struct HelperFunctions_v3
+{
+	// The version of the structure.
+	int Version;
+	// Registers a start position for a character.
+	void (__cdecl *RegisterStartPosition)(unsigned char character, const StartPosition &position);
+	// Clears the list of registered start positions for a character.
+	void (__cdecl *ClearStartPositionList)(unsigned char character);
+	// Registers a 2P intro position for a character.
+	void (__cdecl *Register2PIntroPosition)(unsigned char character, const LevelEndPosition &position);
+	// Clears the list of registered 2P intro positions for a character.
+	void (__cdecl *Clear2PIntroPositionList)(unsigned char character);
+};
+
+typedef HelperFunctions_v3 HelperFunctions;
+
+struct ModInfo
+{
+	int Version;
+	void (__cdecl *Init)(const char *path, const HelperFunctions &helperFunctions);
+	const PatchInfo *Patches;
+	int PatchCount;
+	const PointerInfo *Jumps;
+	int JumpCount;
+	const PointerInfo *Calls;
+	int CallCount;
+	const PointerInfo *Pointers;
+	int PointerCount;
+};
 #endif

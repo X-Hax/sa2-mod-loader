@@ -1562,6 +1562,296 @@ unsigned char ReadCodes(istream &stream, list<Code> &list)
 	return 0;
 }
 
+unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
+bool StartPositionsModified;
+
+struct startposdata { unsigned char character; const StartPosition *positions; };
+
+const startposdata startposaddrs[] = {
+	{ Characters_Sonic, (StartPosition *)0x1746F20 },
+	{ Characters_Shadow, (StartPosition *)0x17472C0 },
+	{ Characters_Tails, (StartPosition *)0x1747BE8 },
+	{ Characters_Eggman, (StartPosition *)0x1747BE8 },
+	{ Characters_Knuckles, (StartPosition *)0x17475D8 },
+	{ Characters_Rouge, (StartPosition *)0x17478F0 },
+	{ Characters_MechTails, (StartPosition *)0x1748008 },
+	{ Characters_MechEggman, (StartPosition *)0x1747C40 },
+	{ Characters_SuperSonic, (StartPosition *)0x1748378 },
+	{ Characters_SuperShadow, (StartPosition *)0x1748400 }
+};
+
+void InitializeStartPositionLists()
+{
+	for (unsigned int i = 0; i < LengthOfArray(startposaddrs); i++)
+	{
+		const StartPosition * origlist = startposaddrs[i].positions;
+		StartPositions[startposaddrs[i].character] = unordered_map<short, StartPosition>();
+		unordered_map<short, StartPosition> &newlist = StartPositions[startposaddrs[i].character];
+		while (origlist->Level != LevelIDs_Invalid)
+			newlist[origlist->Level] = *origlist++;
+	}
+}
+
+void RegisterStartPosition(unsigned char character, const StartPosition &position)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		StartPositions[character][position.Level] = position;
+		StartPositionsModified = true;
+		break;
+	}
+}
+
+void ClearStartPositionList(unsigned char character)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		StartPositions[character].clear();
+		StartPositionsModified = true;
+		break;
+	}
+}
+
+int __cdecl LoadStartPosition_ri(int playerNum, Vertex *position, Rotation *rotation)
+{
+	ObjectMaster *v1 = MainCharacter[playerNum];
+	if (position)
+	{
+		position->z = 0.0;
+		position->y = 0.0;
+		position->x = 0.0;
+	}
+	if (rotation)
+	{
+		rotation->z = 0;
+		rotation->y = 0;
+		rotation->x = 0;
+	}
+	if (v1)
+	{
+		CharObj2 *v4 = MainCharObj2[playerNum];
+		StartPosition *v5;
+		if (v4)
+		{
+			auto iter = StartPositions.find(v4->CharID);
+			if (iter == StartPositions.cend())
+				return 1;
+			auto iter2 = iter->second.find(CurrentLevel);
+			if (iter2 == iter->second.cend())
+				return 1;
+			v5 = &iter2->second;
+		}
+		else
+			return 1;
+		int v6;
+		if ( TwoPlayerMode
+			|| (short)CurrentLevel == LevelIDs_SonicVsShadow1
+			|| (short)CurrentLevel == LevelIDs_SonicVsShadow2
+			|| (short)CurrentLevel == LevelIDs_TailsVsEggman1
+			|| (short)CurrentLevel == LevelIDs_TailsVsEggman2
+			|| (short)CurrentLevel == LevelIDs_KnucklesVsRouge )
+			v6 = (playerNum != 0) + 1;
+		else
+			v6 = 0;
+		if ( rotation )
+			rotation->y = *(&v5->Rotation1P + v6);
+		if ( position )
+		{
+			Vertex *v8 = &(&v5->Position1P)[v6];
+			position->x = v8->x;
+			position->y = v8->y;
+			position->z = v8->z;
+		}
+		return 1;
+	}
+	return 0;
+}
+
+__declspec(naked) void LoadStartPosition_r(Rotation *rotation)
+{
+	__asm
+	{
+		mov eax, [rotation]
+		push eax
+		push edi
+		push ecx
+		call LoadStartPosition_ri
+		add esp, 12
+		retn
+	}
+}
+
+unordered_map<unsigned char, unordered_map<short, LevelEndPosition>> _2PIntroPositions;
+bool _2PIntroPositionsModified;
+
+struct endposdata { unsigned char character; const LevelEndPosition *positions; };
+
+const endposdata _2pintroposaddrs[] = {
+	{ Characters_Sonic, (LevelEndPosition *)0x1746F20 },
+	{ Characters_Shadow, (LevelEndPosition *)0x17472C0 },
+	{ Characters_Tails, (LevelEndPosition *)0x1747BE8 },
+	{ Characters_Eggman, (LevelEndPosition *)0x1747BE8 },
+	{ Characters_Knuckles, (LevelEndPosition *)0x17475D8 },
+	{ Characters_Rouge, (LevelEndPosition *)0x17478F0 },
+	{ Characters_MechTails, (LevelEndPosition *)0x1748008 },
+	{ Characters_MechEggman, (LevelEndPosition *)0x1747C40 },
+	{ Characters_SuperSonic, (LevelEndPosition *)0x1748378 },
+	{ Characters_SuperShadow, (LevelEndPosition *)0x1748400 }
+};
+
+void Initialize2PIntroPositionLists()
+{
+	for (unsigned int i = 0; i < LengthOfArray(_2pintroposaddrs); i++)
+	{
+		const LevelEndPosition * origlist = _2pintroposaddrs[i].positions;
+		_2PIntroPositions[startposaddrs[i].character] = unordered_map<short, LevelEndPosition>();
+		if (origlist == nullptr)
+			return;
+		unordered_map<short, LevelEndPosition> &newlist = _2PIntroPositions[startposaddrs[i].character];
+		while (origlist->Level != LevelIDs_Invalid)
+			newlist[origlist->Level] = *origlist++;
+	}
+}
+
+void Register2PIntroPosition(unsigned char character, const LevelEndPosition &position)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		_2PIntroPositions[character][position.Level] = position;
+		_2PIntroPositionsModified = true;
+		break;
+	}
+}
+
+void Clear2PIntroPositionList(unsigned char character)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		_2PIntroPositions[character].clear();
+		_2PIntroPositionsModified = true;
+		break;
+	}
+}
+
+DataArray(char, byte_1DE4664, 0x1DE4664, 2);
+DataPointer(void *, off_1DE95E0, 0x1DE95E0);
+FunctionPointer(void, sub_46DC70, (int a1, Vertex *a2, char a3), 0x46DC70);
+
+void __cdecl Load2PIntroPos_ri(int playerNum)
+{
+	ObjectMaster *v1 = MainCharacter[playerNum];
+	CharObj1 *v4;
+	Vertex *v8;
+	if (v1)
+	{
+		v4 = v1->Data1;
+		CharObj2 *v3 = MainCharObj2[playerNum];
+		if (v3)
+		{
+			auto iter = _2PIntroPositions.find(v3->CharID);
+			if (iter != _2PIntroPositions.cend())
+			{
+				auto iter2 = iter->second.find(CurrentLevel);
+				if (iter2 != iter->second.cend())
+				{
+					LevelEndPosition *v5 = &iter2->second;
+					int v6 = playerNum != 0;
+					v4->Rotation.y = *(&v5->Mission2YRotation + v6);
+					Vertex *v12 = &(&v5->Mission2Position)[v6];
+					v4->Position = *v12;
+					v8 = &v4->Position;
+					*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
+					v3->field_1B4 = v4->Position.y - 10.0f;
+					goto LABEL_16;
+				}
+			}
+		}
+	}
+	v4->Position.z = 0.0;
+	v8 = &v4->Position;
+	v4->Position.y = 0.0;
+	v4->Rotation.y = 0;
+	v4->Position.x = 0.0;
+LABEL_16:
+	sub_46DC70(playerNum, v8, 0);
+	*((char *)v4->field_2C->dwordC + 2) |= 0x70u;
+	*(int *)&MainCharObj2[playerNum]->field_6C[28] = 0;
+	byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
+	CharObj2 *v9 = MainCharObj2[playerNum];
+	float *v10 = (float *)*(&off_1DE95E0 + playerNum);
+	if (v9)
+	{
+		*(float *)&v9->field_6C[0] = 0.0;
+		v9->VSpeed = 0.0;
+		v9->HSpeed = 0.0;
+	}
+	if (v10)
+	{
+		v10[2] = 0.0;
+		v10[1] = 0.0;
+		v10[0] = 0.0;
+	}
+}
+
+__declspec(naked) void Load2PIntroPos_r()
+{
+	__asm
+	{
+		push eax
+		call Load2PIntroPos_ri
+		add esp, 4
+		retn
+	}
+}
+
+const HelperFunctions helperFunctions = {
+	ModLoaderVer,
+	RegisterStartPosition,
+	ClearStartPositionList,
+	Register2PIntroPosition,
+	Clear2PIntroPositionList
+};
+
 const char codemagic[] = "codev3";
 void __cdecl InitMods(void)
 {
@@ -1612,6 +1902,8 @@ void __cdecl InitMods(void)
 	WriteJump((void *)LoadMDLFilePtr, LoadMDLFile_r);
 	WriteJump((void *)ReleaseMDLFilePtr, ReleaseMDLFile_r);
 	unordered_map<string, string> filereplaces = unordered_map<string, string>();
+	InitializeStartPositionLists();
+	Initialize2PIntroPositionLists();
 	char key[8];
 	for (int i = 1; i < 999; i++)
 	{
@@ -1693,7 +1985,7 @@ void __cdecl InitMods(void)
 						for (int i = 0; i < info->PointerCount; i++)
 							WriteData((void**)info->Pointers[i].address, info->Pointers[i].data);
 					if (info->Init)
-						info->Init(dir.c_str());
+						info->Init(dir.c_str(), helperFunctions);
 				}
 				else
 					PrintDebug("File \"%s\" is not a valid mod file.", filename.c_str());
@@ -1716,6 +2008,10 @@ void __cdecl InitMods(void)
 			PrintDebug("Replaced file: \"%s\" = \"%s\"", it->first.c_str(), buf);
 		}
 	}
+	if (StartPositionsModified)
+		WriteJump((void *)LoadStartPositionPtr, LoadStartPosition_r);
+	if (_2PIntroPositionsModified)
+		WriteJump((void *)Load2PIntroPosPtr, Load2PIntroPos_r);
 	PrintDebug("Mod loading finished.");
 	ifstream cstr("mods\\Codes.dat", ifstream::binary);
 	if (cstr.is_open())
