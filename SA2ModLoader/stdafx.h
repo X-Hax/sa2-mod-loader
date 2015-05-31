@@ -14,3 +14,17 @@
 
 
 // TODO: reference additional headers your program requires here
+#include <algorithm>
+#include <cstdint>
+#include <cstdio>
+#include <deque>
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "ninja.h"
+#include "SA2ModLoader.h"
