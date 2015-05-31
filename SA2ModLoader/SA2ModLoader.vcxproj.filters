@@ -57,6 +57,9 @@
     <ClInclude Include="include\SA2ModLoader.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="CodeParser.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LandTableInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

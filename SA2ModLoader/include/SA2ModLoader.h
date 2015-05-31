@@ -21,7 +21,11 @@ struct PatchInfo
 	int datasize;
 };
 
-#define patchdecl(address,data) { (void*)address, arrayptrandsize(data) }
+struct PatchList
+{
+	const PatchInfo *Patches;
+	int Count;
+};
 
 struct PointerInfo
 {
@@ -29,6 +33,13 @@ struct PointerInfo
 	void *data;
 };
 
+struct PointerList
+{
+	const PointerInfo *Pointers;
+	int Count;
+};
+
+#define patchdecl(address,data) { (void*)address, arrayptrandsize(data) }
 #define ptrdecl(address,data) { (void*)address, (void*)data }
 
 struct HelperFunctions_v3
@@ -46,6 +57,10 @@ struct HelperFunctions_v3
 };
 
 typedef HelperFunctions_v3 HelperFunctions;
+
+typedef void(__cdecl *ModInitFunc)(const char *path, const HelperFunctions &helperFunctions);
+
+typedef void(__cdecl *ModEvent)();
 
 struct ModInfo
 {

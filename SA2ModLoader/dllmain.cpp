@@ -12,6 +12,7 @@
 #include <Shlwapi.h>
 #include "SA2ModLoader.h"
 #include "ModelInfo.h"
+#include "CodeParser.hpp"
 using namespace std;
 
 typedef unordered_map<string, string> IniGroup;
@@ -429,1014 +430,98 @@ void HookTheAPI()
 	}
 }
 
-enum CodeType : uint8_t
-{
-	write8, write16, write32, writefloat,
-	add8, add16, add32, addfloat,
-	sub8, sub16, sub32, subfloat,
-	mulu8, mulu16, mulu32, mulfloat,
-	muls8, muls16, muls32,
-	divu8, divu16, divu32, divfloat,
-	divs8, divs16, divs32,
-	modu8, modu16, modu32,
-	mods8, mods16, mods32,
-	shl8, shl16, shl32,
-	shru8, shru16, shru32,
-	shrs8, shrs16, shrs32,
-	rol8, rol16, rol32,
-	ror8, ror16, ror32,
-	and8, and16, and32,
-	or8, or16, or32,
-	xor8, xor16, xor32,
-	ifeq8, ifeq16, ifeq32, ifeqfloat,
-	ifne8, ifne16, ifne32, ifnefloat,
-	ifltu8, ifltu16, ifltu32, ifltfloat,
-	iflts8, iflts16, iflts32,
-	ifltequ8, ifltequ16, ifltequ32, iflteqfloat,
-	iflteqs8, iflteqs16, iflteqs32,
-	ifgtu8, ifgtu16, ifgtu32, ifgtfloat,
-	ifgts8, ifgts16, ifgts32,
-	ifgtequ8, ifgtequ16, ifgtequ32, ifgteqfloat,
-	ifgteqs8, ifgteqs16, ifgteqs32,
-	ifmask8, ifmask16, ifmask32,
-	ifkbkey,
-	readreg8, readreg16, readreg32,
-	writereg8, writereg16, writereg32,
-	addreg8, addreg16, addreg32, addregfloat,
-	subreg8, subreg16, subreg32, subregfloat,
-	mulregu8, mulregu16, mulregu32, mulregfloat,
-	mulregs8, mulregs16, mulregs32,
-	divregu8, divregu16, divregu32, divregfloat,
-	divregs8, divregs16, divregs32,
-	modregu8, modregu16, modregu32,
-	modregs8, modregs16, modregs32,
-	shlreg8, shlreg16, shlreg32,
-	shrregu8, shrregu16, shrregu32,
-	shrregs8, shrregs16, shrregs32,
-	rolreg8, rolreg16, rolreg32,
-	rorreg8, rorreg16, rorreg32,
-	andreg8, andreg16, andreg32,
-	orreg8, orreg16, orreg32,
-	xorreg8, xorreg16, xorreg32,
-	ifeqreg8, ifeqreg16, ifeqreg32, ifeqregfloat,
-	ifnereg8, ifnereg16, ifnereg32, ifneregfloat,
-	ifltregu8, ifltregu16, ifltregu32, ifltregfloat,
-	ifltregs8, ifltregs16, ifltregs32,
-	iflteqregu8, iflteqregu16, iflteqregu32, iflteqregfloat,
-	iflteqregs8, iflteqregs16, iflteqregs32,
-	ifgtregu8, ifgtregu16, ifgtregu32, ifgtregfloat,
-	ifgtregs8, ifgtregs16, ifgtregs32,
-	ifgteqregu8, ifgteqregu16, ifgteqregu32, ifgteqregfloat,
-	ifgteqregs8, ifgteqregs16, ifgteqregs32,
-	ifmaskreg8, ifmaskreg16, ifmaskreg32,
-	_else,
-	endif,
-	newregs
-};
+static CodeParser codeParser;
 
-union valuetype
+/**
+* Registers an event to the specified event list.
+* @param eventList The event list to add to.
+* @param module The module for the mod DLL.
+* @param name The name of the exported function from the module (i.e OnFrame)
+*/
+static void RegisterEvent(vector<ModEvent>& eventList, HMODULE module, const char* name)
 {
-	uint32_t u32;
-	int32_t s32;
-	uint16_t u16;
-	int16_t s16;
-	uint8_t u8;
-	int8_t s8;
-	float f;
-};
+	const ModEvent modEvent = (const ModEvent)GetProcAddress(module, name);
 
-struct Code
-{
-	bool newregs;
-	CodeType type;
-	void *address;
-	bool pointer;
-	int offsetcount;
-	int32_t *offsets;
-	valuetype value;
-	uint32_t repeatcount;
-	list<Code> trueCodes;
-	list<Code> falseCodes;
-};
-
-list<Code> codes;
-vector<valuetype *> registers;
-
-void *GetAddress(Code &code, valuetype *regs)
-{
-	void *addr = code.address;
-	if (addr < (void *)16)
-		addr = &regs[(int)addr];
-	if (!code.pointer)
-		return addr;
-	addr = *(void **)addr;
-	if (code.offsetcount == 0 || addr == nullptr)
-		return addr;
-	for (int i = 0; i < code.offsetcount - 1; i++)
-	{
-		addr = (void *)((uint32_t)addr + code.offsets[i]);
-		addr = *(void **)addr;
-		if (addr == nullptr)
-			return nullptr;
-	}
-	addr = (void *)((uint32_t)addr + code.offsets[code.offsetcount - 1]);
-	return addr;
+	if (modEvent != nullptr)
+		eventList.push_back(modEvent);
 }
 
-#define ifcode(size,op) for (uint32_t i = 0; i < it->repeatcount; i++) \
-{ \
-	cond &= *addru##size op it->value.u##size; \
-	addru##size++; \
-} \
-	if (cond) \
-	ProcessCodeList(it->trueCodes); \
-else \
-	ProcessCodeList(it->falseCodes);
-
-#define ifcodes(size,op) for (uint32_t i = 0; i < it->repeatcount; i++) \
-{ \
-	cond &= *addrs##size op it->value.s##size; \
-	addrs##size++; \
-} \
-	if (cond) \
-	ProcessCodeList(it->trueCodes); \
-else \
-	ProcessCodeList(it->falseCodes);
-
-#define ifcodef(op) for (uint32_t i = 0; i < it->repeatcount; i++) \
-{ \
-	cond &= *addrf op it->value.f; \
-	addrf++; \
-} \
-	if (cond) \
-	ProcessCodeList(it->trueCodes); \
-else \
-	ProcessCodeList(it->falseCodes);
-
-#define ifcodereg(size,op) for (uint32_t i = 0; i < it->repeatcount; i++) \
-{ \
-	cond &= *addru##size op regs[it->value.u8].u##size; \
-	addru##size++; \
-} \
-	if (cond) \
-	ProcessCodeList(it->trueCodes); \
-else \
-	ProcessCodeList(it->falseCodes);
-
-#define ifcoderegs(size,op) for (uint32_t i = 0; i < it->repeatcount; i++) \
-{ \
-	cond &= *addrs##size op regs[it->value.u8].s##size; \
-	addrs##size++; \
-} \
-	if (cond) \
-	ProcessCodeList(it->trueCodes); \
-else \
-	ProcessCodeList(it->falseCodes);
-
-#define ifcoderegf(op) for (uint32_t i = 0; i < it->repeatcount; i++) \
-{ \
-	cond &= *addrf op regs[it->value.u8].f; \
-	addrf++; \
-} \
-	if (cond) \
-	ProcessCodeList(it->trueCodes); \
-else \
-	ProcessCodeList(it->falseCodes);
-
-template<typename T>
-inline void writecode(T *address, uint32_t repeatcount, T data)
+/**
+* Calls all registered events in the specified event list.
+* @param eventList The list of events to trigger.
+*/
+static inline void RaiseEvents(const vector<ModEvent>& eventList)
 {
-	for (uint32_t i = 0; i < repeatcount; i++)
+	for (auto& i : eventList)
+		i();
+}
+
+static vector<ModEvent> modFrameEvents;
+void __cdecl OnFrame()
+{
+	codeParser.processCodeList();
+	RaiseEvents(modFrameEvents);
+}
+
+static vector<ModEvent> modInputEvents;
+static void __cdecl OnInput()
+{
+	RaiseEvents(modInputEvents);
+}
+
+#pragma region OnFrame Initialization
+
+void* caseDefault_ptr	= (void*)0x004340CC;
+void* case08_ptr		= (void*)0x0043405D;
+void* case09_ptr		= (void*)0x0043407E;
+void* case10_ptr		= (void*)0x0043407E;
+
+void __declspec(naked) OnFrame_MidJump()
+{
+	__asm
 	{
-		WriteData(address, data);
-		address++;
+		push eax
+		call OnFrame
+		pop eax
+
+		pop edi
+		pop esi
+		pop ebp
+		pop ebx
+		pop ecx
+		retn
 	}
 }
 
-template<typename T>
-inline void addcode(T *address, uint32_t repeatcount, T data)
+void* OnFrame_Hook_ptr = (void*)0x004340E7;
+void __declspec(naked) OnFrame_Hook()
 {
-	for (uint32_t i = 0; i < repeatcount; i++)
+	__asm
 	{
-		WriteData(address, (T)(*address + data));
-		address++;
+		push eax
+		call OnFrame
+		pop eax
+		retn
 	}
 }
 
-template<typename T>
-inline void subcode(T *address, uint32_t repeatcount, T data)
+void InitOnFrame()
 {
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address - data));
-		address++;
-	}
+	WriteJump(case08_ptr, OnFrame_MidJump);
+	WriteJump(case09_ptr, OnFrame_MidJump);
+	WriteJump(case10_ptr, OnFrame_MidJump);
+
+	// OnFrame caseDefault
+	// Occurs if the current game mode isn't 8, 9 or 10, and byte_174AFF9 == 1
+	WriteJump(caseDefault_ptr, OnFrame_MidJump);
+
+	// OnFrame OnFrame_Hook
+	// Occurs at the end of the function (effectively the "else" to the statement above)
+	WriteJump(OnFrame_Hook_ptr, OnFrame_Hook);
 }
 
-template<typename T>
-inline void mulcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address * data));
-		address++;
-	}
-}
+#pragma endregion
 
-template<typename T>
-inline void divcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address / data));
-		address++;
-	}
-}
-
-template<typename T>
-inline void modcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address % data));
-		address++;
-	}
-}
-
-template<typename T>
-inline void shlcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address << data));
-		address++;
-	}
-}
-
-template<typename T>
-inline void shrcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address >> data));
-		address++;
-	}
-}
-
-template<typename T>
-inline void andcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address & data));
-		address++;
-	}
-}
-
-template<typename T>
-inline void orcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address | data));
-		address++;
-	}
-}
-
-template<typename T>
-inline void xorcode(T *address, uint32_t repeatcount, T data)
-{
-	for (uint32_t i = 0; i < repeatcount; i++)
-	{
-		WriteData(address, (T)(*address ^ data));
-		address++;
-	}
-}
-
-int regnum;
-void ProcessCodeList(list<Code> &codes)
-{
-	for (list<Code>::iterator it = codes.begin(); it != codes.end(); it++)
-	{
-		if (it->newregs)
-			regnum++;
-		valuetype *regs = nullptr;
-		if (regnum >= 0)
-			regs = registers[regnum];
-		void *address = GetAddress(*it, regs);
-		if (it->type != ifkbkey && address == nullptr)
-		{
-			if (distance(it->falseCodes.begin(), it->falseCodes.end()) > 0)
-				ProcessCodeList(it->falseCodes);
-			continue;
-		}
-		uint8_t *addru8 = (uint8_t *)address;
-		uint16_t *addru16 = (uint16_t *)address;
-		uint32_t *addru32 = (uint32_t *)address;
-		float *addrf = (float *)address;
-		int8_t *addrs8 = (int8_t *)address;
-		int16_t *addrs16 = (int16_t *)address;
-		int32_t *addrs32 = (int32_t *)address;
-		bool cond = true;
-		switch (it->type)
-		{
-		case write8:
-			writecode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case write16:
-			writecode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case write32:
-		case writefloat:
-			writecode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case add8:
-			addcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case add16:
-			addcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case add32:
-			addcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case addfloat:
-			addcode(addrf, it->repeatcount, it->value.f);
-			break;
-		case sub8:
-			subcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case sub16:
-			subcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case sub32:
-			subcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case subfloat:
-			subcode(addrf, it->repeatcount, it->value.f);
-			break;
-		case mulu8:
-			mulcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case mulu16:
-			mulcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case mulu32:
-			mulcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case mulfloat:
-			mulcode(addrf, it->repeatcount, it->value.f);
-			break;
-		case muls8:
-			mulcode(addrs8, it->repeatcount, it->value.s8);
-			break;
-		case muls16:
-			mulcode(addrs16, it->repeatcount, it->value.s16);
-			break;
-		case muls32:
-			mulcode(addrs32, it->repeatcount, it->value.s32);
-			break;
-		case divu8:
-			divcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case divu16:
-			divcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case divu32:
-			divcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case divfloat:
-			divcode(addrf, it->repeatcount, it->value.f);
-			break;
-		case divs8:
-			divcode(addrs8, it->repeatcount, it->value.s8);
-			break;
-		case divs16:
-			divcode(addrs16, it->repeatcount, it->value.s16);
-			break;
-		case divs32:
-			divcode(addrs32, it->repeatcount, it->value.s32);
-			break;
-		case modu8:
-			modcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case modu16:
-			modcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case modu32:
-			modcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case mods8:
-			modcode(addrs8, it->repeatcount, it->value.s8);
-			break;
-		case mods16:
-			modcode(addrs16, it->repeatcount, it->value.s16);
-			break;
-		case mods32:
-			modcode(addrs32, it->repeatcount, it->value.s32);
-			break;
-		case shl8:
-			shlcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case shl16:
-			shlcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case shl32:
-			shlcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case shru8:
-			shrcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case shru16:
-			shrcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case shru32:
-			shrcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case shrs8:
-			shrcode(addrs8, it->repeatcount, it->value.s8);
-			break;
-		case shrs16:
-			shrcode(addrs16, it->repeatcount, it->value.s16);
-			break;
-		case shrs32:
-			shrcode(addrs32, it->repeatcount, it->value.s32);
-			break;
-		case rol8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru8, (uint8_t)(_rotl8(*addru8, it->value.u8)));
-				addru8++;
-			}
-			break;
-		case rol16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru16, (uint16_t)(_rotl16(*addru16, it->value.u8)));
-				addru16++;
-			}
-			break;
-		case rol32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru32, (uint32_t)(_rotl(*addru32, it->value.s32)));
-				addru32++;
-			}
-			break;
-		case ror8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru8, (uint8_t)(_rotr8(*addru8, it->value.u8)));
-				addru8++;
-			}
-			break;
-		case ror16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru16, (uint16_t)(_rotr16(*addru16, it->value.u8)));
-				addru16++;
-			}
-			break;
-		case ror32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru32, (uint32_t)(_rotr(*addru32, it->value.s32)));
-				addru32++;
-			}
-			break;
-		case and8:
-			andcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case and16:
-			andcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case and32:
-			andcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case or8:
-			orcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case or16:
-			orcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case or32:
-			orcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case xor8:
-			xorcode(addru8, it->repeatcount, it->value.u8);
-			break;
-		case xor16:
-			xorcode(addru16, it->repeatcount, it->value.u16);
-			break;
-		case xor32:
-			xorcode(addru32, it->repeatcount, it->value.u32);
-			break;
-		case ifeq8:
-			ifcode(8,==)
-				break;
-		case ifeq16:
-			ifcode(16,==)
-				break;
-		case ifeq32:
-			ifcode(32,==)
-				break;
-		case ifeqfloat:
-			ifcodef(==)
-				break;
-		case ifne8:
-			ifcode(8,!=)
-				break;
-		case ifne16:
-			ifcode(16,!=)
-				break;
-		case ifne32:
-			ifcode(32,!=)
-				break;
-		case ifnefloat:
-			ifcodef(!=)
-				break;
-		case ifltu8:
-			ifcode(8,<)
-				break;
-		case ifltu16:
-			ifcode(16,<)
-				break;
-		case ifltu32:
-			ifcode(32,<)
-				break;
-		case ifltfloat:
-			ifcodef(<)
-				break;
-		case iflts8:
-			ifcodes(8,<)
-				break;
-		case iflts16:
-			ifcodes(16,<)
-				break;
-		case iflts32:
-			ifcodes(32,<)
-				break;
-		case ifltequ8:
-			ifcode(8,<=)
-				break;
-		case ifltequ16:
-			ifcode(16,<=)
-				break;
-		case ifltequ32:
-			ifcode(32,<=)
-				break;
-		case iflteqfloat:
-			ifcodef(<=)
-				break;
-		case iflteqs8:
-			ifcodes(8,<=)
-				break;
-		case iflteqs16:
-			ifcodes(16,<=)
-				break;
-		case iflteqs32:
-			ifcodes(32,<=)
-				break;
-		case ifgtu8:
-			ifcode(8,>)
-				break;
-		case ifgtu16:
-			ifcode(16,>)
-				break;
-		case ifgtu32:
-			ifcode(32,>)
-				break;
-		case ifgtfloat:
-			ifcodef(>)
-				break;
-		case ifgts8:
-			ifcodes(8,>)
-				break;
-		case ifgts16:
-			ifcodes(16,>)
-				break;
-		case ifgts32:
-			ifcodes(32,>)
-				break;
-		case ifgtequ8:
-			ifcode(8,>=)
-				break;
-		case ifgtequ16:
-			ifcode(16,>=)
-				break;
-		case ifgtequ32:
-			ifcode(32,>=)
-				break;
-		case ifgteqfloat:
-			ifcodef(>=)
-				break;
-		case ifgteqs8:
-			ifcodes(8,>=)
-				break;
-		case ifgteqs16:
-			ifcodes(16,>=)
-				break;
-		case ifgteqs32:
-			ifcodes(32,>=)
-				break;
-		case ifmask8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				cond &= (*addru8 & it->value.u8) == it->value.u8;
-				addru8++;
-			}
-			if (cond)
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		case ifmask16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				cond &= (*addru16 & it->value.u16) == it->value.u16;
-				addru16++;
-			}
-			if (cond)
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		case ifmask32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				cond &= (*addru16 & it->value.u32) == it->value.u32;
-				addru32++;
-			}
-			if (cond)
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		case ifkbkey:
-			if (GetAsyncKeyState(it->value.s32))
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		case readreg8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				regs[it->value.u8 + i].u8 = *addru8;
-				addru8++;
-			}
-			break;
-		case readreg16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				regs[it->value.u8 + i].u16 = *addru16;
-				addru16++;
-			}
-			break;
-		case readreg32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				regs[it->value.u8 + i].u32 = *addru32;
-				addru32++;
-			}
-			break;
-		case writereg8:
-			writecode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case writereg16:
-			writecode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case writereg32:
-			writecode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case addreg8:
-			addcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case addreg16:
-			addcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case addreg32:
-			addcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case addregfloat:
-			addcode(addrf, it->repeatcount, regs[it->value.u8].f);
-			break;
-		case subreg8:
-			subcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case subreg16:
-			subcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case subreg32:
-			subcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case subregfloat:
-			subcode(addrf, it->repeatcount, regs[it->value.u8].f);
-			break;
-		case mulregu8:
-			mulcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case mulregu16:
-			mulcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case mulregu32:
-			mulcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case mulregfloat:
-			mulcode(addrf, it->repeatcount, regs[it->value.u8].f);
-			break;
-		case mulregs8:
-			mulcode(addrs8, it->repeatcount, regs[it->value.u8].s8);
-			break;
-		case mulregs16:
-			mulcode(addrs16, it->repeatcount, regs[it->value.u8].s16);
-			break;
-		case mulregs32:
-			mulcode(addrs32, it->repeatcount, regs[it->value.u8].s32);
-			break;
-		case divregu8:
-			divcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case divregu16:
-			divcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case divregu32:
-			divcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case divregfloat:
-			divcode(addrf, it->repeatcount, regs[it->value.u8].f);
-			break;
-		case divregs8:
-			divcode(addrs8, it->repeatcount, regs[it->value.u8].s8);
-			break;
-		case divregs16:
-			divcode(addrs16, it->repeatcount, regs[it->value.u8].s16);
-			break;
-		case divregs32:
-			divcode(addrs32, it->repeatcount, regs[it->value.u8].s32);
-			break;
-		case modregu8:
-			modcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case modregu16:
-			modcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case modregu32:
-			modcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case modregs8:
-			modcode(addrs8, it->repeatcount, regs[it->value.u8].s8);
-			break;
-		case modregs16:
-			modcode(addrs16, it->repeatcount, regs[it->value.u8].s16);
-			break;
-		case modregs32:
-			modcode(addrs32, it->repeatcount, regs[it->value.u8].s32);
-			break;
-		case shlreg8:
-			shlcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case shlreg16:
-			shlcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case shlreg32:
-			shlcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case shrregu8:
-			shrcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case shrregu16:
-			shrcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case shrregu32:
-			shrcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case shrregs8:
-			shrcode(addrs8, it->repeatcount, regs[it->value.u8].s8);
-			break;
-		case shrregs16:
-			shrcode(addrs16, it->repeatcount, regs[it->value.u8].s16);
-			break;
-		case shrregs32:
-			shrcode(addrs32, it->repeatcount, regs[it->value.u8].s32);
-			break;
-		case rolreg8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru8, (uint8_t)(_rotl8(*addru8, regs[it->value.u8].u8)));
-				addru8++;
-			}
-			break;
-		case rolreg16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru16, (uint16_t)(_rotl16(*addru16, regs[it->value.u8].u8)));
-				addru8++;
-			}
-			break;
-		case rolreg32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru32, (uint32_t)(_rotl(*addru32, regs[it->value.u8].s32)));
-				addru32++;
-			}
-			break;
-		case rorreg8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru8, (uint8_t)(_rotr8(*addru8, regs[it->value.u8].u8)));
-				addru8++;
-			}
-			break;
-		case rorreg16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru16, (uint16_t)(_rotr16(*addru16, regs[it->value.u8].u8)));
-				addru16++;
-			}
-			break;
-		case rorreg32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				WriteData(addru32, (uint32_t)(_rotr(*addru32, regs[it->value.u8].s32)));
-				addru32++;
-			}
-			break;
-		case andreg8:
-			andcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case andreg16:
-			andcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case andreg32:
-			andcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case orreg8:
-			orcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case orreg16:
-			orcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case orreg32:
-			orcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case xorreg8:
-			xorcode(addru8, it->repeatcount, regs[it->value.u8].u8);
-			break;
-		case xorreg16:
-			xorcode(addru16, it->repeatcount, regs[it->value.u8].u16);
-			break;
-		case xorreg32:
-			xorcode(addru32, it->repeatcount, regs[it->value.u8].u32);
-			break;
-		case ifeqreg8:
-			ifcodereg(8,==)
-				break;
-		case ifeqreg16:
-			ifcodereg(16,==)
-				break;
-		case ifeqreg32:
-			ifcodereg(32,==)
-				break;
-		case ifeqregfloat:
-			ifcoderegf(==)
-				break;
-		case ifnereg8:
-			ifcodereg(8,!=)
-				break;
-		case ifnereg16:
-			ifcodereg(16,!=)
-				break;
-		case ifnereg32:
-			ifcodereg(32,!=)
-				break;
-		case ifneregfloat:
-			ifcoderegf(!=)
-				break;
-		case ifltregu8:
-			ifcodereg(8,<)
-				break;
-		case ifltregu16:
-			ifcodereg(16,<)
-				break;
-		case ifltregu32:
-			ifcodereg(32,<)
-				break;
-		case ifltregfloat:
-			ifcoderegf(<)
-				break;
-		case ifltregs8:
-			ifcoderegs(8,<)
-				break;
-		case ifltregs16:
-			ifcoderegs(16,<)
-				break;
-		case ifltregs32:
-			ifcoderegs(32,<)
-				break;
-		case iflteqregu8:
-			ifcodereg(8,<=)
-				break;
-		case iflteqregu16:
-			ifcodereg(16,<=)
-				break;
-		case iflteqregu32:
-			ifcodereg(32,<=)
-				break;
-		case iflteqregfloat:
-			ifcoderegf(<=)
-				break;
-		case iflteqregs8:
-			ifcoderegs(8,<=)
-				break;
-		case iflteqregs16:
-			ifcoderegs(16,<=)
-				break;
-		case iflteqregs32:
-			ifcoderegs(32,<=)
-				break;
-		case ifgtregu8:
-			ifcodereg(8,>)
-				break;
-		case ifgtregu16:
-			ifcodereg(16,>)
-				break;
-		case ifgtregu32:
-			ifcodereg(32,>)
-				break;
-		case ifgtregfloat:
-			ifcoderegf(>)
-				break;
-		case ifgtregs8:
-			ifcoderegs(8,>)
-				break;
-		case ifgtregs16:
-			ifcoderegs(16,>)
-				break;
-		case ifgtregs32:
-			ifcoderegs(32,>)
-				break;
-		case ifgteqregu8:
-			ifcodereg(8,>=)
-				break;
-		case ifgteqregu16:
-			ifcodereg(16,>=)
-				break;
-		case ifgteqregu32:
-			ifcodereg(32,>=)
-				break;
-		case ifgteqregfloat:
-			ifcoderegf(>=)
-				break;
-		case ifgteqregs8:
-			ifcoderegs(8,>=)
-				break;
-		case ifgteqregs16:
-			ifcoderegs(16,>=)
-				break;
-		case ifgteqregs32:
-			ifcoderegs(32,>=)
-				break;
-		case ifmaskreg8:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				cond &= (*addru8 & it->value.u8) == regs[it->value.u8].u8;
-				addru8++;
-			}
-			if (cond)
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		case ifmaskreg16:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				cond &= (*addru16 & it->value.u16) == regs[it->value.u8].u16;
-				addru16++;
-			}
-			if (cond)
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		case ifmaskreg32:
-			for (uint32_t i = 0; i < it->repeatcount; i++)
-			{
-				cond &= (*addru16 & it->value.u32) == regs[it->value.u8].u32;
-				addru32++;
-			}
-			if (cond)
-				ProcessCodeList(it->trueCodes);
-			else
-				ProcessCodeList(it->falseCodes);
-			break;
-		}
-	}
-}
-
-void __cdecl ProcessCodes()
-{
-	regnum = -1;
-	ProcessCodeList(codes);
-}
 
 char *ShiftJISToUTF8(char *shiftjis)
 {
@@ -1515,51 +600,6 @@ void ScanFolder(string path, int length)
 	}
 	while (FindNextFileA(hfind, &data) != 0);
 	FindClose(hfind);
-}
-
-unsigned char ReadCodes(istream &stream, list<Code> &list)
-{
-	while (true)
-	{
-		uint8_t t = stream.get();
-		if (t == 0xFF || t == _else || t == endif)
-			return t;
-		Code code = { };
-		if (t == newregs)
-		{
-			code.newregs = true;
-			valuetype *regs = new valuetype[16];
-			memset(regs, 0, sizeof(valuetype) * 16);
-			registers.push_back(regs);
-			t = stream.get();
-		}
-		code.type = (CodeType)t;
-		uintptr_t addr;
-		stream.read((char *)&addr, sizeof(uintptr_t));
-		code.pointer = (addr & 0x80000000u) == 0x80000000u;
-		code.address = (void *)(addr & 0x7FFFFFFF);
-		if (code.pointer)
-		{
-			code.offsetcount = stream.get();
-			code.offsets = new int[code.offsetcount];
-			for (int i = 0; i < code.offsetcount; i++)
-				stream.read((char *)&code.offsets[i], sizeof(int32_t));
-		}
-		stream.read((char *)&code.value, sizeof(code.value));
-		stream.read((char *)&code.repeatcount, sizeof(uint32_t));
-		if ((code.type >= ifeq8 && code.type <= ifkbkey) || (code.type >= ifeqreg8 && code.type <= ifmaskreg32))
-			switch (ReadCodes(stream, code.trueCodes))
-			{
-				case _else:
-					if (ReadCodes(stream, code.falseCodes) == 0xFF)
-						return 0xFF;
-					break;
-				case 0xFF:
-					return 0xFF;
-			}
-		list.push_back(code);
-	}
-	return 0;
 }
 
 unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
@@ -1852,7 +892,6 @@ const HelperFunctions helperFunctions = {
 	Clear2PIntroPositionList
 };
 
-const char codemagic[] = "codev3";
 void __cdecl InitMods(void)
 {
 	datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -1897,13 +936,23 @@ void __cdecl InitMods(void)
 		WriteJump(PrintDebug, SA2DebugOutput);
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
 	}
+
+	// Unprotect the .rdata section.
+	// TODO: Get .rdata address and length dynamically.
 	DWORD oldprot;
 	VirtualProtect((void *)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
+
 	WriteJump((void *)LoadMDLFilePtr, LoadMDLFile_r);
 	WriteJump((void *)ReleaseMDLFilePtr, ReleaseMDLFile_r);
+
+	// Map of files to replace and/or swap.
 	unordered_map<string, string> filereplaces = unordered_map<string, string>();
+
 	InitializeStartPositionLists();
 	Initialize2PIntroPositionLists();
+
+	// It's mod loading time!
+	PrintDebug("Loading mods...");
 	char key[8];
 	for (int i = 1; i < 999; i++)
 	{
@@ -1947,14 +996,20 @@ void __cdecl InitMods(void)
 				filereplaces[NormalizePath(it->second)] = NormalizePath(it->first);
 			}
 		}
+		
+		// Check for gd_pc replacements
 		string sysfol = dir + "\\gd_pc";
 		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
 		if (GetFileAttributesA(sysfol.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
 			ScanFolder(sysfol, sysfol.length() + 1);
+
+		// Check if a custom EXE is required.
 		if (modinfo.find("EXEFile") != modinfo.end())
 		{
 			string modexe = modinfo["EXEFile"];
 			transform(modexe.begin(), modexe.end(), modexe.begin(), ::tolower);
+
+			// Are we using the correct EXE?
 			if (modexe.compare(exefilename) != 0)
 			{
 				const char *msg = ("Mod \"" + modinfo["Name"] + "\" should be run from \"" + modexe + "\", but you are running \"" + exefilename + "\".\n\nContinue anyway?").c_str();
@@ -1962,9 +1017,12 @@ void __cdecl InitMods(void)
 					ExitProcess(1);
 			}
 		}
+
+		// Check if the mod has a DLL file.
 		string filename = modinfo["DLLFile"];
 		if (!filename.empty())
 		{
+			// Prepend the mod directory.
 			filename = dir + "\\" + filename;
 			HMODULE module = LoadLibraryA(filename.c_str());
 			if (module)
@@ -1973,30 +1031,81 @@ void __cdecl InitMods(void)
 				if (info)
 				{
 					if (info->Patches)
+					{
 						for (int i = 0; i < info->PatchCount; i++)
 							WriteData(info->Patches[i].address, info->Patches[i].data, info->Patches[i].datasize);
+					}
 					if (info->Jumps)
+					{
 						for (int i = 0; i < info->JumpCount; i++)
 							WriteJump(info->Jumps[i].address, info->Jumps[i].data);
+					}
 					if (info->Calls)
+					{
 						for (int i = 0; i < info->CallCount; i++)
 							WriteCall(info->Calls[i].address, info->Calls[i].data);
+					}
 					if (info->Pointers)
+					{
 						for (int i = 0; i < info->PointerCount; i++)
 							WriteData((void**)info->Pointers[i].address, info->Pointers[i].data);
+					}
 					if (info->Init)
+					{
 						info->Init(dir.c_str(), helperFunctions);
+					}
+
+					const ModInitFunc init = (const ModInitFunc)GetProcAddress(module, "Init");
+					if (init)
+						init(dir.c_str(), helperFunctions);
+
+					const PatchList* patches = (const PatchList*)GetProcAddress(module, "Patches");
+					if (patches)
+					{
+						for (int i = 0; i < patches->Count; i++)
+							WriteData(patches->Patches[i].address, patches->Patches[i].data, patches->Patches[i].datasize);
+					}
+
+					const PointerList* jumps = (const PointerList*)GetProcAddress(module, "Jumps");
+					if (jumps)
+					{
+						for (int i = 0; i < jumps->Count; i++)
+							WriteJump(jumps->Pointers[i].address, jumps->Pointers[i].data);
+					}
+
+					const PointerList* calls = (const PointerList*)GetProcAddress(module, "Calls");
+					if (calls)
+					{
+						for (int i = 0; i < calls->Count; i++)
+							WriteJump(calls->Pointers[i].address, calls->Pointers[i].data);
+					}
+
+					const PointerList* pointers = (const PointerList*)GetProcAddress(module, "Pointers");
+					if (pointers)
+					{
+						for (int i = 0; i < pointers->Count; i++)
+							WriteData((void**)pointers->Pointers[i].address, pointers->Pointers[i].data);
+					}
+
+					RegisterEvent(modFrameEvents, module, "OnFrame");
+					RegisterEvent(modInputEvents, module, "OnInput");
 				}
 				else
+				{
 					PrintDebug("File \"%s\" is not a valid mod file.", filename.c_str());
+				}
 			}
 			else
+			{
 				PrintDebug("Failed loading file \"%s\".", filename.c_str());
+			}
 		}
 	}
-	for (unordered_map<string,string>::iterator it = filereplaces.begin(); it != filereplaces.end(); it++)
+
+	// Replace filenames. ("ReplaceFiles", "SwapFiles")
+	for (auto it = filereplaces.begin(); it != filereplaces.end(); it++)
 	{
-		unordered_map<string,char *>::iterator f = filemap.find(it->second);
+		auto f = filemap.find(it->second);
 		if (f != filemap.end())
 			filemap[it->first] = f->second;
 		else
@@ -2008,29 +1117,55 @@ void __cdecl InitMods(void)
 			PrintDebug("Replaced file: \"%s\" = \"%s\"", it->first.c_str(), buf);
 		}
 	}
+
 	if (StartPositionsModified)
 		WriteJump((void *)LoadStartPositionPtr, LoadStartPosition_r);
 	if (_2PIntroPositionsModified)
 		WriteJump((void *)Load2PIntroPosPtr, Load2PIntroPos_r);
+
 	PrintDebug("Mod loading finished.");
-	ifstream cstr("mods\\Codes.dat", ifstream::binary);
-	if (cstr.is_open())
+
+	ifstream codes_str("mods\\Codes.dat", ifstream::binary);
+	if (codes_str.is_open())
 	{
-		char buf[6];
-		cstr.read(buf, sizeof(buf));
-		if (memcmp(buf, codemagic, 6) != 0)
+		static const char codemagic[6] = { 'c', 'o', 'd', 'e', 'v', '4' };
+		char buf[sizeof(codemagic)];
+		codes_str.read(buf, sizeof(buf));
+		if (!memcmp(buf, codemagic, sizeof(codemagic)))
 		{
-			PrintDebug("Code file not in correct format.");
-			goto closecodefile;
+			int codecount_header;
+			codes_str.read((char*)&codecount_header, sizeof(codecount_header));
+			PrintDebug("Loading %d codes...\n", codecount_header);
+			codes_str.seekg(0);
+			int codecount = codeParser.readCodes(codes_str);
+			if (codecount >= 0)
+			{
+				PrintDebug("Loaded %d codes.\n", codecount);
+			}
+			else
+			{
+				PrintDebug("ERROR loading codes: ");
+				switch (codecount)
+				{
+				case -EINVAL:
+					PrintDebug("Code file is not in the correct format.\n");
+					break;
+				default:
+					PrintDebug("%s\n", strerror(-codecount));
+					break;
+				}
+			}
 		}
-		int32_t codecount;
-		cstr.read((char *)&codecount, sizeof(int32_t));
-		PrintDebug("Loading %d codes...", codecount);
-		ReadCodes(cstr, codes);
+		else
+		{
+			PrintDebug("Code file is not in the correct format.\n");
+		}
+		codes_str.close();
 	}
-closecodefile:
-	cstr.close();
-	WriteJump((void *)0x77E897, ProcessCodes);
+
+	// Sets up code/event handling
+	InitOnFrame();	// OnFrame
+	WriteJump((void*)0x0077E897, (void*)OnInput);
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
