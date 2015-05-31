@@ -87,7 +87,7 @@ namespace SA2ModManager
 				byte[] hash1 = md5.ComputeHash(File.ReadAllBytes(loaderdllpath));
 				byte[] hash2 = md5.ComputeHash(File.ReadAllBytes(datadllpath));
 				if (!hash1.SequenceEqual(hash2))
-					if (MessageBox.Show(this, "Installed loader DLL differs from copy in mods folder.\n\nDo you want to overwrite the installed copy?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Yes)
+					if (MessageBox.Show(this, "Installed loader DLL differs from copy in mods folder.\n\nDo you want to overwrite the installed copy?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
 						File.Copy(loaderdllpath, datadllpath, true);
 			}
 			try { codes = CodeList.Load(codexmlpath); }
@@ -131,12 +131,6 @@ namespace SA2ModManager
 			modListView.EndUpdate();
 		}
 
-		private void modAboutButton_Click(object sender, EventArgs e)
-		{
-			ModInfo mod = mods[(string)modListView.SelectedItems[0].Tag];
-			MessageBox.Show(this, string.Format("Name: {0}\nAuthor: {1}\nDescription: {2}", mod.Name, mod.Author, mod.Description), Text);
-		}
-
 		private void Save()
 		{
 			loaderini.Mods.Clear();
@@ -149,7 +143,7 @@ namespace SA2ModManager
 			using (FileStream fs = File.Create(codedatpath))
 			using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
 			{
-				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '3' });
+				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '4' });
 				bw.Write(codesCheckedListBox.CheckedIndices.Count);
 				foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes.Codes[a]))
 				{
@@ -161,9 +155,9 @@ namespace SA2ModManager
 			}
 		}
 
-		private void WriteCodes(IEnumerable<CodeLine> codes, BinaryWriter writer)
+		private void WriteCodes(IEnumerable<CodeLine> codeList, BinaryWriter writer)
 		{
-			foreach (CodeLine line in codes)
+			foreach (CodeLine line in codeList)
 			{
 				writer.Write((byte)line.Type);
 				uint address;
@@ -531,6 +525,7 @@ namespace SA2ModManager
 		ifgteqregu8, ifgteqregu16, ifgteqregu32, ifgteqregfloat,
 		ifgteqregs8, ifgteqregs16, ifgteqregs32,
 		ifmaskreg8, ifmaskreg16, ifmaskreg32,
+		s8tos32, s16tos32, s32tofloat, u32tofloat, floattos32, floattou32,
 		@else,
 		endif,
 		newregs
