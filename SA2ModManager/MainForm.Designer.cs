@@ -39,6 +39,7 @@
 			this.modListView = new System.Windows.Forms.ListView();
 			this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.saveButton = new System.Windows.Forms.Button();
 			this.saveAndPlayButton = new System.Windows.Forms.Button();
 			this.installButton = new System.Windows.Forms.Button();
@@ -54,7 +55,6 @@
 			this.editCodeButton = new System.Windows.Forms.Button();
 			this.newCodeButton = new System.Windows.Forms.Button();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
-			this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -174,14 +174,18 @@
 			this.columnHeader2.Text = "Author";
 			this.columnHeader2.Width = 120;
 			// 
+			// columnHeader3
+			// 
+			this.columnHeader3.Text = "Version";
+			// 
 			// saveButton
 			// 
 			this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.saveButton.Location = new System.Drawing.Point(104, 408);
+			this.saveButton.Location = new System.Drawing.Point(92, 408);
 			this.saveButton.Name = "saveButton";
 			this.saveButton.Size = new System.Drawing.Size(75, 23);
 			this.saveButton.TabIndex = 3;
-			this.saveButton.Text = "Save";
+			this.saveButton.Text = "&Save";
 			this.saveButton.UseVisualStyleBackColor = true;
 			this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
 			// 
@@ -192,9 +196,9 @@
 			this.saveAndPlayButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.saveAndPlayButton.Location = new System.Drawing.Point(12, 408);
 			this.saveAndPlayButton.Name = "saveAndPlayButton";
-			this.saveAndPlayButton.Size = new System.Drawing.Size(86, 23);
+			this.saveAndPlayButton.Size = new System.Drawing.Size(74, 23);
 			this.saveAndPlayButton.TabIndex = 4;
-			this.saveAndPlayButton.Text = "Save and Play";
+			this.saveAndPlayButton.Text = "Save && &Play";
 			this.saveAndPlayButton.UseVisualStyleBackColor = true;
 			this.saveAndPlayButton.Click += new System.EventHandler(this.saveAndPlayButton_Click);
 			// 
@@ -203,7 +207,7 @@
 			this.installButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.installButton.AutoSize = true;
 			this.installButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.installButton.Location = new System.Drawing.Point(185, 408);
+			this.installButton.Location = new System.Drawing.Point(173, 408);
 			this.installButton.Name = "installButton";
 			this.installButton.Size = new System.Drawing.Size(76, 23);
 			this.installButton.TabIndex = 5;
@@ -249,7 +253,7 @@
 			this.buttonNewMod.Name = "buttonNewMod";
 			this.buttonNewMod.Size = new System.Drawing.Size(75, 23);
 			this.buttonNewMod.TabIndex = 8;
-			this.buttonNewMod.Text = "New Mod";
+			this.buttonNewMod.Text = "&New Mod";
 			this.buttonNewMod.UseVisualStyleBackColor = true;
 			this.buttonNewMod.Click += new System.EventHandler(this.buttonNewMod_Click);
 			// 
@@ -260,7 +264,7 @@
 			this.buttonModsFolder.Name = "buttonModsFolder";
 			this.buttonModsFolder.Size = new System.Drawing.Size(105, 23);
 			this.buttonModsFolder.TabIndex = 7;
-			this.buttonModsFolder.Text = "Open Mods folder";
+			this.buttonModsFolder.Text = "&Open Mods folder";
 			this.buttonModsFolder.UseVisualStyleBackColor = true;
 			this.buttonModsFolder.Click += new System.EventHandler(this.buttonModsFolder_Click);
 			// 
@@ -271,7 +275,7 @@
 			this.buttonRefreshModList.Name = "buttonRefreshModList";
 			this.buttonRefreshModList.Size = new System.Drawing.Size(75, 23);
 			this.buttonRefreshModList.TabIndex = 6;
-			this.buttonRefreshModList.Text = "Refresh";
+			this.buttonRefreshModList.Text = "&Refresh";
 			this.buttonRefreshModList.UseVisualStyleBackColor = true;
 			this.buttonRefreshModList.Click += new System.EventHandler(this.buttonRefreshModList_Click);
 			// 
@@ -329,7 +333,7 @@
 			this.deleteCodeButton.Name = "deleteCodeButton";
 			this.deleteCodeButton.Size = new System.Drawing.Size(48, 23);
 			this.deleteCodeButton.TabIndex = 3;
-			this.deleteCodeButton.Text = "Delete";
+			this.deleteCodeButton.Text = "&Delete";
 			this.deleteCodeButton.UseVisualStyleBackColor = true;
 			this.deleteCodeButton.Visible = false;
 			// 
@@ -343,7 +347,7 @@
 			this.editCodeButton.Name = "editCodeButton";
 			this.editCodeButton.Size = new System.Drawing.Size(35, 23);
 			this.editCodeButton.TabIndex = 2;
-			this.editCodeButton.Text = "Edit";
+			this.editCodeButton.Text = "&Edit";
 			this.editCodeButton.UseVisualStyleBackColor = true;
 			this.editCodeButton.Visible = false;
 			// 
@@ -356,7 +360,7 @@
 			this.newCodeButton.Name = "newCodeButton";
 			this.newCodeButton.Size = new System.Drawing.Size(39, 23);
 			this.newCodeButton.TabIndex = 1;
-			this.newCodeButton.Text = "New";
+			this.newCodeButton.Text = "&New";
 			this.newCodeButton.UseVisualStyleBackColor = true;
 			this.newCodeButton.Visible = false;
 			// 
@@ -371,10 +375,6 @@
 			this.codesCheckedListBox.Size = new System.Drawing.Size(331, 274);
 			this.codesCheckedListBox.TabIndex = 0;
 			this.codesCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.codesCheckedListBox_SelectedIndexChanged);
-			// 
-			// columnHeader3
-			// 
-			this.columnHeader3.Text = "Version";
 			// 
 			// MainForm
 			// 
