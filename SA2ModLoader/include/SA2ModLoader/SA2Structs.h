@@ -30,7 +30,7 @@ struct struct_v5
 struct CharObj1
 {
 	char Action;
-	char field_1;
+	char NextAction;
 	char field_2;
 	char field_3;
 	unsigned short Status;
