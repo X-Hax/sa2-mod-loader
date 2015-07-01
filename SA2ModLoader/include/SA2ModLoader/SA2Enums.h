@@ -23,6 +23,28 @@ enum Characters
 	Characters_Chaos
 };
 
+enum StatusBits
+{
+	StatusBits_Ground = 0,
+	StatusBits_Hurt = 2,
+	StatusBits_Ball = 8,
+	StatusBits_LightDash,
+	StatusBits_Attack,
+	StatusBits_HoldObject,
+	StatusBits_DoNextAction
+};
+
+enum Status : uint16_t
+{
+	makemask(Status, Ground),
+	makemask(Status, Hurt),
+	makemask(Status, Ball),
+	makemask(Status, LightDash),
+	makemask(Status, Attack),
+	makemask(Status, HoldObject),
+	makemask(Status, DoNextAction)
+};
+
 enum LevelIDs
 {
 	LevelIDs_BasicTest,
