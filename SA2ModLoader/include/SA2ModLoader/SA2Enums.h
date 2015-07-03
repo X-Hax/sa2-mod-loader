@@ -40,7 +40,7 @@ enum StatusBits
 	StatusBits_DoNextAction,
 	StatusBits_OnPath,
 	StatusBits_DisableControl,
-	StatusBits_Unkown7
+	StatusBits_Unkown6
 };
 
 enum Status : uint16_t
@@ -60,7 +60,7 @@ enum Status : uint16_t
 	makemask(Status, DoNextAction),
 	makemask(Status, OnPath),
 	makemask(Status, DisableControl),
-	makemask(Status, Unkown7)
+	makemask(Status, Unkown6)
 };
 
 enum LevelIDs
