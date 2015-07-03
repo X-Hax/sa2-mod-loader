@@ -29,10 +29,10 @@ enum StatusBits
 	StatusBits_Unknown1,
 	StatusBits_Hurt,
 	StatusBits_ObjectInteract,
-	StatusBits_Unkown2,
-	StatusBits_Unkown3,
-	StatusBits_Unkown4,
-	StatusBits_Unkown5,
+	StatusBits_Unknown2,
+	StatusBits_Unknown3,
+	StatusBits_Unknown4,
+	StatusBits_Unknown5,
 	StatusBits_Ball,
 	StatusBits_LightDash,
 	StatusBits_Attack,
@@ -40,7 +40,7 @@ enum StatusBits
 	StatusBits_DoNextAction,
 	StatusBits_OnPath,
 	StatusBits_DisableControl,
-	StatusBits_Unkown6
+	StatusBits_Unknown6
 };
 
 enum Status : uint16_t
@@ -49,10 +49,10 @@ enum Status : uint16_t
 	makemask(Status, Unknown1),
 	makemask(Status, Hurt),
 	makemask(Status, ObjectInteract),
-	makemask(Status, Unkown2),
-	makemask(Status, Unkown3),
-	makemask(Status, Unkown4),
-	makemask(Status, Unkown5),
+	makemask(Status, Unknown2),
+	makemask(Status, Unknown3),
+	makemask(Status, Unknown4),
+	makemask(Status, Unknown5),
 	makemask(Status, Ball),
 	makemask(Status, LightDash),
 	makemask(Status, Attack),
@@ -60,7 +60,7 @@ enum Status : uint16_t
 	makemask(Status, DoNextAction),
 	makemask(Status, OnPath),
 	makemask(Status, DisableControl),
-	makemask(Status, Unkown6)
+	makemask(Status, Unknown6)
 };
 
 enum LevelIDs
