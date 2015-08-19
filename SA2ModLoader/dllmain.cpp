@@ -1032,23 +1032,23 @@ void __cdecl InitMods(void)
 				{
 					if (info->Patches)
 					{
-						for (int i = 0; i < info->PatchCount; i++)
-							WriteData(info->Patches[i].address, info->Patches[i].data, info->Patches[i].datasize);
+						for (int j = 0; j < info->PatchCount; j++)
+							WriteData(info->Patches[j].address, info->Patches[j].data, info->Patches[j].datasize);
 					}
 					if (info->Jumps)
 					{
-						for (int i = 0; i < info->JumpCount; i++)
-							WriteJump(info->Jumps[i].address, info->Jumps[i].data);
+						for (int j = 0; j < info->JumpCount; j++)
+							WriteJump(info->Jumps[j].address, info->Jumps[j].data);
 					}
 					if (info->Calls)
 					{
-						for (int i = 0; i < info->CallCount; i++)
-							WriteCall(info->Calls[i].address, info->Calls[i].data);
+						for (int j = 0; j < info->CallCount; j++)
+							WriteCall(info->Calls[j].address, info->Calls[j].data);
 					}
 					if (info->Pointers)
 					{
-						for (int i = 0; i < info->PointerCount; i++)
-							WriteData((void**)info->Pointers[i].address, info->Pointers[i].data);
+						for (int j = 0; j < info->PointerCount; j++)
+							WriteData((void**)info->Pointers[j].address, info->Pointers[j].data);
 					}
 					if (info->Init)
 					{
@@ -1062,29 +1062,29 @@ void __cdecl InitMods(void)
 					const PatchList* patches = (const PatchList*)GetProcAddress(module, "Patches");
 					if (patches)
 					{
-						for (int i = 0; i < patches->Count; i++)
-							WriteData(patches->Patches[i].address, patches->Patches[i].data, patches->Patches[i].datasize);
+						for (int j = 0; j < patches->Count; j++)
+							WriteData(patches->Patches[j].address, patches->Patches[j].data, patches->Patches[j].datasize);
 					}
 
 					const PointerList* jumps = (const PointerList*)GetProcAddress(module, "Jumps");
 					if (jumps)
 					{
-						for (int i = 0; i < jumps->Count; i++)
-							WriteJump(jumps->Pointers[i].address, jumps->Pointers[i].data);
+						for (int j = 0; j < jumps->Count; j++)
+							WriteJump(jumps->Pointers[j].address, jumps->Pointers[j].data);
 					}
 
 					const PointerList* calls = (const PointerList*)GetProcAddress(module, "Calls");
 					if (calls)
 					{
-						for (int i = 0; i < calls->Count; i++)
-							WriteJump(calls->Pointers[i].address, calls->Pointers[i].data);
+						for (int j = 0; j < calls->Count; j++)
+							WriteJump(calls->Pointers[j].address, calls->Pointers[j].data);
 					}
 
 					const PointerList* pointers = (const PointerList*)GetProcAddress(module, "Pointers");
 					if (pointers)
 					{
-						for (int i = 0; i < pointers->Count; i++)
-							WriteData((void**)pointers->Pointers[i].address, pointers->Pointers[i].data);
+						for (int j = 0; j < pointers->Count; j++)
+							WriteData((void**)pointers->Pointers[j].address, pointers->Pointers[j].data);
 					}
 
 					RegisterEvent(modFrameEvents, module, "OnFrame");
