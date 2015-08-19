@@ -65,3 +65,7 @@ DataPointer(ControllerData, Controller1, &Controllers[0]);
 DataPointer(ControllerData, Controller2, &Controllers[1]);
 DataPointer(ControllerData, Controller3, &Controllers[2]);
 DataPointer(ControllerData, Controller4, &Controllers[3]);
+DataPointer(UserConfigData*, MainUserConfig, 0x01AF19EC);
+DataPointer(HWND, MainWindowHandle, 0x01933EA8);
+DataPointer(float, HorizontalResolution, 0x0174BA64);
+DataPointer(float, VerticalResolution, 0x0174BA68);

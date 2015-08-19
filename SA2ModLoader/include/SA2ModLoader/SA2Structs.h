@@ -27,6 +27,20 @@ struct struct_v5
 	int field_A4;
 };
 
+struct UserConfigData
+{
+	BYTE f0[4];
+	DWORD FullScreen;
+	DWORD Width;
+	DWORD Height;
+	DWORD RefreshRate;
+	DWORD Language;
+	DWORD Display;
+	DWORD Res;
+	DWORD Analytics;
+	DWORD dword24;
+};
+
 struct CharObj1
 {
 	char Action;

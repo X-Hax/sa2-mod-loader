@@ -1166,6 +1166,24 @@ void __cdecl InitMods(void)
 	// Sets up code/event handling
 	InitOnFrame();	// OnFrame
 	WriteJump((void*)0x0077E897, (void*)OnInput);
+
+	if (MainUserConfig->FullScreen == 0)
+	{
+		int endWidth = (int)HorizontalResolution;
+		int endHeight = (int)VerticalResolution;
+		RECT winFrame, winClient;
+
+		GetWindowRect(MainWindowHandle, &winFrame);
+		GetClientRect(MainWindowHandle, &winClient);
+
+		// The game uses GetSystemMetrics which appears to always report incorrect values,
+		// so this code calculates the window frame size manually.
+		endWidth += ((winFrame.right - winFrame.left) - (winClient.right - winClient.left));
+		endHeight += ((winFrame.bottom - winFrame.top) - (winClient.bottom - winClient.top));
+
+		SetWindowPos(MainWindowHandle, nullptr, 0, 0, endWidth, endHeight,
+			SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
+	}
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
