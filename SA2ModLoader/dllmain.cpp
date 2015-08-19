@@ -13,7 +13,12 @@
 #include "SA2ModLoader.h"
 #include "ModelInfo.h"
 #include "CodeParser.hpp"
+#include "Events.h"
 using namespace std;
+
+// TODO: Split file replacement into separate file(s)
+
+#pragma region INI stuff
 
 typedef unordered_map<string, string> IniGroup;
 struct IniGroupStr { IniGroup Element; };
@@ -94,6 +99,8 @@ appendchar:
 	return result;
 }
 
+#pragma endregion
+
 HMODULE myhandle;
 HMODULE datadllhandle;
 FARPROC __stdcall MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName)
@@ -106,10 +113,7 @@ FARPROC __stdcall MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName)
 
 inline int backslashes(int c)
 {
-	if (c == '/')
-		return '\\';
-	else
-		return c;
+	return (c == '/') ? '\\' : c;
 }
 
 IniGroup settings;
@@ -429,99 +433,6 @@ void HookTheAPI()
 		}
 	}
 }
-
-static CodeParser codeParser;
-
-/**
-* Registers an event to the specified event list.
-* @param eventList The event list to add to.
-* @param module The module for the mod DLL.
-* @param name The name of the exported function from the module (i.e OnFrame)
-*/
-static void RegisterEvent(vector<ModEvent>& eventList, HMODULE module, const char* name)
-{
-	const ModEvent modEvent = (const ModEvent)GetProcAddress(module, name);
-
-	if (modEvent != nullptr)
-		eventList.push_back(modEvent);
-}
-
-/**
-* Calls all registered events in the specified event list.
-* @param eventList The list of events to trigger.
-*/
-static inline void RaiseEvents(const vector<ModEvent>& eventList)
-{
-	for (auto& i : eventList)
-		i();
-}
-
-static vector<ModEvent> modFrameEvents;
-void __cdecl OnFrame()
-{
-	codeParser.processCodeList();
-	RaiseEvents(modFrameEvents);
-}
-
-static vector<ModEvent> modInputEvents;
-static void __cdecl OnInput()
-{
-	RaiseEvents(modInputEvents);
-}
-
-#pragma region OnFrame Initialization
-
-void* caseDefault_ptr	= (void*)0x004340CC;
-void* case08_ptr		= (void*)0x0043405D;
-void* case09_ptr		= (void*)0x0043407E;
-void* case10_ptr		= (void*)0x0043407E;
-
-void __declspec(naked) OnFrame_MidJump()
-{
-	__asm
-	{
-		push eax
-		call OnFrame
-		pop eax
-
-		pop edi
-		pop esi
-		pop ebp
-		pop ebx
-		pop ecx
-		retn
-	}
-}
-
-void* OnFrame_Hook_ptr = (void*)0x004340E7;
-void __declspec(naked) OnFrame_Hook()
-{
-	__asm
-	{
-		push eax
-		call OnFrame
-		pop eax
-		retn
-	}
-}
-
-void InitOnFrame()
-{
-	WriteJump(case08_ptr, OnFrame_MidJump);
-	WriteJump(case09_ptr, OnFrame_MidJump);
-	WriteJump(case10_ptr, OnFrame_MidJump);
-
-	// OnFrame caseDefault
-	// Occurs if the current game mode isn't 8, 9 or 10, and byte_174AFF9 == 1
-	WriteJump(caseDefault_ptr, OnFrame_MidJump);
-
-	// OnFrame OnFrame_Hook
-	// Occurs at the end of the function (effectively the "else" to the statement above)
-	WriteJump(OnFrame_Hook_ptr, OnFrame_Hook);
-}
-
-#pragma endregion
-
 
 char *ShiftJISToUTF8(char *shiftjis)
 {

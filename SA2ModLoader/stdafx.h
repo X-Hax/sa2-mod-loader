@@ -28,3 +28,4 @@
 
 #include "ninja.h"
 #include "SA2ModLoader.h"
+#include "Events.h"
