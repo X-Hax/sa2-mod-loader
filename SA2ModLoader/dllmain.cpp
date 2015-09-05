@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <DbgHelp.h>
 #include <Shlwapi.h>
+#include "IniFile.hpp"
 #include "SA2ModLoader.h"
 #include "ModelInfo.h"
 #include "CodeParser.hpp"
@@ -17,89 +18,6 @@
 using namespace std;
 
 // TODO: Split file replacement into separate file(s)
-
-#pragma region INI stuff
-
-typedef unordered_map<string, string> IniGroup;
-struct IniGroupStr { IniGroup Element; };
-typedef unordered_map<string, IniGroupStr> IniDictionary;
-IniDictionary LoadINI(istream &textfile)
-{
-	IniDictionary result = IniDictionary();
-	result[""] = IniGroupStr();
-	IniGroupStr *curent = &result[""];
-	while (textfile.good())
-	{
-		string line;
-		getline(textfile, line);
-		string sb = string();
-		sb.reserve(line.length());
-		bool startswithbracket = false;
-		int firstequals = -1;
-		int endbracket = -1;
-		for (int c = 0; c < (int)line.length(); c++)
-			switch (line[c])
-		{
-			case '\\': // escape character
-				if (c + 1 == line.length())
-					goto appendchar;
-				c++;
-				switch (line[c])
-				{
-				case 'n': // line feed
-					sb += '\n';
-					break;
-				case 'r': // carriage return
-					sb += '\r';
-					break;
-				default: // literal character
-					goto appendchar;
-				}
-				break;
-			case '=':
-				if (firstequals == -1)
-					firstequals = sb.length();
-				goto appendchar;
-			case '[':
-				if (c == 0)
-					startswithbracket = true;
-				goto appendchar;
-			case ']':
-				endbracket = sb.length();
-				goto appendchar;
-			case ';': // comment character, stop processing this line
-				c = line.length();
-				break;
-			default:
-appendchar:
-				sb += line[c];
-				break;
-		}
-		line = sb;
-		if (startswithbracket && endbracket != -1)
-		{
-			line = line.substr(1, endbracket - 1);
-			result[line] = IniGroupStr();
-			curent = &result[line];
-		}
-		else if (!line.empty())
-		{
-			string key;
-			string value = "";
-			if (firstequals > -1)
-			{
-				key = line.substr(0, firstequals);
-				value = line.substr(firstequals + 1);
-			}
-			else
-				key = line;
-			(*curent).Element[key] = value;
-		}
-	}
-	return result;
-}
-
-#pragma endregion
 
 HMODULE myhandle;
 HMODULE datadllhandle;
@@ -189,8 +107,10 @@ ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
 	const char *repfn = _ReplaceFile(combinedpath);
 	if (PathFileExistsA(repfn))
 	{
-		ifstream str(repfn);
-		unordered_map<string, string> indexes = LoadINI(str)[""].Element;
+		FILE *f_mod_ini = fopen(repfn, "r");
+		unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
+		fclose(f_mod_ini);
+		const IniGroup *indexes = ini->getGroup("");
 		strncpy_s(dir, repfn, MAX_PATH);
 		PathRemoveFileSpecA(dir);
 		WIN32_FIND_DATAA data;
@@ -206,7 +126,7 @@ ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
 			ModelInfo modelfile(combinedpath);
 			files.push_back(modelfile);
 			markobjswapped(modelfile.getmodel());
-			for (auto i = indexes.cbegin(); i != indexes.cend(); i++)
+			for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
 			{
 				void *found = modelfile.getdata(i->second);
 				if (found != nullptr)
@@ -795,12 +715,26 @@ __declspec(naked) void Load2PIntroPos_r()
 	}
 }
 
+static const char *mainsavepath = "resource/gd_PC/SAVEDATA";
+static const char *GetMainSavePath()
+{
+	return mainsavepath;
+}
+
+static const char *chaosavepath = "resource/gd_PC/SAVEDATA";
+static const char *GetChaoSavePath()
+{
+	return chaosavepath;
+}
+
 const HelperFunctions helperFunctions = {
 	ModLoaderVer,
 	RegisterStartPosition,
 	ClearStartPositionList,
 	Register2PIntroPosition,
-	Clear2PIntroPositionList
+	Clear2PIntroPositionList,
+	GetMainSavePath,
+	GetChaoSavePath
 };
 
 void __cdecl InitMods(void)
@@ -812,32 +746,28 @@ void __cdecl InitMods(void)
 		ExitProcess(1);
 	}
 	HookTheAPI();
-	ifstream str("mods\\SA2ModLoader.ini");
-	if (!str.is_open())
+	FILE *f_ini = _wfopen(L"mods\\SA2ModLoader.ini", L"r");
+	if (!f_ini)
 	{
 		MessageBox(NULL, L"mods\\SA2ModLoader.ini could not be read!", L"SA2 Mod Loader", MB_ICONWARNING);
 		return;
 	}
-	IniDictionary ini = LoadINI(str);
-	str.close();
-	settings = ini[""].Element;
+	unique_ptr<IniFile> ini(new IniFile(f_ini));
+	fclose(f_ini);
 	char pathbuf[MAX_PATH];
 	GetModuleFileNameA(NULL, pathbuf, MAX_PATH);
 	string exefilename = pathbuf;
 	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
-	string item = settings["DebugConsole"];
-	transform(item.begin(), item.end(), item.begin(), ::tolower);
-	if (item == "true")
+	const IniGroup *settings = ini->getGroup("");
+	if (settings->getBool("DebugConsole"))
 	{
 		AllocConsole();
 		SetConsoleTitle(L"SA2 Mod Loader output");
 		freopen("CONOUT$", "wb", stdout);
 		dbgConsole = true;
 	}
-	item = settings["DebugFile"];
-	transform(item.begin(), item.end(), item.begin(), ::tolower);
-	if (item == "true")
+	if (settings->getBool("DebugFile"))
 	{
 		dbgstr = ofstream("mods\\SA2ModLoader.log", ios_base::ate | ios_base::app);
 		dbgFile = dbgstr.is_open();
@@ -862,80 +792,98 @@ void __cdecl InitMods(void)
 	InitializeStartPositionLists();
 	Initialize2PIntroPositionLists();
 
+	vector<std::pair<ModInitFunc, string>> initfuncs;
+
+	string _mainsavepath, _chaosavepath;
+
 	// It's mod loading time!
 	PrintDebug("Loading mods...");
 	char key[8];
 	for (int i = 1; i < 999; i++)
 	{
 		sprintf_s(key, "Mod%d", i);
-		if (settings.find(key) == settings.end())
+		if (!settings->hasKey(key))
 			break;
-		string dir = "mods\\" + settings[key];
-		ifstream mstr(dir + "\\mod.ini");
-		if (!mstr.is_open())
+		const string mod_dir = "mods\\" + settings->getString(key);
+		const string mod_inifile = mod_dir + "\\mod.ini";
+		FILE *f_mod_ini = fopen(mod_inifile.c_str(), "r");
+		if (!f_mod_ini)
 		{
-			PrintDebug("Could not open file mod.ini in \"mods\\%s\".", settings[key].c_str());
+			PrintDebug("Could not open file mod.ini in \"mods\\%s\".\n", mod_dir.c_str());
 			continue;
 		}
-		IniDictionary modini = LoadINI(mstr);
-		IniGroup modinfo = modini[""].Element;
-		PrintDebug("%d. %s", i, modinfo["Name"].c_str());
-		IniDictionary::iterator gr = modini.find("IgnoreFiles");
-		if (gr != modini.end())
+		unique_ptr<IniFile> ini_mod(new IniFile(f_mod_ini));
+		fclose(f_mod_ini);
+
+		const IniGroup *modinfo = ini_mod->getGroup("");
+		const string mod_name = modinfo->getString("Name");
+		PrintDebug("%d. %s\n", i, mod_name.c_str());
+
+		if (ini_mod->hasGroup("IgnoreFiles"))
 		{
-			IniGroup replaces = gr->second.Element;
-			for (IniGroup::iterator it = replaces.begin(); it != replaces.end(); it++)
+			const IniGroup *group = ini_mod->getGroup("IgnoreFiles");
+			auto data = group->data();
+			for (unordered_map<string, string>::const_iterator iter = data->begin();
+				iter != data->end(); ++iter)
 			{
-				filemap[NormalizePath(it->first)] = "nullfile";
-				PrintDebug("Ignored file: %s", it->first.c_str());
+				filemap[iter->first] = "nullfile";
+				PrintDebug("Ignored file: %s\n", iter->first.c_str());
 			}
 		}
-		gr = modini.find("ReplaceFiles");
-		if (gr != modini.end())
+
+		if (ini_mod->hasGroup("ReplaceFiles"))
 		{
-			IniGroup replaces = gr->second.Element;
-			for (IniGroup::iterator it = replaces.begin(); it != replaces.end(); it++)
-				filereplaces[NormalizePath(it->first)] = NormalizePath(it->second);
-		}
-		gr = modini.find("SwapFiles");
-		if (gr != modini.end())
-		{
-			IniGroup replaces = gr->second.Element;
-			for (IniGroup::iterator it = replaces.begin(); it != replaces.end(); it++)
+			const IniGroup *group = ini_mod->getGroup("ReplaceFiles");
+			auto data = group->data();
+			for (unordered_map<string, string>::const_iterator iter = data->begin();
+				iter != data->end(); ++iter)
 			{
-				filereplaces[NormalizePath(it->first)] = NormalizePath(it->second);
-				filereplaces[NormalizePath(it->second)] = NormalizePath(it->first);
+				filereplaces[NormalizePath(iter->first)] =
+					NormalizePath(iter->second);
 			}
 		}
-		
+
+		if (ini_mod->hasGroup("SwapFiles"))
+		{
+			const IniGroup *group = ini_mod->getGroup("SwapFiles");
+			auto data = group->data();
+			for (unordered_map<string, string>::const_iterator iter = data->begin();
+				iter != data->end(); ++iter)
+			{
+				filereplaces[NormalizePath(iter->first)] =
+					NormalizePath(iter->second);
+				filereplaces[NormalizePath(iter->second)] =
+					NormalizePath(iter->first);
+			}
+		}
+
 		// Check for gd_pc replacements
-		string sysfol = dir + "\\gd_pc";
+		string sysfol = mod_dir + "\\gd_pc";
 		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
 		if (GetFileAttributesA(sysfol.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
 			ScanFolder(sysfol, sysfol.length() + 1);
 
 		// Check if a custom EXE is required.
-		if (modinfo.find("EXEFile") != modinfo.end())
+		if (modinfo->hasKeyNonEmpty("EXEFile"))
 		{
-			string modexe = modinfo["EXEFile"];
+			string modexe = modinfo->getString("EXEFile");
 			transform(modexe.begin(), modexe.end(), modexe.begin(), ::tolower);
 
 			// Are we using the correct EXE?
 			if (modexe.compare(exefilename) != 0)
 			{
-				const char *msg = ("Mod \"" + modinfo["Name"] + "\" should be run from \"" + modexe + "\", but you are running \"" + exefilename + "\".\n\nContinue anyway?").c_str();
+				const char *msg = ("Mod \"" + modinfo->getString("Name") + "\" should be run from \"" + modexe + "\", but you are running \"" + exefilename + "\".\n\nContinue anyway?").c_str();
 				if (MessageBoxA(NULL, msg, "SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
 					ExitProcess(1);
 			}
 		}
 
 		// Check if the mod has a DLL file.
-		string filename = modinfo["DLLFile"];
-		if (!filename.empty())
+		if (modinfo->hasKeyNonEmpty("DLLFile"))
 		{
 			// Prepend the mod directory.
-			filename = dir + "\\" + filename;
-			HMODULE module = LoadLibraryA(filename.c_str());
+			string dll_filename = mod_dir + '\\' + modinfo->getString("DLLFile");
+			HMODULE module = LoadLibraryA(dll_filename.c_str());
 			if (module)
 			{
 				const ModInfo *info = (ModInfo *)GetProcAddress(module, "SA2ModInfo");
@@ -963,12 +911,12 @@ void __cdecl InitMods(void)
 					}
 					if (info->Init)
 					{
-						info->Init(dir.c_str(), helperFunctions);
+						initfuncs.push_back({ info->Init, mod_dir });
 					}
 
 					const ModInitFunc init = (const ModInitFunc)GetProcAddress(module, "Init");
 					if (init)
-						init(dir.c_str(), helperFunctions);
+						initfuncs.push_back({ init, mod_dir });
 
 					const PatchList* patches = (const PatchList*)GetProcAddress(module, "Patches");
 					if (patches)
@@ -1003,14 +951,20 @@ void __cdecl InitMods(void)
 				}
 				else
 				{
-					PrintDebug("File \"%s\" is not a valid mod file.", filename.c_str());
+					PrintDebug("File \"%s\" is not a valid mod file.", dll_filename.c_str());
 				}
 			}
 			else
 			{
-				PrintDebug("Failed loading file \"%s\".", filename.c_str());
+				PrintDebug("Failed loading file \"%s\".", dll_filename.c_str());
 			}
 		}
+
+		if (modinfo->getBool("RedirectMainSave"))
+			_mainsavepath = mod_dir + "\\SAVEDATA";
+
+		if (modinfo->getBool("RedirectChaoSave"))
+			_chaosavepath = mod_dir + "\\SAVEDATA";
 	}
 
 	// Replace filenames. ("ReplaceFiles", "SwapFiles")
@@ -1029,10 +983,54 @@ void __cdecl InitMods(void)
 		}
 	}
 
+	for (unsigned int i = 0; i < initfuncs.size(); i++)
+		initfuncs[i].first(initfuncs[i].second.c_str(), helperFunctions);
+
 	if (StartPositionsModified)
 		WriteJump((void *)LoadStartPositionPtr, LoadStartPosition_r);
 	if (_2PIntroPositionsModified)
 		WriteJump((void *)Load2PIntroPosPtr, Load2PIntroPos_r);
+
+	if (!_mainsavepath.empty())
+	{
+		char *buf = new char[_mainsavepath.size() + 1];
+		strncpy(buf, _mainsavepath.c_str(), _mainsavepath.size() + 1);
+		mainsavepath = buf;
+		string tmp = "./" + _mainsavepath + "/SONIC2B__S%02d";
+		buf = new char[tmp.size() + 1];
+		strncpy(buf, tmp.c_str(), tmp.size() + 1);
+		WriteData((char **)0x445312, buf);
+		WriteData((char **)0x689684, buf);
+		WriteData((char **)0x689AA9, buf);
+		WriteData((char **)0x689D22, buf);
+		WriteData((char **)0x689D4D, buf);
+		tmp = "./" + _mainsavepath + "/SONIC2B__D%02d";
+		buf = new char[tmp.size() + 1];
+		strncpy(buf, tmp.c_str(), tmp.size() + 1);
+		WriteData((char **)0x445332, buf);
+	}
+
+	if (!_chaosavepath.empty())
+	{
+		char *buf = new char[_chaosavepath.size() + 1];
+		strncpy(buf, _chaosavepath.c_str(), _chaosavepath.size() + 1);
+		chaosavepath = buf;
+		string tmp = "./" + _chaosavepath + "/SONIC2B__ALF";
+		buf = new char[tmp.size() + 1];
+		strncpy(buf, tmp.c_str(), tmp.size() + 1);
+		WriteData((char **)0x457027, buf);
+		WriteData((char **)0x52DE84, buf);
+		WriteData((char **)0x52DF48, buf);
+		WriteData((char **)0x52E063, buf);
+		WriteData((char **)0x52E2A8, buf);
+		WriteData((char **)0x52FEC7, buf);
+		WriteData((char **)0x5323A1, buf);
+		WriteData((char **)0x5323B5, buf);
+		WriteData((char **)0x5324A2, buf);
+		WriteData((char **)0x53257E, buf);
+		WriteData((char **)0x532595, buf);
+		WriteData((char **)0x532672, buf);
+	}
 
 	PrintDebug("Mod loading finished.");
 

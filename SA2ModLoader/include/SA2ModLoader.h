@@ -12,7 +12,7 @@
 
 // ModInfo
 
-static const int ModLoaderVer = 3;
+static const int ModLoaderVer = 4;
 
 struct PatchInfo
 {
@@ -56,7 +56,25 @@ struct HelperFunctions_v3
 	void (__cdecl *Clear2PIntroPositionList)(unsigned char character);
 };
 
-typedef HelperFunctions_v3 HelperFunctions;
+struct HelperFunctions_v4
+{
+	// The version of the structure.
+	int Version;
+	// Registers a start position for a character.
+	void(__cdecl *RegisterStartPosition)(unsigned char character, const StartPosition &position);
+	// Clears the list of registered start positions for a character.
+	void(__cdecl *ClearStartPositionList)(unsigned char character);
+	// Registers a 2P intro position for a character.
+	void(__cdecl *Register2PIntroPosition)(unsigned char character, const LevelEndPosition &position);
+	// Clears the list of registered 2P intro positions for a character.
+	void(__cdecl *Clear2PIntroPositionList)(unsigned char character);
+	// Returns the path where main game save files are stored.
+	const char *(__cdecl *GetMainSavePath)();
+	// Returns the path where Chao save files are stored.
+	const char *(__cdecl *GetChaoSavePath)();
+};
+
+typedef HelperFunctions_v4 HelperFunctions;
 
 typedef void(__cdecl *ModInitFunc)(const char *path, const HelperFunctions &helperFunctions);
 
