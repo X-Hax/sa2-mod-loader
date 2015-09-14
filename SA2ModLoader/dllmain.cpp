@@ -1008,6 +1008,20 @@ void __cdecl InitMods(void)
 		buf = new char[tmp.size() + 1];
 		strncpy(buf, tmp.c_str(), tmp.size() + 1);
 		WriteData((char **)0x445332, buf);
+		tmp = "./" + _mainsavepath + "/SONIC2B__S01";
+		buf = new char[tmp.size() + 1];
+		strncpy(buf, tmp.c_str(), tmp.size() + 1);
+		WriteData((char **)0x445317, buf);
+		WriteData((char **)0x689689, buf);
+		WriteData((char **)0x689AAE, buf);
+		WriteData((char **)0x689D27, buf);
+		WriteData((char **)0x689D52, buf);
+		WriteData((char **)0x173D070, buf);
+		tmp = "./" + _mainsavepath + "/SONIC2B__D01";
+		buf = new char[tmp.size() + 1];
+		strncpy(buf, tmp.c_str(), tmp.size() + 1);
+		WriteData((char **)0x445337, buf);
+		WriteData((char **)0x173D07C, buf);
 	}
 
 	if (!_chaosavepath.empty())
