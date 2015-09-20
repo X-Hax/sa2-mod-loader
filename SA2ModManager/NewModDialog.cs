@@ -20,19 +20,25 @@ namespace SA2ModManager
 			{
 				try
 				{
-
 					if (!Directory.Exists(moddir))
 					{
 						Directory.CreateDirectory(moddir);
 
+						if (checkRedirectMainSave.Checked || checkRedirectChaoSave.Checked)
+							Directory.CreateDirectory(Path.Combine(moddir, "SAVEDATA"));
+
 						if (checkOpenFolder.Checked)
 							System.Diagnostics.Process.Start(moddir);
 
-						var newMod = new ModTemplate();
-
-						newMod.Name = textModName.Text;
-						newMod.Author = textModAuthor.Text;
-						newMod.Description = textModDescription.Text;
+						ModInfo newMod = new ModInfo
+						{
+							Name				= textModName.Text,
+							Author				= textModAuthor.Text,
+							Description			= textModDescription.Text,
+							Version				= textVersion.Text,
+							RedirectMainSave	= checkRedirectMainSave.Checked,
+							RedirectChaoSave	= checkRedirectChaoSave.Checked
+						};
 
 						IniFile.Serialize(newMod, Path.Combine(moddir, "mod.ini"));
 
@@ -49,7 +55,7 @@ namespace SA2ModManager
 				}
 				catch (Exception error)
 				{
-					MessageBox.Show(this, error.ToString(), "OH NOES", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(this, error.Message, "Mod Creation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
 			else
@@ -58,7 +64,7 @@ namespace SA2ModManager
 			}
 		}
 
-		string ValidateFilename(string filename)
+		static string ValidateFilename(string filename)
 		{
 			string result = filename;
 
@@ -67,12 +73,5 @@ namespace SA2ModManager
 
 			return result;
 		}
-	}
-
-	class ModTemplate
-	{
-		public string Name;
-		public string Description;
-		public string Author;
 	}
 }
