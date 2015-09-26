@@ -149,7 +149,7 @@ struct CharObj2
 {
 	char PlayerNum;
 	char CharID;
-	char field_2;
+	char Costume;
 	char CharID2;
 	char ActionWindowItems[8];
 	char ActionWindowItemCount;
