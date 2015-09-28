@@ -117,8 +117,8 @@ static inline char IsByteswapped(void *a1)
 	__asm
 	{
 		mov esi, [a1]
-			call IsByteswappedPtr
-			mov result, al
+		call IsByteswappedPtr
+		mov result, al
 	}
 	return result;
 }
@@ -131,11 +131,11 @@ static inline signed int LoadStartPosition(int character, Vertex *position, Rota
 	__asm
 	{
 		push[rotation]
-			mov edi, [position]
-			mov ecx, [character]
-			call LoadStartPositionPtr
-			add esp, 4
-			mov result, eax
+		mov edi, [position]
+		mov ecx, [character]
+		call LoadStartPositionPtr
+		add esp, 4
+		mov result, eax
 	}
 	return result;
 }
@@ -147,7 +147,7 @@ static inline void InitPlayer(int a1)
 	__asm
 	{
 		mov eax, [a1]
-			call InitPlayerPtr
+		call InitPlayerPtr
 	}
 }
 
@@ -158,7 +158,7 @@ static inline void Load2PIntroPos(int a1)
 	__asm
 	{
 		mov eax, [a1]
-			call Load2PIntroPosPtr
+		call Load2PIntroPosPtr
 	}
 }
 
@@ -170,8 +170,8 @@ static inline signed int LoadEndPosition(int playerNum)
 	__asm
 	{
 		mov eax, [playerNum]
-			call LoadEndPositionPtr
-			mov result, eax
+		call LoadEndPositionPtr
+		mov result, eax
 	}
 	return result;
 }
@@ -185,7 +185,7 @@ static inline void PlayMusic(const char *song)
 	__asm
 	{
 		mov edi, [song]
-			call PlayMusicPtr
+		call PlayMusicPtr
 	}
 }
 static const void *const PlayJinglePtr = (void*)0x00443480;
@@ -195,8 +195,8 @@ static inline void PlayJingle(int a1, const char *song)
 	__asm
 	{
 		mov ecx, [a1]
-			mov ebx, [song]
-			call PlayJinglePtr
+		mov ebx, [song]
+		call PlayJinglePtr
 	}
 }
 static const void *const PlayMusicOncePtr = (void*)0x00442EF0;
@@ -207,8 +207,8 @@ static inline void PlayMusicOnce(void *a1, const char *song)
 	__asm
 	{
 		mov ecx, [a1]
-			mov edi, [song]
-			call PlayMusicOncePtr
+		mov edi, [song]
+		call PlayMusicOncePtr
 	}
 }
 static const void *const _PlayMusicOncePtr = (void*)0x00442E60;
@@ -219,7 +219,7 @@ static inline void _PlayMusicOnce(const char *song)
 	__asm
 	{
 		mov edi, [song]
-			call _PlayMusicOncePtr
+		call _PlayMusicOncePtr
 	}
 }
 // Immediately changes the music to the specified song.
@@ -239,10 +239,10 @@ static inline signed int PlayVoice(int a1, int a2)
 	__asm
 	{
 		push[a2]
-			mov edx, [a1]
-			call PlayVoicePtr
-			add esp, 4
-			mov result, eax
+		mov edx, [a1]
+		call PlayVoicePtr
+		add esp, 4
+		mov result, eax
 	}
 	return result;
 }
@@ -254,8 +254,8 @@ static inline void AddLives(char a1, __int16 a2)
 	__asm
 	{
 		mov bx, [a2]
-			mov al, [a1]
-			call AddLivesPtr
+		mov al, [a1]
+		call AddLivesPtr
 	}
 }
 
@@ -266,8 +266,8 @@ static inline void AddRings(char playerNum, int numRings)
 	__asm
 	{
 		mov edx, [numRings]
-			mov al, [playerNum]
-			call AddRingsPtr
+		mov al, [playerNum]
+		call AddRingsPtr
 	}
 }
 
@@ -279,8 +279,8 @@ static inline ModelIndex * LoadMDLFile(char *filename)
 	__asm
 	{
 		mov eax, [filename]
-			call LoadMDLFilePtr
-			mov result, eax
+		call LoadMDLFilePtr
+		mov result, eax
 	}
 	return result;
 }
@@ -292,7 +292,7 @@ static inline void ReleaseMDLFile(ModelIndex *a1)
 	__asm
 	{
 		mov esi, [a1]
-			call ReleaseMDLFilePtr
+		call ReleaseMDLFilePtr
 	}
 }
 
@@ -304,8 +304,8 @@ static inline AnimationIndex * LoadMTNFile(char *filename)
 	__asm
 	{
 		mov eax, [filename]
-			call LoadMTNFilePtr
-			mov result, eax
+		call LoadMTNFilePtr
+		mov result, eax
 	}
 	return result;
 }
@@ -318,8 +318,8 @@ static inline signed int LoadDeathZones(DeathZone *a1)
 	__asm
 	{
 		mov ebx, [a1]
-			call LoadDeathZonesPtr
-			mov result, eax
+		call LoadDeathZonesPtr
+		mov result, eax
 	}
 	return result;
 }
@@ -331,7 +331,7 @@ static inline void KillCharacter(int playerNum)
 	__asm
 	{
 		mov ebx, [playerNum]
-			call KillCharacterPtr
+		call KillCharacterPtr
 	}
 }
 
@@ -343,14 +343,14 @@ static inline ObjectMaster * LoadObject2(int list, char *name, void(__cdecl *mai
 	__asm
 	{
 		xor eax, eax
-			mov al, [flags]
-			push eax
-			mov edi, [mainSub]
-			mov eax, [name]
-			mov ecx, [list]
-			call LoadObject2Ptr
-			add esp, 4
-			mov result, eax
+		mov al, [flags]
+		push eax
+		mov edi, [mainSub]
+		mov eax, [name]
+		mov ecx, [list]
+		call LoadObject2Ptr
+		add esp, 4
+		mov result, eax
 	}
 	return result;
 }
@@ -363,11 +363,11 @@ static inline ObjectMaster * LoadObject(void(__cdecl *mainSub)(ObjectMaster *), 
 	__asm
 	{
 		push[name]
-			mov esi, [list]
-			mov edi, [mainSub]
-			call LoadObjectPtr
-			add esp, 4
-			mov result, eax
+		mov esi, [list]
+		mov edi, [mainSub]
+		call LoadObjectPtr
+		add esp, 4
+		mov result, eax
 	}
 	return result;
 }
@@ -380,14 +380,14 @@ static inline signed int InitCollision(ObjectMaster *a1, void *a2, int count, un
 	__asm
 	{
 		xor eax, eax
-			mov al, [a4]
-			push eax
-			push[count]
-			push[a2]
-			mov eax, [a1]
-			call InitCollisionPtr
-			add esp, 12
-			mov result, eax
+		mov al, [a4]
+		push eax
+		push[count]
+		push[a2]
+		mov eax, [a1]
+		call InitCollisionPtr
+		add esp, 12
+		mov result, eax
 	}
 	return result;
 }
@@ -400,11 +400,11 @@ static inline void * LoadSETFile(int a1, char *name_s, char *name_u)
 	__asm
 	{
 		push[name_u]
-			mov ecx, [name_s]
-			mov eax, [a1]
-			call LoadSETFilePtr
-			add esp, 4
-			mov result, eax
+		mov ecx, [name_s]
+		mov eax, [a1]
+		call LoadSETFilePtr
+		add esp, 4
+		mov result, eax
 	}
 	return result;
 }
@@ -417,12 +417,12 @@ static inline ObjectMaster * SpawnBomb(ObjectMaster *parent, Vertex *position, i
 	__asm
 	{
 		push[a2]
-			push[a1]
-			mov ebx, [position]
-			mov eax, [parent]
-			call SpawnBombPtr
-			add esp, 8
-			mov result, eax
+		push[a1]
+		mov ebx, [position]
+		mov eax, [parent]
+		call SpawnBombPtr
+		add esp, 8
+		mov result, eax
 	}
 	return result;
 }
@@ -434,7 +434,7 @@ static inline void WriteChaoSaveChecksum(char *a1)
 	__asm
 	{
 		mov esi, [a1]
-			call WriteChaoSaveChecksumPtr
+		call WriteChaoSaveChecksumPtr
 	}
 }
 
@@ -445,10 +445,10 @@ static inline void LoadChaoKey(Vertex *a1, float a2, float a3)
 	__asm
 	{
 		push[a3]
-			push[a2]
-			mov ebx, [a1]
-			call LoadChaoKeyPtr
-			add esp, 8
+		push[a2]
+		mov ebx, [a1]
+		call LoadChaoKeyPtr
+		add esp, 8
 	}
 }
 
@@ -460,9 +460,9 @@ static inline bool Knuckles_LevelBounds(CharObj1 *a1, KnucklesCharObj2 *a2)
 	__asm
 	{
 		mov ecx, [a2]
-			mov eax, [a1]
-			call Knuckles_LevelBoundsPtr
-			mov result, al
+		mov eax, [a1]
+		call Knuckles_LevelBoundsPtr
+		mov result, al
 	}
 	return result;
 }
@@ -474,7 +474,7 @@ static inline void LoadEggman(int playerNum)
 	__asm
 	{
 		mov eax, [playerNum]
-			call LoadEggmanPtr
+		call LoadEggmanPtr
 	}
 }
 
@@ -485,8 +485,8 @@ static inline void FreeMovement_MechEggman(CharObj2Base *a1, CharObj1 *a2)
 	__asm
 	{
 		mov edi, [a2]
-			mov eax, [a1]
-			call FreeMovement_MechEggmanPtr
+		mov eax, [a1]
+		call FreeMovement_MechEggmanPtr
 	}
 }
 
@@ -497,7 +497,7 @@ static inline void LoadTails(int playerNum)
 	__asm
 	{
 		mov eax, [playerNum]
-			call LoadTailsPtr
+		call LoadTailsPtr
 	}
 }
 
@@ -508,8 +508,8 @@ static inline void FreeMovement_Tails(CharObj2Base *a1, CharObj1 *a2)
 	__asm
 	{
 		mov edi, [a2]
-			mov eax, [a1]
-			call FreeMovement_TailsPtr
+		mov eax, [a1]
+		call FreeMovement_TailsPtr
 	}
 }
 
@@ -521,8 +521,23 @@ static inline void *LoadPRSFile(const char *filename)
 	__asm
 	{
 		mov eax, [filename]
-			call LoadPRSFilePtr
-			mov result, eax
+		call LoadPRSFilePtr
+		mov result, eax
+	}
+	return result;
+}
+
+//double __usercall CheckDistance@<st0>(NJS_VECTOR *a1@<eax>, NJS_VECTOR *a2@<ecx>)
+static const void* const CheckDistancePtr = (void*)0x0077FBD0;
+static inline double CheckDistance(NJS_VECTOR* a1, NJS_VECTOR* a2)
+{
+	double result;
+	__asm
+	{
+		mov eax, [a1]
+		mov ecx, [a2]
+		call CheckDistancePtr
+		fstp result
 	}
 	return result;
 }
