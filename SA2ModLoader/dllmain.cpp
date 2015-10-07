@@ -503,7 +503,7 @@ void ClearStartPositionList(unsigned char character)
 	}
 }
 
-int __cdecl LoadStartPosition_ri(int playerNum, Vertex *position, Rotation *rotation)
+int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *rotation)
 {
 	ObjectMaster *v1 = MainCharacter[playerNum];
 	if (position)
@@ -548,7 +548,7 @@ int __cdecl LoadStartPosition_ri(int playerNum, Vertex *position, Rotation *rota
 			rotation->y = *(&v5->Rotation1P + v6);
 		if ( position )
 		{
-			Vertex *v8 = &(&v5->Position1P)[v6];
+			NJS_VECTOR *v8 = &(&v5->Position1P)[v6];
 			position->x = v8->x;
 			position->y = v8->y;
 			position->z = v8->z;
@@ -646,13 +646,13 @@ void Clear2PIntroPositionList(unsigned char character)
 
 DataArray(char, byte_1DE4664, 0x1DE4664, 2);
 DataPointer(void *, off_1DE95E0, 0x1DE95E0);
-FunctionPointer(void, sub_46DC70, (int a1, Vertex *a2, char a3), 0x46DC70);
+FunctionPointer(void, sub_46DC70, (int a1, NJS_VECTOR *a2, char a3), 0x46DC70);
 
 void __cdecl Load2PIntroPos_ri(int playerNum)
 {
 	ObjectMaster *v1 = MainCharacter[playerNum];
 	CharObj1 *v4;
-	Vertex *v8;
+	NJS_VECTOR *v8;
 	if (v1)
 	{
 		v4 = v1->Data1;
@@ -668,11 +668,11 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 					LevelEndPosition *v5 = &iter2->second;
 					int v6 = playerNum != 0;
 					v4->Rotation.y = *(&v5->Mission2YRotation + v6);
-					Vertex *v12 = &(&v5->Mission2Position)[v6];
+					NJS_VECTOR *v12 = &(&v5->Mission2Position)[v6];
 					v4->Position = *v12;
 					v8 = &v4->Position;
 					*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
-					v3->field_1B4 = v4->Position.y - 10.0f;
+					*(float*)&v3->field_1A0[5] = v4->Position.y - 10.0f;
 					goto LABEL_16;
 				}
 			}
@@ -686,15 +686,15 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 LABEL_16:
 	sub_46DC70(playerNum, v8, 0);
 	*((char *)v4->field_2C->dwordC + 2) |= 0x70u;
-	*(int *)&MainCharObj2[playerNum]->field_6C[28] = 0;
+	*(int *)&MainCharObj2[playerNum]->field_70[6] = 0;
 	byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
 	CharObj2 *v9 = MainCharObj2[playerNum];
 	float *v10 = (float *)*(&off_1DE95E0 + playerNum);
 	if (v9)
 	{
-		*(float *)&v9->field_6C[0] = 0.0;
-		v9->VSpeed = 0.0;
-		v9->HSpeed = 0.0;
+		v9->Speed.z = 0.0;
+		v9->Speed.y = 0.0;
+		v9->Speed.x = 0.0;
 	}
 	if (v10)
 	{

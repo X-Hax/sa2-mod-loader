@@ -7,8 +7,8 @@
 FunctionPointer(int, PrintDebug, (char *format, ...), 0x426740);
 FunctionPointer(signed int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 VoidFunc(LoadCharacters, 0x43D630);
-FastcallFunctionPointer(signed int, LoadTexturePack, (char *filename, TexList *texlist), 0x44C350);
-ThiscallFunctionPointer(TexList *, LoadCharTextures, (char *filename), 0x44C510);
+FastcallFunctionPointer(signed int, LoadTexturePack, (char *filename, NJS_TEXLIST *texlist), 0x44C350);
+ThiscallFunctionPointer(NJS_TEXLIST *, LoadCharTextures, (char *filename), 0x44C510);
 ObjectFunc(DeathZoneObject, 0x46AD50);
 FunctionPointer(bool, CheckBreakObject, (ObjectMaster *obj, ObjectMaster *other), 0x46EC00);
 ObjectFunc(DeleteObject_, 0x46F720);
@@ -40,8 +40,8 @@ FunctionPointer(void, Bomb_Main, (ObjectMaster *), 0x513830);
 VoidFunc(LoadSandOcean2PCharAnims, 0x51D020);
 VoidFunc(LoadChaomainModule, 0x52AB10);
 ObjectFunc(Chao_Main, 0x54FE20);
-FunctionPointer(ObjectMaster *, CreateChao, (ChaoData *chaoData, int a2, void *a3, Vertex *position, int yrot), 0x5501D0);
-FunctionPointer(ObjectMaster *, CreateChaoEgg, (const void *a1, ChaoData *chaoData, int a3, Vertex *position, int a5), 0x57B9C0);
+FunctionPointer(ObjectMaster *, CreateChao, (ChaoData *chaoData, int a2, void *a3, NJS_VECTOR *position, int yrot), 0x5501D0);
+FunctionPointer(ObjectMaster *, CreateChaoEgg, (const void *a1, ChaoData *chaoData, int a3, NJS_VECTOR *position, int a5), 0x57B9C0);
 VoidFunc(CityEscapeInit, 0x5DCD50);
 VoidFunc(LoadCityEscapeCharAnims, 0x5DDCF0);
 ObjectFunc(MusicChanger_Main, 0x5E2D70);
@@ -125,7 +125,7 @@ static inline char IsByteswapped(void *a1)
 
 // signed int __usercall<eax>(int character<ecx>, Vertex *position<edi>, Rotation *rotation)
 static const void *const LoadStartPositionPtr = (void*)0x43D8E0;
-static inline signed int LoadStartPosition(int character, Vertex *position, Rotation *rotation)
+static inline signed int LoadStartPosition(int character, NJS_VECTOR *position, Rotation *rotation)
 {
 	signed int result;
 	__asm
@@ -411,7 +411,7 @@ static inline void * LoadSETFile(int a1, char *name_s, char *name_u)
 
 // ObjectMaster *__usercall<eax>(ObjectMaster *parent<eax>, Vertex *position<ebx>, int a1, int a2)
 static const void *const SpawnBombPtr = (void*)0x513FE0;
-static inline ObjectMaster * SpawnBomb(ObjectMaster *parent, Vertex *position, int a1, int a2)
+static inline ObjectMaster * SpawnBomb(ObjectMaster *parent, NJS_VECTOR *position, int a1, int a2)
 {
 	ObjectMaster * result;
 	__asm
@@ -440,7 +440,7 @@ static inline void WriteChaoSaveChecksum(char *a1)
 
 // void __usercall(Vertex *a1<ebx>, float a2, float a3)
 static const void *const LoadChaoKeyPtr = (void*)0x6E9D10;
-static inline void LoadChaoKey(Vertex *a1, float a2, float a3)
+static inline void LoadChaoKey(NJS_VECTOR *a1, float a2, float a3)
 {
 	__asm
 	{

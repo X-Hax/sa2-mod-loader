@@ -1,10 +1,9 @@
 #pragma once
-
 #include "../ninja.h"
 
 // SA2 Structs
-typedef NJS_VECTOR Vertex;
-typedef NJS_TEXLIST TexList;
+
+typedef NJS_VECTOR Vector3;
 
 #pragma pack(push, 1)
 struct Rotation
@@ -51,8 +50,8 @@ struct CharObj1
 	char field_6;
 	char field_7;
 	Rotation Rotation;
-	Vertex Position;
-	Vertex Scale;
+	NJS_VECTOR Position;
+	NJS_VECTOR Scale;
 	struct_v5 *field_2C;
 };
 
@@ -180,7 +179,7 @@ struct SonicCharObj2 : CharObj2
 	char field_1B8[432];
 	short SpindashTimer;
 	char filler[42];
-	TexList *TextureList;
+	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 };
@@ -190,8 +189,8 @@ struct SonicCharObj2 : CharObj2
 struct KnucklesCharObj2 : CharObj2
 {
 	char field_1B8[568];
-	TexList *TextureList;
-	TexList *EffectTextureList;
+	NJS_TEXLIST *TextureList;
+	NJS_TEXLIST *EffectTextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 	char field_400[32];
@@ -202,7 +201,7 @@ struct KnucklesCharObj2 : CharObj2
 struct EggmanCharObj2 : CharObj2
 {
 	char field_1B8[424];
-	TexList *TextureList;
+	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 };
@@ -212,8 +211,8 @@ struct EggmanCharObj2 : CharObj2
 struct MechEggmanCharObj2 : CharObj2
 {
 	char field_1B8[652];
-	TexList *CommonTextureList;
-	TexList *TextureList;
+	NJS_TEXLIST *CommonTextureList;
+	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 };
@@ -223,7 +222,7 @@ struct MechEggmanCharObj2 : CharObj2
 struct TailsCharObj2 : CharObj2
 {
 	char field_1B8[504];
-	TexList *TextureList;
+	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 	char field_3BC[36];
@@ -234,7 +233,7 @@ struct TailsCharObj2 : CharObj2
 struct SuperSonicCharObj2 : CharObj2
 {
 	char field_1B8[440];
-	TexList *TextureList;
+	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
 };
@@ -245,8 +244,8 @@ struct SETEntry
 	__int16 XRot;
 	__int16 YRot;
 	__int16 ZRot;
-	Vertex Position;
-	Vertex Scale;
+	NJS_VECTOR Position;
+	NJS_VECTOR Scale;
 };
 
 struct ObjectMaster;
@@ -317,7 +316,7 @@ struct LevelItemData
 
 struct COL
 {
-	Vertex Center;
+	NJS_VECTOR Center;
 	float Radius;
 	NJS_OBJECT *Model;
 	int field_14;
@@ -337,7 +336,7 @@ struct LandTable
 	COL *COLList;
 	float *field_14;
 	char *TextureName;
-	TexList *TextureList;
+	NJS_TEXLIST *TextureList;
 };
 
 struct StartPosition
@@ -346,9 +345,9 @@ struct StartPosition
 	__int16 Rotation1P;
 	__int16 RotationP1;
 	__int16 RotationP2;
-	Vertex Position1P;
-	Vertex PositionP1;
-	Vertex PositionP2;
+	NJS_VECTOR Position1P;
+	NJS_VECTOR PositionP1;
+	NJS_VECTOR PositionP2;
 };
 
 struct StageSelectLevel
@@ -497,7 +496,7 @@ struct ChaoData
 struct TexPackInfo
 {
 	char *TexName;
-	TexList *TexList;
+	NJS_TEXLIST *NJS_TEXLIST;
 };
 
 struct LevelRankScores
@@ -530,8 +529,8 @@ struct LevelEndPosition
 	__int16 Mission2YRotation;
 	__int16 Mission3YRotation;
 	__int16 field_6;
-	Vertex Mission2Position;
-	Vertex Mission3Position;
+	NJS_VECTOR Mission2Position;
+	NJS_VECTOR Mission3Position;
 };
 
 struct CharacterSoundBank
