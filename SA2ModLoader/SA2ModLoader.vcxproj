@@ -82,9 +82,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="AnimationFile.h" />
     <ClInclude Include="CodeParser.hpp" />
     <ClInclude Include="Events.h" />

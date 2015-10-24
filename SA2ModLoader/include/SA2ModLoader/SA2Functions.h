@@ -273,9 +273,9 @@ static inline void AddRings(char playerNum, int numRings)
 
 // ModelIndex *__usercall<eax>(char *filename<eax>)
 static const void *const LoadMDLFilePtr = (void*)0x459590;
-static inline ModelIndex * LoadMDLFile(char *filename)
+static inline ModelIndex* LoadMDLFile(char *filename)
 {
-	ModelIndex * result;
+	ModelIndex* result;
 	__asm
 	{
 		mov eax, [filename]
@@ -298,9 +298,9 @@ static inline void ReleaseMDLFile(ModelIndex *a1)
 
 // AnimationIndex *__usercall<eax>(char *filename<eax>)
 static const void *const LoadMTNFilePtr = (void*)0x459740;
-static inline AnimationIndex * LoadMTNFile(char *filename)
+static inline AnimationIndex* LoadMTNFile(char *filename)
 {
-	AnimationIndex * result;
+	AnimationIndex* result;
 	__asm
 	{
 		mov eax, [filename]
@@ -325,21 +325,33 @@ static inline signed int LoadDeathZones(DeathZone *a1)
 }
 
 // void __usercall(int playerNum<ebx>)
-static const void *const KillCharacterPtr = (void*)0x46B110;
-static inline void KillCharacter(int playerNum)
+static const void *const KillPlayerPtr = (void*)0x46B110;
+static inline void KillPlayer(int playerNum)
 {
 	__asm
 	{
 		mov ebx, [playerNum]
-		call KillCharacterPtr
+		call KillPlayerPtr
+	}
+}
+
+// void __usercall(int playerNum@<eax>, float amount)
+static const void* const AddHPPtr = (void*)0x0046F4C0;
+static inline void AddHP(int playerNum, float amount)
+{
+	__asm
+	{
+		mov eax, [playerNum]
+		push amount
+		call AddHPPtr
 	}
 }
 
 // ObjectMaster *__usercall<eax>(int list<ecx>, char *name<eax>, void (__cdecl *mainSub)(ObjectMaster *)<edi>, char flags)
 static const void *const LoadObject2Ptr = (void*)0x46F610;
-static inline ObjectMaster * LoadObject2(int list, char *name, void(__cdecl *mainSub)(ObjectMaster *), char flags)
+static inline ObjectMaster* LoadObject2(int list, char *name, void(__cdecl *mainSub)(ObjectMaster *), char flags)
 {
-	ObjectMaster * result;
+	ObjectMaster* result;
 	__asm
 	{
 		xor eax, eax
@@ -357,9 +369,9 @@ static inline ObjectMaster * LoadObject2(int list, char *name, void(__cdecl *mai
 
 // ObjectMaster *__usercall<eax>(void (__cdecl *mainSub)(ObjectMaster *)<edi>, int list<esi>, char *name)
 static const void *const LoadObjectPtr = (void*)0x46F680;
-static inline ObjectMaster * LoadObject(void(__cdecl *mainSub)(ObjectMaster *), int list, char *name)
+static inline ObjectMaster* LoadObject(void(__cdecl *mainSub)(ObjectMaster *), int list, char *name)
 {
-	ObjectMaster * result;
+	ObjectMaster* result;
 	__asm
 	{
 		push[name]
@@ -394,9 +406,9 @@ static inline signed int InitCollision(ObjectMaster *a1, void *a2, int count, un
 
 // void *__usercall<eax>(int a1<eax>, char *name_s<ecx>, char *name_u)
 static const void *const LoadSETFilePtr = (void*)0x488DD0;
-static inline void * LoadSETFile(int a1, char *name_s, char *name_u)
+static inline void* LoadSETFile(int a1, char *name_s, char *name_u)
 {
-	void * result;
+	void* result;
 	__asm
 	{
 		push[name_u]
@@ -411,9 +423,9 @@ static inline void * LoadSETFile(int a1, char *name_s, char *name_u)
 
 // ObjectMaster *__usercall<eax>(ObjectMaster *parent<eax>, Vertex *position<ebx>, int a1, int a2)
 static const void *const SpawnBombPtr = (void*)0x513FE0;
-static inline ObjectMaster * SpawnBomb(ObjectMaster *parent, NJS_VECTOR *position, int a1, int a2)
+static inline ObjectMaster* SpawnBomb(ObjectMaster *parent, NJS_VECTOR *position, int a1, int a2)
 {
-	ObjectMaster * result;
+	ObjectMaster* result;
 	__asm
 	{
 		push[a2]
