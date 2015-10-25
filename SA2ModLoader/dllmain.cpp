@@ -685,7 +685,7 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 	v4->Position.x = 0.0;
 LABEL_16:
 	sub_46DC70(playerNum, v8, 0);
-	*((char *)v4->field_2C->dwordC + 2) |= 0x70u;
+	*((char *)&v4->field_2C->CollisionArray->field_2) |= 0x70u;
 	*(int *)&MainCharObj2[playerNum]->field_70[6] = 0;
 	byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
 	CharObj2 *v9 = MainCharObj2[playerNum];

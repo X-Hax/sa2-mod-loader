@@ -4,6 +4,7 @@
 // SA2 Structs
 
 typedef NJS_VECTOR Vector3;
+struct ObjectMaster;
 
 #pragma pack(push, 1)
 struct Rotation
@@ -11,16 +12,31 @@ struct Rotation
 	int x, y, z;
 };
 
-struct struct_v5
+struct CollisionData
+{
+	__int16 field_0;
+	__int16 field_2;
+	int field_4;
+	char gap_8[12];
+	float anonymous_1;
+	float anonymous_2;
+	float anonymous_3;
+	int field_20;
+	int field_24;
+	int field_28;
+	int field_2C;
+};
+
+struct CollisionInfo
 {
 	__int16 char0;
-	char gap_2[2];
-	short word4;
-	short word6;
+	__int16 field_2;
+	WORD word4;
+	WORD Count;
 	float f8;
-	void *dwordC;
-	char f10[140];
-	int dword9C;
+	CollisionData *CollisionArray;
+	BYTE f10[140];
+	ObjectMaster *Object;
 	__int16 field_A0;
 	__int16 field_A2;
 	int field_A4;
@@ -52,7 +68,7 @@ struct CharObj1
 	Rotation Rotation;
 	NJS_VECTOR Position;
 	NJS_VECTOR Scale;
-	struct_v5 *field_2C;
+	CollisionInfo *field_2C;
 };
 
 struct PhysicsData
@@ -248,7 +264,6 @@ struct SETEntry
 	NJS_VECTOR Scale;
 };
 
-struct ObjectMaster;
 typedef void(__cdecl *ObjectFuncPtr)(ObjectMaster *);
 
 struct SETObjectData
@@ -263,28 +278,27 @@ struct SETObjectData
 
 struct ObjectMaster
 {
-	ObjectMaster *PrevObject;
-	ObjectMaster *NextObject;
-	void *field_8;
-	void *field_C;
-	ObjectFuncPtr MainSub;
-	ObjectFuncPtr DisplaySub;
-	ObjectFuncPtr field_18;
-	ObjectFuncPtr field_1C;
-	void *field_20;
-	void *field_24;
-	void *field_28;
-	void *field_2C;
-	SETObjectData *field_30;
-	CharObj1 *Data1;
-	void *field_38;
-	void *field_3C;
-	CharObj2 *Data2;
-	char *Name;
-	void *field_48;
-	void *field_4C;
+	ObjectMaster* PrevObject;
+	ObjectMaster* NextObject;
+	ObjectMaster* Parent;
+	ObjectMaster* Child;
+	ObjectFuncPtr* MainSub;
+	ObjectFuncPtr* DisplaySub;
+	ObjectFuncPtr* DeleteSub;
+	void* field_1C;
+	void* field_20;
+	void* field_24;
+	void* field_28;
+	void* field_2C;
+	SETObjectData* field_30;
+	CharObj1* Data1;
+	void* field_38;
+	void* field_3C;
+	CharObj2Base* Data2;
+	char* Name;
+	int field_48;
+	void* field_4C;
 };
-
 struct ObjectListEntry
 {
 	char Flags;
