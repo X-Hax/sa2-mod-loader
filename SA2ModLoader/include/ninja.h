@@ -3,6 +3,10 @@
 	
 	COPYRIGHT (C) SEGA ENTERPRISES,LTD.
 */
+
+#ifndef SEGA_NINJA_H
+#define SEGA_NINJA_H
+
 // Chopped up by MainMemory for your convenience.
 #ifndef _TYPEDEF_Uint8
 #define _TYPEDEF_Uint8
@@ -1189,6 +1193,9 @@ typedef struct obj {
 	void            putchunkmodel(NJS_CNK_MODEL *value) { model = value; }
 	SA2B_Model      *getsa2bmodel() { return (SA2B_Model*)model; }
 	void            putsa2bmodel(SA2B_Model *value) { model = value; }
+
+#ifdef _MSC_VER
+	// MSVC-specific property emulation.
 	__declspec(property(get = getbasicmodel, put = putbasicmodel))
 	NJS_MODEL       *basicmodel;
 	__declspec(property(get = getbasicdxmodel, put = putbasicdxmodel))
@@ -1197,6 +1204,27 @@ typedef struct obj {
 	NJS_CNK_MODEL   *chunkmodel;
 	__declspec(property(get = getsa2bmodel, put = putsa2bmodel))
 	SA2B_Model      *sa2bmodel;
+#endif
+
+	int countanimated()
+	{
+		int result = (evalflags & NJD_EVAL_SKIP) == NJD_EVAL_SKIP ? 0 : 1;
+		if (child != nullptr)
+			result += child->countanimated();
+		if (sibling != nullptr)
+			result += sibling->countanimated();
+		return result;
+	}
+
+	int countmorph()
+	{
+		int result = (evalflags & NJD_EVAL_SHAPE_SKIP) == NJD_EVAL_SHAPE_SKIP ? 0 : 1;
+		if (child != nullptr)
+			result += child->countmorph();
+		if (sibling != nullptr)
+			result += sibling->countmorph();
+		return result;
+	}
 } NJS_OBJECT;
 
 /*
@@ -2235,9 +2263,7 @@ typedef struct {
 
 #endif /* _NINJA_DIR_H_ */
 
-#ifndef _NINJA_HELPERS_
-#define _NINJA_HELPERS_
-static Sint16 *NextChunk(Sint16 *chunk)
+static inline Sint16 *NextChunk(Sint16 *chunk)
 {
 	unsigned char v5 = (unsigned char)*chunk++;
 	if (v5 == NJD_CE)
@@ -2252,7 +2278,7 @@ static Sint16 *NextChunk(Sint16 *chunk)
 	return chunk;
 }
 
-static Sint16 *FindChunk(Sint16 *chunk, unsigned char type)
+static inline Sint16 *FindChunk(Sint16 *chunk, unsigned char type)
 {
 	chunk = NextChunk(chunk);
 	while (chunk != nullptr)
@@ -2263,7 +2289,7 @@ static Sint16 *FindChunk(Sint16 *chunk, unsigned char type)
 	return chunk;
 }
 
-static Sint32 *NextChunk(Sint32 *chunk)
+static inline Sint32 *NextChunk(Sint32 *chunk)
 {
 	unsigned char v5 = (unsigned char)*chunk++;
 	if (v5 == NJD_CE)
@@ -2278,7 +2304,7 @@ static Sint32 *NextChunk(Sint32 *chunk)
 	return chunk;
 }
 
-static Sint32 *FindChunk(Sint32 *chunk, unsigned char type)
+static inline Sint32 *FindChunk(Sint32 *chunk, unsigned char type)
 {
 	chunk = NextChunk(chunk);
 	while (chunk != nullptr)
@@ -2288,7 +2314,9 @@ static Sint32 *FindChunk(Sint32 *chunk, unsigned char type)
 			chunk = NextChunk(chunk);
 	return chunk;
 }
-#endif
+
 /*
  * End Of File
  */
+
+#endif /* SEGA_NINJA_H */
