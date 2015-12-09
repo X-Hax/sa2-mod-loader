@@ -344,6 +344,7 @@ static inline void AddHP(int playerNum, float amount)
 		mov eax, [playerNum]
 		push amount
 		call AddHPPtr
+		add esp, 4
 	}
 }
 
