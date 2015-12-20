@@ -225,7 +225,7 @@ namespace SA2ModManager
 		{
 			Save();
 			System.Diagnostics.Process.Start(loaderini.Mods.Select((item) => mods[item].EXEFile)
-				.FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "sonic2app.exe");
+				.FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "sonic2app.exe").WaitForInputIdle(10000);
 			Close();
 		}
 
