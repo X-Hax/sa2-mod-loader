@@ -121,9 +121,9 @@
 			this.modDownButton.AutoSize = true;
 			this.modDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modDownButton.Enabled = false;
-			this.modDownButton.Location = new System.Drawing.Point(350, 35);
+			this.modDownButton.Location = new System.Drawing.Point(349, 35);
 			this.modDownButton.Name = "modDownButton";
-			this.modDownButton.Size = new System.Drawing.Size(22, 23);
+			this.modDownButton.Size = new System.Drawing.Size(23, 23);
 			this.modDownButton.TabIndex = 2;
 			this.modDownButton.Text = "↓";
 			this.modDownButton.UseVisualStyleBackColor = true;
@@ -135,9 +135,9 @@
 			this.modUpButton.AutoSize = true;
 			this.modUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modUpButton.Enabled = false;
-			this.modUpButton.Location = new System.Drawing.Point(350, 6);
+			this.modUpButton.Location = new System.Drawing.Point(349, 6);
 			this.modUpButton.Name = "modUpButton";
-			this.modUpButton.Size = new System.Drawing.Size(22, 23);
+			this.modUpButton.Size = new System.Drawing.Size(23, 23);
 			this.modUpButton.TabIndex = 1;
 			this.modUpButton.Text = "↑";
 			this.modUpButton.UseVisualStyleBackColor = true;
@@ -156,7 +156,6 @@
 			this.modListView.FullRowSelect = true;
 			this.modListView.HideSelection = false;
 			this.modListView.Location = new System.Drawing.Point(3, 6);
-			this.modListView.MultiSelect = false;
 			this.modListView.Name = "modListView";
 			this.modListView.Size = new System.Drawing.Size(341, 240);
 			this.modListView.TabIndex = 0;
@@ -301,9 +300,9 @@
 			this.codeDownButton.AutoSize = true;
 			this.codeDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.codeDownButton.Enabled = false;
-			this.codeDownButton.Location = new System.Drawing.Point(350, 35);
+			this.codeDownButton.Location = new System.Drawing.Point(349, 35);
 			this.codeDownButton.Name = "codeDownButton";
-			this.codeDownButton.Size = new System.Drawing.Size(22, 23);
+			this.codeDownButton.Size = new System.Drawing.Size(23, 23);
 			this.codeDownButton.TabIndex = 5;
 			this.codeDownButton.Text = "↓";
 			this.codeDownButton.UseVisualStyleBackColor = true;
@@ -315,9 +314,9 @@
 			this.codeUpButton.AutoSize = true;
 			this.codeUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.codeUpButton.Enabled = false;
-			this.codeUpButton.Location = new System.Drawing.Point(350, 6);
+			this.codeUpButton.Location = new System.Drawing.Point(349, 6);
 			this.codeUpButton.Name = "codeUpButton";
-			this.codeUpButton.Size = new System.Drawing.Size(22, 23);
+			this.codeUpButton.Size = new System.Drawing.Size(23, 23);
 			this.codeUpButton.TabIndex = 4;
 			this.codeUpButton.Text = "↑";
 			this.codeUpButton.UseVisualStyleBackColor = true;
