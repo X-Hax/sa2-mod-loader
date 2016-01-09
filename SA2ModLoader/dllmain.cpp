@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <unordered_map>
 #include <list>
 #include <algorithm>
@@ -793,6 +794,7 @@ void __cdecl InitMods(void)
 	Initialize2PIntroPositionLists();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
+	vector<std::pair<string, string>> errors;
 
 	string _mainsavepath, _chaosavepath;
 
@@ -810,6 +812,7 @@ void __cdecl InitMods(void)
 		if (!f_mod_ini)
 		{
 			PrintDebug("Could not open file mod.ini in \"mods\\%s\".\n", mod_dir.c_str());
+			errors.push_back(std::pair<string, string>(mod_dir, "mod.ini missing"));
 			continue;
 		}
 		unique_ptr<IniFile> ini_mod(new IniFile(f_mod_ini));
@@ -884,7 +887,21 @@ void __cdecl InitMods(void)
 			// Prepend the mod directory.
 			string dll_filename = mod_dir + '\\' + modinfo->getString("DLLFile");
 			HMODULE module = LoadLibraryA(dll_filename.c_str());
-			if (module)
+
+			if (module == nullptr)
+			{
+				DWORD error = GetLastError();
+				LPSTR buffer;
+				size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+					NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buffer, 0, NULL);
+
+				string message(buffer, size);
+				LocalFree(buffer);
+
+				PrintDebug("Failed loading mod DLL \"%s\": %s\n", dll_filename.c_str(), message.c_str());
+				errors.push_back(std::pair<string, string>(mod_name, "DLL error - " + message));
+			}
+			else
 			{
 				const ModInfo *info = (ModInfo *)GetProcAddress(module, "SA2ModInfo");
 				if (info)
@@ -951,12 +968,9 @@ void __cdecl InitMods(void)
 				}
 				else
 				{
-					PrintDebug("File \"%s\" is not a valid mod file.", dll_filename.c_str());
+					PrintDebug("File \"%s\" is not a valid mod file.\n", dll_filename.c_str());
+					errors.push_back(std::pair<string, string>(mod_name, "Not a valid mod file."));
 				}
-			}
-			else
-			{
-				PrintDebug("Failed loading file \"%s\".", dll_filename.c_str());
 			}
 		}
 
@@ -965,6 +979,17 @@ void __cdecl InitMods(void)
 
 		if (modinfo->getBool("RedirectChaoSave"))
 			_chaosavepath = mod_dir + "\\SAVEDATA";
+	}
+
+	if (!errors.empty())
+	{
+		std::stringstream message;
+		message << "The following mods didn't load correctly:" << std::endl;
+
+		for (auto& i : errors)
+			message << std::endl << i.first << ": " << i.second;
+
+		MessageBoxA(nullptr, message.str().c_str(), "Mods failed to load", MB_OK | MB_ICONERROR);
 	}
 
 	// Replace filenames. ("ReplaceFiles", "SwapFiles")
