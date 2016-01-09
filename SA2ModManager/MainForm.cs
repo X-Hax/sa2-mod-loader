@@ -24,8 +24,10 @@ namespace SA2ModManager
 		Dictionary<string, ModInfo> mods;
 		const string codexmlpath = @"mods\Codes.xml";
 		const string codedatpath = @"mods\Codes.dat";
-		CodeList codes;
+		CodeList mainCodes;
+		List<Code> codes;
 		bool installed;
+		bool suppressEvent;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
@@ -70,6 +72,9 @@ namespace SA2ModManager
 			else
 				loaderini = new LoaderInfo();
 
+			try { mainCodes = CodeList.Load(codexmlpath); }
+			catch { mainCodes = new CodeList() { Codes = new List<Code>() }; }
+
 			LoadModList();
 
 			consoleCheckBox.Checked = loaderini.DebugConsole;
@@ -90,10 +95,6 @@ namespace SA2ModManager
 					if (MessageBox.Show(this, "Installed loader DLL differs from copy in mods folder.\n\nDo you want to overwrite the installed copy?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
 						File.Copy(loaderdllpath, datadllpath, true);
 			}
-			try { codes = CodeList.Load(codexmlpath); }
-			catch { codes = new CodeList() { Codes = new List<Code>() }; }
-			foreach (Code item in codes.Codes)
-				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
 		}
 
 		private void modListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -170,14 +171,13 @@ namespace SA2ModManager
 				loaderini.Mods.Add((string)item.Tag);
 			loaderini.DebugConsole = consoleCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
-			loaderini.EnabledCodes = codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes.Codes[a].Name).ToList();
 			IniFile.Serialize(loaderini, loaderinipath);
 			using (FileStream fs = File.Create(codedatpath))
 			using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
 			{
 				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '4' });
 				bw.Write(codesCheckedListBox.CheckedIndices.Count);
-				foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes.Codes[a]))
+				foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes[a]))
 				{
 					if (item.IsReg)
 						bw.Write((byte)CodeType.newregs);
@@ -284,47 +284,11 @@ namespace SA2ModManager
 			installed = !installed;
 		}
 
-		private void codesCheckedListBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (codesCheckedListBox.SelectedIndices.Count == 0)
-				codeUpButton.Enabled = codeDownButton.Enabled = false;
-			else
-			{
-				codeUpButton.Enabled = codesCheckedListBox.SelectedIndices[0] > 0;
-				codeDownButton.Enabled = codesCheckedListBox.SelectedIndices[0] < codesCheckedListBox.Items.Count - 1;
-			}
-		}
-
-		private void codeUpButton_Click(object sender, EventArgs e)
-		{
-			int i = codesCheckedListBox.SelectedIndices[0];
-			Code code = codes.Codes[i];
-			codes.Codes.Remove(code);
-			codes.Codes.Insert(i - 1, code);
-			object item = codesCheckedListBox.Items[i];
-			codesCheckedListBox.BeginUpdate();
-			codesCheckedListBox.Items.Remove(item);
-			codesCheckedListBox.Items.Insert(i - 1, item);
-			codesCheckedListBox.EndUpdate();
-		}
-
-		private void codeDownButton_Click(object sender, EventArgs e)
-		{
-			int i = codesCheckedListBox.SelectedIndices[0];
-			Code code = codes.Codes[i];
-			codes.Codes.Remove(code);
-			codes.Codes.Insert(i + 1, code);
-			object item = codesCheckedListBox.Items[i];
-			codesCheckedListBox.BeginUpdate();
-			codesCheckedListBox.Items.Remove(item);
-			codesCheckedListBox.Items.Insert(i + 1, item);
-			codesCheckedListBox.EndUpdate();
-		}
-
 		private void LoadModList()
 		{
 			modListView.Items.Clear();
 			mods = new Dictionary<string, ModInfo>();
+			codes = new List<Code>(mainCodes.Codes);
 			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
 			foreach (string filename in Directory.GetFiles(modDir, "mod.ini", SearchOption.AllDirectories))
 				mods.Add(Path.GetDirectoryName(filename).Substring(modDir.Length + 1), IniFile.Deserialize<ModInfo>(filename));
@@ -334,7 +298,11 @@ namespace SA2ModManager
 				if (mods.ContainsKey(mod))
 				{
 					ModInfo inf = mods[mod];
+					suppressEvent = true;
 					modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version }) { Checked = true, Tag = mod });
+					suppressEvent = false;
+					if (!string.IsNullOrEmpty(inf.Codes))
+						codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(modDir, mod), inf.Codes)).Codes);
 				}
 				else
 				{
@@ -346,6 +314,14 @@ namespace SA2ModManager
 				if (!loaderini.Mods.Contains(inf.Key))
 					modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version }) { Tag = inf.Key });
 			modListView.EndUpdate();
+			loaderini.EnabledCodes = new List<string>(loaderini.EnabledCodes.Where(a => codes.Any(c => c.Name == a)));
+			foreach (Code item in codes.Where(a => a.Required && !loaderini.EnabledCodes.Contains(a.Name)))
+				loaderini.EnabledCodes.Add(item.Name);
+			codesCheckedListBox.BeginUpdate();
+			codesCheckedListBox.Items.Clear();
+			foreach (Code item in codes)
+				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
+			codesCheckedListBox.EndUpdate();
 		}
 
 		private void buttonRefreshModList_Click(object sender, EventArgs e)
@@ -365,6 +341,52 @@ namespace SA2ModManager
 				if (ModDialog.ShowDialog() == DialogResult.OK)
 					LoadModList();
 			}
+		}
+
+		private void codesCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			Code code = codes[e.Index];
+			if (code.Required)
+				e.NewValue = CheckState.Checked;
+			if (e.NewValue == CheckState.Unchecked)
+			{
+				if (loaderini.EnabledCodes.Contains(code.Name))
+					loaderini.EnabledCodes.Remove(code.Name);
+			}
+			else
+			{
+				if (!loaderini.EnabledCodes.Contains(code.Name))
+					loaderini.EnabledCodes.Add(code.Name);
+			}
+		}
+
+		private void modListView_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			if (suppressEvent) return;
+			codes = new List<Code>(mainCodes.Codes);
+			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
+			List<string> modlist = new List<string>();
+			foreach (ListViewItem item in modListView.CheckedItems)
+				modlist.Add((string)item.Tag);
+			if (e.NewValue == CheckState.Unchecked)
+				modlist.Remove((string)modListView.Items[e.Index].Tag);
+			else
+				modlist.Add((string)modListView.Items[e.Index].Tag);
+			foreach (string mod in modlist)
+				if (mods.ContainsKey(mod))
+				{
+					ModInfo inf = mods[mod];
+					if (!string.IsNullOrEmpty(inf.Codes))
+						codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(modDir, mod), inf.Codes)).Codes);
+				}
+			loaderini.EnabledCodes = new List<string>(loaderini.EnabledCodes.Where(a => codes.Any(c => c.Name == a)));
+			foreach (Code item in codes.Where(a => a.Required && !loaderini.EnabledCodes.Contains(a.Name)))
+				loaderini.EnabledCodes.Add(item.Name);
+			codesCheckedListBox.BeginUpdate();
+			codesCheckedListBox.Items.Clear();
+			foreach (Code item in codes)
+				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
+			codesCheckedListBox.EndUpdate();
 		}
 	}
 
@@ -398,7 +420,8 @@ namespace SA2ModManager
 		public string DLLFile { get; set; }
         public bool RedirectMainSave { get; set; }
         public bool RedirectChaoSave { get; set; }
-    }
+		public string Codes { get; set; }
+	}
 
 	[XmlRoot(Namespace = "http://www.sonicretro.org")]
 	public class CodeList
@@ -425,6 +448,8 @@ namespace SA2ModManager
 	{
 		[XmlAttribute("name")]
 		public string Name { get; set; }
+		[XmlAttribute("required")]
+		public bool Required { get; set; }
 		[XmlElement("CodeLine")]
 		public List<CodeLine> Lines { get; set; }
 

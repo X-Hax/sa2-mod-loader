@@ -49,11 +49,6 @@
 			this.buttonModsFolder = new System.Windows.Forms.Button();
 			this.buttonRefreshModList = new System.Windows.Forms.Button();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.codeDownButton = new System.Windows.Forms.Button();
-			this.codeUpButton = new System.Windows.Forms.Button();
-			this.deleteCodeButton = new System.Windows.Forms.Button();
-			this.editCodeButton = new System.Windows.Forms.Button();
-			this.newCodeButton = new System.Windows.Forms.Button();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
@@ -121,9 +116,9 @@
 			this.modDownButton.AutoSize = true;
 			this.modDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modDownButton.Enabled = false;
-			this.modDownButton.Location = new System.Drawing.Point(349, 35);
+			this.modDownButton.Location = new System.Drawing.Point(343, 35);
 			this.modDownButton.Name = "modDownButton";
-			this.modDownButton.Size = new System.Drawing.Size(23, 23);
+			this.modDownButton.Size = new System.Drawing.Size(29, 23);
 			this.modDownButton.TabIndex = 2;
 			this.modDownButton.Text = "↓";
 			this.modDownButton.UseVisualStyleBackColor = true;
@@ -135,9 +130,9 @@
 			this.modUpButton.AutoSize = true;
 			this.modUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.modUpButton.Enabled = false;
-			this.modUpButton.Location = new System.Drawing.Point(349, 6);
+			this.modUpButton.Location = new System.Drawing.Point(343, 6);
 			this.modUpButton.Name = "modUpButton";
-			this.modUpButton.Size = new System.Drawing.Size(23, 23);
+			this.modUpButton.Size = new System.Drawing.Size(29, 23);
 			this.modUpButton.TabIndex = 1;
 			this.modUpButton.Text = "↑";
 			this.modUpButton.UseVisualStyleBackColor = true;
@@ -161,6 +156,7 @@
 			this.modListView.TabIndex = 0;
 			this.modListView.UseCompatibleStateImageBehavior = false;
 			this.modListView.View = System.Windows.Forms.View.Details;
+			this.modListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.modListView_ItemCheck);
 			this.modListView.SelectedIndexChanged += new System.EventHandler(this.modListView_SelectedIndexChanged);
 			// 
 			// columnHeader1
@@ -280,11 +276,6 @@
 			// 
 			// tabPage2
 			// 
-			this.tabPage2.Controls.Add(this.codeDownButton);
-			this.tabPage2.Controls.Add(this.codeUpButton);
-			this.tabPage2.Controls.Add(this.deleteCodeButton);
-			this.tabPage2.Controls.Add(this.editCodeButton);
-			this.tabPage2.Controls.Add(this.newCodeButton);
 			this.tabPage2.Controls.Add(this.codesCheckedListBox);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
@@ -294,86 +285,15 @@
 			this.tabPage2.Text = "Codes";
 			this.tabPage2.UseVisualStyleBackColor = true;
 			// 
-			// codeDownButton
-			// 
-			this.codeDownButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.codeDownButton.AutoSize = true;
-			this.codeDownButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.codeDownButton.Enabled = false;
-			this.codeDownButton.Location = new System.Drawing.Point(349, 35);
-			this.codeDownButton.Name = "codeDownButton";
-			this.codeDownButton.Size = new System.Drawing.Size(23, 23);
-			this.codeDownButton.TabIndex = 5;
-			this.codeDownButton.Text = "↓";
-			this.codeDownButton.UseVisualStyleBackColor = true;
-			this.codeDownButton.Click += new System.EventHandler(this.codeDownButton_Click);
-			// 
-			// codeUpButton
-			// 
-			this.codeUpButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.codeUpButton.AutoSize = true;
-			this.codeUpButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.codeUpButton.Enabled = false;
-			this.codeUpButton.Location = new System.Drawing.Point(349, 6);
-			this.codeUpButton.Name = "codeUpButton";
-			this.codeUpButton.Size = new System.Drawing.Size(23, 23);
-			this.codeUpButton.TabIndex = 4;
-			this.codeUpButton.Text = "↑";
-			this.codeUpButton.UseVisualStyleBackColor = true;
-			this.codeUpButton.Click += new System.EventHandler(this.codeUpButton_Click);
-			// 
-			// deleteCodeButton
-			// 
-			this.deleteCodeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.deleteCodeButton.AutoSize = true;
-			this.deleteCodeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.deleteCodeButton.Enabled = false;
-			this.deleteCodeButton.Location = new System.Drawing.Point(92, 291);
-			this.deleteCodeButton.Name = "deleteCodeButton";
-			this.deleteCodeButton.Size = new System.Drawing.Size(48, 23);
-			this.deleteCodeButton.TabIndex = 3;
-			this.deleteCodeButton.Text = "&Delete";
-			this.deleteCodeButton.UseVisualStyleBackColor = true;
-			this.deleteCodeButton.Visible = false;
-			// 
-			// editCodeButton
-			// 
-			this.editCodeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.editCodeButton.AutoSize = true;
-			this.editCodeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.editCodeButton.Enabled = false;
-			this.editCodeButton.Location = new System.Drawing.Point(51, 291);
-			this.editCodeButton.Name = "editCodeButton";
-			this.editCodeButton.Size = new System.Drawing.Size(35, 23);
-			this.editCodeButton.TabIndex = 2;
-			this.editCodeButton.Text = "&Edit";
-			this.editCodeButton.UseVisualStyleBackColor = true;
-			this.editCodeButton.Visible = false;
-			// 
-			// newCodeButton
-			// 
-			this.newCodeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.newCodeButton.AutoSize = true;
-			this.newCodeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.newCodeButton.Location = new System.Drawing.Point(6, 291);
-			this.newCodeButton.Name = "newCodeButton";
-			this.newCodeButton.Size = new System.Drawing.Size(39, 23);
-			this.newCodeButton.TabIndex = 1;
-			this.newCodeButton.Text = "&New";
-			this.newCodeButton.UseVisualStyleBackColor = true;
-			this.newCodeButton.Visible = false;
-			// 
 			// codesCheckedListBox
 			// 
-			this.codesCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.codesCheckedListBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.codesCheckedListBox.FormattingEnabled = true;
-			this.codesCheckedListBox.Location = new System.Drawing.Point(6, 6);
+			this.codesCheckedListBox.Location = new System.Drawing.Point(3, 3);
 			this.codesCheckedListBox.Name = "codesCheckedListBox";
-			this.codesCheckedListBox.Size = new System.Drawing.Size(331, 274);
+			this.codesCheckedListBox.Size = new System.Drawing.Size(372, 314);
 			this.codesCheckedListBox.TabIndex = 0;
-			this.codesCheckedListBox.SelectedIndexChanged += new System.EventHandler(this.codesCheckedListBox_SelectedIndexChanged);
+			this.codesCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.codesCheckedListBox_ItemCheck);
 			// 
 			// MainForm
 			// 
@@ -398,7 +318,6 @@
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
 			this.tabPage2.ResumeLayout(false);
-			this.tabPage2.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -418,12 +337,7 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.CheckedListBox codesCheckedListBox;
-        private System.Windows.Forms.Button deleteCodeButton;
-        private System.Windows.Forms.Button editCodeButton;
-        private System.Windows.Forms.Button newCodeButton;
-        private System.Windows.Forms.Button codeDownButton;
-        private System.Windows.Forms.Button codeUpButton;
+		private System.Windows.Forms.CheckedListBox codesCheckedListBox;
 		private System.Windows.Forms.Button buttonModsFolder;
 		private System.Windows.Forms.Button buttonRefreshModList;
 		private System.Windows.Forms.CheckBox fileCheckBox;
