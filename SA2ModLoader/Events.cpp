@@ -4,6 +4,7 @@
 
 std::vector<ModEvent> modFrameEvents;
 std::vector<ModEvent> modInputEvents;
+std::vector<ModEvent> modControlEvents;
 CodeParser codeParser;
 
 /**
@@ -82,4 +83,9 @@ void InitOnFrame()
 void __cdecl OnInput()
 {
 	RaiseEvents(modInputEvents);
+}
+
+void __cdecl OnControl()
+{
+	RaiseEvents(modControlEvents);
 }
