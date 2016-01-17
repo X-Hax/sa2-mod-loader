@@ -1073,6 +1073,46 @@ void __cdecl InitMods(void)
 
 	PrintDebug("Mod loading finished.");
 
+	ifstream patches_str("mods\\Patches.dat", ifstream::binary);
+	if (patches_str.is_open())
+	{
+		CodeParser patchParser;
+		static const char codemagic[6] = { 'c', 'o', 'd', 'e', 'v', '4' };
+		char buf[sizeof(codemagic)];
+		patches_str.read(buf, sizeof(buf));
+		if (!memcmp(buf, codemagic, sizeof(codemagic)))
+		{
+			int codecount_header;
+			patches_str.read((char*)&codecount_header, sizeof(codecount_header));
+			PrintDebug("Loading %d patches...\n", codecount_header);
+			patches_str.seekg(0);
+			int codecount = patchParser.readCodes(patches_str);
+			if (codecount >= 0)
+			{
+				PrintDebug("Loaded %d patches.\n", codecount);
+				patchParser.processCodeList();
+			}
+			else
+			{
+				PrintDebug("ERROR loading patches: ");
+				switch (codecount)
+				{
+				case -EINVAL:
+					PrintDebug("Patch file is not in the correct format.\n");
+					break;
+				default:
+					PrintDebug("%s\n", strerror(-codecount));
+					break;
+				}
+			}
+		}
+		else
+		{
+			PrintDebug("Patch file is not in the correct format.\n");
+		}
+		patches_str.close();
+	}
+
 	ifstream codes_str("mods\\Codes.dat", ifstream::binary);
 	if (codes_str.is_open())
 	{
@@ -1089,6 +1129,7 @@ void __cdecl InitMods(void)
 			if (codecount >= 0)
 			{
 				PrintDebug("Loaded %d codes.\n", codecount);
+				codeParser.processCodeList();
 			}
 			else
 			{

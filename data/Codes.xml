@@ -249,7 +249,7 @@
       </TrueLines>
     </CodeLine>
   </Code>
-  <Code name="Size Modifier" enabled="true">
+  <Code name="Size Modifier">
     <CodeLine>
       <Type>ifeqfloat</Type>
       <Address>r0</Address>
@@ -403,7 +403,7 @@
       <ValueType>decimal</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Always Get A Rank">
+  <Code name="Always Get A Rank" patch="true">
     <CodeLine>
       <Type>write16</Type>
       <Address>0044F799</Address>
@@ -443,7 +443,7 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="All Stages Appear in Stage Select">
+  <Code name="All Stages Appear in Stage Select" patch="true">
     <CodeLine>
       <Type>write32</Type>
       <Address>006773BC</Address>
@@ -629,7 +629,7 @@
       </TrueLines>
     </CodeLine>
   </Code>
-  <Code name="Gold Beetle Never Disappears">
+  <Code name="Gold Beetle Never Disappears" patch="true">
     <CodeLine>
       <Type>write8</Type>
       <Address>00506059</Address>
@@ -637,7 +637,7 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Always Use Hard Mode Layout">
+  <Code name="Always Use Hard Mode Layout" patch="true">
     <CodeLine>
       <Type>write16</Type>
       <Address>0048903D</Address>
@@ -645,7 +645,7 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Debug Menu (Invisible)">
+  <Code name="Debug Menu (Invisible)" patch="true">
     <CodeLine>
       <Type>write16</Type>
       <Address>00434687</Address>
@@ -653,7 +653,7 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Disable Music">
+  <Code name="Disable Music" patch="true">
     <CodeLine>
       <Type>write8</Type>
       <Address>00442CF0</Address>
@@ -661,7 +661,7 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Disable Voices">
+  <Code name="Disable Voices" patch="true">
     <CodeLine>
       <Type>write8</Type>
       <Address>00443130</Address>
@@ -669,7 +669,7 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Instant Spin Dash">
+  <Code name="Instant Spin Dash" patch="true">
     <CodeLine>
       <Type>write16</Type>
       <Address>00723E19</Address>
@@ -677,12 +677,21 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
-  <Code name="Reduce Spin Dash Delay">
+  <Code name="Reduce Spin Dash Delay" patch="true">
     <CodeLine>
       <Type>write8</Type>
       <Address>00723E11</Address>
       <Value>10</Value>
       <ValueType>decimal</ValueType>
+    </CodeLine>
+  </Code>
+  <Code name="Chao Stat Multiplier" patch="true">
+    <CodeLine>
+      <Type>muls16</Type>
+      <Address>8A6240</Address>
+      <Value>5</Value>
+      <ValueType>decimal</ValueType>
+      <RepeatCount>50</RepeatCount>
     </CodeLine>
   </Code>
 </CodeList>
