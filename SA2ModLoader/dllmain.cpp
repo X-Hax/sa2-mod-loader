@@ -965,6 +965,7 @@ void __cdecl InitMods(void)
 
 					RegisterEvent(modFrameEvents, module, "OnFrame");
 					RegisterEvent(modInputEvents, module, "OnInput");
+					RegisterEvent(modControlEvents, module, "OnControl");
 				}
 				else
 				{
@@ -1154,7 +1155,8 @@ void __cdecl InitMods(void)
 
 	// Sets up code/event handling
 	InitOnFrame();	// OnFrame
-	WriteJump((void*)0x0077E897, (void*)OnInput);
+	WriteJump((void*)0x0077E897, OnInput);
+	WriteJump((void*)0x00441D41, OnControl);
 
 	if (MainUserConfig->FullScreen == 0)
 	{
