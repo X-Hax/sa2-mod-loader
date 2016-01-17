@@ -691,7 +691,7 @@
       <Address>8A6240</Address>
       <Value>5</Value>
       <ValueType>decimal</ValueType>
-      <RepeatCount>50</RepeatCount>
+      <RepeatCount>500</RepeatCount>
     </CodeLine>
   </Code>
 </CodeList>
