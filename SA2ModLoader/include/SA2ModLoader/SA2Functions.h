@@ -555,15 +555,15 @@ static inline double CheckDistance(NJS_VECTOR* a1, NJS_VECTOR* a2)
 	return result;
 }
 
-//double __usercall VectorLength@<st0>(NJS_VECTOR *a1@<eax>)
-static const void* const VectorLengthPtr = (void*)0x0077FC30;
-static inline double VectorLength(NJS_VECTOR* a1)
+//double __usercall njScalor@<st0>(NJS_VECTOR *a1@<eax>)
+static const void* const njScalorPtr = (void*)0x0077FC30;
+static inline double njScalor(NJS_VECTOR* a1)
 {
 	double result;
 	__asm
 	{
 		mov eax, [a1]
-		call VectorLengthPtr
+		call njScalorPtr
 		fstp result
 	}
 	return result;
