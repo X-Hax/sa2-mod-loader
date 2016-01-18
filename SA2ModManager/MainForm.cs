@@ -175,7 +175,7 @@ namespace SA2ModManager
 			IniFile.Serialize(loaderini, loaderinipath);
 			List<Code> codes = new List<Code>();
 			List<Code> patches = new List<Code>();
-			foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => codes[a]))
+			foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => this.codes[a]))
 				if (item.Patch)
 					patches.Add(item);
 				else
