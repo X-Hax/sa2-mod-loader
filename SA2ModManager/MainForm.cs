@@ -196,7 +196,7 @@ namespace SA2ModManager
 			using (FileStream fs = File.Create(codedatpath))
 			using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
 			{
-				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '4' });
+				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '5' });
 				bw.Write(codes.Count);
 				foreach (Code item in codes)
 				{
