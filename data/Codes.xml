@@ -405,16 +405,16 @@
   </Code>
   <Code name="Always Get A Rank" patch="true">
     <CodeLine>
-      <Type>write16</Type>
+      <Type>writenop</Type>
       <Address>0044F799</Address>
-      <Value>9090</Value>
-      <ValueType>hex</ValueType>
+      <Value>2</Value>
+      <ValueType>decimal</ValueType>
     </CodeLine>
     <CodeLine>
-      <Type>write16</Type>
+      <Type>writenop</Type>
       <Address>00450688</Address>
-      <Value>9090</Value>
-      <ValueType>hex</ValueType>
+      <Value>2</Value>
+      <ValueType>decimal</ValueType>
     </CodeLine>
   </Code>
   <Code name="Have Invincibility">
@@ -639,10 +639,10 @@
   </Code>
   <Code name="Always Use Hard Mode Layout" patch="true">
     <CodeLine>
-      <Type>write16</Type>
+      <Type>writenop</Type>
       <Address>0048903D</Address>
-      <Value>9090</Value>
-      <ValueType>hex</ValueType>
+      <Value>2</Value>
+      <ValueType>decimal</ValueType>
     </CodeLine>
   </Code>
   <Code name="Debug Menu (Invisible)" patch="true">
@@ -671,10 +671,10 @@
   </Code>
   <Code name="Instant Spin Dash" patch="true">
     <CodeLine>
-      <Type>write16</Type>
+      <Type>writenop</Type>
       <Address>00723E19</Address>
-      <Value>9090</Value>
-      <ValueType>hex</ValueType>
+      <Value>2</Value>
+      <ValueType>decimal</ValueType>
     </CodeLine>
   </Code>
   <Code name="Reduce Spin Dash Delay" patch="true">
