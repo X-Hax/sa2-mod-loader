@@ -32,7 +32,7 @@ void __cdecl OnFrame()
 void* caseDefault_ptr = (void*)0x004340CC;
 void* case08_ptr = (void*)0x0043405D;
 void* case09_ptr = (void*)0x0043407E;
-void* case10_ptr = (void*)0x0043407E;
+void* case10_ptr = (void*)0x004340B6;
 
 void __declspec(naked) OnFrame_MidJump()
 {
