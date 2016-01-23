@@ -20,16 +20,6 @@ using namespace std;
 
 // TODO: Split file replacement into separate file(s)
 
-HMODULE myhandle;
-HMODULE datadllhandle;
-FARPROC __stdcall MyGetProcAddress(HMODULE hModule, LPCSTR lpProcName)
-{
-	if (hModule == myhandle)
-		return GetProcAddress(datadllhandle, lpProcName);
-	else
-		return GetProcAddress(hModule, lpProcName);
-}
-
 inline int backslashes(int c)
 {
 	return (c == '/') ? '\\' : c;
@@ -308,10 +298,8 @@ void HookTheAPI()
 	HMODULE hModule = GetModuleHandle(NULL);
 	PIMAGE_IMPORT_DESCRIPTOR pImportDesc = NULL;
 
-	pNewFunction = (PROC)MyGetProcAddress ;
-	PROC pNewCreateFile = (PROC)MyCreateFileA;
-	pActualFunction = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "GetProcAddress");
-	PROC pActualCreateFile = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA");
+	pNewFunction = (PROC)MyCreateFileA;
+	pActualFunction = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA");
 
 	pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR) ImageDirectoryEntryToData(
 		hModule, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, &ulSize);
@@ -338,16 +326,9 @@ void HookTheAPI()
 						{
 							DWORD dwOldProtect = 0;
 							VirtualProtect(ppfn, sizeof(pNewFunction), PAGE_WRITECOPY,&dwOldProtect);
-							WriteProcessMemory(GetCurrentProcess(), ppfn, &pNewFunction, sizeof(pNewFunction), NULL);
+							WriteData(ppfn, pNewFunction);
 							VirtualProtect(ppfn, sizeof(pNewFunction), dwOldProtect,&dwOldProtect);
 						} // Function that we are looking for
-						else if (*ppfn == pActualCreateFile)
-						{
-							DWORD dwOldProtect = 0;
-							VirtualProtect(ppfn, sizeof(pNewCreateFile), PAGE_WRITECOPY,&dwOldProtect);
-							WriteProcessMemory(GetCurrentProcess(), ppfn, &pNewCreateFile, sizeof(pNewCreateFile), NULL);
-							VirtualProtect(ppfn, sizeof(pNewCreateFile), dwOldProtect,&dwOldProtect);
-						}
 					}
 				} // Compare module name
 			} // Valid module name
@@ -738,10 +719,11 @@ const HelperFunctions helperFunctions = {
 	GetChaoSavePath
 };
 
+DataPointer(HMODULE **, datadllhandle, 0x1AF0220);
 void __cdecl InitMods(void)
 {
-	datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
-	if (!datadllhandle)
+	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
+	if (!**datadllhandle)
 	{
 		MessageBox(NULL, L"Data_DLL_orig.dll could not be loaded!\n\nSA2 will now proceed to abruptly exit.", L"SA2 Mod Loader", MB_ICONERROR);
 		ExitProcess(1);
@@ -1187,7 +1169,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		myhandle = hModule;
 		bufsize = GetCurrentDirectoryA(0, NULL);
 		buf = new char[bufsize];
 		GetCurrentDirectoryA(bufsize, buf);
