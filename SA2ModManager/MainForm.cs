@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using IniSerializer;
+using System.ComponentModel;
 
 namespace SA2ModManager
 {
@@ -80,6 +81,7 @@ namespace SA2ModManager
 
 			consoleCheckBox.Checked = loaderini.DebugConsole;
 			fileCheckBox.Checked = loaderini.DebugFile;
+			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
 			if (!File.Exists(datadllpath))
 			{
 				MessageBox.Show(this, "Data_DLL.dll could not be found.\n\nCannot determine state of installation.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -172,6 +174,7 @@ namespace SA2ModManager
 				loaderini.Mods.Add((string)item.Tag);
 			loaderini.DebugConsole = consoleCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
+			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
 			IniFile.Serialize(loaderini, loaderinipath);
 			List<Code> codes = new List<Code>();
 			List<Code> patches = new List<Code>();
@@ -417,6 +420,8 @@ namespace SA2ModManager
 		public bool DebugScreen { get; set; }
 		public bool DebugFile { get; set; }
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
+		[DefaultValue(true)]
+		public bool PauseWhenInactive { get; set; }
 		[IniName("Mod")]
 		[IniCollection(IniCollectionMode.NoSquareBrackets, StartIndex = 1)]
 		public List<string> Mods { get; set; }
@@ -439,8 +444,8 @@ namespace SA2ModManager
 		public string Description { get; set; }
 		public string EXEFile { get; set; }
 		public string DLLFile { get; set; }
-        public bool RedirectMainSave { get; set; }
-        public bool RedirectChaoSave { get; set; }
+		public bool RedirectMainSave { get; set; }
+		public bool RedirectChaoSave { get; set; }
 		public string Codes { get; set; }
 	}
 
