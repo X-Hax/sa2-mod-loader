@@ -789,7 +789,7 @@ void __cdecl InitMods(void)
 	// It's mod loading time!
 	PrintDebug("Loading mods...");
 	char key[8];
-	for (int i = 1; i < 999; i++)
+	for (int i = 1; i <= 999; i++)
 	{
 		sprintf_s(key, "Mod%d", i);
 		if (!settings->hasKey(key))
