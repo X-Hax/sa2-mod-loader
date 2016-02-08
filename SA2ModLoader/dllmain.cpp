@@ -13,7 +13,7 @@
 #include <Shlwapi.h>
 #include "IniFile.hpp"
 #include "SA2ModLoader.h"
-#include "ModelInfo.h"
+#include <ModelInfo.h>
 #include "CodeParser.hpp"
 #include "Events.h"
 using namespace std;

@@ -24,15 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ModelInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LandTableInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ModLoader\MemAccess.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
@@ -75,15 +66,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LandTableInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CodeParser.cpp">

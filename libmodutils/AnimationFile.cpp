@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "AnimationFile.h"
 #include <fstream>
 #include <iostream>
