@@ -25,7 +25,7 @@ namespace SA2ModManager
 		Dictionary<string, ModInfo> mods;
 		const string codexmlpath = @"mods\Codes.xml";
 		const string codedatpath = @"mods\Codes.dat";
-		const string patchdatpath = @"mods\Codes.dat";
+		const string patchdatpath = @"mods\Patches.dat";
 		CodeList mainCodes;
 		List<Code> codes;
 		bool installed;
