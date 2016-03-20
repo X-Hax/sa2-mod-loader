@@ -314,7 +314,7 @@ namespace SA2ModManager
 			mods = new Dictionary<string, ModInfo>();
 			codes = new List<Code>(mainCodes.Codes);
 			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
-			foreach (string filename in Directory.GetFiles(modDir, "mod.ini", SearchOption.AllDirectories))
+			foreach (string filename in GetModFiles(new DirectoryInfo(modDir)))
 				mods.Add(Path.GetDirectoryName(filename).Substring(modDir.Length + 1), IniFile.Deserialize<ModInfo>(filename));
 			modListView.BeginUpdate();
 			foreach (string mod in new List<string>(loaderini.Mods))
@@ -346,6 +346,17 @@ namespace SA2ModManager
 			foreach (Code item in codes)
 				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
 			codesCheckedListBox.EndUpdate();
+		}
+
+		private IEnumerable<string> GetModFiles(DirectoryInfo directoryInfo)
+		{
+			foreach (DirectoryInfo item in directoryInfo.GetDirectories())
+				if (!item.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
+					foreach (string filename in GetModFiles(item))
+						yield return filename;
+			string modini = Path.Combine(directoryInfo.FullName, "mod.ini");
+			if (File.Exists(modini))
+				yield return modini;
 		}
 
 		private void buttonRefreshModList_Click(object sender, EventArgs e)
