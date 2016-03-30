@@ -45,16 +45,7 @@
     <ClInclude Include="include\SA2ModLoader.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="CodeParser.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FileMap.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IniFile.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TextConv.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Events.h">
@@ -68,16 +59,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CodeParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IniFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FileMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TextConv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Events.cpp">
