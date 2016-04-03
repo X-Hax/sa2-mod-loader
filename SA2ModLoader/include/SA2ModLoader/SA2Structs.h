@@ -282,9 +282,9 @@ struct ObjectMaster
 	ObjectMaster* NextObject;
 	ObjectMaster* Parent;
 	ObjectMaster* Child;
-	ObjectFuncPtr* MainSub;
-	ObjectFuncPtr* DisplaySub;
-	ObjectFuncPtr* DeleteSub;
+	ObjectFuncPtr MainSub;
+	ObjectFuncPtr DisplaySub;
+	ObjectFuncPtr DeleteSub;
 	void* field_1C;
 	void* field_20;
 	void* field_24;
