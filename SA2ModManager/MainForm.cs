@@ -82,6 +82,7 @@ namespace SA2ModManager
 			consoleCheckBox.Checked = loaderini.DebugConsole;
 			fileCheckBox.Checked = loaderini.DebugFile;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
+			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
 			if (!File.Exists(datadllpath))
 			{
 				MessageBox.Show(this, "Data_DLL.dll could not be found.\n\nCannot determine state of installation.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -175,7 +176,9 @@ namespace SA2ModManager
 			loaderini.DebugConsole = consoleCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
+			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
 			IniFile.Serialize(loaderini, loaderinipath);
+			// TODO: hides field MainForm.codes
 			List<Code> codes = new List<Code>();
 			List<Code> patches = new List<Code>();
 			foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => this.codes[a]))
@@ -433,6 +436,8 @@ namespace SA2ModManager
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
 		[DefaultValue(true)]
 		public bool PauseWhenInactive { get; set; }
+		[DefaultValue(false)]
+		public bool BorderlessWindow { get; set; }
 		[IniName("Mod")]
 		[IniCollection(IniCollectionMode.NoSquareBrackets, StartIndex = 1)]
 		public List<string> Mods { get; set; }

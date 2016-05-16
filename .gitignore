@@ -60,3 +60,4 @@ ipch/
 *.vsp
 *.vspx
 *.opendb
+*.db

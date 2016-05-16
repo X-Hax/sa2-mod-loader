@@ -25,6 +25,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <thread>
 
 #include "ninja.h"
 #include "SA2ModLoader.h"

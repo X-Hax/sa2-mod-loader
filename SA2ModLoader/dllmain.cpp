@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <list>
 #include <algorithm>
+#include <thread>
 #include <DbgHelp.h>
 #include <Shlwapi.h>
 #include "IniFile.hpp"
@@ -16,6 +17,9 @@
 #include "ModelInfo.h"
 #include "CodeParser.hpp"
 #include "Events.h"
+
+static std::thread* window_thread = nullptr;
+
 using namespace std;
 
 // TODO: Split file replacement into separate file(s)
@@ -1148,20 +1152,37 @@ void __cdecl InitMods(void)
 
 	if (MainUserConfig->FullScreen == 0)
 	{
-		int endWidth = (int)HorizontalResolution;
-		int endHeight = (int)VerticalResolution;
-		RECT winFrame, winClient;
+		if (settings->getBool("BorderlessWindow", false))
+		{
+			window_thread = new thread([] {
+				SetWindowLong(MainWindowHandle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
 
-		GetWindowRect(MainWindowHandle, &winFrame);
-		GetClientRect(MainWindowHandle, &winClient);
+				auto width = MainUserConfig->Width;
+				auto height = MainUserConfig->Height;
 
-		// The game uses GetSystemMetrics which appears to always report incorrect values,
-		// so this code calculates the window frame size manually.
-		endWidth += ((winFrame.right - winFrame.left) - (winClient.right - winClient.left));
-		endHeight += ((winFrame.bottom - winFrame.top) - (winClient.bottom - winClient.top));
+				auto x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+				auto y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
 
-		SetWindowPos(MainWindowHandle, nullptr, 0, 0, endWidth, endHeight,
-			SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
+				SetWindowPos(MainWindowHandle, nullptr, x, y, width, height, SWP_FRAMECHANGED);
+			});
+		}
+		else
+		{			
+			int endWidth = (int)HorizontalResolution;
+			int endHeight = (int)VerticalResolution;
+			RECT winFrame, winClient;
+
+			GetWindowRect(MainWindowHandle, &winFrame);
+			GetClientRect(MainWindowHandle, &winClient);
+
+			// The game uses GetSystemMetrics which appears to always report incorrect values,
+			// so this code calculates the window frame size manually.
+			endWidth += ((winFrame.right - winFrame.left) - (winClient.right - winClient.left));
+			endHeight += ((winFrame.bottom - winFrame.top) - (winClient.bottom - winClient.top));
+
+			SetWindowPos(MainWindowHandle, nullptr, 0, 0, endWidth, endHeight,
+				SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
+		}
 	}
 }
 
@@ -1186,7 +1207,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 		break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
+		break;
+
 	case DLL_PROCESS_DETACH:
+		if (window_thread)
+		{
+			window_thread->join();
+			delete window_thread;
+		}
 		break;
 	}
 	return TRUE;

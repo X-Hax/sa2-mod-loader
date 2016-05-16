@@ -1,33 +1,33 @@
 ﻿namespace SA2ModManager
 {
-    partial class MainForm
-    {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class MainForm
+	{
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
 			System.Windows.Forms.GroupBox groupBox2;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.fileCheckBox = new System.Windows.Forms.CheckBox();
@@ -52,6 +52,7 @@
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.pauseWhenInactiveCheckBox = new System.Windows.Forms.CheckBox();
+			this.borderlessWindowCheckBox = new System.Windows.Forms.CheckBox();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -64,7 +65,7 @@
 			// groupBox2
 			// 
 			groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			| System.Windows.Forms.AnchorStyles.Right)));
 			groupBox2.Controls.Add(this.fileCheckBox);
 			groupBox2.Controls.Add(this.consoleCheckBox);
 			groupBox2.Location = new System.Drawing.Point(6, 54);
@@ -97,7 +98,7 @@
 			// modDescription
 			// 
 			this.modDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.modDescription.Location = new System.Drawing.Point(6, 252);
 			this.modDescription.Name = "modDescription";
 			this.modDescription.Size = new System.Drawing.Size(366, 36);
@@ -135,13 +136,13 @@
 			// modListView
 			// 
 			this.modListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.modListView.CheckBoxes = true;
 			this.modListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
+			this.columnHeader1,
+			this.columnHeader2,
+			this.columnHeader3});
 			this.modListView.FullRowSelect = true;
 			this.modListView.HideSelection = false;
 			this.modListView.Location = new System.Drawing.Point(3, 6);
@@ -207,8 +208,8 @@
 			// tabControl1
 			// 
 			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			| System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
@@ -305,7 +306,8 @@
 			// groupBox1
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.borderlessWindowCheckBox);
 			this.groupBox1.Controls.Add(this.pauseWhenInactiveCheckBox);
 			this.groupBox1.Location = new System.Drawing.Point(6, 6);
 			this.groupBox1.Name = "groupBox1";
@@ -323,6 +325,16 @@
 			this.pauseWhenInactiveCheckBox.TabIndex = 0;
 			this.pauseWhenInactiveCheckBox.Text = "Pause When Inactive";
 			this.pauseWhenInactiveCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// checkBorderlessWindow
+			// 
+			this.borderlessWindowCheckBox.AutoSize = true;
+			this.borderlessWindowCheckBox.Location = new System.Drawing.Point(141, 19);
+			this.borderlessWindowCheckBox.Name = "borderlessWindowCheckBox";
+			this.borderlessWindowCheckBox.Size = new System.Drawing.Size(117, 17);
+			this.borderlessWindowCheckBox.TabIndex = 1;
+			this.borderlessWindowCheckBox.Text = "Borderless Window";
+			this.borderlessWindowCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
@@ -352,22 +364,22 @@
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        private System.Windows.Forms.ListView modListView;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Button modDownButton;
+		private System.Windows.Forms.ListView modListView;
+		private System.Windows.Forms.ColumnHeader columnHeader1;
+		private System.Windows.Forms.ColumnHeader columnHeader2;
+		private System.Windows.Forms.Button modDownButton;
 		private System.Windows.Forms.Button modUpButton;
-        private System.Windows.Forms.Button saveButton;
-        private System.Windows.Forms.Button saveAndPlayButton;
+		private System.Windows.Forms.Button saveButton;
+		private System.Windows.Forms.Button saveAndPlayButton;
 		private System.Windows.Forms.Button installButton;
-        private System.Windows.Forms.Label modDescription;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.Label modDescription;
+		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.CheckedListBox codesCheckedListBox;
 		private System.Windows.Forms.Button buttonModsFolder;
 		private System.Windows.Forms.Button buttonRefreshModList;
@@ -378,6 +390,7 @@
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox pauseWhenInactiveCheckBox;
+		private System.Windows.Forms.CheckBox borderlessWindowCheckBox;
 	}
 }
 
