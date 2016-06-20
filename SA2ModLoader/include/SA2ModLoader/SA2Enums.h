@@ -65,6 +65,96 @@ enum Status : uint16_t
 	makemask(Status, Unknown6)
 };
 
+enum Actions
+{
+	Action_None,
+	Action_Run,
+	Action_SpinCharge = 3,
+	Action_SpinRelease,
+	Action_Jump = 6,
+	Action_HourglassSpring, // Also used for upside down spring in Crazy Gadget, and spring robots.
+	Action_Spring,
+	Action_RocketFall, // I dunno man. This came up after Sonic fell off the rocket in Metal Harbor.
+	Action_Fall, // The panels that make you soar in Metal Harbor (black, blue, and red ones) use this, as well. Also pit floating.
+	Action_Balancing,
+	Action_Skid,
+	Action_HomingAttack,
+	Action_Push,
+	Action_Pain,
+	Action_WallBump,
+	Action_ObjectControl = 18,
+	Action_PickUp,
+	Action_PutDown,
+	Action_HoldObject,
+	Action_GrabObject, // Pushable/pullable boxes in Wild Canyon. Only set when facing toward the object.
+	Action_GrabObject2, // Only set when facing away from the object
+	Action_MoveWithObject = 25,
+	Action_SkidWithObject = 27,
+	Action_FallWithObject,
+	Action_JumpWithObject,
+	Action_PullObject = 32, // Boxes in Wild Canyon, like Action_GrabObject
+	Action_Throw,
+	Action_ShakeObject = 35,
+	Action_Bound = 38, // Caught by ghost or blue shot from GUN robot
+	Action_StepUp = 40, // Stepping up to ledges
+	Action_Whistle = 42,
+	Action_Pet,
+	Action_MysticMelodyFail = 47,
+	Action_MonitorLook = 50,
+	Action_Pulley,
+	Action_Slide,
+	Action_MysticMelody,
+	Action_Sunglasses = Action_MysticMelody,
+	Action_GhostScare = Action_Sunglasses,
+	Action_AirBubble = Action_GhostScare,
+	Action_Death = 57,
+	Action_Noclip, // Doesn't work for Knuckles.
+	Action_LightDash,
+	Action_Glide = Action_LightDash,
+	Action_MechHover,
+	Action_LightAttack = Action_MechHover,
+	Action_Somersault1,
+	Action_Dig = Action_Somersault1,
+	Action_MechPunch,
+	Action_DigFinish = Action_MechPunch,
+	Action_Somersault2,
+	Action_SomersaultFinish,
+	Action_DigOnWall,
+	Action_SomersaultCancel = Action_DigOnWall,
+	Action_MovingSomersault1,
+	Action_DigFinishOnWall = Action_MovingSomersault1,
+	Action_MovingSomersault2,
+	Action_DigFailOnWall,
+	Action_MovingSomersaultFinish = Action_DigFailOnWall, // This pops up before Action_SomersaultFinish if you somersault while moving. Kinda weird.
+	Action_BounceDown,
+	Action_Climb = Action_BounceDown,
+	Action_BounceUp,
+	Action_ClimbUpLedge = Action_BounceUp,
+	Action_Grind,
+	Action_Punch = Action_Grind,
+	Action_Hang,
+	Action_Punch2 = Action_Hang,
+	Action_Punch3,
+	Action_RailTrick = Action_Punch3,
+	Action_MagicHands,
+	Action_Punch1Run = Action_MagicHands,
+	Action_Trick,
+	Action_Punch2Run = Action_Trick,
+	Action_Board,
+	Action_Punch3Run = Action_Board,
+	Action_SpiralUpper,
+	Action_BoardBrake,
+	Action_DrillClaw = Action_BoardBrake,
+	Action_BoardFall,
+	Action_Swim = Action_BoardFall,
+	Action_BoardJump,
+	Action_SwimMove = Action_BoardJump,
+	Action_BoardTrick,
+	Action_SwimSink = Action_BoardTrick,
+	Action_BoardBump,
+	Action_GravitySwitch,
+};
+
 enum LevelIDs
 {
 	LevelIDs_BasicTest,
