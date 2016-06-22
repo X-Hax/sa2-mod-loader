@@ -111,14 +111,22 @@ enum Actions
 	Action_Noclip, // Doesn't work for Knuckles.
 	Action_LightDash,
 	Action_Glide = Action_LightDash,
+	Action_TailsFly = Action_Glide,
+	Action_SuperStand = Action_TailsFly,
 	Action_MechHover,
 	Action_LightAttack = Action_MechHover,
+	Action_MechlessAttack = Action_LightAttack,
+	Action_SuperMove = Action_MechlessAttack,
 	Action_Somersault1,
 	Action_Dig = Action_Somersault1,
+	Action_SuperMoveUp = Action_Dig, // pressing A while standing still
 	Action_MechPunch,
 	Action_DigFinish = Action_MechPunch,
+	Action_SuperMoveDown = Action_DigFinish,
 	Action_Somersault2,
+	Action_SuperBoostUp = Action_Somersault2, // pressing A while moving
 	Action_SomersaultFinish,
+	Action_SuperBoostDown = Action_SomersaultFinish,
 	Action_DigOnWall,
 	Action_SomersaultCancel = Action_DigOnWall,
 	Action_MovingSomersault1,
@@ -153,6 +161,9 @@ enum Actions
 	Action_SwimSink = Action_BoardTrick,
 	Action_BoardBump,
 	Action_GravitySwitch,
+	Action_TurtleDive = 86,
+	Action_TurtleGrab,
+	Action_BlackShield = Action_TurtleGrab,
 };
 
 enum LevelIDs
