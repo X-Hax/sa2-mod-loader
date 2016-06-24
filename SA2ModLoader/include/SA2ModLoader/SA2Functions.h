@@ -55,7 +55,7 @@ ObjectFunc(StageMapExec_Main, 0x677350);
 VoidFunc(LoadStageMapExec, 0x6779A0);
 VoidFunc(LoadEggQuartersCharAnims, 0x693570);
 ObjectFunc(Omochao_Main, 0x6C0780);
-FunctionPointer(void, HurtPlayer, (int playerNum), 0x6C1AF0);
+FunctionPointer(void, DropRings, (int playerNum), 0x6C1AF0);
 ObjectFunc(GoalRing_Main, 0x6C63C0);
 ObjectFunc(ItemBoxAir_Main, 0x6C8EF0);
 ObjectFunc(WoodenCrate_Main, 0x6CD7F0);
