@@ -1149,6 +1149,7 @@ void __cdecl InitMods(void)
 	InitOnFrame();	// OnFrame
 	WriteJump((void*)0x0077E897, OnInput);
 	WriteJump((void*)0x00441D41, OnControl);
+	WriteJump((void*)0x00441EEB, OnControl);
 
 	if (MainUserConfig->FullScreen == 0)
 	{
