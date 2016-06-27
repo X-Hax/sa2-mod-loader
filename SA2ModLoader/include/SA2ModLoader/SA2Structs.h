@@ -18,9 +18,9 @@ struct CollisionData
 	__int16 field_2;
 	int field_4;
 	char gap_8[12];
-	float anonymous_1;
-	float anonymous_2;
-	float anonymous_3;
+	float XScale;
+	float YScale;
+	float ZScale;
 	int field_20;
 	int field_24;
 	int field_28;
