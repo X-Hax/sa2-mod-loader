@@ -74,7 +74,7 @@ struct CharObj1
 struct PhysicsData
 {
 	int HangTime;
-	float anonymous_0;
+	float Traction;
 	float HSpeedCap;
 	float VSpeedCap;
 	float BaseSpeed;

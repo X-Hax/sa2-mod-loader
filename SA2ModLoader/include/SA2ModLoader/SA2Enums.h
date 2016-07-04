@@ -74,7 +74,7 @@ enum Actions
 	Action_Jump = 6,
 	Action_HourglassSpring, // Also used for upside down spring in Crazy Gadget, and spring robots.
 	Action_Spring,
-	Action_RocketFall, // I dunno man. This came up after Sonic fell off the rocket in Metal Harbor.
+	Action_Launch, // Used for the rocket in Metal Harbor and the vines in Green Forest/White Jungle
 	Action_Fall, // The panels that make you soar in Metal Harbor (black, blue, and red ones) use this, as well. Also pit floating.
 	Action_Balancing,
 	Action_Skid,
