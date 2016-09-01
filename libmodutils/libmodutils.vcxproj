@@ -80,6 +80,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AnimationFile.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="LandTableInfo.h" />
     <ClInclude Include="ModelInfo.h" />
     <ClInclude Include="stdafx.h" />
@@ -87,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationFile.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LandTableInfo.cpp" />
     <ClCompile Include="ModelInfo.cpp" />
     <ClCompile Include="stdafx.cpp">

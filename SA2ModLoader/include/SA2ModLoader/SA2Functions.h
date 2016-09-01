@@ -370,7 +370,7 @@ static inline ObjectMaster* LoadObject2(int list, char *name, void(__cdecl *main
 
 // ObjectMaster *__usercall<eax>(void (__cdecl *mainSub)(ObjectMaster *)<edi>, int list<esi>, char *name)
 static const void *const LoadObjectPtr = (void*)0x46F680;
-static inline ObjectMaster* LoadObject(void(__cdecl *mainSub)(ObjectMaster *), int list, char *name)
+static inline ObjectMaster* LoadObject(void(__cdecl *mainSub)(ObjectMaster *), int list, const char *name)
 {
 	ObjectMaster* result;
 	__asm
