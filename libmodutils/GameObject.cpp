@@ -62,7 +62,10 @@ GameObject::~GameObject()
 	}
 }
 
-GameEntity::GameEntity(int index, const char *name) :GameObject(index, name){}
+GameEntity::GameEntity(int index, const char *name) :GameObject(index, name)
+{
+	objData->Data1 = AllocCharObj1();
+}
 
 CharObj1 *GameEntity::GetData() { return objData->Data1; }
 
