@@ -133,8 +133,7 @@ ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
 					modelindexes.push_back(index);
 				}
 			}
-		}
-		while (FindNextFileA(hfind, &data) != 0);
+		} while (FindNextFileA(hfind, &data) != 0);
 		FindClose(hfind);
 		ModelIndex endmarker = { -1, (NJS_OBJECT *)-1 };
 		modelindexes.push_back(endmarker);
@@ -175,8 +174,7 @@ defaultmodelload:
 				++v3;
 				v4->Model = (NJS_OBJECT *)((((v6 << 16) | (unsigned __int16)(v6 & 0xFF00)) << 8) | (((v6 >> 16) | v7 & 0xFF0000) >> 8));
 				v4 = &result[v3];
-			}
-			while (result[v3].Index != -1);
+			} while (result[v3].Index != -1);
 		}
 		v8 = 0;
 		if (result->Index != -1)
@@ -207,10 +205,9 @@ defaultmodelload:
 				}
 				++v8;
 				v9 = &result[v8];
-			}
-			while (result[v8].Index != -1);
+			} while (result[v8].Index != -1);
 		}
-end:
+	end:
 		--dword_1A55800;
 		if (dword_1AF191C)
 		{
@@ -225,8 +222,7 @@ end:
 					v15 = *(DWORD *)v15;
 					sub_7A5974((void *)v14);
 					v14 = v15;
-				}
-				while (!*(BYTE *)(v15 + 21));
+				} while (!*(BYTE *)(v15 + 21));
 				v13 = dword_1AF1918;
 			}
 			*((DWORD *)v13 + 1) = (DWORD)v13;
@@ -260,8 +256,7 @@ void __cdecl ReleaseMDLFile_ri(ModelIndex *a1)
 			if (v1->Index >= 0 && v1->Index < 532 && CharacterModels[v1->Index].Model == v1->Model)
 				CharacterModels[v1->Index].Model = 0;
 			++v1;
-		}
-		while (v1->Index != -1);
+		} while (v1->Index != -1);
 	}
 	if (modelfiles.find(a1) != modelfiles.cend())
 	{
@@ -305,33 +300,33 @@ void HookTheAPI()
 	pNewFunction = (PROC)MyCreateFileA;
 	pActualFunction = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA");
 
-	pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR) ImageDirectoryEntryToData(
+	pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToData(
 		hModule, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, &ulSize);
 
-	if(NULL != pImportDesc)
+	if (NULL != pImportDesc)
 	{
 		for (; pImportDesc->Name; pImportDesc++)
 		{
 			// get the module name
-			pszModName = (PSTR) ((PBYTE) hModule + pImportDesc->Name);
+			pszModName = (PSTR)((PBYTE)hModule + pImportDesc->Name);
 
-			if(NULL != pszModName)
+			if (NULL != pszModName)
 			{
 				// check if the module is kernel32.dll
 				if (lstrcmpiA(pszModName, "Kernel32.dll") == 0)
 				{
 					// get the module
-					PIMAGE_THUNK_DATA pThunk = (PIMAGE_THUNK_DATA) ((PBYTE) hModule + pImportDesc->FirstThunk);
+					PIMAGE_THUNK_DATA pThunk = (PIMAGE_THUNK_DATA)((PBYTE)hModule + pImportDesc->FirstThunk);
 
-					for (; pThunk->u1.Function; pThunk++) 
+					for (; pThunk->u1.Function; pThunk++)
 					{
-						PROC* ppfn = (PROC*) &pThunk->u1.Function;
-						if(*ppfn == pActualFunction)
+						PROC* ppfn = (PROC*)&pThunk->u1.Function;
+						if (*ppfn == pActualFunction)
 						{
 							DWORD dwOldProtect = 0;
-							VirtualProtect(ppfn, sizeof(pNewFunction), PAGE_WRITECOPY,&dwOldProtect);
+							VirtualProtect(ppfn, sizeof(pNewFunction), PAGE_WRITECOPY, &dwOldProtect);
 							WriteData(ppfn, pNewFunction);
-							VirtualProtect(ppfn, sizeof(pNewFunction), dwOldProtect,&dwOldProtect);
+							VirtualProtect(ppfn, sizeof(pNewFunction), dwOldProtect, &dwOldProtect);
 						} // Function that we are looking for
 					}
 				} // Compare module name
@@ -414,8 +409,7 @@ void ScanFolder(string path, int length)
 			buf[modfile.length()] = 0;
 			PrintDebug("Replaced file: \"%s\" = \"%s\"", origfile.c_str(), buf);
 		}
-	}
-	while (FindNextFileA(hfind, &data) != 0);
+	} while (FindNextFileA(hfind, &data) != 0);
 	FindClose(hfind);
 }
 
@@ -453,19 +447,19 @@ void RegisterStartPosition(unsigned char character, const StartPosition &positio
 {
 	switch (character)
 	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		StartPositions[character][position.Level] = position;
-		StartPositionsModified = true;
-		break;
+		case Characters_Sonic:
+		case Characters_Shadow:
+		case Characters_Tails:
+		case Characters_Eggman:
+		case Characters_Knuckles:
+		case Characters_Rouge:
+		case Characters_MechTails:
+		case Characters_MechEggman:
+		case Characters_SuperSonic:
+		case Characters_SuperShadow:
+			StartPositions[character][position.Level] = position;
+			StartPositionsModified = true;
+			break;
 	}
 }
 
@@ -473,19 +467,19 @@ void ClearStartPositionList(unsigned char character)
 {
 	switch (character)
 	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		StartPositions[character].clear();
-		StartPositionsModified = true;
-		break;
+		case Characters_Sonic:
+		case Characters_Shadow:
+		case Characters_Tails:
+		case Characters_Eggman:
+		case Characters_Knuckles:
+		case Characters_Rouge:
+		case Characters_MechTails:
+		case Characters_MechEggman:
+		case Characters_SuperSonic:
+		case Characters_SuperShadow:
+			StartPositions[character].clear();
+			StartPositionsModified = true;
+			break;
 	}
 }
 
@@ -521,18 +515,18 @@ int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *
 		else
 			return 1;
 		int v6;
-		if ( TwoPlayerMode
+		if (TwoPlayerMode
 			|| (short)CurrentLevel == LevelIDs_SonicVsShadow1
 			|| (short)CurrentLevel == LevelIDs_SonicVsShadow2
 			|| (short)CurrentLevel == LevelIDs_TailsVsEggman1
 			|| (short)CurrentLevel == LevelIDs_TailsVsEggman2
-			|| (short)CurrentLevel == LevelIDs_KnucklesVsRouge )
+			|| (short)CurrentLevel == LevelIDs_KnucklesVsRouge)
 			v6 = (playerNum != 0) + 1;
 		else
 			v6 = 0;
-		if ( rotation )
+		if (rotation)
 			rotation->y = *(&v5->Rotation1P + v6);
-		if ( position )
+		if (position)
 		{
 			NJS_VECTOR *v8 = &(&v5->Position1P)[v6];
 			position->x = v8->x;
@@ -594,19 +588,19 @@ void Register2PIntroPosition(unsigned char character, const LevelEndPosition &po
 {
 	switch (character)
 	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		_2PIntroPositions[character][position.Level] = position;
-		_2PIntroPositionsModified = true;
-		break;
+		case Characters_Sonic:
+		case Characters_Shadow:
+		case Characters_Tails:
+		case Characters_Eggman:
+		case Characters_Knuckles:
+		case Characters_Rouge:
+		case Characters_MechTails:
+		case Characters_MechEggman:
+		case Characters_SuperSonic:
+		case Characters_SuperShadow:
+			_2PIntroPositions[character][position.Level] = position;
+			_2PIntroPositionsModified = true;
+			break;
 	}
 }
 
@@ -614,19 +608,19 @@ void Clear2PIntroPositionList(unsigned char character)
 {
 	switch (character)
 	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		_2PIntroPositions[character].clear();
-		_2PIntroPositionsModified = true;
-		break;
+		case Characters_Sonic:
+		case Characters_Shadow:
+		case Characters_Tails:
+		case Characters_Eggman:
+		case Characters_Knuckles:
+		case Characters_Rouge:
+		case Characters_MechTails:
+		case Characters_MechEggman:
+		case Characters_SuperSonic:
+		case Characters_SuperShadow:
+			_2PIntroPositions[character].clear();
+			_2PIntroPositionsModified = true;
+			break;
 	}
 }
 
@@ -764,7 +758,7 @@ void __cdecl InitMods(void)
 		WriteJump(PrintDebug, SA2DebugOutput);
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
 	}
-	
+
 	if (!settings->getBool("PauseWhenInactive", true))
 	{
 		// JNE -> JMP
@@ -1090,12 +1084,12 @@ void __cdecl InitMods(void)
 				PrintDebug("ERROR loading patches: ");
 				switch (codecount)
 				{
-				case -EINVAL:
-					PrintDebug("Patch file is not in the correct format.\n");
-					break;
-				default:
-					PrintDebug("%s\n", strerror(-codecount));
-					break;
+					case -EINVAL:
+						PrintDebug("Patch file is not in the correct format.\n");
+						break;
+					default:
+						PrintDebug("%s\n", strerror(-codecount));
+						break;
 				}
 			}
 		}
@@ -1129,12 +1123,12 @@ void __cdecl InitMods(void)
 				PrintDebug("ERROR loading codes: ");
 				switch (codecount)
 				{
-				case -EINVAL:
-					PrintDebug("Code file is not in the correct format.\n");
-					break;
-				default:
-					PrintDebug("%s\n", strerror(-codecount));
-					break;
+					case -EINVAL:
+						PrintDebug("Code file is not in the correct format.\n");
+						break;
+					default:
+						PrintDebug("%s\n", strerror(-codecount));
+						break;
 				}
 			}
 		}
@@ -1168,55 +1162,53 @@ void __cdecl InitMods(void)
 			});
 		}
 		else
-		{			
-			int endWidth = (int)HorizontalResolution;
-			int endHeight = (int)VerticalResolution;
-			RECT winFrame, winClient;
+		{
+			RECT rect = {};
 
-			GetWindowRect(MainWindowHandle, &winFrame);
-			GetClientRect(MainWindowHandle, &winClient);
+			rect.right = MainUserConfig->Width;
+			rect.bottom = MainUserConfig->Height;
 
-			// The game uses GetSystemMetrics which appears to always report incorrect values,
-			// so this code calculates the window frame size manually.
-			endWidth += ((winFrame.right - winFrame.left) - (winClient.right - winClient.left));
-			endHeight += ((winFrame.bottom - winFrame.top) - (winClient.bottom - winClient.top));
+			auto dwStyle = GetWindowLong(MainWindowHandle, GWL_STYLE);
+			auto dwExStyle = GetWindowLong(MainWindowHandle, GWL_EXSTYLE);
 
-			SetWindowPos(MainWindowHandle, nullptr, 0, 0, endWidth, endHeight,
+			AdjustWindowRectEx(&rect, dwStyle, false, dwExStyle);
+
+			SetWindowPos(MainWindowHandle, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top,
 				SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
 		}
 	}
 }
 
-BOOL APIENTRY DllMain( HMODULE hModule,
+BOOL APIENTRY DllMain(HMODULE hModule,
 	DWORD  ul_reason_for_call,
 	LPVOID lpReserved
-	)
+)
 {
 	int bufsize;
 	char *buf;
 	switch (ul_reason_for_call)
 	{
-	case DLL_PROCESS_ATTACH:
-		bufsize = GetCurrentDirectoryA(0, NULL);
-		buf = new char[bufsize];
-		GetCurrentDirectoryA(bufsize, buf);
-		sa2dir = buf;
-		delete[] buf;
-		transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
-		sa2dir += "\\";
-		WriteJump((void *)0x77DEEA, InitMods);
-		break;
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-		break;
+		case DLL_PROCESS_ATTACH:
+			bufsize = GetCurrentDirectoryA(0, NULL);
+			buf = new char[bufsize];
+			GetCurrentDirectoryA(bufsize, buf);
+			sa2dir = buf;
+			delete[] buf;
+			transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
+			sa2dir += "\\";
+			WriteJump((void *)0x77DEEA, InitMods);
+			break;
+		case DLL_THREAD_ATTACH:
+		case DLL_THREAD_DETACH:
+			break;
 
-	case DLL_PROCESS_DETACH:
-		if (window_thread)
-		{
-			window_thread->join();
-			delete window_thread;
-		}
-		break;
+		case DLL_PROCESS_DETACH:
+			if (window_thread)
+			{
+				window_thread->join();
+				delete window_thread;
+			}
+			break;
 	}
 	return TRUE;
 }
