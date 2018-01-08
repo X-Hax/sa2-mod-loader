@@ -694,4 +694,12 @@
       <RepeatCount>500</RepeatCount>
     </CodeLine>
   </Code>
+  <Code name="Disable Omochao" patch="true">
+    <CodeLine>
+      <Type>write8</Type>
+      <Address>006C0780</Address>
+      <Value>C3</Value>
+      <ValueType>hex</ValueType>
+    </CodeLine>
+  </Code>
 </CodeList>
