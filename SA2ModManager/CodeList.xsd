@@ -12,7 +12,8 @@
               <xs:element name="CodeLine" maxOccurs="unbounded" type="CodeLine" />
             </xs:sequence>
             <xs:attribute name="name" type="xs:string" use="required" />
-            <xs:attribute name="enabled" type="xs:boolean" use="optional" default="false" />
+            <xs:attribute name="required" type="xs:boolean" use="optional" default="false" />
+            <xs:attribute name="patch" type="xs:boolean" use="optional" default="false" />
           </xs:complexType>
         </xs:element>
       </xs:sequence>
@@ -107,6 +108,7 @@
       <xs:enumeration value="xor8" />
       <xs:enumeration value="xor16" />
       <xs:enumeration value="xor32" />
+      <xs:enumeration value="writenop" />
       <xs:enumeration value="ifeq8" />
       <xs:enumeration value="ifeq16" />
       <xs:enumeration value="ifeq32" />
@@ -205,6 +207,7 @@
       <xs:enumeration value="xorreg8" />
       <xs:enumeration value="xorreg16" />
       <xs:enumeration value="xorreg32" />
+      <xs:enumeration value="writenopreg" />
       <xs:enumeration value="ifeqreg8" />
       <xs:enumeration value="ifeqreg16" />
       <xs:enumeration value="ifeqreg32" />
@@ -244,8 +247,6 @@
       <xs:enumeration value="ifmaskreg8" />
       <xs:enumeration value="ifmaskreg16" />
       <xs:enumeration value="ifmaskreg32" />
-      <xs:enumeration value="else" />
-      <xs:enumeration value="endif" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="AddressPattern">
