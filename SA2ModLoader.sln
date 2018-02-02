@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SA2ModLoader", "SA2ModLoader\SA2ModLoader.vcxproj", "{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,7 +15,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmodutils", "libmodutils\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModLoaderCommon", "mod-loader-common\ModLoaderCommon\ModLoaderCommon.vcxproj", "{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ModManagerCommon", "mod-loader-common\ModManagerCommon\ModManagerCommon.shproj", "{DE1F0B2D-8634-47B7-9E50-EDE78EF59200}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		mod-loader-common\ModManagerCommon\ModManagerCommon.projitems*{8b980bc2-ed9c-4bbd-930f-28171ec82ba9}*SharedItemsImports = 4
+		mod-loader-common\ModManagerCommon\ModManagerCommon.projitems*{de1f0b2d-8634-47b7-9e50-ede78ef59200}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|Win32 = Debug|Win32
@@ -74,5 +80,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0260A4DD-F2E9-4215-8FAB-0E22D1EB58AC}
 	EndGlobalSection
 EndGlobal

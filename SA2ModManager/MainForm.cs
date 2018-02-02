@@ -4,9 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
-using System.Xml.Serialization;
-using IniSerializer;
+using IniFile;
 using System.ComponentModel;
+using ModManagerCommon;
+using System.Diagnostics;
+using System.Reflection;
+using ModManagerCommon.Forms;
+using System.Drawing;
+using System.Threading;
+using System.Net;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace SA2ModManager
 {
@@ -17,12 +25,14 @@ namespace SA2ModManager
 			InitializeComponent();
 		}
 
+		private bool checkedForUpdates;
+
 		const string datadllpath = @"resource\gd_PC\DLL\Win32\Data_DLL.dll";
 		const string datadllorigpath = @"resource\gd_PC\DLL\Win32\Data_DLL_orig.dll";
 		const string loaderinipath = @"mods\SA2ModLoader.ini";
 		const string loaderdllpath = @"mods\SA2ModLoader.dll";
-		LoaderInfo loaderini;
-		Dictionary<string, ModInfo> mods;
+		SA2LoaderInfo loaderini;
+		Dictionary<string, SA2ModInfo> mods;
 		const string codexmlpath = @"mods\Codes.xml";
 		const string codedatpath = @"mods\Codes.dat";
 		const string patchdatpath = @"mods\Patches.dat";
@@ -30,6 +40,41 @@ namespace SA2ModManager
 		List<Code> codes;
 		bool installed;
 		bool suppressEvent;
+
+		readonly ModUpdater modUpdater = new ModUpdater();
+		BackgroundWorker updateChecker;
+		private bool manualModUpdate;
+
+		private static bool UpdateTimeElapsed(UpdateUnit unit, int amount, DateTime start)
+		{
+			if (unit == UpdateUnit.Always)
+			{
+				return true;
+			}
+
+			TimeSpan span = DateTime.UtcNow - start;
+
+			switch (unit)
+			{
+				case UpdateUnit.Hours:
+					return span.TotalHours >= amount;
+
+				case UpdateUnit.Days:
+					return span.TotalDays >= amount;
+
+				case UpdateUnit.Weeks:
+					return span.TotalDays / 7.0 >= amount;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(unit), unit, null);
+			}
+		}
+
+		private static void SetDoubleBuffered(Control control, bool enable)
+		{
+			PropertyInfo doubleBufferPropertyInfo = control.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+			doubleBufferPropertyInfo?.SetValue(control, enable, null);
+		}
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
@@ -69,10 +114,16 @@ namespace SA2ModManager
 						break;
 				}
 
+			if (!Debugger.IsAttached)
+				Environment.CurrentDirectory = Application.StartupPath;
+			SetDoubleBuffered(modListView, true);
 			if (File.Exists(loaderinipath))
-				loaderini = IniFile.Deserialize<LoaderInfo>(loaderinipath);
+				loaderini = IniSerializer.Deserialize<SA2LoaderInfo>(loaderinipath);
 			else
-				loaderini = new LoaderInfo();
+				loaderini = new SA2LoaderInfo();
+
+			if (CheckForUpdates())
+				return;
 
 			try { mainCodes = CodeList.Load(codexmlpath); }
 			catch { mainCodes = new CodeList() { Codes = new List<Code>() }; }
@@ -83,6 +134,125 @@ namespace SA2ModManager
 			fileCheckBox.Checked = loaderini.DebugFile;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
 			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
+			checkUpdateStartup.Checked = loaderini.UpdateCheck;
+			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
+			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
+			numericUpdateFrequency.Value = loaderini.UpdateFrequency;
+
+			CheckForModUpdates();
+
+			// If we've checked for updates, save the modified
+			// last update times without requiring the user to
+			// click the save button.
+			if (checkedForUpdates)
+				IniSerializer.Serialize(loaderini, loaderinipath);
+		}
+
+		private void HandleUri(string uri)
+		{
+			if (WindowState == FormWindowState.Minimized)
+			{
+				WindowState = FormWindowState.Normal;
+			}
+
+			Activate();
+
+			var fields = uri.Substring("sa2mm:".Length).Split(',');
+
+			// TODO: lib-ify
+			string itemType = fields.FirstOrDefault(x => x.StartsWith("gb_itemtype", StringComparison.InvariantCultureIgnoreCase));
+			itemType = itemType.Substring(itemType.IndexOf(":") + 1);
+
+			string itemId = fields.FirstOrDefault(x => x.StartsWith("gb_itemid", StringComparison.InvariantCultureIgnoreCase));
+			itemId = itemId.Substring(itemId.IndexOf(":") + 1);
+
+			var dummyInfo = new ModInfo();
+
+			using (var client = new UpdaterWebClient())
+			{
+				var response = client.DownloadString(
+					string.Format("https://api.gamebanana.com/Core/Item/Data?itemtype={0}&itemid={1}&fields=name,authors",
+						itemType, itemId)
+				);
+
+				var array = JsonConvert.DeserializeObject<string[]>(response);
+				dummyInfo.Name = array[0];
+
+				var authors = JsonConvert.DeserializeObject<Dictionary<string, string[][]>>(array[1]);
+
+				// for every array of string[] in authors, select the first element of each array
+				var authorList = from i in (from x in authors select x.Value) from j in i select j[0];
+				dummyInfo.Author = string.Join(", ", authorList);
+			}
+
+			DialogResult result = MessageBox.Show(this, $"Do you want to install mod \"{dummyInfo.Name}\" by {dummyInfo.Author} from {new Uri(fields[0]).DnsSafeHost}?", "Mod Download", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+			if (result != DialogResult.Yes)
+			{
+				return;
+			}
+
+			string updatePath = Path.Combine("mods", ".updates");
+
+			#region create update folder
+			do
+			{
+				try
+				{
+					result = DialogResult.Cancel;
+					if (!Directory.Exists(updatePath))
+					{
+						Directory.CreateDirectory(updatePath);
+					}
+				}
+				catch (Exception ex)
+				{
+					result = MessageBox.Show(this, "Failed to create temporary update directory:\n" + ex.Message
+												   + "\n\nWould you like to retry?", "Directory Creation Failed", MessageBoxButtons.RetryCancel);
+				}
+			} while (result == DialogResult.Retry);
+			#endregion
+
+			string dummyPath = dummyInfo.Name;
+
+			foreach (char c in Path.GetInvalidFileNameChars())
+			{
+				dummyPath = dummyPath.Replace(c, '_');
+			}
+
+			dummyPath = Path.Combine("mods", dummyPath);
+
+			var updates = new List<ModDownload>
+			{
+				new ModDownload(dummyInfo, dummyPath, fields[0], null, 0)
+			};
+
+			using (var progress = new DownloadDialog(updates, updatePath))
+			{
+				progress.ShowDialog(this);
+			}
+
+			do
+			{
+				try
+				{
+					result = DialogResult.Cancel;
+					Directory.Delete(updatePath, true);
+				}
+				catch (Exception ex)
+				{
+					result = MessageBox.Show(this, "Failed to remove temporary update directory:\n" + ex.Message
+												   + "\n\nWould you like to retry? You can remove the directory manually later.",
+						"Directory Deletion Failed", MessageBoxButtons.RetryCancel);
+				}
+			} while (result == DialogResult.Retry);
+
+			LoadModList();
+		}
+
+		private void MainForm_Shown(object sender, EventArgs e)
+		{
+
 			if (!File.Exists(datadllpath))
 			{
 				MessageBox.Show(this, "Data_DLL.dll could not be found.\n\nCannot determine state of installation.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -92,13 +262,381 @@ namespace SA2ModManager
 			{
 				installed = true;
 				installButton.Text = "Uninstall loader";
-				MD5 md5 = MD5.Create();
-				byte[] hash1 = md5.ComputeHash(File.ReadAllBytes(loaderdllpath));
-				byte[] hash2 = md5.ComputeHash(File.ReadAllBytes(datadllpath));
-				if (!hash1.SequenceEqual(hash2))
-					if (MessageBox.Show(this, "Installed loader DLL differs from copy in mods folder.\n\nDo you want to overwrite the installed copy?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-						File.Copy(loaderdllpath, datadllpath, true);
+				using (MD5 md5 = MD5.Create())
+				{
+					byte[] hash1 = md5.ComputeHash(File.ReadAllBytes(loaderdllpath));
+					byte[] hash2 = md5.ComputeHash(File.ReadAllBytes(datadllpath));
+					if (!hash1.SequenceEqual(hash2))
+						if (MessageBox.Show(this, "Installed loader DLL differs from copy in mods folder.\n\nDo you want to overwrite the installed copy?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+							File.Copy(loaderdllpath, datadllpath, true);
+				}
 			}
+
+			List<string> uris = Program.UriQueue.GetUris();
+
+			foreach (string str in uris)
+			{
+				HandleUri(str);
+			}
+
+			Program.UriQueue.UriEnqueued += UriQueueOnUriEnqueued;
+		}
+
+		private void UriQueueOnUriEnqueued(object sender, OnUriEnqueuedArgs args)
+		{
+			args.Handled = true;
+
+			if (InvokeRequired)
+			{
+				Invoke((Action<object, OnUriEnqueuedArgs>)UriQueueOnUriEnqueued, sender, args);
+				return;
+			}
+
+			HandleUri(args.Uri);
+		}
+
+		private void LoadModList()
+		{
+			modTopButton.Enabled = modUpButton.Enabled = modDownButton.Enabled = modBottomButton.Enabled = configureModButton.Enabled = false;
+			modDescription.Text = "Description: No mod selected.";
+			modListView.Items.Clear();
+			mods = new Dictionary<string, SA2ModInfo>();
+			codes = new List<Code>(mainCodes.Codes);
+			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
+
+			foreach (string filename in SA2ModInfo.GetModFiles(new DirectoryInfo(modDir)))
+				mods.Add((Path.GetDirectoryName(filename) ?? string.Empty).Substring(modDir.Length + 1), IniSerializer.Deserialize<SA2ModInfo>(filename));
+
+			modListView.BeginUpdate();
+
+			foreach (string mod in new List<string>(loaderini.Mods))
+			{
+				if (mods.ContainsKey(mod))
+				{
+					SA2ModInfo inf = mods[mod];
+					suppressEvent = true;
+					modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version }) { Checked = true, Tag = mod });
+					suppressEvent = false;
+					if (!string.IsNullOrEmpty(inf.Codes))
+						codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(modDir, mod), inf.Codes)).Codes);
+				}
+				else
+				{
+					MessageBox.Show(this, "Mod \"" + mod + "\" could not be found.\n\nThis mod will be removed from the list.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					loaderini.Mods.Remove(mod);
+				}
+			}
+
+			foreach (KeyValuePair<string, SA2ModInfo> inf in mods.OrderBy(x => x.Value.Name))
+				if (!loaderini.Mods.Contains(inf.Key))
+					modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version }) { Tag = inf.Key });
+
+			modListView.EndUpdate();
+
+			loaderini.EnabledCodes = new List<string>(loaderini.EnabledCodes.Where(a => codes.Any(c => c.Name == a)));
+			foreach (Code item in codes.Where(a => a.Required && !loaderini.EnabledCodes.Contains(a.Name)))
+				loaderini.EnabledCodes.Add(item.Name);
+
+			codesCheckedListBox.BeginUpdate();
+			codesCheckedListBox.Items.Clear();
+
+			foreach (Code item in codes)
+				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
+
+			codesCheckedListBox.EndUpdate();
+		}
+
+		private bool CheckForUpdates(bool force = false)
+		{
+			if (!force && !loaderini.UpdateCheck)
+			{
+				return false;
+			}
+
+			if (!force && !UpdateTimeElapsed(loaderini.UpdateUnit, loaderini.UpdateFrequency, DateTime.FromFileTimeUtc(loaderini.UpdateTime)))
+			{
+				return false;
+			}
+
+			checkedForUpdates = true;
+			loaderini.UpdateTime = DateTime.UtcNow.ToFileTimeUtc();
+
+			if (!File.Exists("sa2mlver.txt"))
+			{
+				return false;
+			}
+
+			using (var wc = new WebClient())
+			{
+				try
+				{
+					string msg = wc.DownloadString("http://mm.reimuhakurei.net/toolchangelog.php?tool=sa2ml&rev=" + File.ReadAllText("sa2mlver.txt"));
+
+					if (msg.Length > 0)
+					{
+						using (var dlg = new UpdateMessageDialog(msg.Replace("\n", "\r\n")))
+						{
+							if (dlg.ShowDialog(this) == DialogResult.Yes)
+							{
+								Process.Start("http://mm.reimuhakurei.net/sa2mods/SA2ModLoader.7z");
+								Close();
+								return true;
+							}
+						}
+					}
+				}
+				catch
+				{
+					MessageBox.Show(this, "Unable to retrieve update information.", "SA2 Mod Manager");
+				}
+			}
+
+			return false;
+		}
+
+		private void InitializeWorker()
+		{
+			if (updateChecker != null)
+			{
+				return;
+			}
+
+			updateChecker = new BackgroundWorker { WorkerSupportsCancellation = true };
+			updateChecker.DoWork += UpdateChecker_DoWork;
+			updateChecker.RunWorkerCompleted += UpdateChecker_RunWorkerCompleted;
+			updateChecker.RunWorkerCompleted += UpdateChecker_EnableControls;
+		}
+
+		private void UpdateChecker_EnableControls(object sender, RunWorkerCompletedEventArgs runWorkerCompletedEventArgs)
+		{
+			buttonCheckForUpdates.Enabled = true;
+			checkForUpdatesToolStripMenuItem.Enabled = true;
+			verifyToolStripMenuItem.Enabled = true;
+			forceUpdateToolStripMenuItem.Enabled = true;
+			uninstallToolStripMenuItem.Enabled = true;
+			developerToolStripMenuItem.Enabled = true;
+		}
+
+		private void CheckForModUpdates(bool force = false)
+		{
+			if (!force && !loaderini.ModUpdateCheck)
+			{
+				return;
+			}
+
+			InitializeWorker();
+
+			if (!force && !UpdateTimeElapsed(loaderini.UpdateUnit, loaderini.UpdateFrequency, DateTime.FromFileTimeUtc(loaderini.ModUpdateTime)))
+			{
+				return;
+			}
+
+			checkedForUpdates = true;
+			loaderini.ModUpdateTime = DateTime.UtcNow.ToFileTimeUtc();
+			updateChecker.RunWorkerAsync(mods.Select(x => new KeyValuePair<string, ModInfo>(x.Key, x.Value)).ToList());
+			buttonCheckForUpdates.Enabled = false;
+		}
+
+		private void UpdateChecker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			if (modUpdater.ForceUpdate)
+			{
+				updateChecker?.Dispose();
+				updateChecker = null;
+				modUpdater.ForceUpdate = false;
+				modUpdater.Clear();
+			}
+
+			if (e.Cancelled)
+			{
+				return;
+			}
+
+			if (!(e.Result is Tuple<List<ModDownload>, List<string>> data))
+			{
+				return;
+			}
+
+			List<string> errors = data.Item2;
+			if (errors.Count != 0)
+			{
+				MessageBox.Show(this, "The following errors occurred while checking for updates:\n\n" + string.Join("\n", errors),
+					"Update Errors", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+
+			bool manual = manualModUpdate;
+			manualModUpdate = false;
+
+			List<ModDownload> updates = data.Item1;
+			if (updates.Count == 0)
+			{
+				if (manual)
+				{
+					MessageBox.Show(this, "Mods are up to date.",
+						"No Updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				return;
+			}
+
+			using (var dialog = new ModUpdatesDialog(updates))
+			{
+				if (dialog.ShowDialog(this) != DialogResult.OK)
+				{
+					return;
+				}
+
+				updates = dialog.SelectedMods;
+			}
+
+			if (updates.Count == 0)
+			{
+				return;
+			}
+
+			DialogResult result;
+			string updatePath = Path.Combine("mods", ".updates");
+
+			do
+			{
+				try
+				{
+					result = DialogResult.Cancel;
+					if (!Directory.Exists(updatePath))
+					{
+						Directory.CreateDirectory(updatePath);
+					}
+				}
+				catch (Exception ex)
+				{
+					result = MessageBox.Show(this, "Failed to create temporary update directory:\n" + ex.Message
+						+ "\n\nWould you like to retry?", "Directory Creation Failed", MessageBoxButtons.RetryCancel);
+				}
+			} while (result == DialogResult.Retry);
+
+			using (var progress = new DownloadDialog(updates, updatePath))
+			{
+				progress.ShowDialog(this);
+			}
+
+			do
+			{
+				try
+				{
+					result = DialogResult.Cancel;
+					Directory.Delete(updatePath, true);
+				}
+				catch (Exception ex)
+				{
+					result = MessageBox.Show(this, "Failed to remove temporary update directory:\n" + ex.Message
+						+ "\n\nWould you like to retry? You can remove the directory manually later.",
+						"Directory Deletion Failed", MessageBoxButtons.RetryCancel);
+				}
+			} while (result == DialogResult.Retry);
+
+			LoadModList();
+		}
+
+		private void UpdateChecker_DoWork(object sender, DoWorkEventArgs e)
+		{
+			if (!(sender is BackgroundWorker worker))
+			{
+				throw new Exception("what");
+			}
+
+			Invoke(new Action(() =>
+			{
+				buttonCheckForUpdates.Enabled = false;
+				checkForUpdatesToolStripMenuItem.Enabled = false;
+				verifyToolStripMenuItem.Enabled = false;
+				forceUpdateToolStripMenuItem.Enabled = false;
+				uninstallToolStripMenuItem.Enabled = false;
+				developerToolStripMenuItem.Enabled = false;
+			}));
+
+			var updatableMods = e.Argument as List<KeyValuePair<string, ModInfo>>;
+			List<ModDownload> updates = null;
+			List<string> errors = null;
+
+			var tokenSource = new CancellationTokenSource();
+			CancellationToken token = tokenSource.Token;
+
+			using (var task = new Task(() => modUpdater.GetModUpdates(updatableMods, out updates, out errors, token), token))
+			{
+				task.Start();
+
+				while (!task.IsCompleted && !task.IsCanceled)
+				{
+					Application.DoEvents();
+
+					if (worker.CancellationPending)
+					{
+						tokenSource.Cancel();
+					}
+				}
+
+				task.Wait(token);
+			}
+
+			e.Result = new Tuple<List<ModDownload>, List<string>>(updates, errors);
+		}
+
+		// TODO: merge with ^
+		private void UpdateChecker_DoWorkForced(object sender, DoWorkEventArgs e)
+		{
+			if (!(sender is BackgroundWorker worker))
+			{
+				throw new Exception("what");
+			}
+
+			if (!(e.Argument is List<Tuple<string, ModInfo, List<ModManifestDiff>>> updatableMods) || updatableMods.Count == 0)
+			{
+				return;
+			}
+
+			var updates = new List<ModDownload>();
+			var errors = new List<string>();
+
+			using (var client = new UpdaterWebClient())
+			{
+				foreach (Tuple<string, ModInfo, List<ModManifestDiff>> info in updatableMods)
+				{
+					if (worker.CancellationPending)
+					{
+						e.Cancel = true;
+						break;
+					}
+
+					ModInfo mod = info.Item2;
+					if (!string.IsNullOrEmpty(mod.GitHubRepo))
+					{
+						if (string.IsNullOrEmpty(mod.GitHubAsset))
+						{
+							errors.Add($"[{ mod.Name }] GitHubRepo specified, but GitHubAsset is missing.");
+							continue;
+						}
+
+						ModDownload d = modUpdater.GetGitHubReleases(mod, info.Item1, client, errors);
+						if (d != null)
+						{
+							updates.Add(d);
+						}
+					}
+					else if (!string.IsNullOrEmpty(mod.UpdateUrl))
+					{
+						List<ModManifest> localManifest = info.Item3
+							.Where(x => x.State == ModManifestState.Unchanged)
+							.Select(x => x.Current).ToList();
+
+						ModDownload d = modUpdater.CheckModularVersion(mod, info.Item1, localManifest, client, errors);
+						if (d != null)
+						{
+							updates.Add(d);
+						}
+					}
+				}
+			}
+
+			e.Result = new Tuple<List<ModDownload>, List<string>>(updates, errors);
 		}
 
 		private void modListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -106,20 +644,47 @@ namespace SA2ModManager
 			int count = modListView.SelectedIndices.Count;
 			if (count == 0)
 			{
-				modUpButton.Enabled = modDownButton.Enabled = false;
+				modTopButton.Enabled = modUpButton.Enabled = modDownButton.Enabled = modBottomButton.Enabled = configureModButton.Enabled = false;
 				modDescription.Text = "Description: No mod selected.";
 			}
 			else if (count == 1)
 			{
 				modDescription.Text = "Description: " + mods[(string)modListView.SelectedItems[0].Tag].Description;
+				modTopButton.Enabled = modListView.SelectedIndices[0] != 0;
 				modUpButton.Enabled = modListView.SelectedIndices[0] > 0;
 				modDownButton.Enabled = modListView.SelectedIndices[0] < modListView.Items.Count - 1;
+				modBottomButton.Enabled = modListView.SelectedIndices[0] != modListView.Items.Count - 1;
+				configureModButton.Enabled = File.Exists(Path.Combine("mods", (string)modListView.SelectedItems[0].Tag, "configschema.xml"));
 			}
 			else if (count > 1)
 			{
 				modDescription.Text = "Description: Multiple mods selected.";
-				modUpButton.Enabled = modDownButton.Enabled = true;
+				modTopButton.Enabled = modUpButton.Enabled = modDownButton.Enabled = modBottomButton.Enabled = true;
+				configureModButton.Enabled = false;
 			}
+		}
+
+		private void modTopButton_Click(object sender, EventArgs e)
+		{
+			if (modListView.SelectedItems.Count < 1)
+				return;
+
+			modListView.BeginUpdate();
+
+			for (int i = 0; i < modListView.SelectedItems.Count; i++)
+			{
+				int index = modListView.SelectedItems[i].Index;
+
+				if (index > 0)
+				{
+					ListViewItem item = modListView.SelectedItems[i];
+					modListView.Items.Remove(item);
+					modListView.Items.Insert(i, item);
+				}
+			}
+
+			modListView.SelectedItems[0].EnsureVisible();
+			modListView.EndUpdate();
 		}
 
 		private void modUpButton_Click(object sender, EventArgs e)
@@ -168,6 +733,70 @@ namespace SA2ModManager
 			modListView.EndUpdate();
 		}
 
+		private void modBottomButton_Click(object sender, EventArgs e)
+		{
+			if (modListView.SelectedItems.Count < 1)
+				return;
+
+			modListView.BeginUpdate();
+
+			for (int i = modListView.SelectedItems.Count - 1; i >= 0; i--)
+			{
+				int index = modListView.SelectedItems[i].Index;
+
+				if (index != modListView.Items.Count - 1)
+				{
+					ListViewItem item = modListView.SelectedItems[i];
+					modListView.Items.Remove(item);
+					modListView.Items.Insert(modListView.Items.Count, item);
+				}
+			}
+
+			modListView.SelectedItems[modListView.SelectedItems.Count - 1].EnsureVisible();
+			modListView.EndUpdate();
+		}
+
+		static readonly string moddropname = "Mod" + Process.GetCurrentProcess().Id;
+		private void modListView_ItemDrag(object sender, ItemDragEventArgs e)
+		{
+			modListView.DoDragDrop(new DataObject(moddropname, modListView.SelectedItems.Cast<ListViewItem>().ToArray()), DragDropEffects.Move | DragDropEffects.Scroll);
+		}
+
+		private void modListView_DragEnter(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(moddropname))
+				e.Effect = DragDropEffects.Move | DragDropEffects.Scroll;
+			else
+				e.Effect = DragDropEffects.None;
+		}
+
+		private void modListView_DragOver(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(moddropname))
+				e.Effect = DragDropEffects.Move | DragDropEffects.Scroll;
+			else
+				e.Effect = DragDropEffects.None;
+		}
+
+		private void modListView_DragDrop(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(moddropname))
+			{
+				Point clientPoint = modListView.PointToClient(new Point(e.X, e.Y));
+				ListViewItem[] items = (ListViewItem[])e.Data.GetData(moddropname);
+				int ind = modListView.GetItemAt(clientPoint.X, clientPoint.Y).Index;
+				foreach (ListViewItem item in items)
+					if (ind > item.Index)
+						ind++;
+				modListView.BeginUpdate();
+				foreach (ListViewItem item in items)
+					modListView.Items.Insert(ind++, (ListViewItem)item.Clone());
+				foreach (ListViewItem item in items)
+					modListView.Items.Remove(item);
+				modListView.EndUpdate();
+			}
+		}
+
 		private void Save()
 		{
 			loaderini.Mods.Clear();
@@ -177,114 +806,53 @@ namespace SA2ModManager
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
 			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
-			IniFile.Serialize(loaderini, loaderinipath);
-			// TODO: hides field MainForm.codes
-			List<Code> codes = new List<Code>();
-			List<Code> patches = new List<Code>();
+			loaderini.UpdateCheck = checkUpdateStartup.Checked;
+			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
+			loaderini.UpdateUnit = (UpdateUnit)comboUpdateFrequency.SelectedIndex;
+			loaderini.UpdateFrequency = (int)numericUpdateFrequency.Value;
+
+			IniSerializer.Serialize(loaderini, loaderinipath);
+
+			List<Code> selectedCodes = new List<Code>();
+			List<Code> selectedPatches = new List<Code>();
+
 			foreach (Code item in codesCheckedListBox.CheckedIndices.OfType<int>().Select(a => this.codes[a]))
 				if (item.Patch)
-					patches.Add(item);
+					selectedPatches.Add(item);
 				else
-					codes.Add(item);
-			using (FileStream fs = File.Create(patchdatpath))
-			using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
-			{
-				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '5' });
-				bw.Write(patches.Count);
-				foreach (Code item in patches)
-				{
-					if (item.IsReg)
-						bw.Write((byte)CodeType.newregs);
-					WriteCodes(item.Lines, bw);
-				}
-				bw.Write(byte.MaxValue);
-			}
-			using (FileStream fs = File.Create(codedatpath))
-			using (BinaryWriter bw = new BinaryWriter(fs, System.Text.Encoding.ASCII))
-			{
-				bw.Write(new[] { 'c', 'o', 'd', 'e', 'v', '5' });
-				bw.Write(codes.Count);
-				foreach (Code item in codes)
-				{
-					if (item.IsReg)
-						bw.Write((byte)CodeType.newregs);
-					WriteCodes(item.Lines, bw);
-				}
-				bw.Write(byte.MaxValue);
-			}
-		}
+					selectedCodes.Add(item);
 
-		private void WriteCodes(IEnumerable<CodeLine> codeList, BinaryWriter writer)
-		{
-			foreach (CodeLine line in codeList)
-			{
-				writer.Write((byte)line.Type);
-				uint address;
-				if (line.Address.StartsWith("r"))
-					address = uint.Parse(line.Address.Substring(1), System.Globalization.NumberStyles.None, System.Globalization.NumberFormatInfo.InvariantInfo);
-				else
-					address = uint.Parse(line.Address, System.Globalization.NumberStyles.HexNumber);
-				if (line.Pointer)
-					address |= 0x80000000u;
-				writer.Write(address);
-				if (line.Pointer)
-					if (line.Offsets != null)
-					{
-						writer.Write((byte)line.Offsets.Count);
-						foreach (int off in line.Offsets)
-							writer.Write(off);
-					}
-					else
-						writer.Write((byte)0);
-				if (line.Type == CodeType.ifkbkey)
-					writer.Write((int)(Keys)Enum.Parse(typeof(Keys), line.Value));
-				else
-					switch (line.ValueType)
-					{
-						case ValueType.@decimal:
-							switch (line.Type)
-							{
-								case CodeType.writefloat:
-								case CodeType.addfloat:
-								case CodeType.subfloat:
-								case CodeType.mulfloat:
-								case CodeType.divfloat:
-								case CodeType.ifeqfloat:
-								case CodeType.ifnefloat:
-								case CodeType.ifltfloat:
-								case CodeType.iflteqfloat:
-								case CodeType.ifgtfloat:
-								case CodeType.ifgteqfloat:
-									writer.Write(float.Parse(line.Value, System.Globalization.NumberStyles.Float, System.Globalization.NumberFormatInfo.InvariantInfo));
-									break;
-								default:
-									writer.Write(unchecked((int)long.Parse(line.Value, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo)));
-									break;
-							}
-							break;
-						case ValueType.hex:
-							writer.Write(uint.Parse(line.Value, System.Globalization.NumberStyles.HexNumber, System.Globalization.NumberFormatInfo.InvariantInfo));
-							break;
-					}
-				writer.Write(line.RepeatCount ?? 1);
-				if (line.IsIf)
-				{
-					WriteCodes(line.TrueLines, writer);
-					if (line.FalseLines.Count > 0)
-					{
-						writer.Write((byte)CodeType.@else);
-						WriteCodes(line.FalseLines, writer);
-					}
-					writer.Write((byte)CodeType.endif);
-				}
-			}
+			CodeList.WriteDatFile(patchdatpath, selectedPatches);
+			CodeList.WriteDatFile(codedatpath, selectedCodes);
 		}
 
 		private void saveAndPlayButton_Click(object sender, EventArgs e)
 		{
+			if (updateChecker?.IsBusy == true)
+			{
+				var result = MessageBox.Show(this, "Mods are still being checked for updates. Continue anyway?",
+					"Busy", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+				if (result == DialogResult.No)
+				{
+					return;
+				}
+
+				Enabled = false;
+
+				updateChecker.CancelAsync();
+				while (updateChecker.IsBusy)
+				{
+					Application.DoEvents();
+				}
+
+				Enabled = true;
+			}
+
 			Save();
-			System.Diagnostics.Process.Start(loaderini.Mods.Select((item) => mods[item].EXEFile)
-				.FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "sonic2app.exe").WaitForInputIdle(10000);
+			Process process = Process.Start(loaderini.Mods.Select((item) => mods[item].EXEFile)
+												.FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "sonic2app.exe");
+			process?.WaitForInputIdle(10000);
 			Close();
 		}
 
@@ -311,65 +879,9 @@ namespace SA2ModManager
 			installed = !installed;
 		}
 
-		private void LoadModList()
-		{
-			modListView.Items.Clear();
-			mods = new Dictionary<string, ModInfo>();
-			codes = new List<Code>(mainCodes.Codes);
-			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
-			foreach (string filename in GetModFiles(new DirectoryInfo(modDir)))
-				mods.Add(Path.GetDirectoryName(filename).Substring(modDir.Length + 1), IniFile.Deserialize<ModInfo>(filename));
-			modListView.BeginUpdate();
-			foreach (string mod in new List<string>(loaderini.Mods))
-			{
-				if (mods.ContainsKey(mod))
-				{
-					ModInfo inf = mods[mod];
-					suppressEvent = true;
-					modListView.Items.Add(new ListViewItem(new[] { inf.Name, inf.Author, inf.Version }) { Checked = true, Tag = mod });
-					suppressEvent = false;
-					if (!string.IsNullOrEmpty(inf.Codes))
-						codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(modDir, mod), inf.Codes)).Codes);
-				}
-				else
-				{
-					MessageBox.Show(this, "Mod \"" + mod + "\" could not be found.\n\nThis mod will be removed from the list.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					loaderini.Mods.Remove(mod);
-				}
-			}
-			foreach (KeyValuePair<string, ModInfo> inf in mods)
-				if (!loaderini.Mods.Contains(inf.Key))
-					modListView.Items.Add(new ListViewItem(new[] { inf.Value.Name, inf.Value.Author, inf.Value.Version }) { Tag = inf.Key });
-			modListView.EndUpdate();
-			loaderini.EnabledCodes = new List<string>(loaderini.EnabledCodes.Where(a => codes.Any(c => c.Name == a)));
-			foreach (Code item in codes.Where(a => a.Required && !loaderini.EnabledCodes.Contains(a.Name)))
-				loaderini.EnabledCodes.Add(item.Name);
-			codesCheckedListBox.BeginUpdate();
-			codesCheckedListBox.Items.Clear();
-			foreach (Code item in codes)
-				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
-			codesCheckedListBox.EndUpdate();
-		}
-
-		private IEnumerable<string> GetModFiles(DirectoryInfo directoryInfo)
-		{
-			foreach (DirectoryInfo item in directoryInfo.GetDirectories())
-				if (!item.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
-					foreach (string filename in GetModFiles(item))
-						yield return filename;
-			string modini = Path.Combine(directoryInfo.FullName, "mod.ini");
-			if (File.Exists(modini))
-				yield return modini;
-		}
-
 		private void buttonRefreshModList_Click(object sender, EventArgs e)
 		{
 			LoadModList();
-		}
-
-		private void buttonModsFolder_Click(object sender, EventArgs e)
-		{
-			System.Diagnostics.Process.Start(@"mods");
 		}
 
 		private void buttonNewMod_Click(object sender, EventArgs e)
@@ -413,7 +925,7 @@ namespace SA2ModManager
 			foreach (string mod in modlist)
 				if (mods.ContainsKey(mod))
 				{
-					ModInfo inf = mods[mod];
+					SA2ModInfo inf = mods[mod];
 					if (!string.IsNullOrEmpty(inf.Codes))
 						codes.AddRange(CodeList.Load(Path.Combine(Path.Combine(modDir, mod), inf.Codes)).Codes);
 				}
@@ -426,217 +938,272 @@ namespace SA2ModManager
 				codesCheckedListBox.Items.Add(item.Name, loaderini.EnabledCodes.Contains(item.Name));
 			codesCheckedListBox.EndUpdate();
 		}
-	}
 
-	class LoaderInfo
-	{
-		public bool DebugConsole { get; set; }
-		public bool DebugScreen { get; set; }
-		public bool DebugFile { get; set; }
-		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
-		[DefaultValue(true)]
-		public bool PauseWhenInactive { get; set; }
-		[DefaultValue(false)]
-		public bool BorderlessWindow { get; set; }
-		[IniName("Mod")]
-		[IniCollection(IniCollectionMode.NoSquareBrackets, StartIndex = 1)]
-		public List<string> Mods { get; set; }
-		[IniName("Code")]
-		[IniCollection(IniCollectionMode.NoSquareBrackets, StartIndex = 1)]
-		public List<string> EnabledCodes { get; set; }
 
-		public LoaderInfo()
+		private void modListView_MouseClick(object sender, MouseEventArgs e)
 		{
-			Mods = new List<string>();
-			EnabledCodes = new List<string>();
-		}
-	}
-
-	class ModInfo
-	{
-		public string Name { get; set; }
-		public string Author { get; set; }
-		public string Version { get; set; }
-		public string Description { get; set; }
-		public string EXEFile { get; set; }
-		public string DLLFile { get; set; }
-		public bool RedirectMainSave { get; set; }
-		public bool RedirectChaoSave { get; set; }
-		public string Codes { get; set; }
-	}
-
-	[XmlRoot(Namespace = "http://www.sonicretro.org")]
-	public class CodeList
-	{
-		static readonly XmlSerializer serializer = new XmlSerializer(typeof(CodeList));
-
-		public static CodeList Load(string filename)
-		{
-			using (FileStream fs = File.OpenRead(filename))
-				return (CodeList)serializer.Deserialize(fs);
-		}
-
-		public void Save(string filename)
-		{
-			using (FileStream fs = File.Create(filename))
-				serializer.Serialize(fs, this);
-		}
-
-		[XmlElement("Code")]
-		public List<Code> Codes { get; set; }
-	}
-
-	public class Code
-	{
-		[XmlAttribute("name")]
-		public string Name { get; set; }
-		[XmlAttribute("required")]
-		public bool Required { get; set; }
-		[XmlAttribute("patch")]
-		public bool Patch { get; set; }
-		[XmlElement("CodeLine")]
-		public List<CodeLine> Lines { get; set; }
-
-		[XmlIgnore]
-		public bool IsReg { get { return Lines.Any((line) => line.IsReg); } }
-	}
-
-	public class CodeLine
-	{
-		public CodeType Type { get; set; }
-		[XmlElement(IsNullable = false)]
-		public string Address { get; set; }
-		public bool Pointer { get; set; }
-		[XmlIgnore]
-		public bool PointerSpecified { get { return Pointer; } set { } }
-		[XmlIgnore]
-		public List<int> Offsets { get; set; }
-		[XmlArray("Offsets")]
-		[XmlArrayItem("Offset")]
-		public string[] OffsetStrings
-		{
-			get { return Offsets == null ? null : Offsets.Select((a) => a.ToString("X")).ToArray(); }
-			set { Offsets = value.Select((a) => int.Parse(a, System.Globalization.NumberStyles.HexNumber)).ToList(); }
-		}
-		[XmlIgnore]
-		public bool OffsetStringsSpecified { get { return Offsets != null && Offsets.Count > 0; } set { } }
-		[XmlElement(IsNullable = false)]
-		public string Value { get; set; }
-		public ValueType ValueType { get; set; }
-		public uint? RepeatCount { get; set; }
-		[XmlIgnore]
-		public bool RepeatCountSpecified { get { return RepeatCount.HasValue; } set { } }
-		[XmlArray]
-		public List<CodeLine> TrueLines { get; set; }
-		[XmlIgnore]
-		public bool TrueLinesSpecified { get { return TrueLines.Count > 0 && IsIf; } set { } }
-		[XmlArray]
-		public List<CodeLine> FalseLines { get; set; }
-		[XmlIgnore]
-		public bool FalseLinesSpecified { get { return FalseLines.Count > 0 && IsIf; } set { } }
-
-		[XmlIgnore]
-		public bool IsIf
-		{
-			get
+			if (e.Button != MouseButtons.Right)
 			{
-				return (Type >= CodeType.ifeq8 && Type <= CodeType.ifkbkey)
-					|| (Type >= CodeType.ifeqreg8 && Type <= CodeType.ifmaskreg32);
+				return;
+			}
+
+			if (modListView.FocusedItem.Bounds.Contains(e.Location))
+			{
+				modContextMenu.Show(Cursor.Position);
 			}
 		}
 
-		[XmlIgnore]
-		public bool IsReg
+		private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			get
+			foreach (ListViewItem item in modListView.SelectedItems)
 			{
-				if (IsIf)
+				Process.Start(Path.Combine("mods", (string)item.Tag));
+			}
+		}
+
+		private void uninstallToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			DialogResult result = MessageBox.Show(this, "This will uninstall all selected mods."
+				+ "\n\nAre you sure you wish to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+			if (result != DialogResult.Yes)
+			{
+				return;
+			}
+
+			result = MessageBox.Show(this, "Would you like to keep mod user data where possible? (Save files, config files, etc)",
+				"User Data", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+			if (result == DialogResult.Cancel)
+			{
+				return;
+			}
+
+			foreach (ListViewItem item in modListView.SelectedItems)
+			{
+				var dir = (string)item.Tag;
+				var modDir = Path.Combine("mods", dir);
+				var manpath = Path.Combine(modDir, "mod.manifest");
+
+				try
 				{
-					if (TrueLines.Any((line) => line.IsReg))
-						return true;
-					if (FalseLines.Any((line) => line.IsReg))
-						return true;
+					if (result == DialogResult.Yes && File.Exists(manpath))
+					{
+						List<ModManifest> manifest = ModManifest.FromFile(manpath);
+						foreach (var entry in manifest)
+						{
+							var path = Path.Combine(modDir, entry.FilePath);
+							if (File.Exists(path))
+							{
+								File.Delete(path);
+							}
+						}
+
+						File.Delete(manpath);
+						var version = Path.Combine(modDir, "mod.version");
+						if (File.Exists(version))
+						{
+							File.Delete(version);
+						}
+					}
+					else
+					{
+						if (result == DialogResult.Yes)
+						{
+							var retain = MessageBox.Show(this, $"The mod \"{ mods[dir].Name }\" (\"mods\\{ dir }\") does not have a manifest, so mod user data cannot be retained."
+								+ " Do you want to uninstall it anyway?", "Cannot Retain User Data", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+							if (retain == DialogResult.No)
+							{
+								continue;
+							}
+						}
+
+						Directory.Delete(modDir, true);
+					}
 				}
-				if (Address.StartsWith("r"))
-					return true;
-				if (Type >= CodeType.readreg8 && Type <= CodeType.ifmaskreg32)
-					return true;
-				return false;
+				catch (Exception ex)
+				{
+					MessageBox.Show(this, $"Failed to uninstall mod \"{ mods[dir].Name }\" from \"{ dir }\": { ex.Message }", "Failed",
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+
+			LoadModList();
+		}
+
+		private bool displayedManifestWarning;
+
+		private void generateManifestToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!displayedManifestWarning)
+			{
+				DialogResult result = MessageBox.Show(this, Properties.Resources.GenerateManifestWarning,
+					"Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+				if (result != DialogResult.Yes)
+				{
+					return;
+				}
+
+				displayedManifestWarning = true;
+			}
+
+			foreach (ListViewItem item in modListView.SelectedItems)
+			{
+				var modPath = Path.Combine("mods", (string)item.Tag);
+				var manifestPath = Path.Combine(modPath, "mod.manifest");
+
+				List<ModManifest> manifest;
+				List<ModManifestDiff> diff;
+
+				using (var progress = new ManifestDialog(modPath, $"Generating manifest: {(string)item.Tag}", true))
+				{
+					progress.SetTask("Generating file index...");
+					if (progress.ShowDialog(this) == DialogResult.Cancel)
+					{
+						continue;
+					}
+
+					diff = progress.Diff;
+				}
+
+				if (diff == null)
+				{
+					continue;
+				}
+
+				if (diff.Count(x => x.State != ModManifestState.Unchanged) <= 0)
+				{
+					continue;
+				}
+
+				using (var dialog = new ManifestDiffDialog(diff))
+				{
+					if (dialog.ShowDialog(this) == DialogResult.Cancel)
+					{
+						continue;
+					}
+
+					manifest = dialog.MakeNewManifest();
+				}
+
+				ModManifest.ToFile(manifest, manifestPath);
 			}
 		}
-	}
 
-	public enum CodeType
-	{
-		write8, write16, write32, writefloat,
-		add8, add16, add32, addfloat,
-		sub8, sub16, sub32, subfloat,
-		mulu8, mulu16, mulu32, mulfloat,
-		muls8, muls16, muls32,
-		divu8, divu16, divu32, divfloat,
-		divs8, divs16, divs32,
-		modu8, modu16, modu32,
-		mods8, mods16, mods32,
-		shl8, shl16, shl32,
-		shru8, shru16, shru32,
-		shrs8, shrs16, shrs32,
-		rol8, rol16, rol32,
-		ror8, ror16, ror32,
-		and8, and16, and32,
-		or8, or16, or32,
-		xor8, xor16, xor32,
-		writenop,
-		ifeq8, ifeq16, ifeq32, ifeqfloat,
-		ifne8, ifne16, ifne32, ifnefloat,
-		ifltu8, ifltu16, ifltu32, ifltfloat,
-		iflts8, iflts16, iflts32,
-		ifltequ8, ifltequ16, ifltequ32, iflteqfloat,
-		iflteqs8, iflteqs16, iflteqs32,
-		ifgtu8, ifgtu16, ifgtu32, ifgtfloat,
-		ifgts8, ifgts16, ifgts32,
-		ifgtequ8, ifgtequ16, ifgtequ32, ifgteqfloat,
-		ifgteqs8, ifgteqs16, ifgteqs32,
-		ifmask8, ifmask16, ifmask32,
-		ifkbkey,
-		readreg8, readreg16, readreg32,
-		writereg8, writereg16, writereg32,
-		addreg8, addreg16, addreg32, addregfloat,
-		subreg8, subreg16, subreg32, subregfloat,
-		mulregu8, mulregu16, mulregu32, mulregfloat,
-		mulregs8, mulregs16, mulregs32,
-		divregu8, divregu16, divregu32, divregfloat,
-		divregs8, divregs16, divregs32,
-		modregu8, modregu16, modregu32,
-		modregs8, modregs16, modregs32,
-		shlreg8, shlreg16, shlreg32,
-		shrregu8, shrregu16, shrregu32,
-		shrregs8, shrregs16, shrregs32,
-		rolreg8, rolreg16, rolreg32,
-		rorreg8, rorreg16, rorreg32,
-		andreg8, andreg16, andreg32,
-		orreg8, orreg16, orreg32,
-		xorreg8, xorreg16, xorreg32,
-		writenopreg,
-		ifeqreg8, ifeqreg16, ifeqreg32, ifeqregfloat,
-		ifnereg8, ifnereg16, ifnereg32, ifneregfloat,
-		ifltregu8, ifltregu16, ifltregu32, ifltregfloat,
-		ifltregs8, ifltregs16, ifltregs32,
-		iflteqregu8, iflteqregu16, iflteqregu32, iflteqregfloat,
-		iflteqregs8, iflteqregs16, iflteqregs32,
-		ifgtregu8, ifgtregu16, ifgtregu32, ifgtregfloat,
-		ifgtregs8, ifgtregs16, ifgtregs32,
-		ifgteqregu8, ifgteqregu16, ifgteqregu32, ifgteqregfloat,
-		ifgteqregs8, ifgteqregs16, ifgteqregs32,
-		ifmaskreg8, ifmaskreg16, ifmaskreg32,
-		s8tos32, s16tos32, s32tofloat, u32tofloat, floattos32, floattou32,
-		@else,
-		endif,
-		newregs
-	}
+		private void UpdateSelectedMods()
+		{
+			InitializeWorker();
+			manualModUpdate = true;
+			updateChecker?.RunWorkerAsync(modListView.SelectedItems.Cast<ListViewItem>()
+				.Select(x => (string)x.Tag)
+				.Select(x => new KeyValuePair<string, ModInfo>(x, mods[x]))
+				.ToList());
+		}
 
-	public enum ValueType
-	{
-		@decimal,
-		hex
+		private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			UpdateSelectedMods();
+		}
+
+		private void forceUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var result = MessageBox.Show(this, "This will force all selected mods to be completely re-downloaded."
+				+ " Are you sure you want to continue?",
+				"Force Update", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+			if (result != DialogResult.Yes)
+			{
+				return;
+			}
+
+			modUpdater.ForceUpdate = true;
+			UpdateSelectedMods();
+		}
+
+		private void verifyToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			List<Tuple<string, ModInfo>> items = modListView.SelectedItems.Cast<ListViewItem>()
+				.Select(x => (string)x.Tag)
+				.Where(x => File.Exists(Path.Combine("mods", x, "mod.manifest")))
+				.Select(x => new Tuple<string, ModInfo>(x, mods[x]))
+				.ToList();
+
+			if (items.Count < 1)
+			{
+				MessageBox.Show(this, "None of the selected mods have manifests, so they cannot be verified.",
+					"Missing mod.manifest", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+
+			using (var progress = new VerifyModDialog(items))
+			{
+				var result = progress.ShowDialog(this);
+				if (result == DialogResult.Cancel)
+				{
+					return;
+				}
+
+				List<Tuple<string, ModInfo, List<ModManifestDiff>>> failed = progress.Failed;
+				if (failed.Count < 1)
+				{
+					MessageBox.Show(this, "All selected mods passed verification.", "Integrity Pass",
+						MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+				else
+				{
+					result = MessageBox.Show(this, "The following mods failed verification:\n"
+						+ string.Join("\n", failed.Select(x => $"{x.Item2.Name}: {x.Item3.Count(y => y.State != ModManifestState.Unchanged)} file(s)"))
+						+ "\n\nWould you like to attempt repairs?",
+						"Integrity Fail", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+					if (result != DialogResult.Yes)
+					{
+						return;
+					}
+
+					InitializeWorker();
+
+					updateChecker.DoWork -= UpdateChecker_DoWork;
+					updateChecker.DoWork += UpdateChecker_DoWorkForced;
+
+					updateChecker.RunWorkerAsync(failed);
+
+					modUpdater.ForceUpdate = true;
+					buttonCheckForUpdates.Enabled = false;
+				}
+			}
+		}
+
+		private void comboUpdateFrequency_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			numericUpdateFrequency.Enabled = comboUpdateFrequency.SelectedIndex > 0;
+		}
+
+		private void buttonCheckForUpdates_Click(object sender, EventArgs e)
+		{
+			buttonCheckForUpdates.Enabled = false;
+
+			if (CheckForUpdates(true))
+			{
+				return;
+			}
+
+			manualModUpdate = true;
+			CheckForModUpdates(true);
+		}
+
+		private void installURLHandlerButton_Click(object sender, EventArgs e)
+		{
+			Process.Start(new ProcessStartInfo(Application.ExecutablePath, "urlhandler") { UseShellExecute = true, Verb = "runas" }).WaitForExit();
+			MessageBox.Show(this, "URL handler installed!", Text);
+		}
+
+		private void configureModButton_Click(object sender, EventArgs e)
+		{
+			using (ModConfigDialog dlg = new ModConfigDialog(Path.Combine("mods", (string)modListView.SelectedItems[0].Tag), modListView.SelectedItems[0].Text))
+				dlg.ShowDialog(this);
+		}
 	}
 }

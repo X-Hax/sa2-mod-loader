@@ -30,7 +30,7 @@ namespace SA2ModManager
 						if (checkOpenFolder.Checked)
 							System.Diagnostics.Process.Start(moddir);
 
-						ModInfo newMod = new ModInfo
+						SA2ModInfo newMod = new SA2ModInfo
 						{
 							Name				= textModName.Text,
 							Author				= textModAuthor.Text,
