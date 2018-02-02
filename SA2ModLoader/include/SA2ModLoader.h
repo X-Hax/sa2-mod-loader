@@ -4,11 +4,11 @@
 #include <WTypes.h>
 #include <cstdint>
 
-#include "ModLoader/MemAccess.h"
-#include "SA2ModLoader/SA2Enums.h"
-#include "SA2ModLoader/SA2Structs.h"
-#include "SA2ModLoader/SA2Variables.h"
-#include "SA2ModLoader/SA2Functions.h"
+#include "MemAccess.h"
+#include "SA2Enums.h"
+#include "SA2Structs.h"
+#include "SA2Variables.h"
+#include "SA2Functions.h"
 
 // ModInfo
 

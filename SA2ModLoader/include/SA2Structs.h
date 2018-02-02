@@ -1,5 +1,5 @@
 #pragma once
-#include "../ninja.h"
+#include "ninja.h"
 
 // SA2 Structs
 

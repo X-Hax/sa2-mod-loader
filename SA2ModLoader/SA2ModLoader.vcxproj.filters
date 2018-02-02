@@ -24,22 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ModLoader\MemAccess.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
     <ClInclude Include="include\ninja.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SA2ModLoader\SA2Enums.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SA2ModLoader\SA2Functions.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SA2ModLoader\SA2Structs.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-    <ClInclude Include="include\SA2ModLoader\SA2Variables.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
     <ClInclude Include="include\SA2ModLoader.h">
@@ -50,6 +35,21 @@
     </ClInclude>
     <ClInclude Include="Events.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MemAccess.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SA2Enums.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SA2Functions.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SA2Structs.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SA2Variables.h">
+      <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

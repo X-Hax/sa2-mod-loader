@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../ModLoader/MemAccess.h"
+#include "MemAccess.h"
 #include "SA2Structs.h"
 
+#define ObjectFunc(NAME, ADDRESS) FunctionPointer(void,NAME,(ObjectMaster *obj),ADDRESS)
 // SA2 Functions
 FunctionPointer(int, PrintDebug, (char *format, ...), 0x426740);
 FunctionPointer(signed int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);

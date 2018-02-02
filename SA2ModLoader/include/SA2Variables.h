@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ModLoader/MemAccess.h"
+#include "MemAccess.h"
 #include "SA2Structs.h"
 
 DataArray(AnimationInfo, TailsAnimList, 0xA0D608, 118);
