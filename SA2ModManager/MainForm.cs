@@ -606,6 +606,14 @@ namespace SA2ModManager
 							updates.Add(d);
 						}
 					}
+					else if (!string.IsNullOrEmpty(mod.GameBananaItemType) && mod.GameBananaItemId.HasValue)
+					{
+						ModDownload d = modUpdater.GetGameBananaReleases(mod, info.Item1, errors);
+						if (d != null)
+						{
+							updates.Add(d);
+						}
+					}
 					else if (!string.IsNullOrEmpty(mod.UpdateUrl))
 					{
 						List<ModManifest> localManifest = info.Item3
