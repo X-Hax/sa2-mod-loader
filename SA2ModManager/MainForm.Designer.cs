@@ -283,6 +283,7 @@
 			this.configureModButton.TabIndex = 11;
 			this.configureModButton.Text = "Configure...";
 			this.configureModButton.UseVisualStyleBackColor = true;
+			this.configureModButton.Click += new System.EventHandler(this.configureModButton_Click);
 			// 
 			// modBottomButton
 			// 
