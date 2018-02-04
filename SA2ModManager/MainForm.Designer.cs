@@ -45,11 +45,22 @@
 			this.installButton = new System.Windows.Forms.Button();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.configureModButton = new System.Windows.Forms.Button();
+			this.modBottomButton = new System.Windows.Forms.Button();
+			this.modTopButton = new System.Windows.Forms.Button();
 			this.buttonNewMod = new System.Windows.Forms.Button();
 			this.buttonRefreshModList = new System.Windows.Forms.Button();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.installURLHandlerButton = new System.Windows.Forms.Button();
+			this.groupBox4 = new System.Windows.Forms.GroupBox();
+			this.buttonCheckForUpdates = new System.Windows.Forms.Button();
+			this.label4 = new System.Windows.Forms.Label();
+			this.checkUpdateModsStartup = new System.Windows.Forms.CheckBox();
+			this.numericUpdateFrequency = new System.Windows.Forms.NumericUpDown();
+			this.comboUpdateFrequency = new System.Windows.Forms.ComboBox();
+			this.checkUpdateStartup = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.borderlessWindowCheckBox = new System.Windows.Forms.CheckBox();
 			this.pauseWhenInactiveCheckBox = new System.Windows.Forms.CheckBox();
@@ -63,27 +74,16 @@
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
 			this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.groupBox4 = new System.Windows.Forms.GroupBox();
-			this.buttonCheckForUpdates = new System.Windows.Forms.Button();
-			this.label4 = new System.Windows.Forms.Label();
-			this.checkUpdateModsStartup = new System.Windows.Forms.CheckBox();
-			this.numericUpdateFrequency = new System.Windows.Forms.NumericUpDown();
-			this.comboUpdateFrequency = new System.Windows.Forms.ComboBox();
-			this.checkUpdateStartup = new System.Windows.Forms.CheckBox();
-			this.installURLHandlerButton = new System.Windows.Forms.Button();
-			this.modTopButton = new System.Windows.Forms.Button();
-			this.modBottomButton = new System.Windows.Forms.Button();
-			this.configureModButton = new System.Windows.Forms.Button();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
-			this.groupBox1.SuspendLayout();
-			this.modContextMenu.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpdateFrequency)).BeginInit();
+			this.groupBox1.SuspendLayout();
+			this.modContextMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox2
@@ -273,6 +273,47 @@
 			this.tabPage1.Text = "Mods";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
+			// configureModButton
+			// 
+			this.configureModButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.configureModButton.Enabled = false;
+			this.configureModButton.Location = new System.Drawing.Point(87, 223);
+			this.configureModButton.Name = "configureModButton";
+			this.configureModButton.Size = new System.Drawing.Size(75, 23);
+			this.configureModButton.TabIndex = 11;
+			this.configureModButton.Text = "Configure...";
+			this.configureModButton.UseVisualStyleBackColor = true;
+			// 
+			// modBottomButton
+			// 
+			this.modBottomButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.modBottomButton.AutoSize = true;
+			this.modBottomButton.Enabled = false;
+			this.modBottomButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.modBottomButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.modBottomButton.Location = new System.Drawing.Point(344, 90);
+			this.modBottomButton.Name = "modBottomButton";
+			this.modBottomButton.Size = new System.Drawing.Size(28, 22);
+			this.modBottomButton.TabIndex = 10;
+			this.modBottomButton.Text = "⤓";
+			this.modBottomButton.UseVisualStyleBackColor = true;
+			this.modBottomButton.Click += new System.EventHandler(this.modBottomButton_Click);
+			// 
+			// modTopButton
+			// 
+			this.modTopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.modTopButton.AutoSize = true;
+			this.modTopButton.Enabled = false;
+			this.modTopButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.modTopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.modTopButton.Location = new System.Drawing.Point(344, 6);
+			this.modTopButton.Name = "modTopButton";
+			this.modTopButton.Size = new System.Drawing.Size(28, 22);
+			this.modTopButton.TabIndex = 9;
+			this.modTopButton.Text = "⤒";
+			this.modTopButton.UseVisualStyleBackColor = true;
+			this.modTopButton.Click += new System.EventHandler(this.modTopButton_Click);
+			// 
 			// buttonNewMod
 			// 
 			this.buttonNewMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -329,6 +370,115 @@
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Options";
 			this.tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// installURLHandlerButton
+			// 
+			this.installURLHandlerButton.AutoSize = true;
+			this.installURLHandlerButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.installURLHandlerButton.Location = new System.Drawing.Point(6, 198);
+			this.installURLHandlerButton.Name = "installURLHandlerButton";
+			this.installURLHandlerButton.Size = new System.Drawing.Size(109, 23);
+			this.installURLHandlerButton.TabIndex = 4;
+			this.installURLHandlerButton.Text = "Install URL Handler";
+			this.installURLHandlerButton.UseVisualStyleBackColor = true;
+			this.installURLHandlerButton.Click += new System.EventHandler(this.installURLHandlerButton_Click);
+			// 
+			// groupBox4
+			// 
+			this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox4.Controls.Add(this.buttonCheckForUpdates);
+			this.groupBox4.Controls.Add(this.label4);
+			this.groupBox4.Controls.Add(this.checkUpdateModsStartup);
+			this.groupBox4.Controls.Add(this.numericUpdateFrequency);
+			this.groupBox4.Controls.Add(this.comboUpdateFrequency);
+			this.groupBox4.Controls.Add(this.checkUpdateStartup);
+			this.groupBox4.Location = new System.Drawing.Point(6, 102);
+			this.groupBox4.Name = "groupBox4";
+			this.groupBox4.Size = new System.Drawing.Size(366, 90);
+			this.groupBox4.TabIndex = 3;
+			this.groupBox4.TabStop = false;
+			this.groupBox4.Text = "Updates";
+			// 
+			// buttonCheckForUpdates
+			// 
+			this.buttonCheckForUpdates.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.buttonCheckForUpdates.Location = new System.Drawing.Point(259, 55);
+			this.buttonCheckForUpdates.Name = "buttonCheckForUpdates";
+			this.buttonCheckForUpdates.Size = new System.Drawing.Size(75, 23);
+			this.buttonCheckForUpdates.TabIndex = 5;
+			this.buttonCheckForUpdates.Text = "Check Now";
+			this.buttonCheckForUpdates.UseVisualStyleBackColor = true;
+			this.buttonCheckForUpdates.Click += new System.EventHandler(this.buttonCheckForUpdates_Click);
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(6, 40);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(60, 13);
+			this.label4.TabIndex = 2;
+			this.label4.Text = "Frequency:";
+			// 
+			// checkUpdateModsStartup
+			// 
+			this.checkUpdateModsStartup.AutoSize = true;
+			this.checkUpdateModsStartup.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkUpdateModsStartup.Location = new System.Drawing.Point(133, 19);
+			this.checkUpdateModsStartup.Name = "checkUpdateModsStartup";
+			this.checkUpdateModsStartup.Size = new System.Drawing.Size(141, 18);
+			this.checkUpdateModsStartup.TabIndex = 1;
+			this.checkUpdateModsStartup.Text = "Check mods on startup";
+			this.checkUpdateModsStartup.UseVisualStyleBackColor = true;
+			// 
+			// numericUpdateFrequency
+			// 
+			this.numericUpdateFrequency.Location = new System.Drawing.Point(133, 57);
+			this.numericUpdateFrequency.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+			this.numericUpdateFrequency.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.numericUpdateFrequency.Name = "numericUpdateFrequency";
+			this.numericUpdateFrequency.Size = new System.Drawing.Size(120, 20);
+			this.numericUpdateFrequency.TabIndex = 4;
+			this.numericUpdateFrequency.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// comboUpdateFrequency
+			// 
+			this.comboUpdateFrequency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboUpdateFrequency.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.comboUpdateFrequency.FormattingEnabled = true;
+			this.comboUpdateFrequency.Items.AddRange(new object[] {
+            "Always",
+            "Hours",
+            "Days",
+            "Weeks"});
+			this.comboUpdateFrequency.Location = new System.Drawing.Point(6, 56);
+			this.comboUpdateFrequency.Name = "comboUpdateFrequency";
+			this.comboUpdateFrequency.Size = new System.Drawing.Size(121, 21);
+			this.comboUpdateFrequency.TabIndex = 3;
+			this.comboUpdateFrequency.SelectedIndexChanged += new System.EventHandler(this.comboUpdateFrequency_SelectedIndexChanged);
+			// 
+			// checkUpdateStartup
+			// 
+			this.checkUpdateStartup.AutoSize = true;
+			this.checkUpdateStartup.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.checkUpdateStartup.Location = new System.Drawing.Point(6, 19);
+			this.checkUpdateStartup.Name = "checkUpdateStartup";
+			this.checkUpdateStartup.Size = new System.Drawing.Size(113, 18);
+			this.checkUpdateStartup.TabIndex = 0;
+			this.checkUpdateStartup.Text = "Check on startup";
+			this.checkUpdateStartup.UseVisualStyleBackColor = true;
 			// 
 			// groupBox1
 			// 
@@ -437,156 +587,6 @@
 			this.generateManifestToolStripMenuItem.Text = "Generate manifest";
 			this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
 			// 
-			// groupBox4
-			// 
-			this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox4.Controls.Add(this.buttonCheckForUpdates);
-			this.groupBox4.Controls.Add(this.label4);
-			this.groupBox4.Controls.Add(this.checkUpdateModsStartup);
-			this.groupBox4.Controls.Add(this.numericUpdateFrequency);
-			this.groupBox4.Controls.Add(this.comboUpdateFrequency);
-			this.groupBox4.Controls.Add(this.checkUpdateStartup);
-			this.groupBox4.Location = new System.Drawing.Point(6, 102);
-			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(366, 90);
-			this.groupBox4.TabIndex = 3;
-			this.groupBox4.TabStop = false;
-			this.groupBox4.Text = "Updates";
-			// 
-			// buttonCheckForUpdates
-			// 
-			this.buttonCheckForUpdates.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.buttonCheckForUpdates.Location = new System.Drawing.Point(259, 55);
-			this.buttonCheckForUpdates.Name = "buttonCheckForUpdates";
-			this.buttonCheckForUpdates.Size = new System.Drawing.Size(75, 23);
-			this.buttonCheckForUpdates.TabIndex = 5;
-			this.buttonCheckForUpdates.Text = "Check Now";
-			this.buttonCheckForUpdates.UseVisualStyleBackColor = true;
-			this.buttonCheckForUpdates.Click += new System.EventHandler(this.buttonCheckForUpdates_Click);
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(6, 40);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(60, 13);
-			this.label4.TabIndex = 2;
-			this.label4.Text = "Frequency:";
-			// 
-			// checkUpdateModsStartup
-			// 
-			this.checkUpdateModsStartup.AutoSize = true;
-			this.checkUpdateModsStartup.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkUpdateModsStartup.Location = new System.Drawing.Point(133, 19);
-			this.checkUpdateModsStartup.Name = "checkUpdateModsStartup";
-			this.checkUpdateModsStartup.Size = new System.Drawing.Size(141, 18);
-			this.checkUpdateModsStartup.TabIndex = 1;
-			this.checkUpdateModsStartup.Text = "Check mods on startup";
-			this.checkUpdateModsStartup.UseVisualStyleBackColor = true;
-			// 
-			// numericUpdateFrequency
-			// 
-			this.numericUpdateFrequency.Location = new System.Drawing.Point(133, 57);
-			this.numericUpdateFrequency.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-			this.numericUpdateFrequency.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this.numericUpdateFrequency.Name = "numericUpdateFrequency";
-			this.numericUpdateFrequency.Size = new System.Drawing.Size(120, 20);
-			this.numericUpdateFrequency.TabIndex = 4;
-			this.numericUpdateFrequency.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			// 
-			// comboUpdateFrequency
-			// 
-			this.comboUpdateFrequency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboUpdateFrequency.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.comboUpdateFrequency.FormattingEnabled = true;
-			this.comboUpdateFrequency.Items.AddRange(new object[] {
-            "Always",
-            "Hours",
-            "Days",
-            "Weeks"});
-			this.comboUpdateFrequency.Location = new System.Drawing.Point(6, 56);
-			this.comboUpdateFrequency.Name = "comboUpdateFrequency";
-			this.comboUpdateFrequency.Size = new System.Drawing.Size(121, 21);
-			this.comboUpdateFrequency.TabIndex = 3;
-			this.comboUpdateFrequency.SelectedIndexChanged += new System.EventHandler(this.comboUpdateFrequency_SelectedIndexChanged);
-			// 
-			// checkUpdateStartup
-			// 
-			this.checkUpdateStartup.AutoSize = true;
-			this.checkUpdateStartup.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkUpdateStartup.Location = new System.Drawing.Point(6, 19);
-			this.checkUpdateStartup.Name = "checkUpdateStartup";
-			this.checkUpdateStartup.Size = new System.Drawing.Size(113, 18);
-			this.checkUpdateStartup.TabIndex = 0;
-			this.checkUpdateStartup.Text = "Check on startup";
-			this.checkUpdateStartup.UseVisualStyleBackColor = true;
-			// 
-			// installURLHandlerButton
-			// 
-			this.installURLHandlerButton.AutoSize = true;
-			this.installURLHandlerButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.installURLHandlerButton.Location = new System.Drawing.Point(6, 198);
-			this.installURLHandlerButton.Name = "installURLHandlerButton";
-			this.installURLHandlerButton.Size = new System.Drawing.Size(109, 23);
-			this.installURLHandlerButton.TabIndex = 4;
-			this.installURLHandlerButton.Text = "Install URL Handler";
-			this.installURLHandlerButton.UseVisualStyleBackColor = true;
-			this.installURLHandlerButton.Click += new System.EventHandler(this.installURLHandlerButton_Click);
-			// 
-			// modTopButton
-			// 
-			this.modTopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.modTopButton.AutoSize = true;
-			this.modTopButton.Enabled = false;
-			this.modTopButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.modTopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.modTopButton.Location = new System.Drawing.Point(344, 6);
-			this.modTopButton.Name = "modTopButton";
-			this.modTopButton.Size = new System.Drawing.Size(28, 22);
-			this.modTopButton.TabIndex = 9;
-			this.modTopButton.Text = "⤒";
-			this.modTopButton.UseVisualStyleBackColor = true;
-			this.modTopButton.Click += new System.EventHandler(this.modTopButton_Click);
-			// 
-			// modBottomButton
-			// 
-			this.modBottomButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.modBottomButton.AutoSize = true;
-			this.modBottomButton.Enabled = false;
-			this.modBottomButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.modBottomButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.modBottomButton.Location = new System.Drawing.Point(344, 90);
-			this.modBottomButton.Name = "modBottomButton";
-			this.modBottomButton.Size = new System.Drawing.Size(28, 22);
-			this.modBottomButton.TabIndex = 10;
-			this.modBottomButton.Text = "⤓";
-			this.modBottomButton.UseVisualStyleBackColor = true;
-			this.modBottomButton.Click += new System.EventHandler(this.modBottomButton_Click);
-			// 
-			// configureModButton
-			// 
-			this.configureModButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.configureModButton.Enabled = false;
-			this.configureModButton.Location = new System.Drawing.Point(87, 223);
-			this.configureModButton.Name = "configureModButton";
-			this.configureModButton.Size = new System.Drawing.Size(75, 23);
-			this.configureModButton.TabIndex = 11;
-			this.configureModButton.Text = "Configure...";
-			this.configureModButton.UseVisualStyleBackColor = true;
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -603,6 +603,7 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "SA2 Mod Manager";
 			this.Load += new System.EventHandler(this.MainForm_Load);
+			this.Shown += new System.EventHandler(this.MainForm_Shown);
 			groupBox2.ResumeLayout(false);
 			groupBox2.PerformLayout();
 			this.tabControl1.ResumeLayout(false);
@@ -611,12 +612,12 @@
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage3.PerformLayout();
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
-			this.modContextMenu.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox4.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpdateFrequency)).EndInit();
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			this.modContextMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
