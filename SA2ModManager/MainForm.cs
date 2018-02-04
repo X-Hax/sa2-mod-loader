@@ -359,7 +359,7 @@ namespace SA2ModManager
 
 					if (msg.Length > 0)
 					{
-						using (var dlg = new UpdateMessageDialog(msg.Replace("\n", "\r\n")))
+						using (var dlg = new UpdateMessageDialog("SA2", msg.Replace("\n", "\r\n")))
 						{
 							if (dlg.ShowDialog(this) == DialogResult.Yes)
 							{
