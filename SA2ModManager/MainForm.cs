@@ -114,6 +114,8 @@ namespace SA2ModManager
 						break;
 				}
 
+			// Try to use TLS 1.2
+			try { ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; } catch { }
 			if (!Debugger.IsAttached)
 				Environment.CurrentDirectory = Application.StartupPath;
 			SetDoubleBuffered(modListView, true);
