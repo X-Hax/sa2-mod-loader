@@ -702,4 +702,13 @@
       <ValueType>hex</ValueType>
     </CodeLine>
   </Code>
+  <!-- Submitted by TheGag96 -->
+  <Code name="All emeralds trackable in treasure hunt stages" patch="true">
+    <CodeLine>
+      <Type>write16</Type>
+      <Address>0073A7BD</Address>
+      <Value>0FEB</Value>
+      <ValueType>hex</ValueType>
+    </CodeLine>
+  </Code>
 </CodeList>
