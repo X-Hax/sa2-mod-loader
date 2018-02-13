@@ -38,14 +38,10 @@
     <ApplicationIcon>opt_theme_on_def.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LoaderInfo.cs" />
@@ -78,7 +74,6 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -102,7 +97,12 @@
     <None Include="Resources\opt_theme_on_ch.ico" />
     <None Include="Resources\opt_theme_on_am.ico" />
   </ItemGroup>
-  <Import Project="..\mod-loader-common\ModManagerCommon\ModManagerCommon.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\mod-loader-common\ModManagerCommon\ModManagerCommon.csproj">
+      <Project>{4a480502-79b5-4e1e-8d67-16c514bb13cd}</Project>
+      <Name>ModManagerCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

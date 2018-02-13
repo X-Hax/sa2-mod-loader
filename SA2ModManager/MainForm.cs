@@ -13,7 +13,6 @@ using ModManagerCommon.Forms;
 using System.Drawing;
 using System.Threading;
 using System.Net;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace SA2ModManager
@@ -27,6 +26,7 @@ namespace SA2ModManager
 
 		private bool checkedForUpdates;
 
+		const string updatePath = "mods/.updates";
 		const string datadllpath = @"resource\gd_PC\DLL\Win32\Data_DLL.dll";
 		const string datadllorigpath = @"resource\gd_PC\DLL\Win32\Data_DLL_orig.dll";
 		const string loaderinipath = @"mods\SA2ModLoader.ini";
@@ -124,9 +124,6 @@ namespace SA2ModManager
 			else
 				loaderini = new SA2LoaderInfo();
 
-			if (CheckForUpdates())
-				return;
-
 			try { mainCodes = CodeList.Load(codexmlpath); }
 			catch { mainCodes = new CodeList() { Codes = new List<Code>() }; }
 
@@ -179,8 +176,6 @@ namespace SA2ModManager
 				return;
 			}
 
-			string updatePath = Path.Combine("mods", ".updates");
-
 			#region create update folder
 			do
 			{
@@ -214,7 +209,7 @@ namespace SA2ModManager
 				new ModDownload(dummyInfo, dummyPath, fields[0], null, 0)
 			};
 
-			using (var progress = new DownloadDialog(updates, updatePath))
+			using (var progress = new ModDownloadDialog(updates, updatePath))
 			{
 				progress.ShowDialog(this);
 			}
@@ -239,6 +234,8 @@ namespace SA2ModManager
 
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
+			if (CheckForUpdates())
+				return;
 
 			if (!File.Exists(datadllpath))
 			{
@@ -365,9 +362,30 @@ namespace SA2ModManager
 						{
 							if (dlg.ShowDialog(this) == DialogResult.Yes)
 							{
-								Process.Start("http://mm.reimuhakurei.net/sa2mods/SA2ModLoader.7z");
-								Close();
-								return true;
+								DialogResult result = DialogResult.OK;
+								do
+								{
+									try
+									{
+										if (!Directory.Exists(updatePath))
+										{
+											Directory.CreateDirectory(updatePath);
+										}
+									}
+									catch (Exception ex)
+									{
+										result = MessageBox.Show(this, "Failed to create temporary update directory:\n" + ex.Message
+																	   + "\n\nWould you like to retry?", "Directory Creation Failed", MessageBoxButtons.RetryCancel);
+										if (result == DialogResult.Cancel) return false;
+									}
+								} while (result == DialogResult.Retry);
+
+								using (var dlg2 = new LoaderDownloadDialog("http://mm.reimuhakurei.net/sa2mods/SA2ModLoader.7z", updatePath))
+									if (dlg2.ShowDialog(this) == DialogResult.OK)
+									{
+										Close();
+										return true;
+									}
 							}
 						}
 					}
@@ -481,7 +499,6 @@ namespace SA2ModManager
 			}
 
 			DialogResult result;
-			string updatePath = Path.Combine("mods", ".updates");
 
 			do
 			{
@@ -500,7 +517,7 @@ namespace SA2ModManager
 				}
 			} while (result == DialogResult.Retry);
 
-			using (var progress = new DownloadDialog(updates, updatePath))
+			using (var progress = new ModDownloadDialog(updates, updatePath))
 			{
 				progress.ShowDialog(this);
 			}
