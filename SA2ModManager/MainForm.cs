@@ -33,6 +33,7 @@ namespace SA2ModManager
 		const string loaderdllpath = @"mods\SA2ModLoader.dll";
 		SA2LoaderInfo loaderini;
 		Dictionary<string, SA2ModInfo> mods;
+		const string codelstpath = @"mods\Codes.lst";
 		const string codexmlpath = @"mods\Codes.xml";
 		const string codedatpath = @"mods\Codes.dat";
 		const string patchdatpath = @"mods\Patches.dat";
@@ -124,8 +125,20 @@ namespace SA2ModManager
 			else
 				loaderini = new SA2LoaderInfo();
 
-			try { mainCodes = CodeList.Load(codexmlpath); }
-			catch { mainCodes = new CodeList() { Codes = new List<Code>() }; }
+			try
+			{
+				if (File.Exists(codelstpath))
+					mainCodes = CodeList.Load(codelstpath);
+				else if (File.Exists(codexmlpath))
+					mainCodes = CodeList.Load(codexmlpath);
+				else
+					mainCodes = new CodeList();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(this, $"Error loading code list: {ex.Message}", "SA2 Mod Loader", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				mainCodes = new CodeList();
+			}
 
 			LoadModList();
 

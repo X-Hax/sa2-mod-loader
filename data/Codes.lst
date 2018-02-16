@@ -1,0 +1,175 @@
+Code "Infinite Rings P1"
+write16 0174B028 999
+
+Code "Infinite Rings P2"
+write16 0174B02A 999
+
+Code "Infinite Lives P1"
+write16 0174B024 99
+
+Code "Infinite Lives P2"
+write16 0174B024 99
+
+Code "Low Time"
+write8 0174AFDB 0 x2
+
+Code "Max Score"
+write32 0174B050 99999999
+
+Code "Hold Y for Super Turbo"
+ifmask32 01DEFC08 0x200
+	ifltfloat p01DEA6E0|40|64 10
+		writefloat p01DEA6E0|40|64 10
+	endif
+endif
+
+Code "Hold A for Super Jump"
+ifmask32 01DEFC08 0x4
+	ifltfloat p01DEA6E0|40|68 1
+		writefloat p01DEA6E0|40|68 1
+	endif
+endif
+
+Code "D-Pad Up for Huge Size"
+ifmask32 01DEFC08 0x10
+	writefloat p01DEA6E0|34|20 2.75 x3
+endif
+
+Code "D-Pad Up to Grow"
+ifmask32 01DEFC08 0x10
+	mulfloat p01DEA6E0|34|20 1.05 x3
+endif
+
+Code "D-Pad Right for Normal Size"
+ifmask32 01DEFC08 0x80
+	writefloat p01DEA6E0|34|20 1 x3
+endif
+
+Code "D-Pad Down for Mini Size"
+ifmask32 01DEFC08 0x20
+	writefloat p01DEA6E0|34|20 0.25 x3
+endif
+
+Code "D-Pad Down to Shrink"
+ifmask32 01DEFC08 0x20
+	divfloat p01DEA6E0|34|20 1.05 x3
+endif
+
+Code "D-Pad Left to Disappear"
+ifmask32 01DEFC08 0x40
+	writefloat p01DEA6E0|34|20 0 x3
+endif
+
+Code "Size Modifier"
+ifeqfloat r0 0
+	writefloat r0 1
+endif
+ifmask32 01DEFC08 0x10
+	mulfloat r0 1.05
+endif
+ifmask32 01DEFC08 0x80
+	writefloat r0 1
+endif
+ifmask32 01DEFC08 0x20
+	divfloat r0 1.05
+endif
+ifne32 01DEA6E0 0
+	ifeq32 r1 0
+		readreg8 p01DEA6E0|40|3 1
+		mulu32 r1 0x84
+		add32 r1 0x173925C
+		readreg32 pr1 1
+	endif
+	writereg32 p01DEA6E0|34|20 0 x3
+	writereg32 p01DEA6E0|40|134 1
+	mulregfloat p01DEA6E0|40|134 0
+else
+	write32 r1 0
+endif
+
+Code "Have Chao Garden Key"
+write8 0174B004 1
+
+Patch "Always Get A Rank"
+writenop 0044F799 2
+writenop 00450688 2
+
+Code "Have Invincibility"
+or16 p01DEA6E0|40|10 0x8000
+
+Code "Have Magnetic Barrier"
+or16 p01DEA6E0|40|10 0x2
+
+Patch "All Stages Appear in Stage Select"
+write32 006773BC 0x339001B3
+
+Code "Shadow Has Bounce Bracelet"
+ifeq8 01DEB304 1
+	ifeq8 p01DEA6E0|40|1 1
+		or32 p01DEA6E0|40|24 0x10
+	endif
+endif
+
+Code "Shadow Has Magic Gloves"
+ifeq8 01DEB302 1
+	ifeq8 p01DEA6E0|40|1 1
+		or32 p01DEA6E0|40|24 0x4
+	endif
+endif
+
+Code "Tails Has Protective Armor"
+ifeq8 01DEB317 1
+	ifeq8 p01DEA6E0|40|1 6
+		or32 p01DEA6E0|40|24 0x800000
+	endif
+endif
+
+Code "Rouge Has Air Necklace"
+ifeq8 01DEB30D 1
+	ifeq8 p01DEA6E0|40|1 5
+		or32 p01DEA6E0|40|24 0x2000
+	endif
+endif
+
+Code "Have All Upgrades"
+or32 p01DEA6E0|40|24 0x1FFF7FFF
+
+Code "Super Sonic Flag"
+or32 p01DEA6E0|40|24 0x8000
+
+Code "Press Pause Key to Freeze Time"
+ifkbkey 00000000 Pause
+	xor8 0174AFF7 2
+endif
+
+Patch "Gold Beetle Never Disappears"
+write8 00506059 0xEB
+
+Patch "Always Use Hard Mode Layout"
+writenop 0048903D 2
+
+Patch "Debug Menu (Invisible)"
+write16 00434687 0x8F98
+
+Patch "Disable Music"
+write8 00442CF0 0xC3
+
+Patch "Disable Voices"
+write8 00443130 0xC3
+
+Patch "Instant Spin Dash"
+writenop 00723E19 2
+
+Patch "Reduce Spin Dash Delay"
+write8 00723E11 10
+
+Patch "Chao Stat Multiplier"
+muls16 8A6240 5 x500
+
+Patch "Disable Omochao"
+write8 006C0780 0xC3
+
+; Submitted by TheGag96
+Patch "All emeralds trackable in treasure hunt stages"
+write16 0073A7BD 0x0FEB
+
