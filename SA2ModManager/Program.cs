@@ -41,7 +41,9 @@ namespace SA2ModManager
 				return;
 			}
 
-			bool alreadyRunning = !mutex.WaitOne(0, true);
+			bool alreadyRunning;
+			try { alreadyRunning = !mutex.WaitOne(0, true); }
+			catch (AbandonedMutexException) { alreadyRunning = false; }
 
 			if (args.Length > 1 && args[0] == "doupdate")
 			{
