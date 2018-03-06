@@ -8,7 +8,7 @@ Code "Infinite Lives P1"
 write16 0174B024 99
 
 Code "Infinite Lives P2"
-write16 0174B024 99
+write16 0174B026 99
 
 Code "Low Time"
 write8 0174AFDB 0 x2
@@ -136,6 +136,12 @@ or32 p01DEA6E0|40|24 0x1FFF7FFF
 
 Code "Super Sonic Flag"
 or32 p01DEA6E0|40|24 0x8000
+
+Code "Have All Upgrades P2"
+or32 p01DEA6E4|40|24 0x1FFF7FFF
+
+Code "Super Sonic Flag P2"
+or32 p01DEA6E4|40|24 0x8000
 
 Code "Press Pause Key to Freeze Time"
 ifkbkey 00000000 Pause
