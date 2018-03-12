@@ -4,39 +4,67 @@
 #include <Windows.h>
 #include <exception>
 #include <vector>
-#include <ninja.h>		// for typedefs
+#include <cstdint>
 #include <MemAccess.h>
 
-Trampoline::Trampoline(size_t start, size_t end, void* func, bool destructRevert) :
-	target(nullptr), detour(nullptr), codeData(nullptr), originalSize(0), codeSize(0), revert(destructRevert)
+Trampoline::Trampoline(intptr_t start, intptr_t end, void* func, bool destructRevert)
+	: target(reinterpret_cast<void*>(start))
+	, detour(func)
+	, codeData(nullptr)
+	, originalSize(0)
+	, revert(destructRevert)
 {
 	if (start > end)
+	{
 		throw std::exception("Start address cannot exceed end address.");
+	}
 
 	if (end - start < 5)
+	{
 		throw std::exception("Length cannot be less than 5 bytes.");
+	}
 
-	target = (void*)start;
-	detour = func;
 	originalSize = end - start;
-	codeSize = originalSize + 5;
 
 	// Copy original instructions
-	codeData = VirtualAlloc(nullptr, codeSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-	if (codeData == nullptr)
-		throw std::exception("VirtualAlloc failure.");
+	codeData = VirtualAlloc(nullptr, originalSize + 5, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 
-	// ReadProcessMemory maybe?
+	if (codeData == nullptr)
+	{
+		throw std::exception("VirtualAlloc failure.");
+	}
+
+	// memcpy() can be used instead of ReadProcessMemory
+	// because we're not reading memory from another process.
 	memcpy(codeData, target, originalSize);
 
-	// Append jump (terribly)
-	WriteJump(&((Uint8*)codeData)[originalSize], (void*)end);
+	const auto ptr = static_cast<uint8_t*>(codeData);
 
-	// NOP
-	std::vector<Uint8> nop(originalSize, 0x90);
+	if (ptr[0] == 0xE8)
+	{
+		// If the start address has a function call right off the bat,
+		// just repair it for the sake of convenience.
+		intptr_t addr = start + 5 + *reinterpret_cast<intptr_t*>(&ptr[1]);
+		WriteCall(ptr, (void*)addr);
+	}
+	else if (ptr[0] == 0xE9)
+	{
+		// If an existing (hopefully) trampoline has been applied to this address,
+		// correct the jump offset for it.
+		intptr_t addr = start + 5 + *reinterpret_cast<intptr_t*>(&ptr[1]);
+		WriteJump(ptr, (void*)addr);
+	}
+
+	// Append jump
+	WriteJump(&ptr[originalSize], (void*)end);
+
+	// NOP the original code.
+	// NOTE: This is in .text, so we have to use WriteData().
+	// Using memset() will crash.
+	std::vector<uint8_t> nop(originalSize, 0x90);
 	WriteData(target, nop.data(), nop.size());
 
-	// Jump
+	// Write a Jump to the new target function.
 	WriteJump(target, func);
 }
 
@@ -45,8 +73,10 @@ Trampoline::~Trampoline()
 	if (codeData)
 	{
 		if (revert)
+		{
 			WriteData(target, codeData, originalSize);
+		}
 
-		VirtualFree(codeData, codeSize, MEM_DECOMMIT);
+		VirtualFree(codeData, 0, MEM_RELEASE);
 	}
 }

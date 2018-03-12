@@ -16,8 +16,8 @@ using std::transform;
 using std::unordered_map;
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <shlwapi.h>
+#include <Windows.h>
+#include <Shlwapi.h>
 
 FileMap::FileMap()
 {
