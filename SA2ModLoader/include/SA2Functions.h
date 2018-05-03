@@ -5,7 +5,7 @@
 
 #define ObjectFunc(NAME, ADDRESS) FunctionPointer(void,NAME,(ObjectMaster *obj),ADDRESS)
 // SA2 Functions
-FunctionPointer(int, PrintDebug, (char *format, ...), 0x426740);
+FunctionPointer(int, PrintDebug, (const char *format, ...), 0x426740);
 FunctionPointer(signed int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 VoidFunc(LoadCharacters, 0x43D630);
 FastcallFunctionPointer(signed int, LoadTexturePack, (char *filename, NJS_TEXLIST *texlist), 0x44C350);
