@@ -34,7 +34,7 @@ public:
 class GameEntity : GameObject
 {
 protected:
-	CharObj1 *GetData();
+	EntityData1 *GetData();
 public:
 	GameEntity(int index, const char *name = "GameEntity");
 	char GetAction();

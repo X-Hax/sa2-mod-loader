@@ -245,7 +245,6 @@ __declspec(naked) void LoadMDLFile_r()
 	}
 }
 
-DataPointer(MemManFuncs *, MemoryManager, 0x1D19CAC);
 void __cdecl ReleaseMDLFile_ri(ModelIndex *a1)
 {
 	if (a1->Index != -1)
@@ -266,7 +265,7 @@ void __cdecl ReleaseMDLFile_ri(ModelIndex *a1)
 	else
 	{
 		*((DWORD *)a1 - 1) = 0x89ABCDEFu;
-		MemoryManager->Deallocate((char *)a1 - 4, "..\\..\\src\\file_ctl.c", 1091);
+		MemoryManager->Deallocate((AllocatedMem *)a1 - 4, "..\\..\\src\\file_ctl.c", 1091);
 	}
 }
 
@@ -500,7 +499,7 @@ int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *
 	}
 	if (v1)
 	{
-		CharObj2 *v4 = MainCharObj2[playerNum];
+		CharObj2Base *v4 = MainCharObj2[playerNum];
 		StartPosition *v5;
 		if (v4)
 		{
@@ -631,12 +630,12 @@ FunctionPointer(void, sub_46DC70, (int a1, NJS_VECTOR *a2, char a3), 0x46DC70);
 void __cdecl Load2PIntroPos_ri(int playerNum)
 {
 	ObjectMaster *v1 = MainCharacter[playerNum];
-	CharObj1 *v4;
+	EntityData1 *v4;
 	NJS_VECTOR *v8;
 	if (v1)
 	{
-		v4 = v1->Data1;
-		CharObj2 *v3 = MainCharObj2[playerNum];
+		v4 = v1->Data1.Entity;
+		CharObj2Base *v3 = MainCharObj2[playerNum];
 		if (v3)
 		{
 			auto iter = _2PIntroPositions.find(v3->CharID);
@@ -665,10 +664,10 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 	v4->Position.x = 0.0;
 LABEL_16:
 	sub_46DC70(playerNum, v8, 0);
-	*((char *)&v4->field_2C->CollisionArray->field_2) |= 0x70u;
-	*(int *)&MainCharObj2[playerNum]->field_70[6] = 0;
+	*((char *)&v4->Collision->CollisionArray->field_2) |= 0x70u;
+	*(int *)&MainCharObj2[playerNum]->gap_70[6] = 0;
 	byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
-	CharObj2 *v9 = MainCharObj2[playerNum];
+	CharObj2Base *v9 = MainCharObj2[playerNum];
 	float *v10 = (float *)*(&off_1DE95E0 + playerNum);
 	if (v9)
 	{
@@ -717,7 +716,6 @@ const HelperFunctions helperFunctions = {
 	GetChaoSavePath
 };
 
-DataPointer(HMODULE **, datadllhandle, 0x1AF0220);
 void __cdecl InitMods(void)
 {
 	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -1145,15 +1143,15 @@ void __cdecl InitMods(void)
 	WriteJump((void*)0x00441D41, OnControl);
 	WriteJump((void*)0x00441EEB, OnControl);
 
-	if (MainUserConfig->FullScreen == 0)
+	if (MainUserConfig->data.Fullscreen == 0)
 	{
 		if (settings->getBool("BorderlessWindow", false))
 		{
 			window_thread = new thread([] {
 				SetWindowLong(MainWindowHandle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
 
-				auto width = MainUserConfig->Width;
-				auto height = MainUserConfig->Height;
+				auto width = MainUserConfig->data.Width;
+				auto height = MainUserConfig->data.Height;
 
 				auto x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
 				auto y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
@@ -1165,8 +1163,8 @@ void __cdecl InitMods(void)
 		{
 			RECT rect = {};
 
-			rect.right = MainUserConfig->Width;
-			rect.bottom = MainUserConfig->Height;
+			rect.right = MainUserConfig->data.Width;
+			rect.bottom = MainUserConfig->data.Height;
 
 			auto dwStyle = GetWindowLong(MainWindowHandle, GWL_STYLE);
 			auto dwExStyle = GetWindowLong(MainWindowHandle, GWL_EXSTYLE);
