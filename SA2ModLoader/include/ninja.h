@@ -7,30 +7,36 @@
 #ifndef SEGA_NINJA_H
 #define SEGA_NINJA_H
 
-// Chopped up by MainMemory for your convenience.
+#ifdef __cplusplus
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif
+
+/* Chopped up by MainMemory for your convenience. */
 #ifndef _TYPEDEF_Uint8
 #define _TYPEDEF_Uint8
-typedef unsigned char     Uint8;        /*  unsigned 1 byte integer     */
+typedef uint8_t     Uint8;        /*  unsigned 1 byte integer     */
 #endif
 #ifndef _TYPEDEF_Sint8
 #define _TYPEDEF_Sint8
-typedef signed char     Sint8;          /*  signed 1 byte integer       */
+typedef int8_t     Sint8;          /*  signed 1 byte integer       */
 #endif
 #ifndef _TYPEDEF_Uint16
 #define _TYPEDEF_Uint16
-typedef unsigned short  Uint16;         /*  unsigned 2 byte integer     */
+typedef uint16_t  Uint16;         /*  unsigned 2 byte integer     */
 #endif
 #ifndef _TYPEDEF_Sint16
 #define _TYPEDEF_Sint16
-typedef signed short    Sint16;         /*  signed 2 byte integer       */
+typedef int16_t    Sint16;         /*  signed 2 byte integer       */
 #endif
 #ifndef _TYPEDEF_Uint32
 #define _TYPEDEF_Uint32
-typedef unsigned long   Uint32;         /*  unsigned 4 byte integer     */
+typedef uint32_t   Uint32;         /*  unsigned 4 byte integer     */
 #endif
 #ifndef _TYPEDEF_Sint32
 #define _TYPEDEF_Sint32
-typedef signed long     Sint32;         /*  signed 4 byte integer       */
+typedef int32_t     Sint32;         /*  signed 4 byte integer       */
 #endif
 #ifndef _TYPEDEF_Float32
 #define _TYPEDEF_Float32
@@ -924,7 +930,7 @@ typedef	struct {
 
 typedef union {
 	Uint32  color;
-	//NJS_TEX tex;
+	/*NJS_TEX tex;*/
 	NJS_BGRA argb;
 } NJS_COLOR;
 
@@ -1094,8 +1100,8 @@ typedef struct {
 
 typedef struct {
 	Uint16          type_matId; /* meshset type and attr index
-								   14-15 : meshset type bits
-									0-13 : material id(0-4095)  */
+	                               14-15 : meshset type bits
+	                                0-13 : material id(0-4095)  */
 	Uint16          nbMesh;     /* mesh count                   */
 	Sint16          *meshes;    /* mesh array                   */
 	Uint32          *attrs;     /* attribure                    */
@@ -1106,8 +1112,8 @@ typedef struct {
 
 typedef struct {
 	Uint16          type_matId; /* meshset type and attr index
-								   14-15 : meshset type bits
-									0-13 : material id(0-4095)  */
+	                               14-15 : meshset type bits
+	                                0-13 : material id(0-4095)  */
 	Uint16          nbMesh;     /* mesh count                   */
 	Sint16          *meshes;    /* mesh array                   */
 	Uint32          *attrs;     /* attribure                    */
@@ -1185,17 +1191,19 @@ typedef struct obj {
 	Float           scl[3];     /* scaling                      */
 	struct obj      *child;     /* child object                 */
 	struct obj      *sibling;   /* sibling object               */
-	NJS_MODEL       *getbasicmodel() { return (NJS_MODEL*)model; }
+
+#ifdef __cplusplus
+	NJS_MODEL       *getbasicmodel() const { return (NJS_MODEL*)model; }
 	void            putbasicmodel(NJS_MODEL *value) { model = value; }
-	NJS_MODEL_SADX  *getbasicdxmodel() { return (NJS_MODEL_SADX*)model; }
+	NJS_MODEL_SADX  *getbasicdxmodel() const { return (NJS_MODEL_SADX*)model; }
 	void            putbasicdxmodel(NJS_MODEL_SADX *value) { model = value; }
-	NJS_CNK_MODEL   *getchunkmodel() { return (NJS_CNK_MODEL*)model; }
+	NJS_CNK_MODEL   *getchunkmodel() const { return (NJS_CNK_MODEL*)model; }
 	void            putchunkmodel(NJS_CNK_MODEL *value) { model = value; }
-	SA2B_Model      *getsa2bmodel() { return (SA2B_Model*)model; }
+	SA2B_Model      *getsa2bmodel() const { return (SA2B_Model*)model; }
 	void            putsa2bmodel(SA2B_Model *value) { model = value; }
 
 #ifdef _MSC_VER
-	// MSVC-specific property emulation.
+	/* MSVC-specific property emulation. */
 	__declspec(property(get = getbasicmodel, put = putbasicmodel))
 	NJS_MODEL       *basicmodel;
 	__declspec(property(get = getbasicdxmodel, put = putbasicdxmodel))
@@ -1206,7 +1214,7 @@ typedef struct obj {
 	SA2B_Model      *sa2bmodel;
 #endif
 
-	int countanimated()
+	int countanimated() const
 	{
 		int result = (evalflags & NJD_EVAL_SKIP) == NJD_EVAL_SKIP ? 0 : 1;
 		if (child != nullptr)
@@ -1216,7 +1224,7 @@ typedef struct obj {
 		return result;
 	}
 
-	int countmorph()
+	int countmorph() const
 	{
 		int result = (evalflags & NJD_EVAL_SHAPE_SKIP) == NJD_EVAL_SHAPE_SKIP ? 0 : 1;
 		if (child != nullptr)
@@ -1225,6 +1233,8 @@ typedef struct obj {
 			result += sibling->countmorph();
 		return result;
 	}
+#endif /* __cplusplus */
+
 } NJS_OBJECT;
 
 /*
