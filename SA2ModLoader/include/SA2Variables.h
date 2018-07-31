@@ -306,6 +306,8 @@ DataPointer(char, HaveChaoKey, 0x174B004);
 DataPointer(char, isEnglishIGuess, 0x174B008);
 DataPointer(char, Pose2PStart_PlayerNum, 0x174B009);
 DataPointer(char, RumbleEnabled, 0x174B00A);
+DataArray(char, AltCostume, 0x174B013, 2);
+DataArray(char, AltCharacter, 0x174B015, 2);
 DataPointer(char, HandicapSettingMaybe, 0x174B01F);
 DataPointer(char, TwoPlayerTimed, 0x174B020);
 DataArray(__int16, Life_Count, 0x174B024, 2);
