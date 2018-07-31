@@ -1051,7 +1051,6 @@ ObjectFunc(EmeraldManager_Delete, 0x73A970);
 FunctionPointer(int, LoadEmeraldManager, (), 0x73AA70);
 ObjectFunc(ExecDisplayGottenEmeraldIcon, 0x73AE40);
 FunctionPointer(int, ExecDisplayGottenEmeraldIcon_Load, (int), 0x73AEC0);
-FunctionPointer(int, LoadEggman, (), 0x73C220);
 ObjectFunc(Eggman_Main, 0x73C380);
 ObjectFunc(Eggman_Delete, 0x73E700);
 ObjectFunc(Eggman_Display, 0x73EF20);
@@ -2190,6 +2189,17 @@ static inline void EmeraldLocations_2PGroup1(EmeManObj2 *a1)
 	}
 }
 
+// void __usercall(int a1@<eax>)
+static const void *const LoadEggmanPtr = (void*)0x73C220;
+static inline void LoadEggman(int a1)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call LoadEggmanPtr
+	}
+}
+
 // void __usercall(CharObj2Base *a1@<eax>)
 static const void *const InitMechHPPtr = (void*)0x7414D0;
 static inline void InitMechHP(CharObj2Base *a1)
@@ -2245,6 +2255,17 @@ static inline signed int MechEggman_CheckSpecial(CharObj2Base *data2, EntityData
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall(int a1@<eax>)
+static const void *const LoadTailsPtr = (void*)0x74CF00;
+static inline void LoadTails(int a1)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call LoadTailsPtr
+	}
 }
 
 // void __usercall(CharObj2Base *a1@<eax>, EntityData1 *a2@<edi>)
