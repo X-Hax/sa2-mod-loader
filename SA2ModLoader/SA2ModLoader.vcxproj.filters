@@ -66,4 +66,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
