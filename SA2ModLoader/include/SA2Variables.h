@@ -481,7 +481,7 @@ DataPointer(int, ArbitraryGravityAngle_Z, 0x1DE94B0);
 DataPointer(int, Pose2PStart_Frames_SkyRailMetalHarbor, 0x1DE95C0);
 DataPointer(int, Pose2PStart_PlayerNum_dupe, 0x1DE95C4);
 DataPointer(int, Pose2PStart_Frames, 0x1DE95C8);
-DataPointer(CharObj2Base **, MainCharObj2, 0x1DE9600);
+DataArray(CharObj2Base *, MainCharObj2, 0x1DE9600, 2);
 DataArray(ModelIndex, CharacterModels, 0x1DE9620, 532);
 DataArray(EntityData1 *, MainCharObj1, 0x1DEA6C0, 2);
 DataArray(ObjectMaster *, MainCharacter, 0x1DEA6E0, 2);
