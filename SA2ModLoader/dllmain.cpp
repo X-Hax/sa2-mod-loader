@@ -350,8 +350,10 @@ char *ShiftJISToUTF8(char *shiftjis)
 
 bool dbgConsole, dbgFile;
 ofstream dbgstr;
+uint32_t saveedx;
 int __cdecl SA2DebugOutput(const char *Format, ...)
 {
+	__asm { mov saveedx, edx }
 	va_list ap;
 	va_start(ap, Format);
 	int length = vsnprintf(NULL, 0, Format, ap) + 1;
@@ -369,6 +371,7 @@ int __cdecl SA2DebugOutput(const char *Format, ...)
 		delete[] utf8;
 	}
 	delete[] buf;
+	__asm { mov edx, saveedx }
 	return length;
 }
 
