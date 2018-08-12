@@ -769,7 +769,7 @@ struct LandTable
 
 struct COL
 {
-	char gap_0[12];
+	NJS_VECTOR Center;
 	float Radius;
 	NJS_OBJECT *Model;
 	int field_14;
