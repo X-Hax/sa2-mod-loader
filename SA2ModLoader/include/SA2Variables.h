@@ -251,7 +251,7 @@ DataArray(LevelRankScores, Mission4Scores, 0x173AE70, 30);
 DataArray(LevelRankScores, Mission5Scores, 0x173AFA0, 30);
 DataArray(LevelRankTimes, Mission2Times, 0x173B0D0, 34);
 DataArray(LevelRankTimes, Mission3Times, 0x173B208, 30);
-DataArray(NJS_TEXLIST, LifeIconTexs, 0x173B3D8, 17);
+DataArray(NJS_TEXLIST *, LifeIconTexs, 0x173B3D8, 17);
 DataPointer(NJS_TEXLIST, bossResult_TEXLIST, 0x173CAF0);
 DataPointer(TexPackInfo, CommonTextureInfo, 0x173CE90);
 DataPointer(unsigned int, ChaoSaveIndexThing, 0x173D06C);
