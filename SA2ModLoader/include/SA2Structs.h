@@ -968,6 +968,7 @@ struct LoopPoint
 	__int16 XRot;
 	__int16 YRot;
 	float Distance;
+	NJS_VECTOR Position;
 };
 
 struct LoopHead
