@@ -1606,7 +1606,7 @@ static inline void AddScore(int a1)
 
 // void *__usercall@<eax>(char *a1@<eax>)
 static const void *const LoadPRSFilePtr = (void*)0x4548C0;
-static inline void * LoadPRSFile(char *a1)
+static inline void * LoadPRSFile(const char *a1)
 {
 	void * result;
 	__asm
@@ -2447,7 +2447,7 @@ static inline void PowderExecute(NJS_VECTOR *a1, int a2, NJS_VECTOR *a3, char a4
 {
 	__asm
 	{
-		push[a4]
+		push dword ptr [a4]
 		push[a3]
 		push[a2]
 		mov ebx, [a1]
