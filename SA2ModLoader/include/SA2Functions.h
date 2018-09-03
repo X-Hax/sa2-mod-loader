@@ -22,6 +22,7 @@ FunctionPointer(int, GetCrappyReplacementDepartureMachine, (), 0x41DFB0);
 FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (char *, ...), 0x426740);
+FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int(__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST *), 0x42FD10);
@@ -94,7 +95,6 @@ ObjectFunc(WriteTaskWithWaiting, 0x456820);
 ObjectFunc(miniEventExec, 0x4579E0);
 FunctionPointer(int, LoadCharacterSoundBanks, (int, int a1), 0x459100);
 VoidFunc(Load_PLCOMMTN_Stuff, 0x459370);
-FunctionPointer(int, SetPhysicsParamsAndGiveUpgrades, (), 0x4599C0);
 ObjectFunc(GamePlayerMissed, 0x46ABD0);
 ObjectFunc(DeathZoneObject_Delete, 0x46AD40);
 ObjectFunc(DeathZoneObject, 0x46AD50);
@@ -158,6 +158,7 @@ FunctionPointer(void, LoadPathObjects, (LoopHead **a1), 0x490180);
 ObjectFunc(ParticleCoreTask_Load, 0x491C20);
 ObjectFunc(MissionMessageDisplayerExecutor, 0x496B60);
 FunctionPointer(int, LoadBossLast2Module, (), 0x498890);
+VoidFunc(FinalHazard_Init, 0x4988A0);
 ObjectFunc(LastBoss2Exec, 0x49A640);
 ObjectFunc(ManTex_Delete, 0x49A930);
 FunctionPointer(int, LoadSuperSonic, (), 0x49A950);
@@ -174,7 +175,7 @@ ObjectFunc(HosiExec_1, 0x49EFA0);
 ObjectFunc(BL2IkuraSmokeExec, 0x4A11A0);
 ObjectFunc(BL2WeakPtclExec, 0x4A47D0);
 FunctionPointer(int, LoadBossGolemeModule, (), 0x4A5230);
-FunctionPointer(int, EggGolemE_Init, (), 0x4A5240);
+VoidFunc(EggGolemE_Init, 0x4A5240);
 ObjectFunc(BossGolemExec_1, 0x4A5DD0);
 VoidFunc(LoadEggGolemECharAnims, 0x4A6DC0);
 ObjectFunc(ObjectAshibaExec_1, 0x4A7350);
@@ -184,9 +185,11 @@ FunctionPointer(int, FinalRush_Init, (), 0x4AC7D0);
 ObjectFunc(BgExec_01, 0x4ACDB0);
 ObjectFunc(ObjectBurst, 0x4AE830);
 ObjectFunc(ObjectMeteoFall_stg30, 0x4AFBB0);
+VoidFunc(LoadFinalRushCharAnims, 0x4AFE00);
 FunctionPointer(int, LoadStg05Module, (), 0x4B3760);
 FunctionPointer(int, PumpkinHill_Init, (), 0x4B3770);
 ObjectFunc(ObjSetManExec_1, 0x4B3E30);
+VoidFunc(LoadPumpkinHillCharAnims, 0x4B4230);
 FunctionPointer(signed int, TIM, (ObjectMaster *a1), 0x4B4410);
 FunctionPointer(int, KUSA, (ObjectMaster *a1), 0x4B4470);
 FunctionPointer(int, KAKASI, (ObjectMaster *a1), 0x4B44D0);
@@ -211,13 +214,14 @@ ObjectFunc(BgExec_02, 0x4B9FB0);
 ObjectFunc(BgClip_01, 0x4BA350);
 ObjectFunc(CalcLightForPlayer_1, 0x4BA490);
 FunctionPointer(int, LoadStg56Module, (), 0x4BA680);
-FunctionPointer(int, TailsVsEggman2_Init, (), 0x4BA690);
+FunctionPointer(int, EternalEngine2P_Init, (), 0x4BA690);
 FunctionPointer(int, LoadBossGolemModule, (), 0x4BADF0);
-FunctionPointer(int, EggGolem_Init, (), 0x4BAE20);
+VoidFunc(EggGolem_Init, 0x4BAE20);
 ObjectFunc(ObjectGolemUdreel, 0x4BB5D0);
 ObjectFunc(ObjectAshibaExec_2, 0x4BD260);
 ObjectFunc(AshibaBrokenPartsExec, 0x4BE010);
 ObjectFunc(BossGolemExec_2, 0x4BE720);
+VoidFunc(LoadEggGolemCharAnims, 0x4C2410);
 ObjectFunc(EffectExplosionExec, 0x4C6D00);
 FunctionPointer(int, LoadStg42Module, (), 0x4C70F0);
 FunctionPointer(int, SonicVsShadow2_Init, (), 0x4C7100);
@@ -226,10 +230,11 @@ FunctionPointer(int, FIREBALL, (ObjectMaster *a1), 0x4C90B0);
 ObjectFunc(ObjectSS2Dodai, 0x4C9A10);
 FunctionPointer(int, DODAIGEN, (int), 0x4C9DA0);
 FunctionPointer(int, LoadStg34Module, (), 0x4CA020);
-FunctionPointer(int, CannonsCoreSonic_Init, (), 0x4CA030);
+FunctionPointer(int, CannonsCoreS_Init, (), 0x4CA030);
 ObjectFunc(BgClip_02, 0x4CA800);
 FunctionPointer(int, G_LIGHT_SW, (ObjectMaster *a1), 0x4CA9B0);
 ObjectFunc(ObjectGlobalLightManager, 0x4CAB20);
+VoidFunc(LoadCannonsCoreSCharAnims, 0x4CABA0);
 ObjectFunc(BgExec_03, 0x4CAE90);
 ObjectFunc(DenkiColi, 0x4CD070);
 ObjectFunc(InputColi, 0x4CD220);
@@ -261,7 +266,7 @@ FunctionPointer(int, DRMCUN, (ObjectMaster *a1), 0x4D9BD0);
 FunctionPointer(int, CMDOOR, (ObjectMaster *a1), 0x4DA360);
 FunctionPointer(int, SIGN, (ObjectMaster *a1), 0x4DA440);
 FunctionPointer(int, LoadStg37Module, (), 0x4DB110);
-FunctionPointer(int, CannonsCoreRouge_Init, (), 0x4DB120);
+FunctionPointer(int, CannonsCoreR_Init, (), 0x4DB120);
 ObjectFunc(BgClip_03, 0x4DB740);
 ObjectFunc(BgColiExec, 0x4DB840);
 ObjectFunc(BgExec_05, 0x4DB860);
@@ -271,22 +276,24 @@ ObjectFunc(BgAnimeExec, 0x4DCF00);
 ObjectFunc(BgCoverOpenExec, 0x4DD470);
 VoidFunc(LoadCannonsCoreRCharAnims, 0x4DDA70);
 FunctionPointer(int, LoadStg47Module, (), 0x4DDC50);
-FunctionPointer(int, PyramidRace_Init, (), 0x4DDC70);
+VoidFunc(PyramidRace_Init, 0x4DDC70);
 FunctionPointer(int, WALL, (ObjectMaster *a1), 0x4DE2C0);
 FunctionPointer(int, LoadStg14Module, (), 0x4DE920);
 ObjectFunc(BgExec_06, 0x4DEDD0);
 ObjectFunc(BgmStart_RadicalHighway, 0x4DEFF0);
+VoidFunc(LoadRadicalHighwayCharAnims, 0x4DF070);
 FunctionPointer(int, LoadStg46Module, (), 0x4E4F50);
 FunctionPointer(int, DryLagoon2P_Init, (), 0x4E4F70);
 ObjectFunc(Bg3Exec, 0x4E5AC0);
 ObjectFunc(BgClip_04, 0x4E5C50);
-VoidFunc(LoadDryLagoon2PPoolQuestCharAnims, 0x4E63D0);
+VoidFunc(LoadDryLagoon2PCharAnims, 0x4E63D0);
 FunctionPointer(int, LIGHTING, (ObjectMaster *a1), 0x4E65B0);
 FunctionPointer(int, BUTTERFLY_F, (ObjectMaster *a1), 0x4E66E0);
 FunctionPointer(int, LoadStg40Module, (), 0x4E6C50);
 FunctionPointer(int, FinalChase_Init, (), 0x4E6C70);
 ObjectFunc(BgExec_07, 0x4E71D0);
 ObjectFunc(ObjectMeteoFall_stg40, 0x4E80F0);
+VoidFunc(LoadFinalChaseCharAnims, 0x4E8710);
 ObjectFunc(ManGCylExecutor_Delete, 0x4E9490);
 FunctionPointer(int, ResetArbitraryGravity, (int), 0x4E94B0);
 ObjectFunc(ManGCylExecutor_Main, 0x4E9510);
@@ -347,7 +354,7 @@ ObjectFunc(EnemyCapturingBulletExecutor, 0x512570);
 ObjectFunc(EnemyCapturingBulletPiecesExecutor, 0x512930);
 ObjectFunc(Bomb_Main, 0x513830);
 FunctionPointer(int, LoadStg35Module, (), 0x514190);
-FunctionPointer(int, CannonsCoreEggman_Init, (), 0x5141A0);
+FunctionPointer(int, CannonsCoreE_Init, (), 0x5141A0);
 ObjectFunc(BgExec_08, 0x515180);
 ObjectFunc(BgClip_05, 0x517ED0);
 FunctionPointer(int, LoadStg54Module, (), 0x5180D0);
@@ -375,6 +382,7 @@ ObjectFunc(BL1DefendPikaExec, 0x51E720);
 ObjectFunc(BL1DefendCtlExec, 0x51EA00);
 FunctionPointer(int, LoadBiolizard, (), 0x51EC90);
 ObjectFunc(LastBoss1Exec, 0x521750);
+VoidFunc(LoadBiolizardCharAnims, 0x521DB0);
 ObjectFunc(SmokeExec_1, 0x525A70);
 ObjectFunc(BL2BossPointCameraExec, 0x527530);
 ObjectFunc(BL1BreathExec, 0x5289A0);
@@ -566,18 +574,24 @@ ObjectFunc(ChaoParamWindowExecutor_Display, 0x5ACF40);
 ObjectFunc(ChaoParamWindowExecutor_Delete, 0x5AD660);
 FunctionPointer(int, ChaoParamWindowExecutor_Load, (float, float), 0x5AD690);
 FunctionPointer(int, LoadStg17Module, (), 0x5AD710);
+FunctionPointer(int, MissionStreet_Init, (), 0x5AD720);
+VoidFunc(LoadMissionStreetCharAnims, 0x5ADDF0);
 ObjectFunc(ObjectSand, 0x5B3080);
 ObjectFunc(ObjectCarCrashExec_1, 0x5B61C0);
 ObjectFunc(EfMsPaper3DExec_Delete, 0x5B9180);
 ObjectFunc(EfMsPaper3DExec, 0x5B91E0);
 ObjectFunc(EfMsPaper3DExec_Display, 0x5B95C0);
 FunctionPointer(int, LoadStg06Module, (), 0x5B9820);
+FunctionPointer(int, SkyRail_Init, (), 0x5B9830);
 ObjectFunc(BgmStart_SkyRail, 0x5B9DE0);
 ObjectFunc(BgExec_09, 0x5B9E60);
+VoidFunc(LoadSkyRailCharAnims, 0x5BA190);
 ObjectFunc(JizooFireExec_2, 0x5BDCE0);
 FunctionPointer(int, LoadStg32Module, (), 0x5BDE70);
+FunctionPointer(int, MeteorHerd_Init, (), 0x5BDEC0);
 ObjectFunc(BgExec_10, 0x5BF030);
 ObjectFunc(ObjectAsiatoExec, 0x5C03F0);
+VoidFunc(LoadMeteorHerdCharAnims, 0x5C0900);
 ObjectFunc(ObjectMeteoFall_stg32, 0x5C1030);
 ObjectFunc(ObjectFireBall, 0x5C1280);
 FunctionPointer(int, LoadBossHotshotModule, (), 0x5C5EE0);
@@ -593,6 +607,7 @@ ObjectFunc(BossGroboEBombExec, 0x5D9BA0);
 ObjectFunc(BossGroboETorusExec, 0x5D9F40);
 ObjectFunc(BossGroboEHasiraExec, 0x5DA280);
 FunctionPointer(int, LoadStg31Module, (), 0x5DA990);
+FunctionPointer(int, GreenHill_Init, (), 0x5DA9A0);
 FunctionPointer(int, LoadStg13Module, (), 0x5DCD40);
 VoidFunc(CityEscape_Init, 0x5DCD50);
 ObjectFunc(BgmStart_CityEscape, 0x5DD450);
@@ -604,6 +619,7 @@ ObjectFunc(MusicChanger_Delete, 0x5E2DC0);
 ObjectFunc(MusicChanger_Main, 0x5E2E40);
 ObjectFunc(ObjectCrashObjExec, 0x5EC7A0);
 FunctionPointer(int, LoadStg03Module, (), 0x5ED0C0);
+VoidFunc(GreenForest_Init, 0x5ED0D0);
 ObjectFunc(BgmStart_GreenForest, 0x5ED5D0);
 ObjectFunc(BgExec_11, 0x5ED650);
 ObjectFunc(HosiExec_2, 0x5EE270);
@@ -625,8 +641,12 @@ ObjectFunc(singleModelEffectExec, 0x604480);
 ObjectFunc(spriteExec, 0x6046D0);
 FunctionPointer(int, LoadEmblemgetModule, (), 0x6048C0);
 FunctionPointer(int, LoadStg09Module, (), 0x604AC0);
+FunctionPointer(int, PrisonLane_Init, (), 0x604AD0);
+VoidFunc(LoadPrisonLaneCharAnims, 0x604FA0);
 FunctionPointer(int, LoadBossBigbogyModule, (), 0x60A840);
+VoidFunc(KingBoomBoo_Init, 0x60A850);
 FunctionPointer(int, LoadStg19Module, (), 0x6193C0);
+FunctionPointer(int, SonicVsShadow1_Init, (), 0x6193D0);
 ObjectFunc(BgExec_12, 0x6198B0);
 ObjectFunc(ControlShadow_stg19, 0x619C70);
 FunctionPointer(int, Cart_UnknownB, (), 0x61A390);
@@ -651,25 +671,35 @@ ObjectFunc(RESTART_OBJ, 0x624100);
 ObjectFunc(CartRingExec, 0x625770);
 ObjectFunc(Muteki, 0x6262E0);
 FunctionPointer(int, LoadStg20Module, (), 0x626670);
+FunctionPointer(int, TailsVsEggman1_Init, (), 0x626680);
 ObjectFunc(ControlTWalker_1, 0x627300);
 FunctionPointer(int, LoadStg53Module, (), 0x627D10);
+FunctionPointer(int, CosmicWall2P_Init, (), 0x627D30);
 ObjectFunc(BgmStart_CosmicWall, 0x628140);
 ObjectFunc(BgExec_14, 0x6281C0);
 FunctionPointer(int, LoadStg43Module, (), 0x6287D0);
+FunctionPointer(int, CosmicWall_Init, (), 0x6287E0);
 ObjectFunc(ObjSetManExec_2, 0x628DB0);
 ObjectFunc(BgExec_15, 0x628EB0);
+VoidFunc(LoadCosmicWallCharAnims, 0x6295D0);
 ObjectFunc(ObjectEggJump, 0x62E2C0);
 FunctionPointer(int, LoadStg04Module, (), 0x62E9A0);
+FunctionPointer(int, WhiteJungle_Init, (), 0x62E9B0);
 ObjectFunc(BgmStart_WhiteJungle, 0x62EFC0);
 ObjectFunc(BgExec_16, 0x62F060);
+VoidFunc(LoadWhiteJungleCharAnims, 0x6301E0);
 ObjectFunc(AmeExec, 0x630550);
 FunctionPointer(int, LoadStg08Module, (), 0x634510);
+FunctionPointer(int, SecurityHall_Init, (), 0x634520);
 ObjectFunc(BgExec_17, 0x634DB0);
+VoidFunc(LoadSecurityHallCharAnims, 0x634EF0);
 ObjectFunc(EfShPaper3DExec, 0x639500);
 FunctionPointer(int, LoadStg36Module, (), 0x639B50);
+FunctionPointer(int, CannonsCoreT_Init, (), 0x639B60);
 ObjectFunc(BgExec_18, 0x63A5F0);
 ObjectFunc(BgClip_07, 0x63D290);
 FunctionPointer(int, LoadStg18Module, (), 0x63D490);
+FunctionPointer(int, DryLagoon_Init, (), 0x63D4A0);
 ObjectFunc(BgExec_19, 0x63DB80);
 ObjectFunc(BgClip_08, 0x63E540);
 FunctionPointer(int, VibSlightExec_LoadB, (char), 0x63E850);
@@ -678,28 +708,37 @@ ObjectFunc(EffectShibukiExec, 0x641300);
 ObjectFunc(MizugomiExec_2, 0x6449E0);
 VoidFunc(LoadDryLagoonCharAnims, 0x647830);
 FunctionPointer(int, LoadStg33Module, (), 0x648680);
+FunctionPointer(int, KnucklesVsRouge_Init, (), 0x648690);
 ObjectFunc(BgExec_20, 0x648AD0);
 ObjectFunc(ControlRouge, 0x649BA0);
 FunctionPointer(int, LoadStg15Module, (), 0x64BB80);
+FunctionPointer(int, WeaponsBed2P_Init, (), 0x64BB90);
 FunctionPointer(int, LoadStg59Module, (), 0x64C5C0);
+VoidFunc(DeathChamber2P_Init, 0x64C5D0);
 ObjectFunc(BgExec_21, 0x64CDA0);
 FunctionPointer(int, LoadStg57Module, (), 0x64DA80);
+FunctionPointer(int, MetalHarbor2P_Init, (), 0x64DA90);
 ObjectFunc(BgmStart_MetalHarbor, 0x64DEE0);
 ObjectFunc(BgExec_22, 0x64DF60);
 FunctionPointer(int, LoadStg44Module, (), 0x64E1D0);
+FunctionPointer(int, MadSpace_Init, (), 0x64E1E0);
 ObjectFunc(ObjSetManExec_Main_2, 0x64E810);
 ObjectFunc(BgExec_23, 0x64EB10);
+VoidFunc(LoadMadSpaceCharAnims, 0x64F4C0);
 ObjectFunc(ManTxt, 0x6546C0);
 ObjectFunc(DisplayMCWarnNoCardExecutor, 0x6549C0);
 ObjectFunc(DisplayMCWarn, 0x654CB0);
 ObjectFunc(DisplayMCWarnMultiExecutor, 0x6553A0);
 FunctionPointer(int, LoadStg48Module, (), 0x6555F0);
+VoidFunc(HiddenBase2P_Init, 0x655600);
 ObjectFunc(BgmStart_PyramidRace, 0x655B20);
 FunctionPointer(int, LoadStg21Module, (), 0x656350);
+VoidFunc(SandOcean_Init, 0x656360);
 ObjectFunc(BgExec_24, 0x6569B0);
 ObjectFunc(BgClip_09, 0x656BB0);
 VoidFunc(LoadSandOceanCharAnims, 0x658A10);
 FunctionPointer(int, LoadStg38Module, (), 0x65E6A0);
+FunctionPointer(int, CannonsCoreK_Init, (), 0x65E6B0);
 ObjectFunc(BgClip_10, 0x65EE50);
 VoidFunc(LoadCannonsCoreKCharAnims, 0x65EF70);
 ObjectFunc(BgExec_25, 0x65F1A0);
@@ -707,8 +746,10 @@ ObjectFunc(BgBeamFence1OpenExec, 0x65FFA0);
 ObjectFunc(BgBeamFence2OpenExec, 0x660290);
 ObjectFunc(MizugomiExec_3, 0x660710);
 FunctionPointer(int, LoadStg29Module, (), 0x661CC0);
+FunctionPointer(int, TailsVsEggman2_Init, (), 0x661CF0);
 ObjectFunc(ControlTWalker_2, 0x662990);
 FunctionPointer(int, LoadStg50Module, (), 0x6639E0);
+FunctionPointer(int, PlanetQuest_Init, (), 0x6639F0);
 ObjectFunc(ObjSetManExec_3, 0x664010);
 ObjectFunc(BgExec_26, 0x6642B0);
 FunctionPointer(int, Menu_MainMenu, (), 0x664EC0);
@@ -778,7 +819,9 @@ FunctionPointer(int, LoadStg55Module, (), 0x68E4F0);
 VoidFunc(LostColony2P_Init, 0x68E500);
 ObjectFunc(LightBombExec_2, 0x68EA40);
 ObjectFunc(BgInit_1, 0x68F5F0);
+VoidFunc(LoadLostColony2PCharAnims, 0x68F6B0);
 FunctionPointer(int, LoadStg26Module, (), 0x68F890);
+FunctionPointer(int, EggQuarters_Init, (), 0x68F8A0);
 ObjectFunc(BgExec_27, 0x690170);
 ObjectFunc(BgClip_11, 0x690BD0);
 ObjectFunc(ObjectRobotExec, 0x690FC0);
@@ -789,18 +832,24 @@ ObjectFunc(MizugomiExec_4, 0x694110);
 ObjectFunc(ObjectHideLightManager, 0x694600);
 ObjectFunc(ObjectEyeExec, 0x697450);
 FunctionPointer(int, LoadStg11Module, (), 0x699370);
+FunctionPointer(int, IronGate_Init, (), 0x699380);
 ObjectFunc(LightBombExec_3, 0x699890);
 ObjectFunc(BgExec_28, 0x699B70);
+VoidFunc(LoadIronGateCharAnims, 0x69A120);
 ObjectFunc(ItemBox_Delete, 0x69DB80);
 FunctionPointer(int, LoadStg16Module, (), 0x6A2450);
+FunctionPointer(int, WildCanyon_Init, (), 0x6A2460);
 ObjectFunc(BgExec_29, 0x6A2C30);
 ObjectFunc(BgClip_12, 0x6A32B0);
 ObjectFunc(CalcLightForPlayer_2, 0x6A34A0);
+VoidFunc(LoadWildCanyonCharAnims, 0x6A8090);
 FunctionPointer(int, VibSlightExec_stg16_Load, (char), 0x6A89A0);
 FunctionPointer(int, LoadStg25Module, (), 0x6AA1A0);
+FunctionPointer(int, DeathChamber_Init, (), 0x6AA1B0);
 ObjectFunc(BgExec_30, 0x6AA970);
 ObjectFunc(BgClip_13, 0x6AB7D0);
 ObjectFunc(ObjectSandglassExec, 0x6ABDE0);
+VoidFunc(LoadDeathChamberCharAnims, 0x6AD4E0);
 ObjectFunc(EfMsgWnd0Exec_LevelUpDai, 0x6B7170);
 ObjectFunc(EfMsgWnd0Exec, 0x6B79D0);
 ObjectFunc(Omochao_Main, 0x6C0780);
@@ -966,11 +1015,14 @@ ObjectFunc(EsShakeRad, 0x6F01B0);
 ObjectFunc(WpHoleExec, 0x6F1030);
 ObjectFunc(ObjectAsiotoExec, 0x6F1A00);
 FunctionPointer(int, LoadStg49Module, (), 0x6F2160);
+FunctionPointer(int, PoolQuest_Init, (), 0x6F2170);
 FunctionPointer(int, LoadStg10Module, (), 0x6F2900);
+FunctionPointer(int, MetalHarbor_Init, (), 0x6F2910);
 ObjectFunc(BgExec_31, 0x6F2D90);
 VoidFunc(LoadMetalHarborCharAnims, 0x6F36A0);
 ObjectFunc(CloudExec, 0x6F9F50);
 FunctionPointer(int, LoadStg28Module, (), 0x6FA990);
+FunctionPointer(int, PyramidCave_Init, (), 0x6FA9A0);
 ObjectFunc(BgClip_14, 0x6FB0C0);
 FunctionPointer(int, WoodenEggmanCrate, (ObjectMaster *a1), 0x6FB200);
 FunctionPointer(int, IronEggmanCrate, (ObjectMaster *a1), 0x6FBBA0);
@@ -981,6 +1033,7 @@ ObjectFunc(WARP, 0x700AC0);
 ObjectFunc(WARP_Main, 0x700B30);
 StdcallFunctionPointer(int, nullsub_13, (int, int), 0x708DD0);
 FunctionPointer(int, LoadStg23Module, (), 0x710260);
+VoidFunc(HiddenBase_Init, 0x710270);
 ObjectFunc(BgExec_32, 0x710790);
 ObjectFunc(BgClip_15, 0x710A70);
 FunctionPointer(int, DAI, (ObjectMaster *parent), 0x710CC0);
@@ -1032,6 +1085,7 @@ FunctionPointer(void, LoadChaos, (int playerNum), 0x728B60);
 ObjectFunc(Knuckles_Main, 0x728D70);
 FunctionPointer(void, Knuckles_ChecksDamage, (EntityData1 *a1, signed int a2, KnucklesCharObj2 *a3, KnucklesCharObj2 *a4), 0x72A520);
 ObjectFunc(Knuckles_Delete, 0x72D8A0);
+ObjectFunc(Rouge_2C, 0x72E390);
 ObjectFunc(Knuckles_Display, 0x72EF20);
 ObjectFunc(Tikal_Display, 0x72FB10);
 ObjectFunc(Rouge_Display, 0x730970);
@@ -1134,11 +1188,16 @@ ObjectFunc(BgInit_2_Delete, 0x763EB0);
 ObjectFunc(BgInit_2_Display, 0x763F00);
 ObjectFunc(BgInit_2_field_20, 0x764400);
 ObjectFunc(DmgColExec, 0x768A30);
+VoidFunc(LoadLostColonyCharAnims, 0x7695F0);
 FunctionPointer(int, LoadStg12Module, (), 0x76AA10);
+FunctionPointer(int, WeaponsBed_Init, (), 0x76AA20);
 ObjectFunc(BgExec_33, 0x76AF40);
+VoidFunc(LoadWeaponsBedCharAnims, 0x770400);
 FunctionPointer(int, LoadStg22Module, (), 0x7705E0);
+FunctionPointer(int, CrazyGadget_Init, (), 0x7705F0);
 ObjectFunc(ObjSetManExec_Main, 0x770AF0);
 ObjectFunc(BgExec_34, 0x770D50);
+VoidFunc(LoadCrazyGadgetCharAnims, 0x774160);
 FunctionPointer(int, GetDllData, (LPCSTR lpProcName), 0x77DEF0);
 FunctionPointer(void *, MemoryManager__Allocate, (int size, char *file, int line), 0x77DFA0);
 FunctionPointer(void *, MemoryManager__AllocateArray, (int count, int size), 0x77DFB0);
@@ -1146,11 +1205,13 @@ FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem *a1, size_t coun
 VoidFunc(UpdateControllers, 0x77E780);
 FunctionPointer(int, LoadStg00Module, (), 0x786500);
 FunctionPointer(int, LoadStg24Module, (), 0x786770);
+FunctionPointer(int, EternalEngine_Init, (), 0x786780);
 ObjectFunc(ObjSetManExec_4, 0x786D10);
 ObjectFunc(BgExec_35, 0x7870A0);
 FunctionPointer(int, CAPSULEBOMB, (ObjectMaster *a1), 0x787830);
 FunctionPointer(int, TaVibExe_LoadB, (), 0x78A090);
 ObjectFunc(DrrTamaExec, 0x78AE20);
+VoidFunc(LoadEternalEngineCharAnims, 0x78B780);
 ObjectFunc(TaVibExec, 0x78C160);
 FunctionPointer(int, TaVibExe_Load, (int, char, char, int), 0x78C1C0);
 ObjectFunc(HatchAirExec, 0x7919B0);
@@ -1158,9 +1219,11 @@ FunctionPointer(int, LoadOtherprintModule, (), 0x791E50);
 ObjectFunc(execSegalogo, 0x7920F0);
 ObjectFunc(execTentoEnding, 0x7927F0);
 FunctionPointer(int, LoadStg51Module, (), 0x792970);
+FunctionPointer(int, DeckRace_Init, (), 0x792980);
 ObjectFunc(BgmStart_WeaponsBed, 0x792E40);
 FunctionPointer(int, LoadEndingModule, (), 0x7930E0);
 FunctionPointer(int, LoadStg39Module, (), 0x793250);
+FunctionPointer(int, MissionStreet2P_Init, (), 0x793260);
 ObjectFunc(BgmStart_MissionStreet, 0x7936C0);
 ObjectFunc(cartAWindowExec, 0x795630);
 FunctionPointer(UnknownData2 *, AllocateUnknownData2, (ObjectMaster *obj), 0x7966D0);
@@ -1191,7 +1254,7 @@ static inline HWND CreateMainWindow(int nWidth, HINSTANCE hInstance, int nHeight
 	HWND result;
 	__asm
 	{
-		push dword ptr [isWindowed]
+		push dword ptr[isWindowed]
 		push[nHeight]
 		push[hInstance]
 		mov eax, [nWidth]
@@ -1248,6 +1311,60 @@ static inline int ReadSaveFileThing(char *path, void *buffer, size_t _size)
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall(float *a1@<eax>, float a2, float a3, float a4)
+static const void *const njTranslatePtr = (void*)0x427470;
+static inline void njTranslate(float *a1, float a2, float a3, float a4)
+{
+	__asm
+	{
+		push[a4]
+		push[a3]
+		push[a2]
+		mov eax, [a1]
+		call njTranslatePtr
+		add esp, 12
+	}
+}
+
+// void __usercall(float *a1@<ebx>, signed int a2)
+static const void *const njRotateXPtr = (void*)0x4274E0;
+static inline void njRotateX(float *a1, signed int a2)
+{
+	__asm
+	{
+		push[a2]
+		mov ebx, [a1]
+		call njRotateXPtr
+		add esp, 4
+	}
+}
+
+// void __usercall(const void *EBX@<ebx>, signed int a2)
+static const void *const njRotateYPtr = (void*)0x4275B0;
+static inline void njRotateY(const void *EBX, signed int a2)
+{
+	__asm
+	{
+		push[a2]
+		mov ebx, [EBX]
+		call njRotateYPtr
+		add esp, 4
+	}
+}
+
+// void __usercall(float *a1@<ebx>, signed int a2)
+static const void *const njRotateZPtr = (void*)0x427680;
+static inline void njRotateZ(float *a1, signed int a2)
+{
+	__asm
+	{
+		push[a2]
+		mov ebx, [a1]
+		call njRotateZPtr
+		add esp, 4
+	}
 }
 
 // char __usercall@<al>(_DWORD *a1@<esi>)
@@ -1487,6 +1604,20 @@ static inline void AddScore(int a1)
 	}
 }
 
+// void *__usercall@<eax>(char *a1@<eax>)
+static const void *const LoadPRSFilePtr = (void*)0x4548C0;
+static inline void * LoadPRSFile(char *a1)
+{
+	void * result;
+	__asm
+	{
+		mov eax, [a1]
+		call LoadPRSFilePtr
+		mov result, eax
+	}
+	return result;
+}
+
 // ModelIndex *__usercall@<eax>(char *filename@<eax>)
 static const void *const LoadMDLFilePtr = (void*)0x459590;
 static inline ModelIndex * LoadMDLFile(char *filename)
@@ -1524,6 +1655,18 @@ static inline AnimationIndex * LoadMTNFile(char *filename)
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall(ObjectMaster *a1@<eax>, int a2@<ecx>)
+static const void *const SetPhysicsParamsAndGiveUpgradesPtr = (void*)0x4599C0;
+static inline void SetPhysicsParamsAndGiveUpgrades(ObjectMaster *a1, int a2)
+{
+	__asm
+	{
+		mov ecx, [a2]
+		mov eax, [a1]
+		call SetPhysicsParamsAndGiveUpgradesPtr
+	}
 }
 
 // void __usercall(int id@<esi>)
@@ -1655,7 +1798,7 @@ static inline void AddHP(int playerNum, float amount)
 	}
 }
 
-// ObjectMaster *__usercall@<eax>(int list@<ecx>, char *name@<eax>, void (__cdecl *mainSub)(ObjectMaster *)@<edi>, LoadObj flags)
+// ObjectMaster *__usercall@<eax>(int list@<ecx>, const char *name@<eax>, void (__cdecl *mainSub)(ObjectMaster *)@<edi>, LoadObj flags)
 static const void *const LoadObjectPtr = (void*)0x46F610;
 static inline ObjectMaster * LoadObject(int list, const char *name, void(__cdecl *mainSub)(ObjectMaster *), LoadObj flags)
 {
@@ -1673,7 +1816,7 @@ static inline ObjectMaster * LoadObject(int list, const char *name, void(__cdecl
 	return result;
 }
 
-// ObjectMaster *__usercall@<eax>(void (__cdecl *mainSub)(ObjectMaster *)@<edi>, int list@<esi>, char *name)
+// ObjectMaster *__usercall@<eax>(void (__cdecl *mainSub)(ObjectMaster *)@<edi>, int list@<esi>, const char *name)
 static const void *const AllocateObjectMasterPtr = (void*)0x46F680;
 static inline ObjectMaster * AllocateObjectMaster(void(__cdecl *mainSub)(ObjectMaster *), int list, const char *name)
 {
@@ -2304,7 +2447,7 @@ static inline void PowderExecute(NJS_VECTOR *a1, int a2, NJS_VECTOR *a3, char a4
 {
 	__asm
 	{
-		push dword ptr [a4]
+		push[a4]
 		push[a3]
 		push[a2]
 		mov ebx, [a1]
@@ -2356,20 +2499,6 @@ static inline PDS_PERIPHERAL * pdGetPeripheral(signed int a1, int a2)
 		mov ecx, [a2]
 		mov eax, [a1]
 		call pdGetPeripheralPtr
-		mov result, eax
-	}
-	return result;
-}
-
-// void *__usercall<eax>(char *filename<eax>)
-static const void *const LoadPRSFilePtr = (void*)0x4548C0;
-static inline void *LoadPRSFile(const char *filename)
-{
-	void *result;
-	__asm
-	{
-		mov eax, [filename]
-		call LoadPRSFilePtr
 		mov result, eax
 	}
 	return result;
