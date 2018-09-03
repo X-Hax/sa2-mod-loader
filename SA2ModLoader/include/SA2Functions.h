@@ -21,7 +21,7 @@ StdcallFunctionPointer(int, nullsub_5, (int), 0x411600);
 FunctionPointer(int, GetCrappyReplacementDepartureMachine, (), 0x41DFB0);
 FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
-FunctionPointer(int, PrintDebug, (char *, ...), 0x426740);
+FunctionPointer(int, PrintDebug, (const char *, ...), 0x426740);
 FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int(__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
