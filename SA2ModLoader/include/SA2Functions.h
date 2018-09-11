@@ -21,10 +21,10 @@ StdcallFunctionPointer(int, nullsub_5, (int), 0x411600);
 FunctionPointer(int, GetCrappyReplacementDepartureMachine, (), 0x41DFB0);
 FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
-FunctionPointer(int, PrintDebug, (const char *, ...), 0x426740);
+FunctionPointer(int, PrintDebug, (const char *a1, ...), 0x426740);
 FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
-FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int(__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
+FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int (__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST *), 0x42FD10);
 VoidFunc(main_gc_free, 0x433E60);
 FunctionPointer(int, GameLoop, (), 0x433EE0);
@@ -112,7 +112,7 @@ FunctionPointer(EntityData1 *, AllocateEntityData1, (), 0x470B40);
 FunctionPointer(EntityData2 *, AllocateEntityData2, (), 0x470B70);
 FunctionPointer(ObjUnknownA *, AllocateObjUnknownA, (), 0x470BA0);
 FunctionPointer(ObjUnknownB *, AllocateObjUnknownB, (), 0x470BD0);
-FunctionPointer(ObjectMaster *, LoadChildObject, (LoadObj a3, void(__cdecl *a4)(ObjectMaster *), ObjectMaster *parent), 0x470C00);
+FunctionPointer(ObjectMaster *, LoadChildObject, (LoadObj a3, void (__cdecl *a4)(ObjectMaster *), ObjectMaster *parent), 0x470C00);
 ObjectFunc(DeleteChildObjects, 0x470C80);
 ObjectFunc(StageNameDisplayExecutor_Main, 0x4724C0);
 FunctionPointer(int, DamagePlayer, (EntityData1 *data1, CharObj2Base *data2), 0x473800);
@@ -230,7 +230,7 @@ FunctionPointer(int, FIREBALL, (ObjectMaster *a1), 0x4C90B0);
 ObjectFunc(ObjectSS2Dodai, 0x4C9A10);
 FunctionPointer(int, DODAIGEN, (int), 0x4C9DA0);
 FunctionPointer(int, LoadStg34Module, (), 0x4CA020);
-FunctionPointer(int, CannonsCoreS_Init, (), 0x4CA030);
+FunctionPointer(int, CannonsCoreSonic_Init, (), 0x4CA030);
 ObjectFunc(BgClip_02, 0x4CA800);
 FunctionPointer(int, G_LIGHT_SW, (ObjectMaster *a1), 0x4CA9B0);
 ObjectFunc(ObjectGlobalLightManager, 0x4CAB20);
@@ -266,7 +266,7 @@ FunctionPointer(int, DRMCUN, (ObjectMaster *a1), 0x4D9BD0);
 FunctionPointer(int, CMDOOR, (ObjectMaster *a1), 0x4DA360);
 FunctionPointer(int, SIGN, (ObjectMaster *a1), 0x4DA440);
 FunctionPointer(int, LoadStg37Module, (), 0x4DB110);
-FunctionPointer(int, CannonsCoreR_Init, (), 0x4DB120);
+VoidFunc(CannonsCoreRouge_Init, 0x4DB120);
 ObjectFunc(BgClip_03, 0x4DB740);
 ObjectFunc(BgColiExec, 0x4DB840);
 ObjectFunc(BgExec_05, 0x4DB860);
@@ -354,7 +354,7 @@ ObjectFunc(EnemyCapturingBulletExecutor, 0x512570);
 ObjectFunc(EnemyCapturingBulletPiecesExecutor, 0x512930);
 ObjectFunc(Bomb_Main, 0x513830);
 FunctionPointer(int, LoadStg35Module, (), 0x514190);
-FunctionPointer(int, CannonsCoreE_Init, (), 0x5141A0);
+VoidFunc(CannonsCoreEggman_Init, 0x5141A0);
 ObjectFunc(BgExec_08, 0x515180);
 ObjectFunc(BgClip_05, 0x517ED0);
 FunctionPointer(int, LoadStg54Module, (), 0x5180D0);
@@ -507,6 +507,7 @@ FunctionPointer(int, ALO_RaceKariToy_Load, (char, int, int, int), 0x5604F0);
 ObjectFunc(ParamFukidasiExecutor, 0x564C80);
 ObjectFunc(WaterManagerExecutor, 0x56AF60);
 ObjectFunc(CnkWaterManagerExecutor, 0x56B1B0);
+FunctionPointer(int, SetChunkTextureIndex, (int), 0x56E3D0);
 ObjectFunc(KarateCameraExec, 0x574480);
 ObjectFunc(KarateChaoExec_Main, 0x578D30);
 ObjectFunc(EGG, 0x57B520);
@@ -908,6 +909,8 @@ ObjectFunc(SmokeExec_2, 0x6CD020);
 ObjectFunc(SandyExec, 0x6CD4A0);
 FunctionPointer(void, SomethingParticleRelated, (Rotation *a1, NJS_VECTOR *a2, float a3), 0x6CD720);
 ObjectFunc(WoodenCrate_Main, 0x6CD7F0);
+ObjectFunc(WoodenCrate_Main_, 0x6CD890);
+ObjectFunc(WoodenCrate_Display, 0x6CDF90);
 FunctionPointer(int, ROCKETMISSILE, (ObjectMaster *parent), 0x6CE4C0);
 ObjectFunc(DashPanel_Main, 0x6CFBF0);
 FunctionPointer(void, EmeraldPiece_Load, (NJS_VECTOR *a1, unsigned __int8 a2, unsigned __int8 a3), 0x6CFFC0);
@@ -975,6 +978,7 @@ FunctionPointer(int, UDREEL, (ObjectMaster *a1), 0x6E5620);
 FunctionPointer(int, KDASIBA, (ObjectMaster *a2), 0x6E6680);
 FunctionPointer(int, LINKLINK, (ObjectMaster *a1), 0x6E6EB0);
 ObjectFunc(SOLIDBOX, 0x6E70B0);
+ObjectFunc(Crate_Delete, 0x6E7140);
 FunctionPointer(int, KNUDAI, (ObjectMaster *a2), 0x6E7480);
 FunctionPointer(int, PauseHintExec_Load, (), 0x6E7C00);
 ObjectFunc(PauseHintExec_Display, 0x6E7C60);
@@ -1114,7 +1118,7 @@ FunctionPointer(void, LoadMechTails, (int playerNum), 0x740EB0);
 FunctionPointer(void, LoadChaoWalker, (int playerNum), 0x741110);
 FunctionPointer(void, LoadDarkChaoWalker, (int playerNum), 0x7412F0);
 ObjectFunc(MechEggman_Main, 0x741530);
-FunctionPointer(double, MechEggman_ChecksDamage, (EntityData1 *a1, signed int a3, SonicCharObj2 *a4, int), 0x742C10);
+FunctionPointer(double, MechEggman_ChecksDamage, (EntityData1 *a1, signed int a3, SonicCharObj2 *a4, int a2), 0x742C10);
 ObjectFunc(MechEggman_Delete, 0x743E90);
 ObjectFunc(MechEggman_Display, 0x7444F0);
 ObjectFunc(MechEggman_1C, 0x7454B0);
@@ -1254,9 +1258,10 @@ static inline HWND CreateMainWindow(int nWidth, HINSTANCE hInstance, int nHeight
 	HWND result;
 	__asm
 	{
-		push dword ptr[isWindowed]
-		push[nHeight]
-		push[hInstance]
+		movzx eax, [isWindowed]
+		push eax
+		push [nHeight]
+		push [hInstance]
 		mov eax, [nWidth]
 		call CreateMainWindowPtr
 		add esp, 12
@@ -1286,7 +1291,7 @@ static inline int WriteSaveFileThing(char *path, void *a2, size_t count)
 	int result;
 	__asm
 	{
-		push[count]
+		push [count]
 		mov edx, [a2]
 		mov ecx, [path]
 		call WriteSaveFileThingPtr
@@ -1303,7 +1308,7 @@ static inline int ReadSaveFileThing(char *path, void *buffer, size_t _size)
 	int result;
 	__asm
 	{
-		push[_size]
+		push [_size]
 		mov edx, [buffer]
 		mov ecx, [path]
 		call ReadSaveFileThingPtr
@@ -1319,9 +1324,9 @@ static inline void njTranslate(float *a1, float a2, float a3, float a4)
 {
 	__asm
 	{
-		push[a4]
-		push[a3]
-		push[a2]
+		push [a4]
+		push [a3]
+		push [a2]
 		mov eax, [a1]
 		call njTranslatePtr
 		add esp, 12
@@ -1334,7 +1339,7 @@ static inline void njRotateX(float *a1, signed int a2)
 {
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ebx, [a1]
 		call njRotateXPtr
 		add esp, 4
@@ -1347,7 +1352,7 @@ static inline void njRotateY(const void *EBX, signed int a2)
 {
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ebx, [EBX]
 		call njRotateYPtr
 		add esp, 4
@@ -1360,14 +1365,14 @@ static inline void njRotateZ(float *a1, signed int a2)
 {
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ebx, [a1]
 		call njRotateZPtr
 		add esp, 4
 	}
 }
 
-// char __usercall@<al>(_DWORD *a1@<esi>)
+// char __usercall@<al>(void *a1@<esi>)
 static const void *const IsByteswappedPtr = (void*)0x429840;
 static inline char IsByteswapped(void *a1)
 {
@@ -1387,9 +1392,11 @@ static inline void PlaySoundProbably(int a1, int a2, char a3, char a4)
 {
 	__asm
 	{
-		push dword ptr [a4]
-		push dword ptr [a3]
-		push[a2]
+		movzx eax, [a4]
+		push eax
+		movzx eax, [a3]
+		push eax
+		push [a2]
 		mov esi, [a1]
 		call PlaySoundProbablyPtr
 		add esp, 12
@@ -1402,7 +1409,7 @@ static inline void KnockBackRumble(int pnum, signed int a2, signed int a3, int a
 {
 	__asm
 	{
-		push[a4]
+		push [a4]
 		mov ecx, [a3]
 		mov edx, [a2]
 		mov eax, [pnum]
@@ -1429,7 +1436,7 @@ static inline Sint32 LoadStartPosition(int playerNumber, NJS_VECTOR *position, R
 	Sint32 result;
 	__asm
 	{
-		push[rotation]
+		push [rotation]
 		mov edi, [position]
 		mov ecx, [playerNumber]
 		call LoadStartPositionPtr
@@ -1462,17 +1469,28 @@ static inline void Load2PIntroPos(int a1)
 }
 
 // signed int __usercall@<eax>(int playerNum@<eax>)
-static const void *const LoadEndPositionPtr = (void*)0x43DD50;
-static inline signed int LoadEndPosition(int playerNum)
+static const void *const LoadEndPosition_Mission12Ptr = (void*)0x43DD50;
+static inline signed int LoadEndPosition_Mission12(int playerNum)
 {
 	signed int result;
 	__asm
 	{
 		mov eax, [playerNum]
-		call LoadEndPositionPtr
+		call LoadEndPosition_Mission12Ptr
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall(int playerNum@<eax>)
+static const void *const LoadEndPositionPtr = (void*)0x43DF30;
+static inline void LoadEndPosition(int playerNum)
+{
+	__asm
+	{
+		mov eax, [playerNum]
+		call LoadEndPositionPtr
+	}
 }
 
 // void __usercall(signed int n@<esi>)
@@ -1538,7 +1556,7 @@ static inline signed int PlayVoice(int idk, int num)
 	signed int result;
 	__asm
 	{
-		push[num]
+		push [num]
 		mov edx, [idk]
 		call PlayVoicePtr
 		add esp, 4
@@ -1604,7 +1622,7 @@ static inline void AddScore(int a1)
 	}
 }
 
-// void *__usercall@<eax>(char *a1@<eax>)
+// void *__usercall@<eax>(const char *a1@<eax>)
 static const void *const LoadPRSFilePtr = (void*)0x4548C0;
 static inline void * LoadPRSFile(const char *a1)
 {
@@ -1632,7 +1650,7 @@ static inline ModelIndex * LoadMDLFile(char *filename)
 	return result;
 }
 
-// void __usercall(ModelIndex *a1<esi>)
+// void __usercall(ModelIndex *a1@<esi>)
 static const void *const ReleaseMDLFilePtr = (void*)0x4596D0;
 static inline void ReleaseMDLFile(ModelIndex *a1)
 {
@@ -1711,18 +1729,18 @@ static inline void SetPlayerSpeed(int pid, float speed_x, float speed_y, float s
 {
 	__asm
 	{
-		push[speed_z]
-		push[speed_y]
-		push[speed_x]
+		push [speed_z]
+		push [speed_y]
+		push [speed_x]
 		mov ecx, [pid]
 		call SetPlayerSpeedPtr
 		add esp, 12
 	}
 }
 
-// NJS_VECTOR *__usercall@<eax>(NJS_VECTOR *result@<eax>, Rotation *a2@<edx>, int a3@<ecx>, __int16 a4)
+// void __usercall(NJS_VECTOR *result@<eax>, Rotation *a2@<edx>, int a3@<ecx>, __int16 a4)
 static const void *const SetPlayerSpeedIGuessPtr = (void*)0x46C340;
-static inline void SetPlayerSpeedIGuess(NJS_VECTOR *_result, Rotation *a2, int a3, __int16 a4)
+static inline void SetPlayerSpeedIGuess(NJS_VECTOR *result, Rotation *a2, int a3, __int16 a4)
 {
 	__asm
 	{
@@ -1730,7 +1748,7 @@ static inline void SetPlayerSpeedIGuess(NJS_VECTOR *_result, Rotation *a2, int a
 		push eax
 		mov ecx, [a3]
 		mov edx, [a2]
-		mov eax, [_result]
+		mov eax, [result]
 		call SetPlayerSpeedIGuessPtr
 		add esp, 4
 	}
@@ -1789,21 +1807,22 @@ static inline void AddHP(int playerNum, float amount)
 {
 	__asm
 	{
-		push[amount]
+		push [amount]
 		mov eax, [playerNum]
 		call AddHPPtr
 		add esp, 4
 	}
 }
 
-// ObjectMaster *__usercall@<eax>(int list@<ecx>, const char *name@<eax>, void (__cdecl *mainSub)(ObjectMaster *)@<edi>, LoadObj flags)
+// ObjectMaster *__usercall@<eax>(int list@<ecx>, const char *name@<eax>, void (__cdecl *mainSub)(ObjectMaster *)@<edi>, char flags)
 static const void *const LoadObjectPtr = (void*)0x46F610;
-static inline ObjectMaster * LoadObject(int list, const char *name, void(__cdecl *mainSub)(ObjectMaster *), LoadObj flags)
+static inline ObjectMaster * LoadObject(int list, const char *name, void (__cdecl *mainSub)(ObjectMaster *), char flags)
 {
 	ObjectMaster * result;
 	__asm
 	{
-		push dword ptr [flags]
+		movzx eax, [flags]
+		push eax
 		mov edi, [mainSub]
 		mov eax, [name]
 		mov ecx, [list]
@@ -1816,12 +1835,12 @@ static inline ObjectMaster * LoadObject(int list, const char *name, void(__cdecl
 
 // ObjectMaster *__usercall@<eax>(void (__cdecl *mainSub)(ObjectMaster *)@<edi>, int list@<esi>, const char *name)
 static const void *const AllocateObjectMasterPtr = (void*)0x46F680;
-static inline ObjectMaster * AllocateObjectMaster(void(__cdecl *mainSub)(ObjectMaster *), int list, const char *name)
+static inline ObjectMaster * AllocateObjectMaster(void (__cdecl *mainSub)(ObjectMaster *), int list, const char *name)
 {
 	ObjectMaster * result;
 	__asm
 	{
-		push[name]
+		push [name]
 		mov esi, [list]
 		mov edi, [mainSub]
 		call AllocateObjectMasterPtr
@@ -1852,12 +1871,32 @@ static inline signed int InitCollision(ObjectMaster *obj, CollisionData *collisi
 	signed int result;
 	__asm
 	{
-		push dword ptr [a4]
-		push[count]
-		push[collision]
+		movzx eax, [a4]
+		push eax
+		push [count]
+		push [collision]
 		mov eax, [obj]
 		call InitCollisionPtr
 		add esp, 12
+		mov result, eax
+	}
+	return result;
+}
+
+// signed int __usercall@<eax>(unsigned __int8 a1@<bl>, ObjectMaster *a2@<edi>, CollisionData *a3, __int16 a4)
+static const void *const InitCollision_0Ptr = (void*)0x47E620;
+static inline signed int InitCollision_0(unsigned __int8 a1, ObjectMaster *a2, CollisionData *a3, __int16 a4)
+{
+	signed int result;
+	__asm
+	{
+		movzx eax, [a4]
+		push eax
+		push [a3]
+		mov edi, [a2]
+		mov bl, [a1]
+		call InitCollision_0Ptr
+		add esp, 8
 		mov result, eax
 	}
 	return result;
@@ -1870,10 +1909,10 @@ static inline bool SETDistanceCheckThing(NJS_VECTOR *a1, float x, float y, float
 	bool result;
 	__asm
 	{
-		push[distance_maybe]
-		push[z]
-		push[y]
-		push[x]
+		push [distance_maybe]
+		push [z]
+		push [y]
+		push [x]
 		mov ecx, [a1]
 		call SETDistanceCheckThingPtr
 		add esp, 16
@@ -1889,7 +1928,7 @@ static inline void * LoadSETFile(int _size, char *name_s, char *name_u)
 	void * result;
 	__asm
 	{
-		push[name_u]
+		push [name_u]
 		mov ecx, [name_s]
 		mov eax, [_size]
 		call LoadSETFilePtr
@@ -1916,9 +1955,9 @@ static inline void SuperSonic_ChecksForDamage(CharObj2Base *_data2, EntityData1 
 {
 	__asm
 	{
-		push[a4]
-		push[a2]
-		push[_data1]
+		push [a4]
+		push [a2]
+		push [_data1]
 		mov eax, [_data2]
 		call SuperSonic_ChecksForDamagePtr
 		add esp, 12
@@ -1932,8 +1971,8 @@ static inline ObjectMaster * SpawnBomb(ObjectMaster *parent, NJS_VECTOR *positio
 	ObjectMaster * result;
 	__asm
 	{
-		push[a2]
-		push[a1]
+		push [a2]
+		push [a1]
 		mov ebx, [position]
 		mov eax, [parent]
 		call SpawnBombPtr
@@ -1961,8 +2000,9 @@ static inline signed int AddToGlobalChaoThingMaybe(unsigned __int16 a1, ObjectMa
 	signed int result;
 	__asm
 	{
-		push[data]
-		push[a3]
+		push [data]
+		movzx eax, [a3]
+		push eax
 		mov ebx, [obj]
 		mov cx, [a1]
 		call AddToGlobalChaoThingMaybePtr
@@ -1978,7 +2018,7 @@ static inline void AddChaoSaveSignature(char *a1, char *a2)
 {
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov eax, [a1]
 		call AddChaoSaveSignaturePtr
 		add esp, 4
@@ -2017,10 +2057,24 @@ static inline int ALO_ShabonExecutor_Load(NJS_VECTOR *position, int a2)
 	int result;
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ebx, [position]
 		call ALO_ShabonExecutor_LoadPtr
 		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+// unsigned int __usercall@<eax>(int a1@<eax>)
+static const void *const GetChunkTextureIndexPtr = (void*)0x56D1F0;
+static inline unsigned int GetChunkTextureIndex(int a1)
+{
+	unsigned int result;
+	__asm
+	{
+		mov eax, [a1]
+		call GetChunkTextureIndexPtr
 		mov result, eax
 	}
 	return result;
@@ -2033,7 +2087,7 @@ static inline EntityData1 * ALO_OdekakeMachine_Load(NJS_VECTOR *position, int a2
 	EntityData1 * result;
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ebx, [position]
 		call ALO_OdekakeMachine_LoadPtr
 		add esp, 4
@@ -2104,8 +2158,8 @@ static inline void njDrawSprite2D_0(NJS_SPRITE *_sp, Int n, Float pri, Uint32 at
 {
 	__asm
 	{
-		push[attr]
-		push[pri]
+		push [attr]
+		push [pri]
 		mov eax, [n]
 		mov ebx, [_sp]
 		call njDrawSprite2D_0Ptr
@@ -2119,7 +2173,7 @@ static inline void ExpManExec_LoadB(NJS_VECTOR *a1, float a2)
 {
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ebx, [a1]
 		call ExpManExec_LoadBPtr
 		add esp, 4
@@ -2159,8 +2213,8 @@ static inline void LoadChaoKey(NJS_VECTOR *a1, float a2, float a3)
 {
 	__asm
 	{
-		push[a3]
-		push[a2]
+		push [a3]
+		push [a2]
 		mov ebx, [a1]
 		call LoadChaoKeyPtr
 		add esp, 8
@@ -2174,7 +2228,7 @@ static inline signed int Sonic_CheckActionWindow(EntityData1 *a1, EntityData2 *a
 	signed int result;
 	__asm
 	{
-		push[a4]
+		push [a4]
 		mov ecx, [a3]
 		mov edx, [a2]
 		mov eax, [a1]
@@ -2201,16 +2255,46 @@ static inline char Sonic_StartSpindash(EntityData1 *a1, CharObj2Base *a2, SonicC
 	return result;
 }
 
+// void __usercall(EntityData1 *a1@<eax>, SonicCharObj2 *a2@<ecx>, CharObj2Base *a3@<edi>)
+static const void *const Sonic_DoObstacleSomersaultPtr = (void*)0x723560;
+static inline void Sonic_DoObstacleSomersault(EntityData1 *a1, SonicCharObj2 *a2, CharObj2Base *a3)
+{
+	__asm
+	{
+		mov edi, [a3]
+		mov ecx, [a2]
+		mov eax, [a1]
+		call Sonic_DoObstacleSomersaultPtr
+	}
+}
+
+// signed int __usercall@<eax>(SonicCharObj2 *a1@<eax>, EntityData1 *a2, CharObj2Base *a3)
+static const void *const Sonic_SomersaultPtr = (void*)0x723880;
+static inline signed int Sonic_Somersault(SonicCharObj2 *a1, EntityData1 *a2, CharObj2Base *a3)
+{
+	signed int result;
+	__asm
+	{
+		push [a3]
+		push [a2]
+		mov eax, [a1]
+		call Sonic_SomersaultPtr
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
 // void __usercall(SonicCharObj2 *sonicdata@<eax>, CharObj2Base *basedata@<edx>, EntityData1 *entity@<ecx>)
-static const void *const PerformLightDashPtr = (void*)0x724010;
-static inline void PerformLightDash(SonicCharObj2 *sonicdata, CharObj2Base *basedata, EntityData1 *entity)
+static const void *const Sonic_PerformLightDashPtr = (void*)0x724010;
+static inline void Sonic_PerformLightDash(SonicCharObj2 *sonicdata, CharObj2Base *basedata, EntityData1 *entity)
 {
 	__asm
 	{
 		mov ecx, [entity]
 		mov edx, [basedata]
 		mov eax, [sonicdata]
-		call PerformLightDashPtr
+		call Sonic_PerformLightDashPtr
 	}
 }
 
@@ -2221,7 +2305,7 @@ static inline signed int Sonic_CheckSpecial(CharObj2Base *data2, EntityData1 *a2
 	signed int result;
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ecx, [data2]
 		call Sonic_CheckSpecialPtr
 		add esp, 4
@@ -2252,8 +2336,8 @@ static inline signed int Knuckles_CheckActionWindow(KnucklesCharObj2 *a1, int a2
 	signed int result;
 	__asm
 	{
-		push[a4]
-		push[a3]
+		push [a4]
+		push [a3]
 		mov edx, [a2]
 		mov eax, [a1]
 		call Knuckles_CheckActionWindowPtr
@@ -2270,7 +2354,7 @@ static inline signed int Knuckles_CheckSpecial(CharObj2Base *data2, EntityData1 
 	signed int result;
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ecx, [data2]
 		call Knuckles_CheckSpecialPtr
 		add esp, 4
@@ -2285,7 +2369,7 @@ static inline void GiveDiggableItem(EntityData1 *a1, CharObj2Base *a2, KnucklesC
 {
 	__asm
 	{
-		push[a3]
+		push [a3]
 		mov edi, [a2]
 		mov eax, [a1]
 		call GiveDiggableItemPtr
@@ -2371,7 +2455,7 @@ static inline signed int MechEggman_CheckActionWindow(int a1, int a2, CharObj2Ba
 	signed int result;
 	__asm
 	{
-		push[a4]
+		push [a4]
 		mov ecx, [a3]
 		mov edx, [a2]
 		mov eax, [a1]
@@ -2389,7 +2473,7 @@ static inline signed int MechEggman_CheckSpecial(CharObj2Base *data2, EntityData
 	signed int result;
 	__asm
 	{
-		push[a2]
+		push [a2]
 		mov ecx, [data2]
 		call MechEggman_CheckSpecialPtr
 		add esp, 4
@@ -2428,7 +2512,7 @@ static inline signed int Tails_CheckActionWindow(int a1, int a2, CharObj2Base *a
 	signed int result;
 	__asm
 	{
-		push[a4]
+		push [a4]
 		mov ecx, [a3]
 		mov edx, [a2]
 		mov eax, [a1]
@@ -2445,9 +2529,10 @@ static inline void PowderExecute(NJS_VECTOR *a1, int a2, NJS_VECTOR *a3, char a4
 {
 	__asm
 	{
-		push dword ptr [a4]
-		push[a3]
-		push[a2]
+		movzx eax, [a4]
+		push eax
+		push [a3]
+		push [a2]
 		mov ebx, [a1]
 		call PowderExecutePtr
 		add esp, 12
@@ -2460,10 +2545,11 @@ static inline void njDrawSprite2D(NJS_SPRITE *_sp, Int n, Float pri, char attr)
 {
 	__asm
 	{
-		push dword ptr [attr]
-		push[pri]
+		movzx eax, [attr]
+		push eax
+		push [pri]
 		mov eax, [n]
-		push[_sp]
+		push [_sp]
 		call njDrawSprite2DPtr
 		add esp, 12
 	}
@@ -2479,7 +2565,7 @@ static inline void * AllocateArray(int _size, int count, char *file, int line)
 		mov eax, [line]
 		mov ecx, [file]
 		mov edx, [count]
-		push[_size]
+		push [_size]
 		call AllocateArrayPtr
 		add esp, 4
 		mov result, eax
@@ -2516,6 +2602,20 @@ static inline int XInputToDreamcastButtons(int buttons)
 	return result;
 }
 
+// float __usercall@<st0>(NJS_VECTOR *a1@<esi>)
+static const void *const njUnitVectorPtr = (void*)0x77F3A0;
+static inline float njUnitVector(NJS_VECTOR *a1)
+{
+	float result;
+	__asm
+	{
+		mov esi, [a1]
+		call njUnitVectorPtr
+		fstp result
+	}
+	return result;
+}
+
 // double __usercall@<st0>(NJS_VECTOR *a1@<eax>, NJS_VECTOR *a2@<ecx>)
 static const void *const CheckDistancePtr = (void*)0x77FBD0;
 static inline double CheckDistance(NJS_VECTOR *a1, NJS_VECTOR *a2)
@@ -2531,16 +2631,17 @@ static inline double CheckDistance(NJS_VECTOR *a1, NJS_VECTOR *a2)
 	return result;
 }
 
-// double __usercall@<st0>(NJS_VECTOR *a1@<eax>)
+// float __usercall@<st0>(const NJS_VECTOR *result@<eax>)
 static const void *const njScalorPtr = (void*)0x77FC30;
-static inline double njScalor(NJS_VECTOR *a1)
+static inline float njScalor(const NJS_VECTOR *src)
 {
-	double result;
+	float result;
 	__asm
 	{
-		mov eax, [a1]
+		mov eax, [src]
 		call njScalorPtr
 		fstp result
 	}
 	return result;
 }
+
