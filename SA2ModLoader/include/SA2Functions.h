@@ -1722,20 +1722,18 @@ static inline void SetPlayerSpeed(int pid, float speed_x, float speed_y, float s
 
 // NJS_VECTOR *__usercall@<eax>(NJS_VECTOR *result@<eax>, Rotation *a2@<edx>, int a3@<ecx>, __int16 a4)
 static const void *const SetPlayerSpeedIGuessPtr = (void*)0x46C340;
-static inline NJS_VECTOR * SetPlayerSpeedIGuess(NJS_VECTOR *_result, Rotation *a2, int a3, __int16 a4)
+static inline void SetPlayerSpeedIGuess(NJS_VECTOR *_result, Rotation *a2, int a3, __int16 a4)
 {
-	NJS_VECTOR * result;
 	__asm
 	{
-		push[a4]
+		movzx eax, [a4]
+		push eax
 		mov ecx, [a3]
 		mov edx, [a2]
 		mov eax, [_result]
 		call SetPlayerSpeedIGuessPtr
 		add esp, 4
-		mov result, eax
 	}
-	return result;
 }
 
 // int __usercall@<eax>(ObjectMaster *a1@<eax>)
