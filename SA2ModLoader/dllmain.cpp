@@ -806,6 +806,7 @@ void __cdecl LoadEndPosition_ri(int playerNum)
 				auto iter2 = iter->second.find(CurrentLevel);
 				if (iter2 != iter->second.cend())
 				{
+					v5 = &iter2->second;
 					if (TwoPlayerMode
 						|| CurrentLevel == LevelIDs_SonicVsShadow1
 						|| CurrentLevel == LevelIDs_SonicVsShadow2
