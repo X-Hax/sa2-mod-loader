@@ -632,7 +632,24 @@ void Clear2PIntroPositionList(unsigned char character)
 
 DataArray(char, byte_1DE4664, 0x1DE4664, 2);
 DataPointer(void *, off_1DE95E0, 0x1DE95E0);
-FunctionPointer(void, sub_46DC70, (int a1, NJS_VECTOR *a2, char a3), 0x46DC70);
+
+// signed int __usercall@<eax>(int a1@<eax>, NJS_VECTOR *a2@<ecx>, char a3)
+static const void *const sub_46DC70Ptr = (void*)0x46DC70;
+static inline signed int sub_46DC70(int a1, NJS_VECTOR *a2, char a3)
+{
+	signed int result;
+	__asm
+	{
+		movzx eax, [a3]
+		push eax
+		mov ecx, [a2]
+		mov eax, [a1]
+		call sub_46DC70Ptr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
 
 void __cdecl Load2PIntroPos_ri(int playerNum)
 {
