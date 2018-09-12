@@ -540,16 +540,20 @@ int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *
 	return 0;
 }
 
-__declspec(naked) void LoadStartPosition_r(Rotation *rotation)
+static void __declspec(naked) LoadStartPosition_r()
 {
 	__asm
 	{
-		mov eax, [rotation]
-		push eax
-		push edi
-		push ecx
+		push[esp + 04h] // rotation
+		push edi // position
+		push ecx // playerNumber
+
+		// Call your __cdecl function here:
 		call LoadStartPosition_ri
-		add esp, 12
+
+		pop ecx // playerNumber
+		pop edi // position
+		add esp, 4 // rotation
 		retn
 	}
 }
