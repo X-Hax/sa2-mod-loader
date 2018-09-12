@@ -421,16 +421,16 @@ bool StartPositionsModified;
 struct startposdata { unsigned char character; const StartPosition *positions; };
 
 const startposdata startposaddrs[] = {
-	{ Characters_Sonic, (StartPosition *)0x1746F20 },
-	{ Characters_Shadow, (StartPosition *)0x17472C0 },
-	{ Characters_Tails, (StartPosition *)0x1747BE8 },
-	{ Characters_Eggman, (StartPosition *)0x1747BE8 },
-	{ Characters_Knuckles, (StartPosition *)0x17475D8 },
-	{ Characters_Rouge, (StartPosition *)0x17478F0 },
-	{ Characters_MechTails, (StartPosition *)0x1748008 },
-	{ Characters_MechEggman, (StartPosition *)0x1747C40 },
-	{ Characters_SuperSonic, (StartPosition *)0x1748378 },
-	{ Characters_SuperShadow, (StartPosition *)0x1748400 }
+	{ Characters_Sonic, SonicStartArray },
+	{ Characters_Shadow, ShadowStartArray },
+	{ Characters_Tails, TailsStartArray },
+	{ Characters_Eggman, TailsStartArray },
+	{ Characters_Knuckles, KnucklesStartArray },
+	{ Characters_Rouge, RougeStartArray },
+	{ Characters_MechTails, MechTailsStartArray },
+	{ Characters_MechEggman, MechEggmanStartArray },
+	{ Characters_SuperSonic, SuperSonicStartArray },
+	{ Characters_SuperShadow, SuperShadowStartArray }
 };
 
 void InitializeStartPositionLists()
@@ -560,16 +560,16 @@ bool _2PIntroPositionsModified;
 struct endposdata { unsigned char character; const LevelEndPosition *positions; };
 
 const endposdata _2pintroposaddrs[] = {
-	{ Characters_Sonic, (LevelEndPosition *)0x1746F20 },
-	{ Characters_Shadow, (LevelEndPosition *)0x17472C0 },
-	{ Characters_Tails, (LevelEndPosition *)0x1747BE8 },
-	{ Characters_Eggman, (LevelEndPosition *)0x1747BE8 },
-	{ Characters_Knuckles, (LevelEndPosition *)0x17475D8 },
-	{ Characters_Rouge, (LevelEndPosition *)0x17478F0 },
-	{ Characters_MechTails, (LevelEndPosition *)0x1748008 },
-	{ Characters_MechEggman, (LevelEndPosition *)0x1747C40 },
-	{ Characters_SuperSonic, (LevelEndPosition *)0x1748378 },
-	{ Characters_SuperShadow, (LevelEndPosition *)0x1748400 }
+	{ Characters_Sonic, Sonic2PIntroArray },
+	{ Characters_Shadow, Shadow2PIntroArray },
+	{ Characters_Tails, nullptr },
+	{ Characters_Eggman, nullptr },
+	{ Characters_Knuckles, Knuckles2PIntroArray },
+	{ Characters_Rouge, Rouge2PIntroArray },
+	{ Characters_MechTails, MechTails2PIntroArray },
+	{ Characters_MechEggman, MechEggman2PIntroArray },
+	{ Characters_SuperSonic, nullptr },
+	{ Characters_SuperShadow, nullptr }
 };
 
 void Initialize2PIntroPositionLists()
@@ -577,10 +577,10 @@ void Initialize2PIntroPositionLists()
 	for (unsigned int i = 0; i < LengthOfArray(_2pintroposaddrs); i++)
 	{
 		const LevelEndPosition * origlist = _2pintroposaddrs[i].positions;
-		_2PIntroPositions[startposaddrs[i].character] = unordered_map<short, LevelEndPosition>();
+		_2PIntroPositions[_2pintroposaddrs[i].character] = unordered_map<short, LevelEndPosition>();
 		if (origlist == nullptr)
-			return;
-		unordered_map<short, LevelEndPosition> &newlist = _2PIntroPositions[startposaddrs[i].character];
+			continue;
+		unordered_map<short, LevelEndPosition> &newlist = _2PIntroPositions[_2pintroposaddrs[i].character];
 		while (origlist->Level != LevelIDs_Invalid)
 			newlist[origlist->Level] = *origlist++;
 	}
@@ -697,6 +697,323 @@ __declspec(naked) void Load2PIntroPos_r()
 	}
 }
 
+unordered_map<unsigned char, unordered_map<short, StartPosition>> EndPositions;
+bool EndPositionsModified;
+
+const startposdata endposaddrs[] = {
+	{ Characters_Sonic, SonicEndArray },
+	{ Characters_Shadow, ShadowEndArray },
+	{ Characters_Tails, nullptr },
+	{ Characters_Eggman, nullptr },
+	{ Characters_Knuckles, KnucklesEndArray },
+	{ Characters_Rouge, RougeEndArray },
+	{ Characters_MechTails, MechTailsEndArray },
+	{ Characters_MechEggman, MechEggmanEndArray },
+	{ Characters_SuperSonic, SuperSonicEndArray },
+	{ Characters_SuperShadow, SuperShadowEndArray }
+};
+
+void InitializeEndPositionLists()
+{
+	for (unsigned int i = 0; i < LengthOfArray(endposaddrs); i++)
+	{
+		const StartPosition * origlist = endposaddrs[i].positions;
+		EndPositions[endposaddrs[i].character] = unordered_map<short, StartPosition>();
+		if (origlist == nullptr)
+			continue;
+		unordered_map<short, StartPosition> &newlist = EndPositions[endposaddrs[i].character];
+		while (origlist->Level != LevelIDs_Invalid)
+			newlist[origlist->Level] = *origlist++;
+	}
+}
+
+void RegisterEndPosition(unsigned char character, const StartPosition &position)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		EndPositions[character][position.Level] = position;
+		EndPositionsModified = true;
+		break;
+	}
+}
+
+void ClearEndPositionList(unsigned char character)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		EndPositions[character].clear();
+		EndPositionsModified = true;
+		break;
+	}
+}
+
+bool Mission23EndPositionsModified;
+int __cdecl LoadEndPosition_Mission23_ri(int playerNum);
+void __cdecl LoadEndPosition_ri(int playerNum)
+{
+	int v1; // edi
+	ObjectMaster *v2; // esi
+	CharObj2Base *v3; // eax
+	EntityData1 *v4; // esi
+	StartPosition *v5; // eax
+	int v6; // edx
+	NJS_VECTOR *v7; // ecx
+	NJS_VECTOR *v9; // eax
+	float v10; // ST14_4
+
+	v1 = playerNum;
+	v2 = MainCharacter[playerNum];
+	if (v2)
+	{
+		if (Mission23EndPositionsModified)
+		{
+			if (LoadEndPosition_Mission23_ri(playerNum))
+				return;
+		}
+		else if (LoadEndPosition_Mission23(playerNum))
+			return;
+		v3 = MainCharObj2[v1];
+		v4 = v2->Data1.Entity;
+		if (v3)
+		{
+			auto iter = EndPositions.find(v3->CharID);
+			if (iter != EndPositions.cend())
+			{
+				auto iter2 = iter->second.find(CurrentLevel);
+				if (iter2 != iter->second.cend())
+				{
+					if (TwoPlayerMode
+						|| CurrentLevel == LevelIDs_SonicVsShadow1
+						|| CurrentLevel == LevelIDs_SonicVsShadow2
+						|| CurrentLevel == LevelIDs_TailsVsEggman1
+						|| CurrentLevel == LevelIDs_TailsVsEggman2
+						|| CurrentLevel == LevelIDs_KnucklesVsRouge)
+						v6 = (v1 != 0) + 1;
+					else
+						v6 = 0;
+					v4->Rotation.z = 0;
+					v4->Rotation.x = 0;
+					v4->Rotation.y = *(&v5->Rotation1P + v6);
+					*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
+					v9 = &v5->Position1P + v6;
+					v4->Position.x = v9->x;
+					v7 = &v4->Position;
+					v7->y = v9->y;
+					v7->z = v9->z;
+					v10 = v4->Position.y - 10;
+					*(float*)&MainCharObj2[v1]->field_1A0[5] = v10;
+					*(char*)&MainCharObj2[v1]->field_144[0] = 0;
+					goto LABEL_27;
+				}
+			}
+		}
+		v4->Rotation.z = 0;
+		v4->Rotation.y = 0;
+		v4->Rotation.x = 0;
+		v4->Position.z = 0.0;
+		v7 = &v4->Position;
+		v4->Position.y = 0.0;
+		v4->Position.x = 0.0;
+		*((int *)*(&off_1DE95E0 + playerNum) + 7) = 0;
+	LABEL_27:
+		sub_46DC70(v1, v7, 0);
+		v4->Collision->CollisionArray->field_2 |= 0x70u;
+		*(int *)&MainCharObj2[v1]->gap_70[24] = 0;
+		if (CurrentLevel == LevelIDs_RadicalHighway || CurrentLevel == LevelIDs_LostColony)
+		{
+			byte_1DE4664[v1 & 1] = 5;
+		}
+		else
+		{
+			byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
+		}
+	}
+}
+
+__declspec(naked) void LoadEndPosition_r()
+{
+	__asm
+	{
+		push eax
+		call LoadEndPosition_ri
+		add esp, 4
+		retn
+	}
+}
+
+unordered_map<unsigned char, unordered_map<short, LevelEndPosition>> Mission23EndPositions;
+
+const endposdata m23endposaddrs[] = {
+	{ Characters_Sonic, SonicMission23EndArray },
+	{ Characters_Shadow, ShadowMission23EndArray },
+	{ Characters_Tails, nullptr },
+	{ Characters_Eggman, nullptr },
+	{ Characters_Knuckles, KnucklesMission23EndArray },
+	{ Characters_Rouge, RougeMission23EndArray },
+	{ Characters_MechTails, MechTailsMission23EndArray },
+	{ Characters_MechEggman, MechEggmanMission23EndArray },
+	{ Characters_SuperSonic, nullptr },
+	{ Characters_SuperShadow, nullptr }
+};
+
+void InitializeMission23EndPositionLists()
+{
+	for (unsigned int i = 0; i < LengthOfArray(endposaddrs); i++)
+	{
+		const LevelEndPosition * origlist = m23endposaddrs[i].positions;
+		Mission23EndPositions[m23endposaddrs[i].character] = unordered_map<short, LevelEndPosition>();
+		if (origlist == nullptr)
+			continue;
+		unordered_map<short, LevelEndPosition> &newlist = Mission23EndPositions[m23endposaddrs[i].character];
+		while (origlist->Level != LevelIDs_Invalid)
+			newlist[origlist->Level] = *origlist++;
+	}
+}
+
+void RegisterMission23EndPosition(unsigned char character, const LevelEndPosition &position)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		Mission23EndPositions[character][position.Level] = position;
+		Mission23EndPositionsModified = true;
+		break;
+	}
+}
+
+void ClearMission23EndPositionList(unsigned char character)
+{
+	switch (character)
+	{
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		Mission23EndPositions[character].clear();
+		Mission23EndPositionsModified = true;
+		break;
+	}
+}
+
+int __cdecl LoadEndPosition_Mission23_ri(int playerNum)
+{
+	int v1; // edi
+	__int16 v2; // bp
+	int v3; // edx
+	EntityData1 *v4; // esi
+	LevelEndPosition *v5; // eax
+	int v7; // edi
+	NJS_VECTOR *v9; // eax
+	NJS_VECTOR *v10; // ecx
+	float v11; // ST14_4
+
+	v1 = playerNum;
+	if (TwoPlayerMode)
+	{
+		return 0;
+	}
+	v2 = CurrentLevel;
+	if (CurrentLevel == LevelIDs_SonicVsShadow1
+		|| CurrentLevel == LevelIDs_SonicVsShadow2
+		|| CurrentLevel == LevelIDs_TailsVsEggman1
+		|| CurrentLevel == LevelIDs_TailsVsEggman2
+		|| CurrentLevel == LevelIDs_KnucklesVsRouge
+		|| CurrentLevel > LevelIDs_BigFoot && CurrentLevel != LevelIDs_Route101280)
+	{
+		return 0;
+	}
+	if (MissionNum != 1 && MissionNum != 2)
+	{
+		return 0;
+	}
+	v4 = MainCharacter[playerNum]->Data1.Entity;
+	auto iter = Mission23EndPositions.find(GetCharacterID(playerNum));
+	if (iter == Mission23EndPositions.cend())
+		return 0;
+	auto iter2 = iter->second.find(CurrentLevel);
+	if (iter2 == iter->second.cend())
+		return 0;
+	v5 = &iter2->second;
+	if (*(&v5->Mission2YRotation + v3) == 0xFFFF)
+	{
+		return 0;
+	}
+	v4->Rotation.z = 0;
+	v4->Rotation.x = 0;
+	v4->Rotation.y = *(&v5->Mission2YRotation + v3);
+	*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
+	v9 = &v5->Mission2Position + v3;
+	v4->Position.x = v9->x;
+	v10 = &v4->Position;
+	v10->y = v9->y;
+	v10->z = v9->z;
+	v11 = v4->Position.y - 10;
+	*(float*)&MainCharObj2[v1]->field_1A0[5] = v11;
+	*(char*)&MainCharObj2[v1]->field_144[0] = 0;
+	sub_46DC70(v1, &v4->Position, 0);
+	v4->Collision->CollisionArray->field_2 |= 0x70u;
+	*(int *)&MainCharObj2[v1]->gap_70[24] = 0;
+	v7 = v1 & 1;
+	if (CurrentLevel == LevelIDs_LostColony)
+	{
+		byte_1DE4664[v7] = 5;
+	}
+	else
+	{
+		byte_1DE4664[v7] = *(char*)0x1DE4660;
+	}
+	return 1;
+}
+
+static void __declspec(naked) LoadEndPosition_Mission23_r()
+{
+	__asm
+	{
+		push eax // playerNum
+
+		// Call your __cdecl function here:
+		call LoadEndPosition_Mission23_ri
+
+		add esp, 4 // playerNum<eax> is also used for return value
+		retn
+	}
+}
+
 static const char *mainsavepath = "resource/gd_PC/SAVEDATA";
 static const char *GetMainSavePath()
 {
@@ -716,7 +1033,11 @@ const HelperFunctions helperFunctions = {
 	Register2PIntroPosition,
 	Clear2PIntroPositionList,
 	GetMainSavePath,
-	GetChaoSavePath
+	GetChaoSavePath,
+	RegisterEndPosition,
+	ClearEndPositionList,
+	RegisterMission23EndPosition,
+	ClearMission23EndPositionList,
 };
 
 void __cdecl InitMods(void)
@@ -779,6 +1100,8 @@ void __cdecl InitMods(void)
 
 	InitializeStartPositionLists();
 	Initialize2PIntroPositionLists();
+	InitializeEndPositionLists();
+	InitializeMission23EndPositionLists();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<string, string>> errors;
@@ -1003,6 +1326,10 @@ void __cdecl InitMods(void)
 		WriteJump((void *)LoadStartPositionPtr, LoadStartPosition_r);
 	if (_2PIntroPositionsModified)
 		WriteJump((void *)Load2PIntroPosPtr, Load2PIntroPos_r);
+	if (EndPositionsModified)
+		WriteJump((void *)LoadEndPositionPtr, LoadEndPosition_r);
+	if (Mission23EndPositionsModified)
+		WriteJump((void *)LoadEndPosition_Mission23Ptr, LoadEndPosition_Mission23_r);
 
 	if (!_mainsavepath.empty())
 	{

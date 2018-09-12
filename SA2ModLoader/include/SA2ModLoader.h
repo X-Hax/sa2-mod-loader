@@ -12,7 +12,7 @@
 
 // ModInfo
 
-static const int ModLoaderVer = 4;
+static const int ModLoaderVer = 5;
 
 struct PatchInfo
 {
@@ -42,21 +42,7 @@ struct PointerList
 #define patchdecl(address,data) { (void*)address, arrayptrandsize(data) }
 #define ptrdecl(address,data) { (void*)address, (void*)data }
 
-struct HelperFunctions_v3
-{
-	// The version of the structure.
-	int Version;
-	// Registers a start position for a character.
-	void (__cdecl *RegisterStartPosition)(unsigned char character, const StartPosition &position);
-	// Clears the list of registered start positions for a character.
-	void (__cdecl *ClearStartPositionList)(unsigned char character);
-	// Registers a 2P intro position for a character.
-	void (__cdecl *Register2PIntroPosition)(unsigned char character, const LevelEndPosition &position);
-	// Clears the list of registered 2P intro positions for a character.
-	void (__cdecl *Clear2PIntroPositionList)(unsigned char character);
-};
-
-struct HelperFunctions_v4
+struct HelperFunctions
 {
 	// The version of the structure.
 	int Version;
@@ -69,12 +55,24 @@ struct HelperFunctions_v4
 	// Clears the list of registered 2P intro positions for a character.
 	void(__cdecl *Clear2PIntroPositionList)(unsigned char character);
 	// Returns the path where main game save files are stored.
+	// Requires version >= 4.
 	const char *(__cdecl *GetMainSavePath)();
 	// Returns the path where Chao save files are stored.
+	// Requires version >= 4.
 	const char *(__cdecl *GetChaoSavePath)();
+	// Registers an end position for a character.
+	// Requires version >= 5.
+	void(__cdecl *RegisterEndPosition)(unsigned char character, const StartPosition &position);
+	// Clears the list of registered end positions for a character.
+	// Requires version >= 5.
+	void(__cdecl *ClearEndPositionList)(unsigned char character);
+	// Registers an end position for missions 2 and 3 for a character.
+	// Requires version >= 5.
+	void(__cdecl *RegisterMission23EndPosition)(unsigned char character, const LevelEndPosition &position);
+	// Clears the list of registered end positions for missions 2 and 3 for a character.
+	// Requires version >= 5.
+	void(__cdecl *ClearMission23EndPositionList)(unsigned char character);
 };
-
-typedef HelperFunctions_v4 HelperFunctions;
 
 typedef void(__cdecl *ModInitFunc)(const char *path, const HelperFunctions &helperFunctions);
 

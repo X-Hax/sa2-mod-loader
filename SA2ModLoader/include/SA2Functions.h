@@ -1469,14 +1469,14 @@ static inline void Load2PIntroPos(int a1)
 }
 
 // signed int __usercall@<eax>(int playerNum@<eax>)
-static const void *const LoadEndPosition_Mission12Ptr = (void*)0x43DD50;
-static inline signed int LoadEndPosition_Mission12(int playerNum)
+static const void *const LoadEndPosition_Mission23Ptr = (void*)0x43DD50;
+static inline signed int LoadEndPosition_Mission23(int playerNum)
 {
 	signed int result;
 	__asm
 	{
 		mov eax, [playerNum]
-		call LoadEndPosition_Mission12Ptr
+		call LoadEndPosition_Mission23Ptr
 		mov result, eax
 	}
 	return result;
@@ -1752,6 +1752,20 @@ static inline void SetPlayerSpeedIGuess(NJS_VECTOR *result, Rotation *a2, int a3
 		call SetPlayerSpeedIGuessPtr
 		add esp, 4
 	}
+}
+
+// signed int __usercall@<eax>(int playerNum@<eax>)
+static const void *const GetCharacterIDPtr = (void*)0x46DBD0;
+static inline signed int GetCharacterID(int playerNum)
+{
+	signed int result;
+	__asm
+	{
+		mov eax, [playerNum]
+		call GetCharacterIDPtr
+		mov result, eax
+	}
+	return result;
 }
 
 // int __usercall@<eax>(ObjectMaster *a1@<eax>)
