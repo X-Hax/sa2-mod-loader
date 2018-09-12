@@ -979,10 +979,17 @@ int __cdecl LoadEndPosition_Mission23_ri(int playerNum)
 	{
 		return 0;
 	}
-	if (MissionNum != 1 && MissionNum != 2)
+	if (MissionNum != 1)
 	{
+		if (MissionNum == 2)
+		{
+			v3 = 1;
+			goto LABEL_13;
+		}
 		return 0;
 	}
+	v3 = 0;
+LABEL_13:
 	v4 = MainCharacter[playerNum]->Data1.Entity;
 	auto iter = Mission23EndPositions.find(GetCharacterID(playerNum));
 	if (iter == Mission23EndPositions.cend())
