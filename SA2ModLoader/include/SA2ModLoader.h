@@ -91,4 +91,25 @@ struct ModInfo
 	const PointerInfo *Pointers;
 	int PointerCount;
 };
+
+static inline void njPushMatrix(NJS_MATRIX_PTR m)
+{
+	if (_nj_current_matrix_ptr_ + 12 <= *(float**)0x2670588)
+	{
+		if (!m)
+			m = _nj_current_matrix_ptr_;
+		float *v5 = _nj_current_matrix_ptr_ + 12;
+		memcpy(v5, m, 0x30u);
+		_nj_current_matrix_ptr_ = v5;
+	}
+}
+
+static inline void njPopMatrix(int n)
+{
+	for (int i = 0; i < n; i++)
+		if (_nj_current_matrix_ptr_ - 12 >= *(float**)0x267053C)
+			_nj_current_matrix_ptr_ -= 12;
+		else
+			break;
+}
 #endif
