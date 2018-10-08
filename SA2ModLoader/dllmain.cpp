@@ -285,21 +285,10 @@ HANDLE __stdcall MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD d
 	return CreateFileA(_ReplaceFile(lpFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 
-void HookTheAPI()
+void HookExport(const HMODULE hModule, LPCSTR moduleName, const PROC pActualFunction, const PROC pNewFunction)
 {
 	ULONG ulSize = 0;
-	PROC pNewFunction = NULL;
-	PROC pActualFunction = NULL;
-
-	PSTR pszModName = NULL;
-
-	HMODULE hModule = GetModuleHandle(NULL);
-	PIMAGE_IMPORT_DESCRIPTOR pImportDesc = NULL;
-
-	pNewFunction = (PROC)MyCreateFileA;
-	pActualFunction = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA");
-
-	pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToData(
+	PIMAGE_IMPORT_DESCRIPTOR pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToData(
 		hModule, TRUE, IMAGE_DIRECTORY_ENTRY_IMPORT, &ulSize);
 
 	if (NULL != pImportDesc)
@@ -307,12 +296,12 @@ void HookTheAPI()
 		for (; pImportDesc->Name; pImportDesc++)
 		{
 			// get the module name
-			pszModName = (PSTR)((PBYTE)hModule + pImportDesc->Name);
+			PSTR pszModName = (PSTR)((PBYTE)hModule + pImportDesc->Name);
 
 			if (NULL != pszModName)
 			{
 				// check if the module is kernel32.dll
-				if (lstrcmpiA(pszModName, "Kernel32.dll") == 0)
+				if (lstrcmpiA(pszModName, moduleName) == 0)
 				{
 					// get the module
 					PIMAGE_THUNK_DATA pThunk = (PIMAGE_THUNK_DATA)((PBYTE)hModule + pImportDesc->FirstThunk);
@@ -332,6 +321,11 @@ void HookTheAPI()
 			} // Valid module name
 		}
 	}
+}
+
+void HookTheAPI()
+{
+	HookExport(GetModuleHandle(NULL), "Kernel32.dll", GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA"), (PROC)MyCreateFileA);
 }
 
 char *ShiftJISToUTF8(char *shiftjis)
@@ -449,19 +443,19 @@ void RegisterStartPosition(unsigned char character, const StartPosition &positio
 {
 	switch (character)
 	{
-		case Characters_Sonic:
-		case Characters_Shadow:
-		case Characters_Tails:
-		case Characters_Eggman:
-		case Characters_Knuckles:
-		case Characters_Rouge:
-		case Characters_MechTails:
-		case Characters_MechEggman:
-		case Characters_SuperSonic:
-		case Characters_SuperShadow:
-			StartPositions[character][position.Level] = position;
-			StartPositionsModified = true;
-			break;
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		StartPositions[character][position.Level] = position;
+		StartPositionsModified = true;
+		break;
 	}
 }
 
@@ -469,19 +463,19 @@ void ClearStartPositionList(unsigned char character)
 {
 	switch (character)
 	{
-		case Characters_Sonic:
-		case Characters_Shadow:
-		case Characters_Tails:
-		case Characters_Eggman:
-		case Characters_Knuckles:
-		case Characters_Rouge:
-		case Characters_MechTails:
-		case Characters_MechEggman:
-		case Characters_SuperSonic:
-		case Characters_SuperShadow:
-			StartPositions[character].clear();
-			StartPositionsModified = true;
-			break;
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		StartPositions[character].clear();
+		StartPositionsModified = true;
+		break;
 	}
 }
 
@@ -594,19 +588,19 @@ void Register2PIntroPosition(unsigned char character, const LevelEndPosition &po
 {
 	switch (character)
 	{
-		case Characters_Sonic:
-		case Characters_Shadow:
-		case Characters_Tails:
-		case Characters_Eggman:
-		case Characters_Knuckles:
-		case Characters_Rouge:
-		case Characters_MechTails:
-		case Characters_MechEggman:
-		case Characters_SuperSonic:
-		case Characters_SuperShadow:
-			_2PIntroPositions[character][position.Level] = position;
-			_2PIntroPositionsModified = true;
-			break;
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		_2PIntroPositions[character][position.Level] = position;
+		_2PIntroPositionsModified = true;
+		break;
 	}
 }
 
@@ -614,19 +608,19 @@ void Clear2PIntroPositionList(unsigned char character)
 {
 	switch (character)
 	{
-		case Characters_Sonic:
-		case Characters_Shadow:
-		case Characters_Tails:
-		case Characters_Eggman:
-		case Characters_Knuckles:
-		case Characters_Rouge:
-		case Characters_MechTails:
-		case Characters_MechEggman:
-		case Characters_SuperSonic:
-		case Characters_SuperShadow:
-			_2PIntroPositions[character].clear();
-			_2PIntroPositionsModified = true;
-			break;
+	case Characters_Sonic:
+	case Characters_Shadow:
+	case Characters_Tails:
+	case Characters_Eggman:
+	case Characters_Knuckles:
+	case Characters_Rouge:
+	case Characters_MechTails:
+	case Characters_MechEggman:
+	case Characters_SuperSonic:
+	case Characters_SuperShadow:
+		_2PIntroPositions[character].clear();
+		_2PIntroPositionsModified = true;
+		break;
 	}
 }
 
@@ -1292,7 +1286,7 @@ void __cdecl InitMods(void)
 					if (calls)
 					{
 						for (int j = 0; j < calls->Count; j++)
-							WriteJump(calls->Pointers[j].address, calls->Pointers[j].data);
+							WriteCall(calls->Pointers[j].address, calls->Pointers[j].data);
 					}
 
 					const PointerList* pointers = (const PointerList*)GetProcAddress(module, "Pointers");
@@ -1441,12 +1435,12 @@ void __cdecl InitMods(void)
 				PrintDebug("ERROR loading patches: ");
 				switch (codecount)
 				{
-					case -EINVAL:
-						PrintDebug("Patch file is not in the correct format.\n");
-						break;
-					default:
-						PrintDebug("%s\n", strerror(-codecount));
-						break;
+				case -EINVAL:
+					PrintDebug("Patch file is not in the correct format.\n");
+					break;
+				default:
+					PrintDebug("%s\n", strerror(-codecount));
+					break;
 				}
 			}
 		}
@@ -1480,12 +1474,12 @@ void __cdecl InitMods(void)
 				PrintDebug("ERROR loading codes: ");
 				switch (codecount)
 				{
-					case -EINVAL:
-						PrintDebug("Code file is not in the correct format.\n");
-						break;
-					default:
-						PrintDebug("%s\n", strerror(-codecount));
-						break;
+				case -EINVAL:
+					PrintDebug("Code file is not in the correct format.\n");
+					break;
+				default:
+					PrintDebug("%s\n", strerror(-codecount));
+					break;
 				}
 			}
 		}
@@ -1545,27 +1539,27 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	char *buf;
 	switch (ul_reason_for_call)
 	{
-		case DLL_PROCESS_ATTACH:
-			bufsize = GetCurrentDirectoryA(0, NULL);
-			buf = new char[bufsize];
-			GetCurrentDirectoryA(bufsize, buf);
-			sa2dir = buf;
-			delete[] buf;
-			transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
-			sa2dir += "\\";
-			WriteJump((void *)0x77DEEA, InitMods);
-			break;
-		case DLL_THREAD_ATTACH:
-		case DLL_THREAD_DETACH:
-			break;
+	case DLL_PROCESS_ATTACH:
+		bufsize = GetCurrentDirectoryA(0, NULL);
+		buf = new char[bufsize];
+		GetCurrentDirectoryA(bufsize, buf);
+		sa2dir = buf;
+		delete[] buf;
+		transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
+		sa2dir += "\\";
+		WriteJump((void *)0x77DEEA, InitMods);
+		break;
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+		break;
 
-		case DLL_PROCESS_DETACH:
-			if (window_thread)
-			{
-				window_thread->join();
-				delete window_thread;
-			}
-			break;
+	case DLL_PROCESS_DETACH:
+		if (window_thread)
+		{
+			window_thread->join();
+			delete window_thread;
+		}
+		break;
 	}
 	return TRUE;
 }
