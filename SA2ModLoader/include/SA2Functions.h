@@ -1346,14 +1346,14 @@ static inline void njRotateX(float *a1, signed int a2)
 	}
 }
 
-// void __usercall(const void *EBX@<ebx>, signed int a2)
+// void __usercall(float *a1@<ebx>, signed int a2)
 static const void *const njRotateYPtr = (void*)0x4275B0;
-static inline void njRotateY(const void *EBX, signed int a2)
+static inline void njRotateY(float *a1, signed int a2)
 {
 	__asm
 	{
 		push [a2]
-		mov ebx, [EBX]
+		mov ebx, [a1]
 		call njRotateYPtr
 		add esp, 4
 	}
