@@ -880,7 +880,7 @@ struct struct_a1
 
 struct TexPackInfo
 {
-	char *TexName;
+	const char *TexName;
 	NJS_TEXLIST *TexList;
 };
 
