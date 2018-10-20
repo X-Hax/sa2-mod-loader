@@ -13,6 +13,7 @@
 #include <DbgHelp.h>
 #include <Shlwapi.h>
 #include "IniFile.hpp"
+#include "FileSystem.h"
 #include "SA2ModLoader.h"
 #include "ModelInfo.h"
 #include "CodeParser.hpp"
@@ -29,6 +30,15 @@ inline int backslashes(int c)
 	return (c == '/') ? '\\' : c;
 }
 
+string NormalizePath(string path)
+{
+	string pathlower = path;
+	if (pathlower.length() > 2 && (pathlower[0] == '.' && pathlower[1] == '\\'))
+		pathlower = pathlower.substr(2, pathlower.length() - 2);
+	transform(pathlower.begin(), pathlower.end(), pathlower.begin(), ::tolower);
+	return pathlower;
+}
+
 IniGroup settings;
 unordered_map<string, char *> filemap;
 const string resourcedir = "resource\\gd_pc\\";
@@ -37,15 +47,50 @@ const char *_ReplaceFile(const char *lpFileName)
 {
 	string path = lpFileName;
 	transform(path.begin(), path.end(), path.begin(), backslashes);
-	if (path.length() > 2 && (path[0] == '.' && path[1] == '\\'))
-		path = path.substr(2, path.length() - 2);
-	transform(path.begin(), path.end(), path.begin(), ::tolower);
+	path = NormalizePath(path);
 	if (path.length() > sa2dir.length() && path.compare(0, sa2dir.length(), sa2dir) == 0)
 		path = path.substr(sa2dir.length(), path.length() - sa2dir.length());
 	unordered_map<string, char *>::iterator fileIter = filemap.find(path);
 	if (fileIter != filemap.end())
 		lpFileName = fileIter->second;
 	return lpFileName;
+}
+
+unordered_map<string, unordered_set<string>*> csbfilemap;
+struct itercont { unordered_set<string>::const_iterator cur; unordered_set<string>::const_iterator end; };
+__out HANDLE WINAPI FindFirstCSBFileA(__in  LPCSTR lpFileName, __out LPWIN32_FIND_DATAA lpFindFileData)
+{
+	string path = lpFileName;
+	path.erase(path.size() - 2);
+	path = NormalizePath(path);
+	auto iter = csbfilemap.find(path);
+	if (iter == csbfilemap.cend())
+		return INVALID_HANDLE_VALUE;
+	auto it2 = iter->second->cbegin();
+	HANDLE hfind = FindFirstFileA(_ReplaceFile(it2->c_str()), lpFindFileData);
+	if (hfind == INVALID_HANDLE_VALUE)
+		return INVALID_HANDLE_VALUE;
+	FindClose(hfind);
+	return new itercont({ it2, iter->second->cend() });
+}
+
+BOOL WINAPI FindNextCSBFileA(__in  HANDLE hFindFile, __out LPWIN32_FIND_DATAA lpFindFileData)
+{
+	itercont *iter = (itercont *)hFindFile;
+	++iter->cur;
+	if (iter->cur == iter->end)
+		return FALSE;
+	HANDLE hfind = FindFirstFileA(_ReplaceFile(iter->cur->c_str()), lpFindFileData);
+	if (hfind == INVALID_HANDLE_VALUE)
+		return FALSE;
+	FindClose(hfind);
+	return TRUE;
+}
+
+BOOL WINAPI FindCSBClose(__inout HANDLE hFindFile)
+{
+	delete hFindFile;
+	return TRUE;
 }
 
 unordered_map<ModelIndex *, list<ModelInfo>> modelfiles;
@@ -369,13 +414,45 @@ int __cdecl SA2DebugOutput(const char *Format, ...)
 	return length;
 }
 
-string NormalizePath(string path)
+void ScanCSBFolder(string path, int length)
 {
-	string pathlower = path;
-	if (pathlower.length() > 2 && (pathlower[0] == '.' && pathlower[1] == '\\'))
-		pathlower = pathlower.substr(2, pathlower.length() - 2);
-	transform(pathlower.begin(), pathlower.end(), pathlower.begin(), ::tolower);
-	return pathlower;
+	_WIN32_FIND_DATAA data;
+	HANDLE hfind = FindFirstFileA((path + "\\*").c_str(), &data);
+	if (hfind == INVALID_HANDLE_VALUE)
+		return;
+	do
+	{
+		if (data.cFileName[0] == '.')
+			continue;
+		else if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			string newpath = path + "\\" + data.cFileName;
+			_WIN32_FIND_DATAA newdata;
+			HANDLE newhfind = FindFirstFileA((newpath + "\\*.csb").c_str(), &newdata);
+			if (newhfind != INVALID_HANDLE_VALUE)
+			{
+				if (length != 0)
+				{
+					newpath = newpath.substr(length);
+					newpath = resourcedir + newpath;
+				}
+				transform(newpath.begin(), newpath.end(), newpath.begin(), ::tolower);
+				unordered_set<string> *files;
+				if (csbfilemap.find(newpath) == csbfilemap.cend())
+					csbfilemap[newpath] = files = new unordered_set<string>();
+				else
+					files = csbfilemap[newpath];
+				do
+				{
+					string filebase = newpath + "\\" + newdata.cFileName;
+					transform(filebase.begin(), filebase.end(), filebase.begin(), ::tolower);
+					files->insert(filebase);
+				} while (FindNextFileA(newhfind, &newdata) != 0);
+				FindClose(newhfind);
+			}
+		}
+	} while (FindNextFileA(hfind, &data) != 0);
+	FindClose(hfind);
 }
 
 void ScanFolder(string path, int length)
@@ -1117,6 +1194,18 @@ void __cdecl InitMods(void)
 
 	WriteJump((void *)LoadMDLFilePtr, LoadMDLFile_r);
 	WriteJump((void *)ReleaseMDLFilePtr, ReleaseMDLFile_r);
+	WriteData((char*)0x435A44, (char)0x90u);
+	WriteCall((void*)0x435A45, FindFirstCSBFileA);
+	WriteData((char*)0x435BD6, (char)0x90u);
+	WriteCall((void*)0x435BD7, FindNextCSBFileA);
+	WriteData((char*)0x435BE5, (char)0x90u);
+	WriteCall((void*)0x435BE6, FindCSBClose);
+	WriteData((char*)0x435D4F, (char)0x90u);
+	WriteCall((void*)0x435D50, FindFirstCSBFileA);
+	WriteData((char*)0x435EE6, (char)0x90u);
+	WriteCall((void*)0x435EE7, FindNextCSBFileA);
+	WriteData((char*)0x435EF5, (char)0x90u);
+	WriteCall((void*)0x435EF6, FindCSBClose);
 
 	// Map of files to replace and/or swap.
 	unordered_map<string, string> filereplaces = unordered_map<string, string>();
@@ -1125,6 +1214,10 @@ void __cdecl InitMods(void)
 	Initialize2PIntroPositionLists();
 	InitializeEndPositionLists();
 	InitializeMission23EndPositionLists();
+
+	ScanCSBFolder("resource\\gd_PC\\MLT", 0);
+	ScanCSBFolder("resource\\gd_PC\\MPB", 0);
+	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<string, string>> errors;
@@ -1197,7 +1290,12 @@ void __cdecl InitMods(void)
 		string sysfol = mod_dir + "\\gd_pc";
 		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
 		if (GetFileAttributesA(sysfol.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
+		{
 			ScanFolder(sysfol, sysfol.length() + 1);
+			ScanCSBFolder(sysfol + "\\mlt", sysfol.length() + 1);
+			ScanCSBFolder(sysfol + "\\mpb", sysfol.length() + 1);
+			ScanCSBFolder(sysfol + "\\event\\mlt", sysfol.length() + 1);
+		}
 
 		// Check if a custom EXE is required.
 		if (modinfo->hasKeyNonEmpty("EXEFile"))
