@@ -174,3 +174,5 @@ writenop 006C0A9A 20
 Patch "All emeralds trackable in treasure hunt stages"
 write16 0073A7BD 0x0FEB
 
+Patch "Enable Cutscene Debug Features"
+writenop 005FBB86 6
