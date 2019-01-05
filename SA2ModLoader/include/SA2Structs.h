@@ -1674,4 +1674,12 @@ struct __declspec(align(8)) struct_a2
 	uint32_t dword37C;
 };
 
+struct StoryEntry
+{
+	int8_t Type;
+	int8_t Character;
+	int16_t Level;
+	int16_t Events[4];
+};
+
 #pragma pack(pop)

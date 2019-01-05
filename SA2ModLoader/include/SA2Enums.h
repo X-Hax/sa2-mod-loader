@@ -1365,3 +1365,11 @@ enum Actions
 	Action_TurtleGrab,
 	Action_BlackShield = Action_TurtleGrab,
 };
+
+enum StoryEntryType
+{
+	StoryEntryType_Event = 0x0,
+	StoryEntryType_Level = 0x1,
+	StoryEntryType_End = 0x2,
+	StoryEntryType_Credits = 0x3,
+};
