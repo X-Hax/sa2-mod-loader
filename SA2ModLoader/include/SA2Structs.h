@@ -1323,10 +1323,11 @@ struct PDS_BASE
 
 struct FogData
 {
-	float field_0;
-	float field_4;
-	float field_8;
-	int field_C;
+	int flags;
+	int color;
+	float far_;
+	float near_;
+	float fogtable[128];
 };
 
 struct SaveFileStruct
