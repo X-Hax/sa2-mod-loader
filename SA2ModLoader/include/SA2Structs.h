@@ -114,6 +114,33 @@ struct EntityData1
 	CollisionInfo *Collision;
 };
 
+
+struct MotionTableData
+{
+	__int16 flag;
+	__int16 gap2;
+	int AnimID;
+	int TransitionToID;
+	float frameIncreaseSpeed_;
+	float someSpeedThing;
+	float dword14;
+	__int16 SomeFlagThingInEntry2;
+	__int16 field_1A;
+	float frame;
+	float StartFrame2;
+	float EndFrame2;
+	float PlaySpeed2;
+	NJS_MOTION *LastNJS_Motion;
+	__int16 SomeFlagThingInEntry;
+	__int16 field_32;
+	float StartFrame;
+	float StartFrame_;
+	float EndFrame;
+	float PlaySpeed;
+	NJS_MOTION *NJS_MOTION;
+	void *PointerToAnimations;
+};
+
 struct ChaoUnknownD
 {
 	__int16 field_0;
@@ -127,70 +154,267 @@ struct ChaoUnknownD
 	int field_18;
 };
 
-struct ChaoUnknownB
+struct ChaoSomeUnknownA
+{
+	__int16 index;
+	__int16 index2;
+	__int16 ID;
+	__int16 someFlag;
+	int saveData;
+	int field_C;
+	NJS_VECTOR locationVector;
+	int field_1C;
+	int field_20;
+	int field_24;
+	float field_28;
+	float field_2C;
+	float playerDistance;
+	__int16 setSomeIndex;
+	__int16 field_36;
+	__int16 field_38;
+	__int16 field_3A;
+	ObjectMaster *pointerToOwner;
+	ChaoSomeUnknownA *heldBy;
+	ChaoSomeUnknownA *field_44;
+};
+
+struct ChaoGlobalObjectDefinition
 {
 	__int16 field_0;
 	__int16 field_2;
 	__int16 field_4;
 	__int16 field_6;
-	float field_8;
+	float Distance;
 	int field_C;
 	int field_10;
 	int field_14;
-	int field_18;
+	ChaoSomeUnknownA *UnknownA;
 };
 
-struct ChaoUnknown
+struct ChaoObjectList
 {
-	__int16 field_0;
+	__int16 Count;
 	__int16 field_2;
-	int field_4;
+	int IsSet;
 	int field_8;
 	int field_C;
-	float field_10;
-	__int16 field_14;
+	float Distance;
+	__int16 Count2;
 	__int16 field_16;
-	ChaoUnknownB field_18[32];
+	ChaoGlobalObjectDefinition field_18[32];
+};
+
+struct ChaoCurrentActionInfo
+{
+	__int16 field_0;
+	unsigned __int16 Index;
+	__int16 field_4;
+	__int16 field_6;
+	int field_8;
+	int Timer;
+	int field_10;
+	int field_14;
+	int BehaviourTime;
+};
+
+struct ChaoBehaviourInfothing
+{
+	int field_0[8];
+};
+
+struct ChaoBehaviourInfo
+{
+	ChaoCurrentActionInfo CurrentActionInfo;
+	__int16 CanThink_;
+	__int16 field_1E;
+	int field_20;
+	int field_24;
+	ChaoBehaviourInfothing field_28;
+	ChaoBehaviourInfothing field_48;
+	char field_68[8];
+	char field_70[72];
+	int field_B8;
+	int field_BC;
+	int field_C0;
+	char field_288[420];
+	int field_268;
+	int field_430;
+	float someFloat;
+	NJS_VECTOR someKindaPosition;
+	int LastBehaviour;
+	int behaviourNumber;
+	int currentBehaviourIndex;
+	int BehaviourBase[15];
+	int field_2C8;
+	int BehaviourTimer[15];
+};
+
+struct ChaoToyChunk
+{
+	NJS_OBJECT *model;
+	NJS_TEXLIST *texlist;
+	float scale;
+	int exists;
+};
+
+struct ChaoFacialData
+{
+	int eyeTimer;
+	__int16 field_4;
+	__int16 field_6;
+	__int16 Eye;
+	__int16 field_A;
+	int mouthTimer;
+	__int16 field_10;
+	__int16 Mouth;
+	NJS_VECTOR somekindaposition;
+	float field_20;
+	int field_24;
+	NJS_CNK_MODEL *Eye1;
+	NJS_CNK_MODEL *Eye2;
+	int field_30;
+	int blinkState;
+	int blinkTimer;
+	int dword3C;
+	unsigned int unsigned40;
+	int gap44;
+	int field_48;
+	int VertRotAlt;
+	int VertRot;
+	int field_54;
+	int HorizRotAlt;
+	int HorizRot;
+};
+
+struct EmotionBallData
+{
+	__int16 ballID;
+	__int16 ballID2;
+	int notsure;
+	int timer;
+	int sizeSine;
+	int yPosSine;
+	int color;
+	__int16 torchTimer;
+	__int16 timer1;
+	int randomZRot;
+	NJS_VECTOR HeadPosUnitTransPortion;
+	NJS_VECTOR parentPosition;
+	__int16 gap38;
+	unsigned __int16 field_3A;
+	__int16 field_3C;
+	__int16 field_3E;
+	float field_40;
+	float sizeTimer;
+	int gap48;
+	NJS_VECTOR position;
+	NJS_VECTOR velocity;
+	NJS_VECTOR someSize;
+	__int16 field_70;
+	__int16 field_72;
+	__int16 field_74;
+	__int16 field_76;
+	__int16 field_78;
+	__int16 field_7A;
+	__int16 field_7C;
+	__int16 field_7E;
+	__int16 field_80;
+	__int16 field_82;
+	int field_84;
+	float float88;
+	int field_8C;
+	NJS_VECTOR float90;
+	NJS_VECTOR float9C;
+	NJS_VECTOR field_A8;
+};
+
+struct ChaoObjectListInfo
+{
+	float MinimumDistance;
+	int a2;
+	int MinimumRotation;
+	float a4;
+	float a5;
+};
+
+struct ChaoEvos
+{
+	NJS_OBJECT *child[40];
+	NJS_OBJECT *normal[40];
+	NJS_OBJECT *swim[40];
+	NJS_OBJECT *fly[40];
+	NJS_OBJECT *run[40];
+	NJS_OBJECT *power[40];
 };
 
 struct ChaoData1
 {
 	EntityData1 entity;
-	char gap_30[12];
+	int gap_30;
+	int field_34;
 	ObjectMaster *ObjectMaster_ptr1;
-	char field_4c[4];
+	int field_38;
 	ObjectMaster *ObjectMaster_ptr2;
-	char field_54[12];
+	int field_44;
+	float field_54;
+	int field_4C;
+	int field_50;
 	int field_60;
 	int field_58;
 	ChaoDataBase *ChaoDataBase_ptr;
-	char field_70[64];
-	int field_B0;
-	char field_B4[4];
-	float field_B8;
-	int MotionTable;
-	char field_B0_real[260];
-	ChaoUnknownD unknown_d[7];
-	char field_288[424];
-	int field_430;
-	char field_434[16];
-	int field_444;
-	char field_448[8];
-	int field_450;
-	char field_454[208];
-	int field_524;
-	char field_528[160];
-	ChaoUnknownE *unknown_e_1;
-	ChaoUnknownE *unknown_e_2;
-	char field_5D0[216];
-	__int16 field_6A8;
-	char field_6AA[310];
-	char field_7E0;
-	char field_7E1[19];
-	ChaoUnknown UnknownArray[5];
-	char UnknownArrayEnd;
-	char field_19ED[922];
-	char field_1D87;
+	char field_70[40];
+	int field_88;
+	int field_8C;
+	char field_90[16];
+	int Flags;
+	__int16 field_B4;
+	__int16 field_A6;
+	float waypointID;
+	MotionTableData MotionTable;
+	MotionTableData BodyTypeNone_MotionTable;
+	char gap144[112];
+	ChaoBehaviourInfo ChaoBehaviourInfo;
+	int field_4BC[21];
+	int PointerToStructWithCnkObject;
+	float ChaoNodes[40];
+	ChaoEvos *NormalModels;
+	ChaoEvos *HeroModels;
+	ChaoEvos *DarkModels;
+	NJS_VECTOR BaseTranslationPos;
+	NJS_VECTOR HeadTranslationPos;
+	NJS_VECTOR LeftHandTranslationPos;
+	NJS_VECTOR RightHandTranslationPos;
+	NJS_VECTOR LeftLegTranslationPos;
+	NJS_VECTOR RightLegTranslationPos;
+	NJS_VECTOR NoseTranslationPos;
+	NJS_VECTOR NoseUnitTransPortion;
+	NJS_VECTOR LeftEyeTranslationPos;
+	NJS_VECTOR LeftEyeUnitTransPortion;
+	NJS_VECTOR RightEyeTranslationPos;
+	NJS_VECTOR RightEyeUnitTransPortion;
+	ChaoToyChunk LeftHandToyChunk;
+	ChaoToyChunk RightHandToyChunk;
+	int field_670;
+	int field_674;
+	int field_678;
+	int field_67C;
+	int field_680;
+	int field_684;
+	int field_688;
+	ChaoFacialData ChaoFacialData;
+	EmotionBallData EmotionBallData;
+	NJS_VECTOR field_7A4;
+	float waypointLerpFactor;
+	NJS_VECTOR field_7B4;
+	NJS_VECTOR field_7C0;
+	ChaoObjectListInfo ObjectListInfo;
+	ChaoObjectList PlayerObjects;
+	ChaoObjectList ChaoObjects;
+	ChaoObjectList FruitObjects;
+	ChaoObjectList TreeObjects;
+	ChaoObjectList ToyObjects;
+	char ObjectListEnd;
+	char field_19D9[927];
 };
 
 struct ChaoDebugData1
@@ -583,11 +807,6 @@ struct __declspec(align(1)) ChaoDataBase
 	ChaoCharacterBond SA2BCharacterBonds[6];
 	char field_190[680];
 	ChaoDNA DNA;
-};
-
-struct ChaoUnknownE
-{
-	char pad[960];
 };
 
 struct AnimationInfo
