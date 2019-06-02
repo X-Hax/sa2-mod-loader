@@ -1825,15 +1825,34 @@ struct al_confirmload_data2
 	uint32_t dword20;
 };
 
+struct AL_GBAManagerExecutor_Thing
+{
+	int thing;
+	int field_4;
+	__int16 field_8;
+	__int16 field_A;
+	int mode;
+	int field_10;
+	int field_14;
+	int hasItem[11];
+	int hasItem___[11];
+	int chaoDataPointer;
+	int eggType;
+	int rings;
+	char fruitType[8];
+	ChaoData chaoData1;
+	ChaoData chaoData2;
+};
+
 struct AL_GBAManagerExecutor_Data
 {
-	int field_0;
-	int field_4;
-	int field_8;
-	ObjectMaster *ObjectPtr;
-	char field_10[4228];
-	char gap_1094[12691];
-	char field_4227;
+	int dword0;
+	int gap4;
+	int dword8;
+	ObjectMaster* field_C;
+	int insertedChao;
+	ChaoData* ChaoDataPointer;
+	AL_GBAManagerExecutor_Thing field_18[4];
 };
 
 struct ChaoEggData
