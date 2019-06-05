@@ -2602,6 +2602,85 @@ static inline PDS_PERIPHERAL * pdGetPeripheral(signed int a1, int a2)
 	return result;
 }
 
+// void __usercall(ObjectMaster* a1@<eax>, int(__cdecl* bhav)(ObjectMaster*), int timer)
+static const void* const Chao_BehaviourPtr = (void*)0x0053D890;
+static inline void Chao_Behaviour(ObjectMaster* a1, int(__cdecl* bhav)(ObjectMaster*), int timer)
+{
+	__asm
+	{
+		push a3
+		push a2
+		mov eax, a1
+		call Chao_BehaviourPtr
+		add esp, 8
+	}
+}
+
+// void __usercall(ObjectMaster* a1@<eax>, int(__cdecl* bhav)(ObjectMaster*)@<edx>)
+static const void* const Chao_BehaviourQueuePtr = (void*)0x0053D970;
+static inline void Chao_BehaviourQueue(ObjectMaster* a1, int(__cdecl* bhav)(ObjectMaster*))
+{
+	__asm
+	{
+		mov edx, a2
+		mov eax, a1
+		call Chao_BehaviourQueuePtr
+	}
+}
+
+// void __usercall(ObjectMaster* a1@<ecx>, int index@<edx>, int timer@<eax>)
+static const void* const Chao_SetEyePtr = (void*)0x0053A4B0;
+static inline void Chao_SetEye(ObjectMaster* a1, int index, int timer)
+{
+	__asm
+	{
+		mov eax, timer
+		mov edx, index
+		mov ecx, a1
+		call Chao_SetEyePtr
+	}
+}
+
+// void __usercall(ObjectMaster* a1@<ecx>, int index, int timer@<edx>)
+static const void* const Chao_SetMouthPtr = (void*)0x0053A5A0;
+static inline void Chao_SetMouth(ObjectMaster* a1, int index, int timer)
+{
+	__asm
+	{
+		mov edx, timer
+		mov ecx, a1
+		push index
+		call Chao_SetMouthPtr
+		add esp, 4
+	}
+}
+
+// void __usercall(MotionTableData* a1@<eax>, int a2@<edx>)
+static const void* const Chao_AnimationPtr = (void*)0x00793C40;
+static inline void Chao_Animation(MotionTableData* a1, int a2)
+{
+	__asm
+	{
+		mov eax, a1
+		mov edx, a2
+		call Chao_AnimationPtr
+	}
+}
+
+// void __usercall(MotionTableData* a1@<eax>, int a2@<edx>, unsigned __int16 a3)
+static const void* const Chao_PlayAnimationSpeedPtr = (void*)0x00793D30;
+static inline void Chao_PlayAnimationSpeed(MotionTableData* a1, int a2, unsigned __int16 a3)
+{
+	__asm
+	{
+		push a3
+		mov edx, a2
+		mov eax, a1
+		call Chao_PlayAnimationSpeedPtr
+		add esp, 4
+	}
+}
+
 // int __usercall@<eax>(int buttons@<edx>)
 static const void *const XInputToDreamcastButtonsPtr = (void*)0x77E910;
 static inline int XInputToDreamcastButtons(int buttons)
