@@ -2608,8 +2608,8 @@ static inline void Chao_Behaviour(ObjectMaster* a1, int(__cdecl* bhav)(ObjectMas
 {
 	__asm
 	{
-		push a3
-		push a2
+		push timer
+		push bhav
 		mov eax, a1
 		call Chao_BehaviourPtr
 		add esp, 8
@@ -2622,7 +2622,7 @@ static inline void Chao_BehaviourQueue(ObjectMaster* a1, int(__cdecl* bhav)(Obje
 {
 	__asm
 	{
-		mov edx, a2
+		mov edx, bhav
 		mov eax, a1
 		call Chao_BehaviourQueuePtr
 	}
