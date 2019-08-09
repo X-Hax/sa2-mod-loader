@@ -409,7 +409,7 @@ DataPointer(char, AnalyticsEnabled, 0x1A55708);
 DataPointer(int, CheatsEnabled, 0x1A55770);
 DataPointer(int, Cheats_GiveMaxRings, 0x1A55774);
 DataPointer(int, Cheats_GiveAllUpgrades, 0x1A55778);
-DataPointer(int, Cheats_GiveMaxLives, 0x1A5577C);
+DataPointer(int, Cheats_GiveAllEmblems, 0x1A5577C);
 DataPointer(int, P2Start, 0x1A557C4);
 DataPointer(float *, _nj_current_matrix_ptr_, 0x1A557FC);
 DataArray(ObjectMaster *, VibTasks, 0x1A5588C, 4);
