@@ -324,6 +324,8 @@ DataPointer(char, TimerFrames, 0x174AFDD);
 DataPointer(char, TwoPlayerMode, 0x174AFDE);
 DataPointer(char, Current2PLevelGroup, 0x174AFDF);
 DataPointer(char, MissionNum, 0x174AFE3);
+DataArray(char, P1SpecialAttacks, 0x174AFED, 3);
+DataArray(char, P2SpecialAttacks, 0x174AFF0, 3);
 DataPointer(char*, SpecialActivateTimer, 0x174AFF3);
 DataPointer(char*, RoundsWon, 0x174AFF5);
 DataPointer(char, TimeStopped, 0x174AFF7);
