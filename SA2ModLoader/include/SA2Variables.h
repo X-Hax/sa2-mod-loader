@@ -470,7 +470,7 @@ DataPointer(SOCControllerAll *, Global_SOCControllerAll, 0x1AF1A90);
 DataPointer(MemManFuncs *, MemoryManager, 0x1D19CAC);
 DataArray(char, CharacterToCostumeIndex, 0x1D1B8B0, 2);
 DataPointer(char*, CharacterSelected, 0x1D1B8B2);
-DataPointer(CharSelectThing*, CharSelectThings, 0x1D1B8C5);
+DataArray(CharSelectThing, CharSelectThings, 0x1D1B8C5, 6);
 DataArray(Uint8, character_copy_becauseweneedatleast7copiesofeveryvariable, 0x1D1B9E0, 2);
 DataPointer(char, BattleSelection, 0x1D1B9F4);
 DataPointer(MenuData*, MainMenu, 0x1D1BBC0);
