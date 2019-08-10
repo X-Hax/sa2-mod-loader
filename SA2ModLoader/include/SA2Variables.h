@@ -392,7 +392,7 @@ DataPointer(ChaoData*, ChaoSlots, 0x19F6EC4);
 DataPointer(int, ALO_EntranceLampManager_ptr, 0x1A2771C);
 DataPointer(int, SomeObjectPointers_Index, 0x1A2835C);
 DataPointer(ObjectMaster **, SomeObjectPointers, 0x1A28360);
-DataPointer(int*, CharacterSelection, 0x1A3D8E0);
+DataArray(int, CharacterSelection, 0x1A3D8E0, 2);
 DataArray(int, character_whyaretheresomany, 0x1A3D8E8, 2);
 DataPointer(int, Old2PBattleTimerThing, 0x1A4A910);
 DataPointer(DWORD, dwMilliseconds, 0x1A51638);
