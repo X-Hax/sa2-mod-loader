@@ -566,28 +566,28 @@ struct PhysicsData
 
 struct CharAnimInfo
 {
-	__int16 field_0;
-	__int16 Animation;
-	__int16 Animation2;
-	__int16 Animation3;
-	__int16 field_8;
-	__int16 field_A;
-	__int16 field_C;
-	char field_E;
-	char field_F;
-	float field_10;
-	float field_14;
-	float field_18;
-	char field_1C;
-	char field_1D;
-	char field_1E;
-	char field_1F;
-	char field_20;
-	char field_21;
-	char field_22;
-	char field_23;
-	AnimationInfo *Animations;
-	NJS_MOTION *motion;
+  __int16 AnimationFrame;
+  __int16 Next;
+  __int16 Current;
+  __int16 Animation3;
+  __int16 field_8;
+  __int16 field_A;
+  __int16 field_C;
+  char field_E;
+  char field_F;
+  float field_10;
+  float field_14;
+  float field_18;
+  char field_1C;
+  char field_1D;
+  char field_1E;
+  char field_1F;
+  char field_20;
+  char field_21;
+  char field_22;
+  char field_23;
+  AnimationInfo *Animations;
+  NJS_MOTION *Motion;
 };
 
 struct CharObj2Base
