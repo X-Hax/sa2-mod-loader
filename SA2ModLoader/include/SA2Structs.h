@@ -6,7 +6,7 @@
 
 // SA2 Structs
 
-typedef NJS_VECTOR Vector3;
+using Vector3 = NJS_VECTOR;
 
 struct EntityData1;
 struct ObjectListEntry;
@@ -31,7 +31,7 @@ struct ObjUnknownA;
 struct ObjUnknownB;
 struct ObjectMaster;
 
-typedef void(__cdecl *ObjectFuncPtr)(ObjectMaster *);
+using ObjectFuncPtr = void(__cdecl*)(ObjectMaster*);
 
 // All structs should be packed.
 #pragma pack(push, 1)
