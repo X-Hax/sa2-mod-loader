@@ -1526,6 +1526,17 @@ static inline void PlayMusic(const char *song)
 	}
 }
 
+static const void *const PlayJinglePtr = (void*)0x00443480;
+// Plays specified song once, then restores previous song as set by PlayMusic.
+static inline void PlayJingle(const char *song)
+{
+	__asm
+	{
+		mov ebx, [song]
+		call PlayJinglePtr
+	}
+}
+
 // void __usercall(const char *a1@<edi>)
 static const void *const _PlayMusicOncePtr = (void*)0x442E60;
 static inline void _PlayMusicOnce(const char *a1)
