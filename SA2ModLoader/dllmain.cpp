@@ -1206,6 +1206,9 @@ void __cdecl InitMods(void)
 	WriteCall((void*)0x435EE7, FindNextCSBFileA);
 	WriteData((char*)0x435EF5, (char)0x90u);
 	WriteCall((void*)0x435EF6, FindCSBClose);
+	
+	// Expand chunk model vertex buffer from 512 to 32768 verts
+	*(void**)0x25EFE48 = calloc(1, 0x100004);
 
 	// Map of files to replace and/or swap.
 	unordered_map<string, string> filereplaces = unordered_map<string, string>();
