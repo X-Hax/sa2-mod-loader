@@ -25,6 +25,29 @@ enum Characters
 	Characters_Chaos
 };
 
+#define chfl(name) CharacterFlags_##name = (1 << Characters_##name)
+enum CharacterFlags
+{
+	chfl(Sonic),
+	chfl(Shadow),
+	chfl(Tails),
+	chfl(Eggman),
+	chfl(Knuckles),
+	chfl(Rouge),
+	chfl(MechTails),
+	chfl(MechEggman),
+	chfl(Amy),
+	chfl(SuperSonic),
+	chfl(SuperShadow),
+	chfl(B),
+	chfl(MetalSonic),
+	chfl(ChaoWalker),
+	chfl(DarkChaoWalker),
+	chfl(Tikal),
+	chfl(Chaos)
+};
+#undef chfl
+
 enum LevelIDs
 {
 	LevelIDs_BasicTest,
