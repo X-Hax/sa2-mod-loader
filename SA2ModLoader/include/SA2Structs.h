@@ -1944,4 +1944,31 @@ struct StoryEntry
 	int16_t Events[4];
 };
 
+struct BossTitleLetterData
+{
+	__int16 X;
+	__int16 Y;
+	__int16 Width;
+	__int16 Height;
+	__int16 field_8;
+	__int16 TexWidth;
+	__int16 TexHeight;
+	__int16 field_E;
+};
+
+struct BossTitleData
+{
+	BossTitleLetterData* Letters;
+	__int16 LetterCount;
+	__int16 field_6;
+	int anonymous_2;
+	int anonymous_3;
+	int anonymous_4;
+	int anonymous_5;
+	NJS_TEXLIST* TexList;
+	float X;
+	float Y;
+	float Scale;
+	int anonymous_9;
+};
 #pragma pack(pop)

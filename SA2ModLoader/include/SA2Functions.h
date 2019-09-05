@@ -2564,6 +2564,19 @@ static inline void PowderExecute(NJS_VECTOR *a1, int a2, NJS_VECTOR *a3, char a4
 	}
 }
 
+// void __usercall(ObjectMaster *parent@<eax>, BossTitleData *data)
+static const void *const LoadBossTitleExecPtr = (void*)0x762FA0;
+static inline void LoadBossTitleExec(ObjectMaster *parent, BossTitleData *data)
+{
+	__asm
+	{
+		push [data]
+		mov eax, [parent]
+		call LoadBossTitleExecPtr
+		add esp, 4
+	}
+}
+
 // void __usercall(NJS_SPRITE *sp, Int n@<eax>, Float pri, char attr)
 static const void *const njDrawSprite2DPtr = (void*)0x77D0B0;
 static inline void njDrawSprite2D(NJS_SPRITE *_sp, Int n, Float pri, char attr)
