@@ -1946,7 +1946,7 @@ struct StoryEntry
 
 struct BossTitleLetterData
 {
-	int ID;
+	int GBIX;
 	__int16 Width;
 	__int16 Height;
 	__int16 Delay;
@@ -1963,7 +1963,7 @@ struct BossTitleData
 	int anonymous_2;
 	int anonymous_3;
 	int anonymous_4;
-	int anonymous_5;
+	int DisplayTime;
 	NJS_TEXLIST* TexList;
 	float X;
 	float Y;
