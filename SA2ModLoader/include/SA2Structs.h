@@ -1946,11 +1946,10 @@ struct StoryEntry
 
 struct BossTitleLetterData
 {
-	__int16 X;
-	__int16 Y;
+	int ID;
 	__int16 Width;
 	__int16 Height;
-	__int16 field_8;
+	__int16 Delay;
 	__int16 TexWidth;
 	__int16 TexHeight;
 	__int16 field_E;
