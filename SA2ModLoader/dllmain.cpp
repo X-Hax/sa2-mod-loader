@@ -18,6 +18,7 @@
 #include "ModelInfo.h"
 #include "CodeParser.hpp"
 #include "Events.h"
+#include "FadeFix.h"
 
 static std::thread* window_thread = nullptr;
 
@@ -1209,6 +1210,8 @@ void __cdecl InitMods(void)
 	
 	// Expand chunk model vertex buffer from 512 to 32768 verts
 	*(void**)0x25EFE48 = calloc(1, 0x100004);
+
+	InitScreenFadeFix();
 
 	// Map of files to replace and/or swap.
 	unordered_map<string, string> filereplaces = unordered_map<string, string>();

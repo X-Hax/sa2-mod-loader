@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Events.h" />
+    <ClInclude Include="FadeFix.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="include\MemAccess.h" />
     <ClInclude Include="include\ninja.h" />
@@ -106,6 +107,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Events.cpp" />
+    <ClCompile Include="FadeFix.cpp" />
     <ClCompile Include="FileMap.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
