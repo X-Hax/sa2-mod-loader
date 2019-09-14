@@ -157,7 +157,7 @@ DataPointer(int, CurrentChaoArea, 0x134046C);
 DataPointer(int, NextChaoArea, 0x134062C);
 DataPointer(ObjectListEntry, AL_RaceMaster_ObjectArray, 0x1353338);
 DataPointer(ObjectListHead, AL_RaceMaster_ObjectList, 0x13533F8);
-DataArray(NJS_VECTOR*, ProbablyChaoSpawnPoints, 0x1366260, 48);
+DataArray(NJS_VECTOR, ProbablyChaoSpawnPoints, 0x1366260, 48);
 DataArray(ChaoSegmentData, ChaoSegments, 0x1366580, 48);
 DataPointer(LevelHeader, ChaoHeader, 0x1367380);
 DataPointer(ObjectListEntry, IronGate2P_ObjectArray, 0x1368EB0);

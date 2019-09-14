@@ -1148,32 +1148,32 @@ typedef struct {
 	void            *null;
 } NJS_MODEL_SADX;
 
-struct struct_0
+struct SA2B_VertexData
 {
 	char DataType; // 1 = Vertex, 3 = VColor?, 5 = UV?, 0xFF = end list
 	char ElementSize;
 	__int16 ElementCount;
 	int field_4;
-	void *Data;
+	void* Data;
 	int DataSize;
 };
 
-struct struct_1
+struct SA2B_GeometryData
 {
-	int  *ptr1;
-	int   cnt1;
-	char *ptr2;
-	int   cnt2;
+	int* ParameterOffset;
+	int   ParameterCount;
+	char* PrimitiveOffset;
+	int   PrimitiveCount;
 };
 
 struct SA2B_Model
 {
-	struct_0 *Vertices;
-	int field_4;
-	struct_1 *Poly;
-	int field_C;
-	__int16 PolyCount;
-	__int16 field_12;
+	SA2B_VertexData* Vertices;
+	int field_4; //unknown1?
+	SA2B_GeometryData* OpaqueGeoData;
+	SA2B_GeometryData* TranslucentGeoData;
+	__int16 OpaqueGeometryCount;
+	__int16 TranslucentGeometryCount;
 	NJS_VECTOR Center;
 	float Radius;
 };
