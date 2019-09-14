@@ -6,6 +6,13 @@
 #include <cstdint>
 #include <SA2ModLoader.h>
 
+enum LandTableFormat
+{
+	LandTableFormat_Invalid,
+	LandTableFormat_SA2,
+	LandTableFormat_SA2B
+};
+
 class LandTableInfo
 {
 public:
@@ -17,6 +24,7 @@ public:
 	LandTableInfo(const std::wstring &filename);
 	LandTableInfo(std::istream &stream);
 
+	LandTableFormat getformat();
 	LandTable *getlandtable();
 	const std::string &getauthor();
 	const std::string &gettool();
@@ -27,10 +35,12 @@ public:
 
 private:
 	static const uint64_t SA2LVL = 0x4C564C324153u;
+	static const uint64_t SA2BLVL = 0x4C564C42324153u;
 	static const uint64_t FormatMask = 0xFFFFFFFFFFFFu;
 	static const uint8_t CurrentVersion = 3;
 	static const int headersize = 0x10;
 
+	LandTableFormat format;
 	LandTable *landtable;
 	std::string author, tool, description;
 	std::unordered_map<uint32_t, Metadata> metadata;
@@ -50,6 +60,7 @@ private:
 
 	void fixbasicmodelpointers(NJS_MODEL *model, intptr_t base);
 	void fixchunkmodelpointers(NJS_CNK_MODEL *model, intptr_t base);
+	void fixsa2bmodelpointers(SA2B_Model *model, intptr_t base);
 	void fixobjectpointers(NJS_OBJECT *object, intptr_t base, bool chunk);
 	void fixlandtablepointers(LandTable *landtable, intptr_t base);
 	void init(std::istream &stream);

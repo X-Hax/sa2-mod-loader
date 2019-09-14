@@ -44,6 +44,8 @@ LandTableInfo::LandTableInfo(const wstring &filename)
 
 LandTableInfo::LandTableInfo(istream &stream) { init(stream); }
 
+LandTableFormat LandTableInfo::getformat() { return format; }
+
 LandTable *LandTableInfo::getlandtable() { return landtable; }
 
 const string &LandTableInfo::getauthor() { return author; }
@@ -104,7 +106,7 @@ template<typename T>
 static inline void fixptr(T *&ptr, intptr_t base)
 {
 	if (ptr != nullptr)
-		ptr = (T *)((uint8_t *)ptr + base);
+		ptr = (T *)((intptr_t)ptr + base);
 }
 
 void LandTableInfo::fixbasicmodelpointers(NJS_MODEL *model, intptr_t base)
@@ -136,23 +138,71 @@ void LandTableInfo::fixchunkmodelpointers(NJS_CNK_MODEL *model, intptr_t base)
 	fixptr(model->plist, base);
 }
 
+void LandTableInfo::fixsa2bmodelpointers(SA2B_Model* model, intptr_t base)
+{
+	if (model->Vertices != nullptr)
+	{
+		fixptr(model->Vertices, base);
+		if (fixedpointers.find(model->Vertices) == fixedpointers.end())
+		{
+			fixedpointers.insert(model->Vertices);
+			for (SA2B_VertexData* vd = model->Vertices; vd->DataType != 0xFF; ++vd)
+				fixptr(vd->Data, base);
+		}
+	}
+	if (model->OpaqueGeoData != nullptr)
+	{
+		fixptr(model->OpaqueGeoData, base);
+		if (fixedpointers.find(model->OpaqueGeoData) == fixedpointers.end())
+		{
+			fixedpointers.insert(model->OpaqueGeoData);
+			for (int i = 0; i < model->OpaqueGeometryCount; i++)
+			{
+				fixptr(model->OpaqueGeoData[i].PrimitiveOffset, base);
+				fixptr(model->OpaqueGeoData[i].ParameterOffset, base);
+			}
+		}
+	}
+	if (model->TranslucentGeoData != nullptr)
+	{
+		fixptr(model->TranslucentGeoData, base);
+		if (fixedpointers.find(model->TranslucentGeoData) == fixedpointers.end())
+		{
+			fixedpointers.insert(model->TranslucentGeoData);
+			for (int i = 0; i < model->TranslucentGeometryCount; i++)
+			{
+				fixptr(model->TranslucentGeoData[i].PrimitiveOffset, base);
+				fixptr(model->TranslucentGeoData[i].ParameterOffset, base);
+			}
+		}
+	}
+}
+
 void LandTableInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base, bool chunk)
 {
 	if (object->model != nullptr)
 	{
-		object->model = (uint8_t *)object->model + base;
+		fixptr(object->model, base);
 		if (fixedpointers.find(object->model) == fixedpointers.end())
 		{
 			fixedpointers.insert(object->model);
 			if (chunk)
-				fixchunkmodelpointers(object->chunkmodel, base);
+				switch (format)
+				{
+				case LandTableFormat_SA2:
+					fixchunkmodelpointers(object->chunkmodel, base);
+					break;
+				case LandTableFormat_SA2B:
+					fixsa2bmodelpointers(object->sa2bmodel, base);
+					break;
+				}
 			else
 				fixbasicmodelpointers(object->basicmodel, base);
 		}
 	}
 	if (object->child != nullptr)
 	{
-		object->child = (NJS_OBJECT *)((uint8_t *)object->child + base);
+		fixptr(object->child, base);
 		if (fixedpointers.find(object->child) == fixedpointers.end())
 		{
 			fixedpointers.insert(object->child);
@@ -161,7 +211,7 @@ void LandTableInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base, bool ch
 	}
 	if (object->sibling != nullptr)
 	{
-		object->sibling = (NJS_OBJECT *)((uint8_t *)object->sibling + base);
+		fixptr(object->sibling, base);
 		if (fixedpointers.find(object->sibling) == fixedpointers.end())
 		{
 			fixedpointers.insert(object->sibling);
@@ -174,11 +224,11 @@ void LandTableInfo::fixlandtablepointers(LandTable *landtable, intptr_t base)
 {
 	if (landtable->COLList != nullptr)
 	{
-		landtable->COLList = (COL *)((uint8_t *)landtable->COLList + base);
+		fixptr(landtable->COLList, base);
 		for (int i = 0; i < landtable->COLCount; i++)
 			if (landtable->COLList[i].Model != nullptr)
 			{
-				landtable->COLList[i].Model = (NJS_OBJECT *)((uint8_t *)landtable->COLList[i].Model + base);
+				fixptr(landtable->COLList[i].Model, base);
 				if (fixedpointers.find(landtable->COLList[i].Model) == fixedpointers.end())
 				{
 					fixedpointers.insert(landtable->COLList[i].Model);
@@ -208,8 +258,17 @@ void LandTableInfo::init(istream &stream)
 	magic &= FormatMask;
 	if (version != CurrentVersion) // unrecognized file version
 		return;
-	if (magic != SA2LVL)
+	switch (magic)
+	{
+	case SA2LVL:
+		format = LandTableFormat_SA2;
+		break;
+	case SA2BLVL:
+		format = LandTableFormat_SA2B;
+		break;
+	default:
 		return;
+	}
 	uint32_t landtableoff;
 	readdata(stream, landtableoff);
 	landtableoff -= headersize;

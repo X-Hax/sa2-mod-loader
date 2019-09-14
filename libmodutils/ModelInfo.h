@@ -10,7 +10,8 @@ enum ModelFormat
 {
 	ModelFormat_Invalid,
 	ModelFormat_Basic,
-	ModelFormat_Chunk
+	ModelFormat_Chunk,
+	ModelFormat_SA2B
 };
 
 class ModelInfo
@@ -38,6 +39,7 @@ public:
 private:
 	static const uint64_t SA1MDL = 0x4C444D314153u;
 	static const uint64_t SA2MDL = 0x4C444D324153u;
+	static const uint64_t SA2BMDL = 0x4C444D42324153u;
 	static const uint64_t FormatMask = 0xFFFFFFFFFFFFu;
 	static const uint8_t CurrentVersion = 3;
 	static const int headersize = 0x10;
@@ -66,6 +68,7 @@ private:
 
 	void fixbasicmodelpointers(NJS_MODEL *model, intptr_t base);
 	void fixchunkmodelpointers(NJS_CNK_MODEL *model, intptr_t base);
+	void fixsa2bmodelpointers(SA2B_Model *model, intptr_t base);
 	void fixobjectpointers(NJS_OBJECT *object, intptr_t base);
 	void init(std::istream &stream);
 };
