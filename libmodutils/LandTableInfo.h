@@ -36,7 +36,7 @@ public:
 private:
 	static const uint64_t SA2LVL = 0x4C564C324153u;
 	static const uint64_t SA2BLVL = 0x4C564C42324153u;
-	static const uint64_t FormatMask = 0xFFFFFFFFFFFFu;
+	static const uint64_t FormatMask = 0xFFFFFFFFFFFFFFu;
 	static const uint8_t CurrentVersion = 3;
 	static const int headersize = 0x10;
 

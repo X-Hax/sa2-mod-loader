@@ -40,7 +40,7 @@ private:
 	static const uint64_t SA1MDL = 0x4C444D314153u;
 	static const uint64_t SA2MDL = 0x4C444D324153u;
 	static const uint64_t SA2BMDL = 0x4C444D42324153u;
-	static const uint64_t FormatMask = 0xFFFFFFFFFFFFu;
+	static const uint64_t FormatMask = 0xFFFFFFFFFFFFFFu;
 	static const uint8_t CurrentVersion = 3;
 	static const int headersize = 0x10;
 
