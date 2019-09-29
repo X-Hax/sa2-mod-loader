@@ -146,7 +146,7 @@ void LandTableInfo::fixsa2bmodelpointers(SA2B_Model* model, intptr_t base)
 		if (fixedpointers.find(model->Vertices) == fixedpointers.end())
 		{
 			fixedpointers.insert(model->Vertices);
-			for (SA2B_VertexData* vd = model->Vertices; vd->DataType != 0xFF; ++vd)
+			for (SA2B_VertexData* vd = model->Vertices; vd->DataType != -1; ++vd)
 				fixptr(vd->Data, base);
 		}
 	}
