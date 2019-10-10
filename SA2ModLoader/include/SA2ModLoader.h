@@ -1,6 +1,10 @@
 #ifndef SA2MODLOADER_H
 #define SA2MODLOADER_H
 
+#if !defined(_M_IX86) && !defined(__i386__)
+#error Mods must be built targeting 32-bit x86, change your settings.
+#endif
+
 #include <WTypes.h>
 #include <cstdint>
 
