@@ -15,9 +15,9 @@ public:
 	AnimationFile(const std::wstring &filename);
 	AnimationFile(std::istream &stream);
 
-	NJS_MOTION *getmotion();
-	int getmodelcount();
-	const std::string &getlabel();
+	NJS_MOTION *getmotion() const;
+	int getmodelcount() const;
+	const std::string &getlabel() const;
 
 private:
 	static const uint64_t SAANIM = 0x4D494E414153u;
