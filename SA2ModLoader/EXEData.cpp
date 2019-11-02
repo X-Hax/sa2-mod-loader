@@ -13,6 +13,7 @@
 #include "ModelInfo.h"
 #include "AnimationFile.h"
 #include "EXEData.h"
+#include <FileSystem.h>
 
 using std::unordered_map;
 using std::vector;
@@ -257,6 +258,16 @@ static void ParseRotation(const string str, Rotation &rot)
 	rot.z = (int)strtol(vals[2].c_str(), nullptr, 16);
 }
 
+static void ParseMinSec(const string str, MinSec& minsec)
+{
+	vector<string> vals = split(str, ':');
+	assert(vals.size() == 2);
+	if (vals.size() < 2)
+		return;
+	minsec.Minutes = (char)strtol(vals[0].c_str(), nullptr, 10);
+	minsec.Seconds = (char)strtol(vals[1].c_str(), nullptr, 10);
+}
+
 template<typename T>
 static void ProcessPointerList(const string &list, T *item)
 {
@@ -483,6 +494,183 @@ static void ProcessDeathZoneINI(const IniGroup *group, const wstring &mod_dir)
 	ProcessPointerList(group->getString("pointer"), newlist);
 }
 
+static void ProcessLevelRankScoresINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<LevelRankScores> scores;
+	for (auto iter = data->cbegin(); iter != data->cend(); ++iter)
+	{
+		if (iter->first.empty()) continue;
+		LevelRankScores entry;
+		entry.Level = ParseLevelID(iter->first);
+		entry.DRank = (short)iter->second->getInt("DRank");
+		entry.CRank = (short)iter->second->getInt("CRank");
+		entry.BRank = (short)iter->second->getInt("BRank");
+		entry.ARank = (short)iter->second->getInt("ARank");
+		scores.push_back(entry);
+	}
+	delete data;
+	auto numents = scores.size();
+	LevelRankScores* list = new LevelRankScores[numents + 1];
+	arrcpy(list, scores.data(), numents);
+	list[numents].Level = LevelIDs_Invalid;
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
+static void ProcessLevelRankTimesINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<LevelRankTimes> scores;
+	for (auto iter = data->cbegin(); iter != data->cend(); ++iter)
+	{
+		if (iter->first.empty()) continue;
+		LevelRankTimes entry;
+		entry.Level = ParseLevelID(iter->first);
+		ParseMinSec(iter->second->getString("DRank"), entry.DRank);
+		ParseMinSec(iter->second->getString("CRank"), entry.CRank);
+		ParseMinSec(iter->second->getString("BRank"), entry.BRank);
+		ParseMinSec(iter->second->getString("ARank"), entry.ARank);
+		scores.push_back(entry);
+	}
+	delete data;
+	auto numents = scores.size();
+	LevelRankTimes* list = new LevelRankTimes[numents + 1];
+	arrcpy(list, scores.data(), numents);
+	list[numents].Level = LevelIDs_Invalid;
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
+static void ProcessEndPosINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const startposdata = new IniFile(filename);
+	vector<LevelEndPosition> poss;
+	for (auto iter = startposdata->cbegin(); iter != startposdata->cend(); ++iter)
+	{
+		if (iter->first.empty()) continue;
+		LevelEndPosition pos;
+		pos.Level = ParseLevelID(iter->first);
+		pos.Mission2YRotation = iter->second->getIntRadix("Mission2YRotation", 16);
+		pos.Mission3YRotation = iter->second->getIntRadix("Mission3YRotation", 16);
+		pos.field_6 = iter->second->getIntRadix("Unknown", 16);
+		ParseVertex(iter->second->getString("Mission2Position", "0,0,0"), pos.Mission2Position);
+		ParseVertex(iter->second->getString("Mission3Position", "0,0,0"), pos.Mission3Position);
+		poss.push_back(pos);
+	}
+	delete startposdata;
+	auto numents = poss.size();
+	LevelEndPosition* list = new LevelEndPosition[numents + 1];
+	arrcpy(list, poss.data(), numents);
+	clrmem(&list[numents]);
+	list[numents].Level = LevelIDs_Invalid;
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
+static void ProcessAnimationListINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<AnimationInfo> anims;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* animdata = data->getGroup(key);
+		AnimationInfo entry;
+		entry.AnimNum = (short)animdata->getInt("Animation");
+		entry.ModelNum = (short)animdata->getInt("Model");
+		entry.anonymous_2 = (short)animdata->getInt("Property");
+		entry.NextAnimation = (short)animdata->getInt("NextAnimation");
+		entry.TransitionSpeed = animdata->getFloat("TransitionSpeed");
+		entry.AnimationSpeed = animdata->getFloat("AnimationSpeed");
+		anims.push_back(entry);
+	}
+	delete data;
+	auto numents = anims.size();
+	AnimationInfo* list = new AnimationInfo[numents];
+	arrcpy(list, anims.data(), numents);
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
+static void ProcessPathListINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	vector<LoopHead*> paths;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		wchar_t levelpath[MAX_PATH];
+		swprintf(levelpath, LengthOfArray(levelpath), L"%s\\%u.ini",
+			filename, i);
+
+		if (!Exists(levelpath))
+		{
+			break;
+		}
+
+		auto inidata = new IniFile(levelpath);
+		const IniGroup* entdata;
+		vector<LoopPoint> points;
+		char buf2[8];
+
+		for (unsigned int j = 0; j < 999; j++)
+		{
+			snprintf(buf2, LengthOfArray(buf2), "%u", j);
+
+			if (!inidata->hasGroup(buf2))
+			{
+				break;
+			}
+
+			entdata = inidata->getGroup(buf2);
+			LoopPoint point;
+			point.XRot = (int16_t)entdata->getIntRadix("XRotation", 16);
+			point.YRot = (int16_t)entdata->getIntRadix("ZRotation", 16);
+			point.Distance = entdata->getFloat("Distance");
+			ParseVertex(entdata->getString("Position", "0,0,0"), point.Position);
+			points.push_back(point);
+		}
+
+		entdata = inidata->getGroup("");
+
+		auto* path = new LoopHead;
+
+		path->anonymous_0 = (int16_t)entdata->getInt("Unknown");
+		path->Count = (int16_t)points.size();
+		path->TotalDistance = entdata->getFloat("TotalDistance");
+		path->Points = new LoopPoint[path->Count];
+
+		arrcpy(path->Points, points.data(), path->Count);
+
+		path->Object = (ObjectFuncPtr)entdata->getIntRadix("Code", 16);
+		paths.push_back(path);
+
+		delete inidata;
+	}
+	auto numents = paths.size();
+	LoopHead** list = new LoopHead*[numents + 1];
+	arrcpy(list, paths.data(), numents);
+	list[numents] = nullptr;
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
 static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "landtable", ProcessLandTableINI },
@@ -496,7 +684,12 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "texlist", ProcessTexListINI },
 	{ "stringarray", ProcessStringArrayINI },
 	{ "deathzone", ProcessDeathZoneINI },
-	//{ "bmitemattrlist", ProcessBMItemAttrListINI },
+	//{ "stageselectlist", ProcessStageSelectListINI },
+	{ "levelrankscores", ProcessLevelRankScoresINI },
+	{ "levelranktimes", ProcessLevelRankTimesINI },
+	{ "endpos", ProcessEndPosINI },
+	{ "animationlist", ProcessAnimationListINI },
+	{ "pathlist", ProcessPathListINI },
 };
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
@@ -505,9 +698,12 @@ void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
 	for (auto iter = exedata->cbegin(); iter != exedata->cend(); ++iter)
 	{
 		IniGroup *group = iter->second;
-		auto type = exedatafuncmap.find(group->getString("type"));
+		auto typestr = group->getString("type");
+		auto type = exedatafuncmap.find(typestr);
 		if (type != exedatafuncmap.end())
 			type->second(group, mod_dir);
+		else
+			PrintDebug("Handler for INI data type \"%s\" not found!", typestr.c_str());
 	}
 	delete exedata;
 }
