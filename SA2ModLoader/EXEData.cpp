@@ -149,6 +149,28 @@ static uint8_t ParseLevelID(const string &str)
 		return (uint8_t)strtol(str.c_str(), nullptr, 10);
 }
 
+static const unordered_map<string, uint8_t> charnamemap = {
+	{ "sonic", Characters_Sonic },
+	{ "shadow", Characters_Shadow },
+	{ "tails", Characters_Tails },
+	{ "eggman", Characters_Eggman },
+	{ "knuckles", Characters_Knuckles },
+	{ "rouge", Characters_Rouge },
+	{ "mechtails", Characters_MechTails },
+	{ "mecheggman", Characters_MechEggman }
+};
+
+static uint8_t ParseCharacter(const string &str)
+{
+	string str2 = trim(str);
+	transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+	auto ch = charnamemap.find(str2);
+	if (ch != charnamemap.end())
+		return ch->second;
+	else
+		return (uint8_t)strtol(str.c_str(), nullptr, 10);
+}
+
 static const unordered_map<string, uint32_t> charflagsnamemap = {
 	{ "sonic", CharacterFlags_Sonic },
 	{ "shadow", CharacterFlags_Shadow },
@@ -177,6 +199,24 @@ static uint32_t ParseCharacterFlags(const string &str)
 	return flag;
 }
 
+static const unordered_map<string, uint8_t> storytypenamemap = {
+	{ "event", StoryEntryType_Event },
+	{ "level", StoryEntryType_Level },
+	{ "end", StoryEntryType_End },
+	{ "credits", StoryEntryType_Credits }
+};
+
+static uint8_t ParseStoryEntryType(const string& str)
+{
+	string str2 = trim(str);
+	transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+	auto ty = storytypenamemap.find(str2);
+	if (ty != storytypenamemap.end())
+		return ty->second;
+	else
+		return (uint8_t)strtol(str.c_str(), nullptr, 10);
+}
+
 static const unordered_map<string, uint8_t> languagesnamemap = {
 	{ "japanese", 0 },
 	{ "english", 1 },
@@ -197,7 +237,7 @@ static uint8_t ParseLanguage(const string &str)
 
 static string DecodeUTF8(const string &str, int language)
 {
-	if (language <= 2)
+	if (language == 0)
 		return UTF8toSJIS(str);
 	else
 		return UTF8to1252(str);
@@ -671,6 +711,74 @@ static void ProcessPathListINI(const IniGroup* group, const wstring& mod_dir)
 	ProcessPointerList(group->getString("pointer"), list);
 }
 
+static void ProcessAnimIndexListINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\*.saanim",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	WIN32_FIND_DATA data;
+
+	HANDLE hFind = FindFirstFile(filename, &data);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	vector<AnimationIndex> anims;
+	do
+	{
+		wchar_t *end;
+		auto ind = wcstol(data.cFileName, &end, 10);
+		if (end == data.cFileName) continue; // filename was not a number
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
+			mod_dir.c_str(), group->getWString("filename").c_str(), data.cFileName);
+		auto animfile = new AnimationFile(filename);
+		AnimationIndex entry { ind, animfile->getmodelcount(), animfile->getmotion() };
+		anims.push_back(entry);
+	} while (FindNextFile(hFind, &data));
+	auto numents = anims.size();
+	AnimationIndex* list = new AnimationIndex[numents + 1];
+	arrcpy(list, anims.data(), numents);
+	memset(&list[numents], -1, sizeof(AnimationIndex));
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
+static void ProcessStorySequenceINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<StoryEntry> seqs;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* seqdata = data->getGroup(key);
+		StoryEntry entry;
+		entry.Type = ParseStoryEntryType(seqdata->getString("Type"));
+		entry.Character = ParseCharacter(seqdata->getString("Character"));
+		entry.Level = ParseLevelID(seqdata->getString("Level"));
+		memset(entry.Events, -1, SizeOfArray(entry.Events));
+		if (seqdata->hasKeyNonEmpty("Events"))
+		{
+			auto events = split(seqdata->getString("Events", "-1"), ',');
+			for (int i = 0; i < min(events.size(), 4); ++i)
+				entry.Events[i] = strtol(events[i].c_str(), nullptr, 10);
+		}
+		seqs.push_back(entry);
+	}
+	delete data;
+	auto numents = seqs.size();
+	StoryEntry* list = new StoryEntry[numents + 1];
+	arrcpy(list, seqs.data(), numents);
+	list[numents].Type = StoryEntryType_End;
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
 static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "landtable", ProcessLandTableINI },
@@ -690,6 +798,9 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "endpos", ProcessEndPosINI },
 	{ "animationlist", ProcessAnimationListINI },
 	{ "pathlist", ProcessPathListINI },
+	//{ "bmitemattrlist", ProcessBMItemAttrListINI },
+	{ "animindexlist", ProcessAnimIndexListINI },
+	{ "storysequence", ProcessStorySequenceINI },
 };
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
