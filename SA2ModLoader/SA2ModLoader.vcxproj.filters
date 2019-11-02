@@ -51,6 +51,9 @@
     <ClInclude Include="include\SA2Variables.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="EXEData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="FadeFix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -66,6 +69,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Events.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EXEData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FadeFix.cpp">

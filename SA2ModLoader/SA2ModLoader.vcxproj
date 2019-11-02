@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Events.h" />
+    <ClInclude Include="EXEData.h" />
     <ClInclude Include="FadeFix.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="include\MemAccess.h" />
@@ -107,6 +108,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Events.cpp" />
+    <ClCompile Include="EXEData.cpp" />
     <ClCompile Include="FadeFix.cpp" />
     <ClCompile Include="FileMap.cpp" />
     <ClCompile Include="stdafx.cpp">
