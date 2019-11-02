@@ -2,5 +2,3 @@
 #include <string>
 
 void ProcessDLLData(const wchar_t* filename, const std::wstring& mod_dir);
-
-void SetDLLHandle(HMODULE handle);

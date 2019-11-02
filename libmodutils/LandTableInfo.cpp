@@ -29,7 +29,7 @@ LandTableInfo::LandTableInfo(const wchar_t *filename)
 }
 
 #ifdef _MSC_VER
-LandTableInfo::LandTableInfo(const wchar_t* filename)
+LandTableInfo::LandTableInfo(const string &filename)
 {
 	ifstream str(filename, ios::binary);
 	init(str);

@@ -119,8 +119,6 @@ static const unordered_map<string, dlldatafunc_t> dlldatafuncmap = {
 	{ "actionarray",       ProcessActionArrayDLL },
 };
 
-static HMODULE dllhandle;
-
 struct dllexportinfo { void* address = nullptr; string type; };
 static unordered_map<string, dllexportinfo> dllexports;
 
@@ -156,7 +154,7 @@ void ProcessDLLData(const wchar_t* filename, const wstring& mod_dir)
 		for (const auto& iter : *group)
 		{
 			dllexportinfo inf;
-			inf.address = GetProcAddress(dllhandle, iter.first.c_str());
+			inf.address = GetProcAddress(**datadllhandle, iter.first.c_str());
 			inf.type = iter.second;
 			dllexports[iter.first] = inf;
 		}
@@ -222,9 +220,4 @@ void ProcessDLLData(const wchar_t* filename, const wstring& mod_dir)
 	}
 
 	delete dlldata;
-}
-
-void SetDLLHandle(HMODULE handle)
-{
-	dllhandle = handle;
 }
