@@ -28,8 +28,7 @@ LandTableInfo::LandTableInfo(const wchar_t *filename)
 	str.close();
 }
 
-#ifdef _MSC_VER
-LandTableInfo::LandTableInfo(const wchar_t* filename)
+LandTableInfo::LandTableInfo(const string &filename)
 {
 	ifstream str(filename, ios::binary);
 	init(str);
@@ -42,7 +41,6 @@ LandTableInfo::LandTableInfo(const wstring &filename)
 	init(str);
 	str.close();
 }
-#endif /* _MSC_VER */
 
 LandTableInfo::LandTableInfo(istream &stream) { init(stream); }
 
@@ -88,11 +86,6 @@ void *LandTableInfo::getdata(const string &label)
 		return nullptr;
 	else
 		return elem->second;
-}
-
-const std::unordered_map<string, void*>* LandTableInfo::getlabels() const
-{
-	return &labels2;
 }
 
 static string getstring(istream &stream)

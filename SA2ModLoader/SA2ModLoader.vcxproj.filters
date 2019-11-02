@@ -57,6 +57,9 @@
     <ClInclude Include="FadeFix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DLLData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FadeFix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLLData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
