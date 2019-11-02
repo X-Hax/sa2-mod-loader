@@ -161,10 +161,10 @@ static const unordered_map<string, uint32_t> charflagsnamemap = {
 	{ "water", 0x2000000 }
 };
 
-static uint8_t ParseCharacterFlags(const string &str)
+static uint32_t ParseCharacterFlags(const string &str)
 {
 	vector<string> strflags = split(str, ',');
-	uint8_t flag = 0;
+	uint32_t flag = 0;
 	for (auto iter = strflags.cbegin(); iter != strflags.cend(); ++iter)
 	{
 		string s = trim(*iter);
@@ -466,7 +466,7 @@ static void ProcessDeathZoneINI(const IniGroup *group, const wstring &mod_dir)
 		char key[8];
 		snprintf(key, sizeof(key), "%u", i);
 		if (!dzdata->hasGroup(key)) break;
-		uint8_t flag = ParseCharacterFlags(dzdata->getString(key, "Flags"));
+		uint32_t flag = ParseCharacterFlags(dzdata->getString(key, "Flags"));
 
 		wchar_t dzpath[MAX_PATH];
 		swprintf(dzpath, LengthOfArray(dzpath), L"%s\\%u.sa1mdl", dzinipath, i);
