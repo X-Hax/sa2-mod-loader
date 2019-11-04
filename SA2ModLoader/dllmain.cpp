@@ -19,6 +19,7 @@
 #include "CodeParser.hpp"
 #include "Events.h"
 #include "FadeFix.h"
+#include "testspawn.h"
 
 static std::thread* window_thread = nullptr;
 
@@ -1599,6 +1600,8 @@ void __cdecl InitMods(void)
 	WriteJump((void*)0x0077E897, OnInput);
 	WriteJump((void*)0x00441D41, OnControl);
 	WriteJump((void*)0x00441EEB, OnControl);
+
+	TestSpawnCheckArgs(helperFunctions);
 
 	if (MainUserConfig->data.Fullscreen == 0)
 	{
