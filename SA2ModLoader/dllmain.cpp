@@ -1143,7 +1143,7 @@ static void HookExport(LPCSTR exportName, const void* newdata)
 		intptr_t* nameaddrs = (intptr_t*)(hModule + pExportDesc->AddressOfNames);
 		short* ordaddrs = (short*)(hModule + pExportDesc->AddressOfNameOrdinals);
 
-		for (int i = 0; i < pExportDesc->NumberOfNames; ++i)
+		for (unsigned int i = 0; i < pExportDesc->NumberOfNames; ++i)
 		{
 			LPCSTR ename = (LPCSTR)(hModule + nameaddrs[i]);
 
@@ -1451,7 +1451,7 @@ void __cdecl InitMods(void)
 		{
 			wchar_t filename[MAX_PATH];
 			swprintf(filename, LengthOfArray(filename), L"%s\\%s",
-				mod_dirA.c_str(), modinfo->getWString("EXEData").c_str());
+				mod_dir.c_str(), modinfo->getWString("EXEData").c_str());
 			ProcessEXEData(filename, mod_dir);
 		}
 
@@ -1460,7 +1460,7 @@ void __cdecl InitMods(void)
 		{
 			wchar_t filename[MAX_PATH];
 			swprintf(filename, LengthOfArray(filename), L"%s\\%s",
-				mod_dirA.c_str(), modinfo->getWString("DLLData").c_str());
+				mod_dir.c_str(), modinfo->getWString("DLLData").c_str());
 			ProcessDLLData(filename, mod_dir);
 		}
 

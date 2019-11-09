@@ -66,7 +66,7 @@ static inline void HookExport(LPCSTR exportName, const void* newdata)
 		intptr_t* nameaddrs = (intptr_t*)(hModule + pExportDesc->AddressOfNames);
 		short* ordaddrs = (short*)(hModule + pExportDesc->AddressOfNameOrdinals);
 
-		for (int i = 0; i < pExportDesc->NumberOfNames; ++i)
+		for (unsigned int i = 0; i < pExportDesc->NumberOfNames; ++i)
 		{
 			LPCSTR ename = (LPCSTR)(hModule + nameaddrs[i]);
 
@@ -201,7 +201,7 @@ static void ProcessAnimIndexListDLL(const IniGroup* group, const wstring& mod_di
 		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
 			mod_dir.c_str(), group->getWString("filename").c_str(), data.cFileName);
 		auto animfile = new AnimationFile(filename);
-		AnimationIndex entry{ ind, animfile->getmodelcount(), animfile->getmotion() };
+		AnimationIndex entry{ (uint16_t)ind, (uint16_t)animfile->getmodelcount(), animfile->getmotion() };
 		anims.push_back(entry);
 	} while (FindNextFile(hFind, &data));
 	auto numents = anims.size();
@@ -214,7 +214,7 @@ static void ProcessAnimIndexListDLL(const IniGroup* group, const wstring& mod_di
 static void ProcessCharaObjectDataListDLL(const IniGroup* group, const wstring& mod_dir)
 {
 	if (!group->hasKeyNonEmpty("filename")) return;
-	unordered_map<const string, void*> labels;
+	unordered_map<string, void*> labels;
 	wchar_t filename[MAX_PATH];
 	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\*.sa2mdl",
 		mod_dir.c_str(), group->getWString("filename").c_str());
@@ -230,7 +230,7 @@ static void ProcessCharaObjectDataListDLL(const IniGroup* group, const wstring& 
 	{
 		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
 			mod_dir.c_str(), group->getWString("filename").c_str(), fdata.cFileName);
-		auto mdllbl = new ModelInfo(filename)->getlabels();
+		auto mdllbl = (new ModelInfo(filename))->getlabels();
 		for (auto iter = mdllbl->cbegin(); iter != mdllbl->cend(); ++iter)
 			labels[iter->first] = iter->second;
 	} while (FindNextFile(hFind, &fdata));
