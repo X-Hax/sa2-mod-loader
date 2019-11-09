@@ -51,10 +51,16 @@
     <ClInclude Include="include\SA2Variables.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="EXEData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="FadeFix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="testspawn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DLLData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,10 +77,16 @@
     <ClCompile Include="Events.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EXEData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="FadeFix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="testspawn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DLLData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

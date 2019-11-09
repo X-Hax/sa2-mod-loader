@@ -20,6 +20,8 @@
 #include "Events.h"
 #include "FadeFix.h"
 #include "testspawn.h"
+#include "EXEData.h"
+#include "DLLData.h"
 
 static std::thread* window_thread = nullptr;
 
@@ -332,7 +334,7 @@ HANDLE __stdcall MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD d
 	return CreateFileA(_ReplaceFile(lpFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 }
 
-void HookExport(const HMODULE hModule, LPCSTR moduleName, const PROC pActualFunction, const PROC pNewFunction)
+void HookImport(const HMODULE hModule, LPCSTR moduleName, const PROC pActualFunction, const PROC pNewFunction)
 {
 	ULONG ulSize = 0;
 	PIMAGE_IMPORT_DESCRIPTOR pImportDesc = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToData(
@@ -372,7 +374,7 @@ void HookExport(const HMODULE hModule, LPCSTR moduleName, const PROC pActualFunc
 
 void HookTheAPI()
 {
-	HookExport(GetModuleHandle(NULL), "Kernel32.dll", GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA"), (PROC)MyCreateFileA);
+	HookImport(GetModuleHandle(NULL), "Kernel32.dll", GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA"), (PROC)MyCreateFileA);
 }
 
 char *ShiftJISToUTF8(char *shiftjis)
@@ -1239,13 +1241,14 @@ void __cdecl InitMods(void)
 		sprintf_s(key, "Mod%d", i);
 		if (!settings->hasKey(key))
 			break;
-		const string mod_dir = "mods\\" + settings->getString(key);
-		const string mod_inifile = mod_dir + "\\mod.ini";
+		const string mod_dirA = "mods\\" + settings->getString(key);
+		const wstring mod_dir = L"mods\\" + settings->getWString(key);
+		const string mod_inifile = mod_dirA + "\\mod.ini";
 		FILE *f_mod_ini = fopen(mod_inifile.c_str(), "r");
 		if (!f_mod_ini)
 		{
-			PrintDebug("Could not open file mod.ini in \"mods\\%s\".\n", mod_dir.c_str());
-			errors.push_back(std::pair<string, string>(mod_dir, "mod.ini missing"));
+			PrintDebug("Could not open file mod.ini in \"mods\\%s\".\n", mod_dirA.c_str());
+			errors.push_back(std::pair<string, string>(mod_dirA, "mod.ini missing"));
 			continue;
 		}
 		unique_ptr<IniFile> ini_mod(new IniFile(f_mod_ini));
@@ -1294,7 +1297,7 @@ void __cdecl InitMods(void)
 		}
 
 		// Check for gd_pc replacements
-		string sysfol = mod_dir + "\\gd_pc";
+		string sysfol = mod_dirA + "\\gd_pc";
 		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
 		if (GetFileAttributesA(sysfol.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
 		{
@@ -1323,7 +1326,7 @@ void __cdecl InitMods(void)
 		if (modinfo->hasKeyNonEmpty("DLLFile"))
 		{
 			// Prepend the mod directory.
-			string dll_filename = mod_dir + '\\' + modinfo->getString("DLLFile");
+			string dll_filename = mod_dirA + '\\' + modinfo->getString("DLLFile");
 			HMODULE module = LoadLibraryA(dll_filename.c_str());
 
 			if (module == nullptr)
@@ -1366,12 +1369,12 @@ void __cdecl InitMods(void)
 					}
 					if (info->Init)
 					{
-						initfuncs.push_back({ info->Init, mod_dir });
+						initfuncs.push_back({ info->Init, mod_dirA });
 					}
 
 					const ModInitFunc init = (const ModInitFunc)GetProcAddress(module, "Init");
 					if (init)
-						initfuncs.push_back({ init, mod_dir });
+						initfuncs.push_back({ init, mod_dirA });
 
 					const PatchList* patches = (const PatchList*)GetProcAddress(module, "Patches");
 					if (patches)
@@ -1413,11 +1416,29 @@ void __cdecl InitMods(void)
 			}
 		}
 
+		// Check if the mod has EXE data replacements.
+		if (modinfo->hasKeyNonEmpty("EXEData"))
+		{
+			wchar_t filename[MAX_PATH];
+			swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+				mod_dirA.c_str(), modinfo->getWString("EXEData").c_str());
+			ProcessEXEData(filename, mod_dir);
+		}
+
+		// Check if the mod has DLL data replacements.
+		if (modinfo->hasKeyNonEmpty("DLLData"))
+		{
+			wchar_t filename[MAX_PATH];
+			swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+				mod_dirA.c_str(), modinfo->getWString("DLLData").c_str());
+			ProcessDLLData(filename, mod_dir);
+		}
+
 		if (modinfo->getBool("RedirectMainSave"))
-			_mainsavepath = mod_dir + "\\SAVEDATA";
+			_mainsavepath = mod_dirA + "\\SAVEDATA";
 
 		if (modinfo->getBool("RedirectChaoSave"))
-			_chaosavepath = mod_dir + "\\SAVEDATA";
+			_chaosavepath = mod_dirA + "\\SAVEDATA";
 	}
 
 	if (!errors.empty())

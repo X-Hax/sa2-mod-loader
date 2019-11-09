@@ -31,6 +31,7 @@ public:
 	const std::string &getdescription();
 	const uint8_t *getmetadata(uint32_t identifier, uint32_t &size);
 	const std::string &getlabel(void *data);
+	const std::unordered_map<std::string, void*>* getlabels() const;
 	void *getdata(const std::string &label);
 
 private:

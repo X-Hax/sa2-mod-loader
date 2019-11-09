@@ -84,7 +84,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DLLData.h" />
     <ClInclude Include="Events.h" />
+    <ClInclude Include="EXEData.h" />
     <ClInclude Include="FadeFix.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="include\MemAccess.h" />
@@ -99,6 +101,7 @@
     <ClInclude Include="testspawn.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DLLData.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -108,6 +111,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Events.cpp" />
+    <ClCompile Include="EXEData.cpp" />
     <ClCompile Include="FadeFix.cpp" />
     <ClCompile Include="FileMap.cpp" />
     <ClCompile Include="stdafx.cpp">

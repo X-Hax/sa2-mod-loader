@@ -2030,4 +2030,23 @@ struct BossTitleData
 	float Scale;
 	int anonymous_9;
 };
+
+struct CharaObjectData
+{
+	NJS_OBJECT* MainModel;
+	NJS_MOTION* Animation1;
+	NJS_MOTION* Animation2;
+	NJS_MOTION* Animation3;
+	NJS_OBJECT* AccessoryModel;
+	NJS_OBJECT* AccessoryAttachNode;
+	NJS_OBJECT* SuperModel;
+	NJS_MOTION* SuperAnimation1;
+	NJS_MOTION* SuperAnimation2;
+	NJS_MOTION* SuperAnimation3;
+	int anonymous_9;
+	int anonymous_10;
+	int anonymous_11;
+	int anonymous_12;
+	float anonymous_13;
+};
 #pragma pack(pop)
