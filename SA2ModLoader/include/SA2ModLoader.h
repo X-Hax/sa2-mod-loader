@@ -16,7 +16,7 @@
 
 // ModInfo
 
-static const int ModLoaderVer = 5;
+static const int ModLoaderVer = 6;
 
 struct PatchInfo
 {
@@ -76,6 +76,9 @@ struct HelperFunctions
 	// Clears the list of registered end positions for missions 2 and 3 for a character.
 	// Requires version >= 5.
 	void(__cdecl *ClearMission23EndPositionList)(unsigned char character);
+	// Replaces data exported from the Data DLL with your own data.
+	// Requires version >= 6.
+	void(__cdecl* HookExport)(LPCSTR exportName, const void* newdata);
 };
 
 typedef void(__cdecl *ModInitFunc)(const char *path, const HelperFunctions &helperFunctions);
@@ -115,33 +118,5 @@ static inline void njPopMatrix(int n)
 			_nj_current_matrix_ptr_ -= 12;
 		else
 			break;
-}
-
-static inline void HookExport(const HMODULE hModule, LPCSTR exportName, const void* newdata)
-{
-	ULONG ulSize = 0;
-	PIMAGE_EXPORT_DIRECTORY pExportDesc = (PIMAGE_EXPORT_DIRECTORY)ImageDirectoryEntryToData(
-		hModule, TRUE, IMAGE_DIRECTORY_ENTRY_EXPORT, &ulSize);
-
-	if (pExportDesc != nullptr)
-	{
-		intptr_t* funcaddrs = (intptr_t*)((intptr_t)hModule + pExportDesc->AddressOfFunctions);
-		intptr_t* nameaddrs = (intptr_t*)((intptr_t)hModule + pExportDesc->AddressOfNames);
-		short* ordaddrs = (short*)((intptr_t)hModule + pExportDesc->AddressOfNameOrdinals);
-
-		for (int i = 0; i < pExportDesc->NumberOfNames; ++i)
-		{
-			LPCSTR ename = (LPCSTR)((intptr_t)hModule + nameaddrs[i]);
-
-			if (!lstrcmpiA(ename, exportName))
-			{
-				auto thing = &funcaddrs[ordaddrs[i]];
-				DWORD dwOldProtect = 0;
-				VirtualProtect(thing, sizeof(intptr_t), PAGE_WRITECOPY, &dwOldProtect);
-				*thing = (intptr_t)newdata - (intptr_t)hModule;
-				VirtualProtect(thing, sizeof(intptr_t), dwOldProtect, &dwOldProtect);
-			}
-		}
-	}
 }
 #endif

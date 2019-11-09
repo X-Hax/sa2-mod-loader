@@ -1130,6 +1130,35 @@ static const char *GetChaoSavePath()
 	return chaosavepath;
 }
 
+static void HookExport(LPCSTR exportName, const void* newdata)
+{
+	intptr_t hModule = (intptr_t)**datadllhandle;
+	ULONG ulSize = 0;
+	PIMAGE_EXPORT_DIRECTORY pExportDesc = (PIMAGE_EXPORT_DIRECTORY)ImageDirectoryEntryToData(
+		**datadllhandle, TRUE, IMAGE_DIRECTORY_ENTRY_EXPORT, &ulSize);
+
+	if (pExportDesc != nullptr)
+	{
+		intptr_t* funcaddrs = (intptr_t*)(hModule + pExportDesc->AddressOfFunctions);
+		intptr_t* nameaddrs = (intptr_t*)(hModule + pExportDesc->AddressOfNames);
+		short* ordaddrs = (short*)(hModule + pExportDesc->AddressOfNameOrdinals);
+
+		for (int i = 0; i < pExportDesc->NumberOfNames; ++i)
+		{
+			LPCSTR ename = (LPCSTR)(hModule + nameaddrs[i]);
+
+			if (!lstrcmpiA(ename, exportName))
+			{
+				auto thing = &funcaddrs[ordaddrs[i]];
+				DWORD dwOldProtect = 0;
+				VirtualProtect(thing, sizeof(intptr_t), PAGE_WRITECOPY, &dwOldProtect);
+				*thing = (intptr_t)newdata - hModule;
+				VirtualProtect(thing, sizeof(intptr_t), dwOldProtect, &dwOldProtect);
+			}
+		}
+	}
+}
+
 const HelperFunctions helperFunctions = {
 	ModLoaderVer,
 	RegisterStartPosition,
@@ -1142,6 +1171,7 @@ const HelperFunctions helperFunctions = {
 	ClearEndPositionList,
 	RegisterMission23EndPosition,
 	ClearMission23EndPositionList,
+	HookExport
 };
 
 void __cdecl InitMods(void)
