@@ -208,7 +208,7 @@ static void ProcessAnimIndexListDLL(const IniGroup* group, const wstring& mod_di
 	AnimationIndex* list = new AnimationIndex[numents + 1];
 	arrcpy(list, anims.data(), numents);
 	memset(&list[numents], -1, sizeof(AnimationIndex));
-	HookExport(**datadllhandle, group->getString("export").c_str(), list);
+	HookExport(group->getString("export").c_str(), list);
 }
 
 static void ProcessCharaObjectDataListDLL(const IniGroup* group, const wstring& mod_dir)
@@ -289,7 +289,7 @@ static void ProcessCharaObjectDataListDLL(const IniGroup* group, const wstring& 
 	auto numents = chars.size();
 	auto list = new CharaObjectData[numents];
 	arrcpy(list, chars.data(), numents);
-	HookExport(**datadllhandle, group->getString("export").c_str(), list);
+	HookExport(group->getString("export").c_str(), list);
 }
 
 typedef void(__cdecl* dlldatafunc_t)(const IniGroup* group, const wstring& mod_dir);
