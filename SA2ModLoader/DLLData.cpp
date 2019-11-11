@@ -169,6 +169,7 @@ static void ProcessActionArrayDLL(const IniGroup* group, void* exp)
 using dllitemfunc_t = void(__cdecl*)(const IniGroup * group, void* exp);
 static const unordered_map<string, dllitemfunc_t> dllitemfuncmap = {
 	{ "landtable",         ProcessLandTableDLL },
+	{ "battlelandtable",         ProcessLandTableDLL },
 	{ "landtablearray",    ProcessLandTableArrayDLL },
 	{ "model",             ProcessModelDLL },
 	{ "modelarray",        ProcessModelArrayDLL },
