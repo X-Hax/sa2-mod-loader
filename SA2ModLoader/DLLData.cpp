@@ -359,7 +359,7 @@ void ProcessDLLData(const wchar_t* filename, const wstring& mod_dir)
 
 	char buf[16]{};
 
-	for (unsigned int k = 0; k < 9999; k++)
+	for (unsigned int k = 1; k < 9999; k++)
 	{
 		snprintf(buf, sizeof(buf), "Item%u", k);
 
@@ -378,7 +378,7 @@ void ProcessDLLData(const wchar_t* filename, const wstring& mod_dir)
 		}
 	}
 
-	for (unsigned int k = 0; k < 9999; k++)
+	for (unsigned int k = 1; k < 9999; k++)
 	{
 		snprintf(buf, sizeof(buf), "DataItem%u", k);
 
