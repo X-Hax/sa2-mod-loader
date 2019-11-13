@@ -7,9 +7,8 @@
 #include "FileMap.hpp"
 
 #include <cctype>
-#include <cstring>
 #include <algorithm>
-using std::forward_list;
+
 using std::list;
 using std::string;
 using std::transform;
@@ -19,26 +18,14 @@ using std::unordered_map;
 #include <Windows.h>
 #include <Shlwapi.h>
 
-FileMap::FileMap()
-{
-}
-
-FileMap::~FileMap()
-{
-	clear();
-}
-
 /**
  * Replace slash characters with backslashes.
  * @param c Character.
  * @return If c == '/', '\\'; otherwise, c.
  */
-static inline int backslashes(int c)
+inline int backslashes(int c)
 {
-	if (c == '/')
-		return '\\';
-	else
-		return c;
+	return c == '/' ? '\\' : c;
 }
 
 /**
@@ -46,7 +33,7 @@ static inline int backslashes(int c)
  * @param filename Filename.
  * @return Normalized filename.
  */
-string FileMap::normalizePath(const string &filename)
+string FileMap::normalizePath(const string& filename)
 {
 	return normalizePath(filename.c_str());
 }
@@ -56,7 +43,7 @@ string FileMap::normalizePath(const string &filename)
  * @param filename Filename.
  * @return Normalized filename.
  */
-string FileMap::normalizePath(const char *filename)
+string FileMap::normalizePath(const char* filename)
 {
 	string path = filename;
 	transform(path.begin(), path.end(), path.begin(), backslashes);
@@ -69,11 +56,12 @@ string FileMap::normalizePath(const char *filename)
 /**
  * Ignore a file.
  * @param ignoreFile File to ignore.
+ * @param modIdx Index of the current mod.
  */
-void FileMap::addIgnoreFile(const string &ignoreFile)
+void FileMap::addIgnoreFile(const string& ignoreFile, int modIdx)
 {
 	string path = normalizePath(ignoreFile);
-	m_fileMap[path] = "nullfile";
+	m_fileMap[path] = { "nullfile", modIdx };
 }
 
 /**
@@ -81,7 +69,7 @@ void FileMap::addIgnoreFile(const string &ignoreFile)
  * @param origFile Original filename.
  * @param modFile Mod filename.
  */
-void FileMap::addReplaceFile(const std::string &origFile, const std::string &modFile)
+void FileMap::addReplaceFile(const std::string& origFile, const std::string& modFile)
 {
 	string origFile_norm = normalizePath(origFile);
 	string modFile_norm = normalizePath(modFile);
@@ -92,23 +80,61 @@ void FileMap::addReplaceFile(const std::string &origFile, const std::string &mod
 	{
 		// Destination file is being replaced.
 		// Use the replacement for the original file.
-		setReplaceFile(origFile_norm, iter->second);
+		setReplaceFile(origFile_norm, iter->second.fileName, iter->second.modIndex);
 	}
 	else
 	{
 		// Destination file is not already in the map.
-		setReplaceFile(origFile_norm, modFile_norm);
+		setReplaceFile(origFile_norm, modFile_norm, 0);
 	}
+}
+
+/**
+* Swap two files.
+* @param fileA First filename.
+* @param fileB Second filename.
+*/
+void FileMap::swapFiles(const std::string& fileA, const std::string& fileB)
+{
+	string fileA_norm = normalizePath(fileA);
+	string fileB_norm = normalizePath(fileB);
+
+	string fileA_repl = fileB_norm;
+	int fileA_ind = 0;
+	string fileB_repl = fileA_norm;
+	int fileB_ind = 0;
+
+	// Check if the destination file is being replaced.
+	auto iter = m_fileMap.find(fileA_repl);
+	if (iter != m_fileMap.end())
+	{
+		// Destination file is being replaced.
+		// Use the replacement for the original file.
+		fileA_repl = iter->second.fileName;
+		fileA_ind = iter->second.modIndex;
+	}
+	iter = m_fileMap.find(fileB_repl);
+	if (iter != m_fileMap.end())
+	{
+		// Destination file is being replaced.
+		// Use the replacement for the original file.
+		fileB_repl = iter->second.fileName;
+		fileB_ind = iter->second.modIndex;
+	}
+
+	setReplaceFile(fileA_norm, fileA_repl, fileA_ind);
+	setReplaceFile(fileB_norm, fileB_repl, fileB_ind);
 }
 
 /**
  * Recursively scan a directory and add all files to the replacement map.
  * Destination is always relative to system/.
  * @param srcPath Path to scan.
+ * @param modIdx Index of the current mod.
  */
-void FileMap::scanFolder(const string &srcPath)
+void FileMap::scanFolder(const string& srcPath, int modIdx)
 {
-	scanFolder_int(srcPath, srcPath.length() + 1);
+	scanFolder_int(srcPath, srcPath.length() + 1, modIdx);
 }
 
 /**
@@ -117,15 +143,18 @@ void FileMap::scanFolder(const string &srcPath)
  * (Internal recursive function)
  * @param srcPath Path to scan.
  * @param srcLen Length of original srcPath. (used for recursion)
+ * @param modIdx Index of the current mod.
  */
-void FileMap::scanFolder_int(const std::string &srcPath, int srcLen)
+void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 {
 	WIN32_FIND_DATAA data;
-	string srcPathSearch = srcPath + "\\*";
-	HANDLE hFind = FindFirstFileA(srcPathSearch.c_str(), &data);
+	char path[MAX_PATH];
+	snprintf(path, sizeof(path), "%s\\*", srcPath.c_str());
+	HANDLE hFind = FindFirstFileA(path, &data);
+
+	// No files found.
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
-		// No files found.
 		return;
 	}
 
@@ -138,23 +167,25 @@ void FileMap::scanFolder_int(const std::string &srcPath, int srcLen)
 		{
 			continue;
 		}
-		else if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			// Recursively scan this directory.
-			string newSrcPath = srcPath + "\\" + string(data.cFileName);
-			scanFolder_int(newSrcPath, srcLen);
+			const string newSrcPath = srcPath + '\\' + string(data.cFileName);
+			scanFolder_int(newSrcPath, srcLen, modIdx);
+			continue;
 		}
-		else
-		{
-			// Create the mod filename and original filename.
-			string modFile = srcPath + "\\" + string(data.cFileName);
-			transform(modFile.begin(), modFile.end(), modFile.begin(), ::tolower);
-			string fileBase = modFile.substr(srcLen);
-			string origFile = "system\\" + fileBase;
-			setReplaceFile(origFile, modFile);
-		}
-	}
-	while (FindNextFileA(hFind, &data) != 0);
+
+		// Create the mod filename and original filename.
+		string modFile = srcPath + '\\' + string(data.cFileName);
+		transform(modFile.begin(), modFile.end(), modFile.begin(), ::tolower);
+
+		// Original filename.
+		string origFile = "resource\\gd_pc\\" + modFile.substr(srcLen);
+
+		setReplaceFile(origFile, modFile, modIdx);
+	} while (FindNextFileA(hFind, &data) != 0);
+
 	FindClose(hFind);
 }
 
@@ -164,31 +195,16 @@ void FileMap::scanFolder_int(const std::string &srcPath, int srcLen)
  * (Internal function; handles memory allocation)
  * @param origFile Original file.
  * @param destFile Replacement filename.
+ * @param modIdx Index of the current mod.
  */
-void FileMap::setReplaceFile(const std::string &origFile, const std::string &destFile)
+void FileMap::setReplaceFile(const std::string& origFile, const std::string& destFile, int modIdx)
 {
 	// Update the main map.
-	m_fileMap[origFile] = destFile;
+	m_fileMap[origFile] = { destFile, modIdx };
 
-	// Remove the file extension from the original filename.
-	char pathnoext[MAX_PATH];
-	strncpy(pathnoext, origFile.c_str(), sizeof(pathnoext));
-	PathRemoveExtensionA(pathnoext);
-	string s_pathnoext(pathnoext);
-
-	// Check if m_fileNoExtMap already has a list.
-	auto iter_noext = m_fileNoExtMap.find(s_pathnoext);
-	if (iter_noext == m_fileNoExtMap.end())
-	{
-		// No list yet.
-		iter_noext = m_fileNoExtMap.insert(std::make_pair(s_pathnoext, new forward_list<string>())).first;
-	}
-	forward_list<string> *fileList = iter_noext->second;
-
-	// Add the filename to the list.
-	fileList->push_front(destFile);
-
+#ifdef _DEBUG
 	PrintDebug("Replaced file: \"%s\" = \"%s\"\n", origFile.c_str(), destFile.c_str());
+#endif
 }
 
 /**
@@ -196,14 +212,14 @@ void FileMap::setReplaceFile(const std::string &origFile, const std::string &des
  * @param lpFileName Filename.
  * @return Replaced filename, or original filename if not replaced by a mod.
  */
-const char *FileMap::replaceFile(const char *lpFileName) const
+const char* FileMap::replaceFile(const char* lpFileName) const
 {
 	// Check if the normalized filename is in the file replacement map.
 	string path = normalizePath(lpFileName);
-	unordered_map<string, string>::const_iterator iter = m_fileMap.find(path);
+	auto iter = m_fileMap.find(path);
 	if (iter != m_fileMap.cend())
 	{
-		const string &newFileName = iter->second;
+		const string& newFileName = iter->second.fileName;
 		return newFileName.c_str();
 	}
 
@@ -213,30 +229,28 @@ const char *FileMap::replaceFile(const char *lpFileName) const
 }
 
 /**
- * Find filenames that matches the specified filename, ignoring the extension.
- * This is used for BASS vgmstream.
+ * Get the index of the mod that replaced a given file.
  * @param lpFileName Filename.
- * @return List of matching filenames, or nullptr if not fonud.
+ * @return Index of the mod that replaced a file, or 0 if no mod replaced it.
  */
-const forward_list<string>* FileMap::findFileNoExt(const char *lpFileName) const
+int FileMap::getModIndex(const char* lpFileName) const
 {
-	// Remove the file extension from the specified filename.
-	char pathnoext[MAX_PATH];
-	strncpy(pathnoext, lpFileName, sizeof(pathnoext));
-	PathRemoveExtensionA(pathnoext);
-	string s_pathnoext = normalizePath(pathnoext);
+	// Check if the normalized filename is in the file replacement map.
+	string path = normalizePath(lpFileName);
+	auto iter = m_fileMap.find(path);
+	if (iter != m_fileMap.cend())
+	{
+		return iter->second.modIndex;
+	}
 
-	auto iter = m_fileNoExtMap.find(s_pathnoext);
-	return (iter != m_fileNoExtMap.cend()
-		? iter->second
-		: nullptr);
+	// File was not replaced by a mod.
+	return 0;
 }
 
 /**
  * Clear the file replacement map.
  */
-void FileMap::clear(void)
+void FileMap::clear()
 {
-	m_fileNoExtMap.clear();
 	m_fileMap.clear();
 }

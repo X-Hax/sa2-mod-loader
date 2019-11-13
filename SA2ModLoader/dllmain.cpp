@@ -22,43 +22,13 @@
 #include "testspawn.h"
 #include "EXEData.h"
 #include "DLLData.h"
+#include "FileReplacement.h"
 
 static std::thread* window_thread = nullptr;
 
 using namespace std;
 
-// TODO: Split file replacement into separate file(s)
-
-inline int backslashes(int c)
-{
-	return (c == '/') ? '\\' : c;
-}
-
-string NormalizePath(string path)
-{
-	string pathlower = path;
-	if (pathlower.length() > 2 && (pathlower[0] == '.' && pathlower[1] == '\\'))
-		pathlower = pathlower.substr(2, pathlower.length() - 2);
-	transform(pathlower.begin(), pathlower.end(), pathlower.begin(), ::tolower);
-	return pathlower;
-}
-
-IniGroup settings;
-unordered_map<string, char *> filemap;
 const string resourcedir = "resource\\gd_pc\\";
-string sa2dir;
-const char *_ReplaceFile(const char *lpFileName)
-{
-	string path = lpFileName;
-	transform(path.begin(), path.end(), path.begin(), backslashes);
-	path = NormalizePath(path);
-	if (path.length() > sa2dir.length() && path.compare(0, sa2dir.length(), sa2dir) == 0)
-		path = path.substr(sa2dir.length(), path.length() - sa2dir.length());
-	unordered_map<string, char *>::iterator fileIter = filemap.find(path);
-	if (fileIter != filemap.end())
-		lpFileName = fileIter->second;
-	return lpFileName;
-}
 
 unordered_map<string, unordered_set<string>*> csbfilemap;
 struct itercont { unordered_set<string>::const_iterator cur; unordered_set<string>::const_iterator end; };
@@ -66,12 +36,12 @@ __out HANDLE WINAPI FindFirstCSBFileA(__in  LPCSTR lpFileName, __out LPWIN32_FIN
 {
 	string path = lpFileName;
 	path.erase(path.size() - 2);
-	path = NormalizePath(path);
+	path = FileMap::normalizePath(path);
 	auto iter = csbfilemap.find(path);
 	if (iter == csbfilemap.cend())
 		return INVALID_HANDLE_VALUE;
 	auto it2 = iter->second->cbegin();
-	HANDLE hfind = FindFirstFileA(_ReplaceFile(it2->c_str()), lpFindFileData);
+	HANDLE hfind = FindFirstFileA(sadx_fileMap.replaceFile(it2->c_str()), lpFindFileData);
 	if (hfind == INVALID_HANDLE_VALUE)
 		return INVALID_HANDLE_VALUE;
 	FindClose(hfind);
@@ -84,7 +54,7 @@ BOOL WINAPI FindNextCSBFileA(__in  HANDLE hFindFile, __out LPWIN32_FIND_DATAA lp
 	++iter->cur;
 	if (iter->cur == iter->end)
 		return FALSE;
-	HANDLE hfind = FindFirstFileA(_ReplaceFile(iter->cur->c_str()), lpFindFileData);
+	HANDLE hfind = FindFirstFileA(sadx_fileMap.replaceFile(iter->cur->c_str()), lpFindFileData);
 	if (hfind == INVALID_HANDLE_VALUE)
 		return FALSE;
 	FindClose(hfind);
@@ -148,7 +118,7 @@ ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
 	char combinedpath[MAX_PATH];
 	PathCombineA(combinedpath, dir, fn);
 	PathAddExtensionA(combinedpath, ".ini");
-	const char *repfn = _ReplaceFile(combinedpath);
+	const char *repfn = sadx_fileMap.replaceFile(combinedpath);
 	if (PathFileExistsA(repfn))
 	{
 		FILE *f_mod_ini = fopen(repfn, "r");
@@ -329,11 +299,6 @@ __declspec(naked) void ReleaseMDLFile_r()
 	}
 }
 
-HANDLE __stdcall MyCreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
-{
-	return CreateFileA(_ReplaceFile(lpFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
-}
-
 void HookImport(const HMODULE hModule, LPCSTR moduleName, const PROC pActualFunction, const PROC pNewFunction)
 {
 	ULONG ulSize = 0;
@@ -454,37 +419,6 @@ void ScanCSBFolder(string path, int length)
 				} while (FindNextFileA(newhfind, &newdata) != 0);
 				FindClose(newhfind);
 			}
-		}
-	} while (FindNextFileA(hfind, &data) != 0);
-	FindClose(hfind);
-}
-
-void ScanFolder(string path, int length)
-{
-	_WIN32_FIND_DATAA data;
-	HANDLE hfind = FindFirstFileA((path + "\\*").c_str(), &data);
-	if (hfind == INVALID_HANDLE_VALUE)
-		return;
-	do
-	{
-		if (data.cFileName[0] == '.')
-			continue;
-		else if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-			ScanFolder(path + "\\" + data.cFileName, length);
-		else
-		{
-			string filebase = path + "\\" + data.cFileName;
-			transform(filebase.begin(), filebase.end(), filebase.begin(), ::tolower);
-			string modfile = filebase;
-			filebase = filebase.substr(length);
-			string origfile = resourcedir + filebase;
-			char *buf = new char[modfile.length() + 1];
-			if (filemap.find(origfile) != filemap.end())
-				delete[] filemap[origfile];
-			filemap[origfile] = buf;
-			modfile.copy(buf, modfile.length());
-			buf[modfile.length()] = 0;
-			PrintDebug("Replaced file: \"%s\" = \"%s\"", origfile.c_str(), buf);
 		}
 	} while (FindNextFileA(hfind, &data) != 0);
 	FindClose(hfind);
@@ -1159,6 +1093,22 @@ static void HookExport(LPCSTR exportName, const void* newdata)
 	}
 }
 
+const char* __cdecl GetReplaceablePath(const char* path)
+{
+	return sadx_fileMap.replaceFile(path);
+}
+
+void _ReplaceFile(const char* src, const char* dst)
+{
+	sadx_fileMap.addReplaceFile(src, dst);
+}
+
+void SetWindowTitle(const char* title)
+{
+	if (MainWindowHandle)
+		SetWindowTextA(MainWindowHandle, title);
+}
+
 const HelperFunctions helperFunctions = {
 	ModLoaderVer,
 	RegisterStartPosition,
@@ -1171,7 +1121,10 @@ const HelperFunctions helperFunctions = {
 	ClearEndPositionList,
 	RegisterMission23EndPosition,
 	ClearMission23EndPositionList,
-	HookExport
+	HookExport,
+	GetReplaceablePath,
+	_ReplaceFile,
+	SetWindowTitle
 };
 
 void __cdecl InitMods(void)
@@ -1246,8 +1199,11 @@ void __cdecl InitMods(void)
 
 	InitScreenFadeFix();
 
-	// Map of files to replace and/or swap.
-	unordered_map<string, string> filereplaces = unordered_map<string, string>();
+	// Map of files to replace.
+	// This is done with a second map instead of sadx_fileMap directly
+	// in order to handle multiple mods.
+	unordered_map<string, string> filereplaces;
+	vector<std::pair<string, string>> fileswaps;
 
 	InitializeStartPositionLists();
 	Initialize2PIntroPositionLists();
@@ -1295,7 +1251,7 @@ void __cdecl InitMods(void)
 			for (unordered_map<string, string>::const_iterator iter = data->begin();
 				iter != data->end(); ++iter)
 			{
-				filemap[iter->first] = "nullfile";
+				sadx_fileMap.addIgnoreFile(iter->first, i);
 				PrintDebug("Ignored file: %s\n", iter->first.c_str());
 			}
 		}
@@ -1307,31 +1263,28 @@ void __cdecl InitMods(void)
 			for (unordered_map<string, string>::const_iterator iter = data->begin();
 				iter != data->end(); ++iter)
 			{
-				filereplaces[NormalizePath(iter->first)] =
-					NormalizePath(iter->second);
+				filereplaces[FileMap::normalizePath(iter->first)] =
+					FileMap::normalizePath(iter->second);
 			}
 		}
 
 		if (ini_mod->hasGroup("SwapFiles"))
 		{
-			const IniGroup *group = ini_mod->getGroup("SwapFiles");
+			const IniGroup* group = ini_mod->getGroup("SwapFiles");
 			auto data = group->data();
-			for (unordered_map<string, string>::const_iterator iter = data->begin();
-				iter != data->end(); ++iter)
+			for (const auto& iter : *data)
 			{
-				filereplaces[NormalizePath(iter->first)] =
-					NormalizePath(iter->second);
-				filereplaces[NormalizePath(iter->second)] =
-					NormalizePath(iter->first);
+				fileswaps.emplace_back(FileMap::normalizePath(iter.first),
+					FileMap::normalizePath(iter.second));
 			}
 		}
 
 		// Check for gd_pc replacements
 		string sysfol = mod_dirA + "\\gd_pc";
 		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
-		if (GetFileAttributesA(sysfol.c_str()) & FILE_ATTRIBUTE_DIRECTORY)
+		if (DirectoryExists(sysfol))
 		{
-			ScanFolder(sysfol, sysfol.length() + 1);
+			sadx_fileMap.scanFolder(sysfol, i);
 			ScanCSBFolder(sysfol + "\\mlt", sysfol.length() + 1);
 			ScanCSBFolder(sysfol + "\\mpb", sysfol.length() + 1);
 			ScanCSBFolder(sysfol + "\\event\\mlt", sysfol.length() + 1);
@@ -1482,20 +1435,14 @@ void __cdecl InitMods(void)
 		MessageBoxA(nullptr, message.str().c_str(), "Mods failed to load", MB_OK | MB_ICONERROR);
 	}
 
-	// Replace filenames. ("ReplaceFiles", "SwapFiles")
-	for (auto it = filereplaces.begin(); it != filereplaces.end(); it++)
+	// Replace filenames. ("ReplaceFiles")
+	for (const auto& filereplace : filereplaces)
 	{
-		auto f = filemap.find(it->second);
-		if (f != filemap.end())
-			filemap[it->first] = f->second;
-		else
-		{
-			char *buf = new char[it->second.length() + 1];
-			filemap[it->first] = buf;
-			it->second.copy(buf, it->second.length());
-			buf[it->second.length()] = 0;
-			PrintDebug("Replaced file: \"%s\" = \"%s\"", it->first.c_str(), buf);
-		}
+		sadx_fileMap.addReplaceFile(filereplace.first, filereplace.second);
+	}
+	for (const auto& fileswap : fileswaps)
+	{
+		sadx_fileMap.swapFiles(fileswap.first, fileswap.second);
 	}
 
 	for (unsigned int i = 0; i < initfuncs.size(); i++)
@@ -1693,18 +1640,9 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	LPVOID lpReserved
 )
 {
-	int bufsize;
-	char *buf;
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		bufsize = GetCurrentDirectoryA(0, NULL);
-		buf = new char[bufsize];
-		GetCurrentDirectoryA(bufsize, buf);
-		sa2dir = buf;
-		delete[] buf;
-		transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
-		sa2dir += "\\";
 		WriteJump((void *)0x77DEEA, InitMods);
 		break;
 	case DLL_THREAD_ATTACH:
