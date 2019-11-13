@@ -16,7 +16,7 @@
 
 // ModInfo
 
-static const int ModLoaderVer = 6;
+static const int ModLoaderVer = 7;
 
 struct PatchInfo
 {
