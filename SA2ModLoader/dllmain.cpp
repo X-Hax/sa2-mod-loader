@@ -1640,12 +1640,14 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	LPVOID lpReserved
 )
 {
+	int bufsize;
+	char* buf;
 	string sa2dir;
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		int bufsize = GetCurrentDirectoryA(0, NULL);
-		char *buf = new char[bufsize];
+		bufsize = GetCurrentDirectoryA(0, NULL);
+		buf = new char[bufsize];
 		GetCurrentDirectoryA(bufsize, buf);
 		sa2dir = buf;
 		delete[] buf;
