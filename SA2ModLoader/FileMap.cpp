@@ -216,6 +216,8 @@ const char* FileMap::replaceFile(const char* lpFileName) const
 {
 	// Check if the normalized filename is in the file replacement map.
 	string path = normalizePath(lpFileName);
+	if (path.length() > sa2dir.length() && path.compare(0, sa2dir.length(), sa2dir) == 0)
+		path = path.substr(sa2dir.length(), path.length() - sa2dir.length());
 	auto iter = m_fileMap.find(path);
 	if (iter != m_fileMap.cend())
 	{
@@ -253,4 +255,9 @@ int FileMap::getModIndex(const char* lpFileName) const
 void FileMap::clear()
 {
 	m_fileMap.clear();
+}
+
+void FileMap::setSA2Dir(string dir)
+{
+	sa2dir = dir;
 }

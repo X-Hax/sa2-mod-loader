@@ -103,6 +103,11 @@ public:
 	 */
 	void clear();
 
+	/**
+	 * Set the SA2 directory.
+	 */
+	void setSA2Dir(std::string dir);
+
 protected:
 
 	struct Entry
@@ -117,6 +122,7 @@ protected:
 	 * - Value: New filename.
 	 */
 	std::unordered_map<std::string, Entry> m_fileMap;
+	std::string sa2dir;
 };
 
 #endif /* FILEMAP_HPP */

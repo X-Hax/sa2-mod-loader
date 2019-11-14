@@ -1640,9 +1640,18 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	LPVOID lpReserved
 )
 {
+	string sa2dir;
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		int bufsize = GetCurrentDirectoryA(0, NULL);
+		char *buf = new char[bufsize];
+		GetCurrentDirectoryA(bufsize, buf);
+		sa2dir = buf;
+		delete[] buf;
+		transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
+		sa2dir += "\\";
+		sadx_fileMap.setSA2Dir(sa2dir);
 		WriteJump((void *)0x77DEEA, InitMods);
 		break;
 	case DLL_THREAD_ATTACH:
