@@ -97,7 +97,7 @@ struct HelperFunctions
 	void(__cdecl* ReplaceFile)(const char* src, const char* dst);
 	// Sets the window title.
 	// Requires version >= 7.
-	void(__cdecl* SetWindowTitle)(const char* title);
+	void(__cdecl* SetWindowTitle)(const wchar_t* title);
 };
 
 typedef void(__cdecl *ModInitFunc)(const char *path, const HelperFunctions &helperFunctions);

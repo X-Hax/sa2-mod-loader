@@ -1103,10 +1103,10 @@ void _ReplaceFile(const char* src, const char* dst)
 	sadx_fileMap.addReplaceFile(src, dst);
 }
 
-void SetWindowTitle(const char* title)
+void SetWindowTitle(const wchar_t* title)
 {
 	if (MainWindowHandle)
-		SetWindowTextA(MainWindowHandle, title);
+		SetWindowTextW(MainWindowHandle, title);
 }
 
 const HelperFunctions helperFunctions = {
