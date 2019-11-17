@@ -280,9 +280,9 @@ static void ProcessCharaObjectDataListDLL(const IniGroup* group, const wstring& 
 			entry.SuperAnimation3 = (NJS_MOTION*)labels[chrdata->getString("SuperAnimation3")];
 		}
 		entry.anonymous_9 = chrdata->getInt("Unknown1");
-		entry.anonymous_10 = chrdata->getInt("Unknown2");
-		entry.anonymous_11 = chrdata->getInt("Unknown3");
-		entry.anonymous_12 = chrdata->getInt("Unknown4");
+		entry.Rating = chrdata->getInt("Rating");
+		entry.DescriptionID = chrdata->getInt("DescriptionID");
+		entry.TextBackTexture = chrdata->getInt("TextBackTexture");
 		entry.anonymous_13 = chrdata->getFloat("Unknown5");
 		chars.push_back(entry);
 	}
