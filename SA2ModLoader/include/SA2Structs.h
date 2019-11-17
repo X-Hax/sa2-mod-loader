@@ -2044,9 +2044,9 @@ struct CharaObjectData
 	NJS_MOTION* SuperAnimation2;
 	NJS_MOTION* SuperAnimation3;
 	int anonymous_9;
-	int anonymous_10;
-	int anonymous_11;
-	int anonymous_12;
+	int Rating;
+	int DescriptionID;
+	int TextBackTexture;
 	float anonymous_13;
 };
 #pragma pack(pop)
