@@ -181,6 +181,11 @@ void TestSpawnCheckArgs(const HelperFunctions &helperFunctions)
 
 			helperFunctions.RegisterStartPosition(chara, position);
 		}
+		else if (!wcscmp(argv[i], L"--savenum") || !wcscmp(argv[i], L"-s"))
+		{
+			SetWorkingSave(wcstol(argv[++i], nullptr, 10));
+			ProbablyLoadsSave(0);
+		}
 	}
 
 	StoryEntry* story = (StoryEntry*)0x173A5E0;

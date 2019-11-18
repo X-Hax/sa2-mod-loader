@@ -58,7 +58,6 @@ ObjectFunc(JingleTask_Delete, 0x443320);
 ObjectFunc(JingleTask, 0x4433D0);
 FunctionPointer(int, ProbablySavesSaveFile, (), 0x4436A0);
 FunctionPointer(int, ProbablyLoadsSave, (char), 0x445100);
-FunctionPointer(int, SetWorkingSave, (), 0x445310);
 FunctionPointer(int, SetWorkingSaveD, (), 0x445330);
 ObjectFunc(DrawLine3DExec, 0x44B680);
 FunctionPointer(int, Get_dword_1A559C8, (), 0x44BFE0);
@@ -1584,6 +1583,17 @@ static inline void PlaySong_Queue(const char *song)
 	{
 		mov eax, [song]
 		call PlaySong_QueuePtr
+	}
+}
+
+// void __usercall(int a1@<eax>)
+static const void *const SetWorkingSavePtr = (void*)0x445310;
+static inline void SetWorkingSave(int a1)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call SetWorkingSavePtr
 	}
 }
 
