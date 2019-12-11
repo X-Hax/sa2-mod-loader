@@ -293,10 +293,69 @@ static void ProcessCharaObjectDataListDLL(const IniGroup* group, const wstring& 
 	HookExport(group->getString("export").c_str(), list);
 }
 
+static void ProcessKartSpecialInfoListDLL(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename")) return;
+	unordered_map<string, void*> labels;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\*.sa2mdl",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	WIN32_FIND_DATA fdata;
+
+	HANDLE hFind = FindFirstFile(filename, &fdata);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
+			mod_dir.c_str(), group->getWString("filename").c_str(), fdata.cFileName);
+		auto mdllbl = (new ModelInfo(filename))->getlabels();
+		for (auto iter = mdllbl->cbegin(); iter != mdllbl->cend(); ++iter)
+			labels[iter->first] = iter->second;
+	} while (FindNextFile(hFind, &fdata));
+
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\info.ini",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<KartSpecialInfo> chars;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* chrdata = data->getGroup(key);
+		KartSpecialInfo entry{};
+		entry.ID = chrdata->getInt("ID");
+		entry.Model = (NJS_OBJECT*)labels[chrdata->getString("Model")];
+		if (chrdata->hasKeyNonEmpty("LowModel"))
+			entry.LowModel = (NJS_OBJECT*)labels[chrdata->getString("LowModel")];
+		if (chrdata->hasKeyNonEmpty("TexList"))
+		{
+			entry.TexList = (NJS_TEXLIST*)chrdata->getIntRadix("TexList", 16);
+			auto tl = dlltexlists.find(entry.TexList);
+			if (tl != dlltexlists.end())
+				entry.TexList = tl->second;
+		}
+		entry.Unknown1 = chrdata->getInt("Unknown1");
+		entry.Unknown2 = chrdata->getInt("Unknown2");
+		entry.Unknown3 = chrdata->getInt("Unknown3");
+		chars.push_back(entry);
+	}
+	delete data;
+	auto numents = chars.size();
+	auto list = new KartSpecialInfo[numents];
+	arrcpy(list, chars.data(), numents);
+	HookExport(group->getString("export").c_str(), list);
+}
+
 typedef void(__cdecl* dlldatafunc_t)(const IniGroup* group, const wstring& mod_dir);
 static const unordered_map<string, dlldatafunc_t> dlldatafuncmap = {
 	{ "animindexlist", ProcessAnimIndexListDLL },
 	{ "charaobjectdatalist", ProcessCharaObjectDataListDLL },
+	{ "kartspecialinfolist", ProcessKartSpecialInfoListDLL },
 };
 
 struct dllexportinfo { void* address = nullptr; string type; };

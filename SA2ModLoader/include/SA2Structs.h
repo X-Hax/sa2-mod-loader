@@ -2049,4 +2049,15 @@ struct CharaObjectData
 	int TextBackTexture;
 	float anonymous_13;
 };
+
+struct KartSpecialInfo
+{
+	int ID;
+	NJS_OBJECT* Model;
+	NJS_OBJECT* LowModel;
+	NJS_TEXLIST* TexList;
+	int Unknown1;
+	int Unknown2;
+	int Unknown3;
+};
 #pragma pack(pop)
