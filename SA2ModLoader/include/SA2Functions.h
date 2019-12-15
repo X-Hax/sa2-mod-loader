@@ -69,7 +69,6 @@ FunctionPointer(int, GetHandicapThingMaybe, (int id), 0x44CBA0);
 ObjectFunc(DispTechniqueScore_Main, 0x44D320);
 FunctionPointer(int, DispTechniqueScore_Something, (int), 0x44D360);
 ObjectFunc(DispTechniqueScore_Delete, 0x44D8D0);
-FunctionPointer(int, DispTechniqueScore_Load, (), 0x44D910);
 ObjectFunc(CounterOfDestructedEnemy, 0x44DB80);
 ObjectFunc(ScoreWindow, 0x44EEA0);
 ObjectFunc(CalcTotalScore, 0x44F7C0);
@@ -1639,6 +1638,17 @@ static inline void AddScore(int a1)
 	__asm
 	{
 		mov eax, [a1]
+		call AddScorePtr
+	}
+}
+
+// void __usercall(signed int a1@<ebx>)
+static const void* const DispTechniqueScore_LoadPtr = (void*)0x44D910;
+static inline void DispTechniqueScore_Load(signed int a1)
+{
+	__asm
+	{
+		mov ebx, [a1]
 		call AddScorePtr
 	}
 }
