@@ -1649,7 +1649,7 @@ static inline void DispTechniqueScore_Load(signed int a1)
 	__asm
 	{
 		mov ebx, [a1]
-		call AddScorePtr
+		call DispTechniqueScore_Load
 	}
 }
 
