@@ -603,7 +603,8 @@ struct CharObj2Base
 	int field_12;
 	__int16 UnderwaterTime;
 	__int16 IdleTime;
-	char gap_1A[10];
+	__int16 ConfuseTime;
+	char gap_1C[8];
 	int Upgrades;
 	float field_28;
 	char field_2C[28];
