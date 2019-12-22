@@ -684,7 +684,7 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 					v4->Position = *v12;
 					v8 = &v4->Position;
 					*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
-					*(float*)&v3->field_1A0[5] = v4->Position.y - 10.0f;
+					v3->idk6 = v4->Position.y - 10.0f;
 					goto LABEL_16;
 				}
 			}
@@ -698,7 +698,7 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 LABEL_16:
 	sub_46DC70(playerNum, v8, 0);
 	*((char *)&v4->Collision->CollisionArray->field_2) |= 0x70u;
-	*(int *)&MainCharObj2[playerNum]->gap_70[6] = 0;
+	*(int *)&MainCharObj2[playerNum]->gap70[6] = 0;
 	byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
 	CharObj2Base *v9 = MainCharObj2[playerNum];
 	float *v10 = (float *)*(&off_1DE95E0 + playerNum);
@@ -852,7 +852,7 @@ void __cdecl LoadEndPosition_ri(int playerNum)
 					v7->y = v9->y;
 					v7->z = v9->z;
 					v10 = v4->Position.y - 10;
-					*(float*)&MainCharObj2[v1]->field_1A0[5] = v10;
+					MainCharObj2[v1]->idk6 = v10;
 					*(char*)&MainCharObj2[v1]->field_144[0] = 0;
 					goto LABEL_27;
 				}
@@ -869,7 +869,7 @@ void __cdecl LoadEndPosition_ri(int playerNum)
 	LABEL_27:
 		sub_46DC70(v1, v7, 0);
 		v4->Collision->CollisionArray->field_2 |= 0x70u;
-		*(int *)&MainCharObj2[v1]->gap_70[24] = 0;
+		*(int *)&MainCharObj2[v1]->gap70[24] = 0;
 		if (CurrentLevel == LevelIDs_RadicalHighway || CurrentLevel == LevelIDs_LostColony)
 		{
 			byte_1DE4664[v1 & 1] = 5;
@@ -1021,11 +1021,11 @@ LABEL_13:
 	v10->y = v9->y;
 	v10->z = v9->z;
 	v11 = v4->Position.y - 10;
-	*(float*)&MainCharObj2[v1]->field_1A0[5] = v11;
+	MainCharObj2[v1]->idk6 = v11;
 	*(char*)&MainCharObj2[v1]->field_144[0] = 0;
 	sub_46DC70(v1, &v4->Position, 0);
 	v4->Collision->CollisionArray->field_2 |= 0x70u;
-	*(int *)&MainCharObj2[v1]->gap_70[24] = 0;
+	*(int *)&MainCharObj2[v1]->gap70[24] = 0;
 	v7 = v1 & 1;
 	if (CurrentLevel == LevelIDs_LostColony)
 	{
