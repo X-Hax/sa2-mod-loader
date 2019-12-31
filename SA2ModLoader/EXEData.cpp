@@ -808,6 +808,7 @@ void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
 	const IniFile *const exedata = new IniFile(filename);
 	for (auto iter = exedata->cbegin(); iter != exedata->cend(); ++iter)
 	{
+		if (iter->first.empty()) continue;
 		IniGroup *group = iter->second;
 		auto typestr = group->getString("type");
 		auto type = exedatafuncmap.find(typestr);
