@@ -785,6 +785,7 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "model", ProcessModelINI },
 	{ "basicmodel", ProcessModelINI },
 	{ "chunkmodel", ProcessModelINI },
+	{ "gcmodel", ProcessModelINI },
 	{ "action", ProcessActionINI },
 	{ "animation", ProcessAnimationINI },
 	{ "objlist", ProcessObjListINI },
