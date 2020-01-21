@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cstdint>
-#include <SA2ModLoader.h>
+#include "SA2ModLoader.h"
 
 enum LandTableFormat
 {
