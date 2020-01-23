@@ -351,11 +351,61 @@ static void ProcessKartSpecialInfoListDLL(const IniGroup* group, const wstring& 
 	HookExport(group->getString("export").c_str(), list);
 }
 
+static void ProcessChaoMotionTableDLL(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename")) return;
+	unordered_map<string, void*> labels;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\*.saanim",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	WIN32_FIND_DATA fdata;
+
+	HANDLE hFind = FindFirstFile(filename, &fdata);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
+			mod_dir.c_str(), group->getWString("filename").c_str(), fdata.cFileName);
+		auto anim = new AnimationFile(filename);
+		labels[anim->getlabel()] = anim->getmotion();
+	} while (FindNextFile(hFind, &fdata));
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\info.ini",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<ChaoMotionTableEntry> chars;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* chrdata = data->getGroup(key);
+		ChaoMotionTableEntry entry{};
+		entry.Motion = (NJS_MOTION*)labels[chrdata->getString("Motion")];
+		entry.Flag1 = chrdata->getIntRadix("Flag1", 16);
+		entry.TransitionID = chrdata->getInt("TransitionID");
+		entry.Flag2 = chrdata->getIntRadix("Flag2", 16);
+		entry.StartFrame = chrdata->getFloat("StartFrame");
+		entry.EndFrame = chrdata->getFloat("EndFrame");
+		entry.PlaySpeed = chrdata->getFloat("PlaySpeed");
+		chars.push_back(entry);
+	}
+	delete data;
+	auto numents = chars.size();
+	auto list = new ChaoMotionTableEntry[numents];
+	arrcpy(list, chars.data(), numents);
+	HookExport(group->getString("export").c_str(), list);
+}
+
 typedef void(__cdecl* dlldatafunc_t)(const IniGroup* group, const wstring& mod_dir);
 static const unordered_map<string, dlldatafunc_t> dlldatafuncmap = {
 	{ "animindexlist", ProcessAnimIndexListDLL },
 	{ "charaobjectdatalist", ProcessCharaObjectDataListDLL },
 	{ "kartspecialinfolist", ProcessKartSpecialInfoListDLL },
+	{ "chaomotiontable", ProcessChaoMotionTableDLL },
 };
 
 struct dllexportinfo { void* address = nullptr; string type; };

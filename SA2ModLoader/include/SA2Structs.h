@@ -2071,4 +2071,15 @@ struct KartSpecialInfo
 	int Unknown2;
 	int Unknown3;
 };
+
+struct ChaoMotionTableEntry
+{
+	NJS_MOTION* Motion;
+	unsigned int Flag1;
+	int TransitionID;
+	unsigned int Flag2;
+	float StartFrame;
+	float EndFrame;
+	float PlaySpeed;
+};
 #pragma pack(pop)
