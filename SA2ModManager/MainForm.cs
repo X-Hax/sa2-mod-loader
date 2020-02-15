@@ -143,6 +143,7 @@ namespace SA2ModManager
 			LoadModList();
 
 			consoleCheckBox.Checked = loaderini.DebugConsole;
+			screenCheckBox.Checked = loaderini.DebugScreen;
 			fileCheckBox.Checked = loaderini.DebugFile;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
 			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
@@ -828,6 +829,7 @@ namespace SA2ModManager
 			foreach (ListViewItem item in modListView.CheckedItems)
 				loaderini.Mods.Add((string)item.Tag);
 			loaderini.DebugConsole = consoleCheckBox.Checked;
+			loaderini.DebugScreen = screenCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
 			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;

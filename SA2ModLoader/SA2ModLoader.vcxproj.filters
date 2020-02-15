@@ -66,6 +66,9 @@
     <ClInclude Include="FileReplacement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DebugText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -93,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileReplacement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

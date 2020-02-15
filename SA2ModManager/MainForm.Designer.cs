@@ -74,6 +74,7 @@
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
 			this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.screenCheckBox = new System.Windows.Forms.CheckBox();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
@@ -90,6 +91,7 @@
 			// 
 			groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			groupBox2.Controls.Add(this.screenCheckBox);
 			groupBox2.Controls.Add(this.fileCheckBox);
 			groupBox2.Controls.Add(this.consoleCheckBox);
 			groupBox2.Location = new System.Drawing.Point(6, 54);
@@ -102,10 +104,10 @@
 			// fileCheckBox
 			// 
 			this.fileCheckBox.AutoSize = true;
-			this.fileCheckBox.Location = new System.Drawing.Point(76, 19);
+			this.fileCheckBox.Location = new System.Drawing.Point(142, 19);
 			this.fileCheckBox.Name = "fileCheckBox";
 			this.fileCheckBox.Size = new System.Drawing.Size(42, 17);
-			this.fileCheckBox.TabIndex = 1;
+			this.fileCheckBox.TabIndex = 2;
 			this.fileCheckBox.Text = "File";
 			this.fileCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -588,6 +590,16 @@
 			this.generateManifestToolStripMenuItem.Text = "Generate manifest";
 			this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
 			// 
+			// screenCheckBox
+			// 
+			this.screenCheckBox.AutoSize = true;
+			this.screenCheckBox.Location = new System.Drawing.Point(76, 19);
+			this.screenCheckBox.Name = "screenCheckBox";
+			this.screenCheckBox.Size = new System.Drawing.Size(60, 17);
+			this.screenCheckBox.TabIndex = 1;
+			this.screenCheckBox.Text = "Screen";
+			this.screenCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -669,6 +681,7 @@
 		private System.Windows.Forms.Button modTopButton;
 		private System.Windows.Forms.Button modBottomButton;
 		private System.Windows.Forms.Button configureModButton;
+		private System.Windows.Forms.CheckBox screenCheckBox;
 	}
 }
 

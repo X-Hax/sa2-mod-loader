@@ -23,6 +23,7 @@
 #include "EXEData.h"
 #include "DLLData.h"
 #include "FileReplacement.h"
+#include "DebugText.h"
 
 static std::thread* window_thread = nullptr;
 
@@ -356,7 +357,7 @@ char *ShiftJISToUTF8(char *shiftjis)
 	return utf8;
 }
 
-bool dbgConsole, dbgFile;
+bool dbgConsole, dbgFile, dbgScreen;
 ofstream dbgstr;
 uint32_t saveedx;
 int __cdecl SA2DebugOutput(const char *Format, ...)
@@ -372,6 +373,8 @@ int __cdecl SA2DebugOutput(const char *Format, ...)
 	va_end(ap);
 	if (dbgConsole)
 		cout << buf << "\n";
+	if (dbgScreen)
+		PrintDebug_Screen(buf);
 	if (dbgFile && dbgstr.good())
 	{
 		char *utf8 = ShiftJISToUTF8(buf);
@@ -1157,11 +1160,13 @@ void __cdecl InitMods(void)
 		freopen("CONOUT$", "wb", stdout);
 		dbgConsole = true;
 	}
+	dbgScreen = settings->getBool("DebugScreen");
 	if (settings->getBool("DebugFile"))
 	{
 		dbgstr = ofstream("mods\\SA2ModLoader.log", ios_base::ate | ios_base::app);
 		dbgFile = dbgstr.is_open();
 	}
+	DebugText_Init();
 	if (dbgConsole || dbgFile)
 	{
 		WriteJump(PrintDebug, SA2DebugOutput);
