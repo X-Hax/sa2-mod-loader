@@ -584,18 +584,8 @@ void PreEndSceneHook()
 	DrawDebugText();      //this draws it
 }
 
-void Debug_LoadShader()
-{
-	LPD3DXBUFFER pUIShaderBuffer;
-
-	D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", 0, 0, "main", "vs_3_0", 0, &pUIShaderBuffer, 0, 0);
-	dword_1A557C0->pointerToDevice->CreateVertexShader((DWORD*)pUIShaderBuffer->GetBufferPointer(), &uiShader);
-}
-
 void DebugText_Init()
 {
-	WriteCall((void*)0x00433FF7, PreEndSceneHook);
-
 	DebugMessages = (DebugStringInfo*)malloc(0x1000);
 	DebugTextBuffer = (char*)& DebugMessages[128];
 	DebugMessageMax = 128;
@@ -614,6 +604,12 @@ void DebugText_Init()
 	dword_1A557C0->pointerToDevice->CreateVertexDeclaration(testDeclaration, &declaration);
 	dword_1A557C0->pointerToDevice->CreateVertexDeclaration(drawPolygonDeclaration, &njDrawPolygonDeclaration);
 
-	Debug_LoadShader();
-	D3DXCreateTextureFromFileA(dword_1A557C0->pointerToDevice, "mods\\DebugFontTexture.dds", &texture);
+	LPD3DXBUFFER pUIShaderBuffer;
+
+	if (SUCCEEDED(D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", 0, 0, "main", "vs_3_0", 0, &pUIShaderBuffer, 0, 0)))
+	{
+		dword_1A557C0->pointerToDevice->CreateVertexShader((DWORD*)pUIShaderBuffer->GetBufferPointer(), &uiShader);
+		D3DXCreateTextureFromFileA(dword_1A557C0->pointerToDevice, "mods\\DebugFontTexture.dds", &texture);
+		WriteCall((void*)0x00433FF7, PreEndSceneHook);
+	}
 }
