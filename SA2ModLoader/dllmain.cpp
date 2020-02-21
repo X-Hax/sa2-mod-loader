@@ -1167,7 +1167,7 @@ void __cdecl InitMods(void)
 		dbgFile = dbgstr.is_open();
 	}
 	DebugText_Init();
-	if (dbgConsole || dbgFile || dbgScreen)
+	if (dbgConsole || dbgFile)
 	{
 		WriteJump(PrintDebug, SA2DebugOutput);
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
