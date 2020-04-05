@@ -779,6 +779,27 @@ static void ProcessStorySequenceINI(const IniGroup* group, const wstring& mod_di
 	ProcessPointerList(group->getString("pointer"), list);
 }
 
+static void ProcessStringINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	uint8_t language = ParseLanguage(group->getString("language"));
+	ifstream fstr(filename);
+	string str;
+	while (fstr.good())
+	{
+		string str2;
+		getline(fstr, str2);
+		if (str2[0] == '\r')
+			str2[0] = '\n';
+		str.append(DecodeUTF8(str2, language));
+	}
+	fstr.close();
+	ProcessPointerList(group->getString("pointer"), strdup(str.c_str()));
+}
+
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
 static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "landtable", ProcessLandTableINI },
@@ -802,6 +823,7 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	//{ "bmitemattrlist", ProcessBMItemAttrListINI },
 	{ "animindexlist", ProcessAnimIndexListINI },
 	{ "storysequence", ProcessStorySequenceINI },
+	{ "string", ProcessStringINI },
 };
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
