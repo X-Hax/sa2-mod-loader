@@ -117,6 +117,8 @@ typedef int     Int;
 
 typedef Sint32  Angle;
 
+typedef Sint16  Sangle;
+
 typedef Float   NJS_MATRIX[16];
 
 typedef Float NJS_FOG_TABLE[128];
@@ -1250,6 +1252,11 @@ typedef struct {
 	Uint32          keyframe;
 	Angle           key[3];     /* angle                        */
 } NJS_MKEY_A;
+
+typedef struct {
+	Uint16          keyframe;
+	Sangle          key[3];     /* angle                        */
+} NJS_MKEY_SA;
 
 typedef struct {
 	Uint32          keyframe;

@@ -52,6 +52,8 @@ NJS_MOTION* AnimationFile::getmotion() const { return motion; }
 
 int AnimationFile::getmodelcount() const { return modelcount; }
 
+bool AnimationFile::isshortrot() const { return shortrot; }
+
 const string& AnimationFile::getlabel() const
 {
 	return label;
@@ -131,6 +133,9 @@ void AnimationFile::init(istream& stream)
 	uint32_t tmpaddr;
 	readdata(stream, tmpaddr);
 	readdata(stream, modelcount);
+
+	shortrot = modelcount < 0;
+	modelcount &= INT32_MAX;
 
 	size_t mdlsize = tmpaddr - headersize;
 	auto motionbuf = new uint8_t[mdlsize];

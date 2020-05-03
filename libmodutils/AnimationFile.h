@@ -17,6 +17,7 @@ public:
 
 	NJS_MOTION *getmotion() const;
 	int getmodelcount() const;
+	bool isshortrot() const;
 	const std::string &getlabel() const;
 
 private:
@@ -27,6 +28,7 @@ private:
 
 	NJS_MOTION *motion;
 	int modelcount;
+	bool shortrot;
 	std::string label;
 	std::vector<std::shared_ptr<void>> allocatedmem;
 	std::unordered_set<void *> fixedpointers;
