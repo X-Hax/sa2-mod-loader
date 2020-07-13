@@ -1972,6 +1972,17 @@ static inline signed int InitCollision_0(unsigned __int8 a1, ObjectMaster *a2, C
 	return result;
 }
 
+// void __usercall(ObjectMaster *a1@<esi>)
+static const void* const AddToCollisionListPtr = (void*)0x47E750;
+static inline void AddToCollisionList(ObjectMaster* object)
+{
+	__asm
+	{
+		mov esi, [object]
+		call AddToCollisionListPtr
+	}
+}
+
 // bool __usercall@<eax>(NJS_VECTOR *a1@<ecx>, float x, float y, float z, float distance_maybe)
 static const void *const SETDistanceCheckThingPtr = (void*)0x488340;
 static inline bool SETDistanceCheckThing(NJS_VECTOR *a1, float x, float y, float z, float distance_maybe)
