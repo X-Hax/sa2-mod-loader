@@ -23,6 +23,7 @@ FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (const char *a1, ...), 0x426740);
 FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
+VoidFunc(ResetRenderSpace, 0x42D340);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int (__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST *), 0x42FD10);
@@ -1205,6 +1206,7 @@ FunctionPointer(void *, MemoryManager__Allocate, (int size, char *file, int line
 FunctionPointer(void *, MemoryManager__AllocateArray, (int count, int size), 0x77DFB0);
 FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem *a1, size_t count), 0x77DFE0);
 VoidFunc(UpdateControllers, 0x77E780);
+FunctionPointer(void, FreeTexList, (NJS_TEXLIST* texlist), 0x77F9F0);
 FunctionPointer(int, LoadStg00Module, (), 0x786500);
 FunctionPointer(int, LoadStg24Module, (), 0x786770);
 FunctionPointer(int, EternalEngine_Init, (), 0x786780);
