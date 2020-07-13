@@ -2010,7 +2010,7 @@ static inline void * LoadSETFile(int _size, char *name_s, char *name_u)
 
 // void* __usercall@<eax>(char *filename@<ecx>, int size)
 static const void* const LoadStageSETFilePtr = (void*)0x488F60;
-static inline void* LoadStageSETFile_(char* filename, int buffersize)
+static inline void* LoadStageSETFile(char* filename, int buffersize)
 {
 	void* result;
 	__asm
