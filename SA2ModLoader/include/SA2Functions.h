@@ -86,6 +86,7 @@ FunctionPointer(void, CountDownTimerForTimeLimit2P_Load, (char a1), 0x451B00);
 ObjectFunc(CountDownTimerForGameOver, 0x451DF0);
 ObjectFunc(execTotalBossScore, 0x452400);
 ObjectFunc(DisplayTotalRings, 0x453150);
+VoidFunc(LoadStageCameraFile, 0x453A90);
 ObjectFunc(CardIndicatorExec_Delete, 0x455E40);
 ObjectFunc(CardIndicatorExec_Main, 0x456280);
 ObjectFunc(CardCloseOperationExec, 0x4566F0);
@@ -141,7 +142,6 @@ ObjectFunc(SetObject_Main, 0x487F60);
 FunctionPointer(int, ByteswapSETFile, (), 0x487FC0);
 VoidFunc(ReadSET_2P, 0x4883D0);
 VoidFunc(ReadSET_1P, 0x488630);
-ThiscallFunctionPointer(void *, LoadStageSETFile, (char *filename, int size), 0x488F60);
 VoidFunc(CountPerfectRings, 0x4890E0);
 ObjectFunc(MinimalCounterExecutor, 0x489240);
 ObjectFunc(MinimalCaptureEffect_Exec, 0x489650);
@@ -1607,6 +1607,31 @@ static inline void LoadTextures(TexPackInfo *pack)
 	}
 }
 
+// void __usercall(TexPackInfo* a1@<eax>, NJS_TEXLIST*** a2)
+static const void* const LoadTexPacksPtr = (void*)0x44C7B0;
+static inline void LoadTexPacks(TexPackInfo* TexPackList, NJS_TEXLIST*** Texlists)
+{
+	__asm
+	{
+		push[Texlists]
+		mov eax, [TexPackList]
+		call LoadTexPacksPtr
+		add esp, 4
+	}
+}
+
+// void __usercall(NJS_TEXLIST*** a1@<eax>, TexPackInfo* a2@<ecx>)
+static const void* const FreeTexPacksPtr = (void*)0x44C810;
+static inline void FreeTexPacks(NJS_TEXLIST*** Texlists, TexPackInfo* TexPackList)
+{
+	__asm
+	{
+		mov ecx, [TexPackList]
+		mov eax, [Texlists]
+		call FreeTexPacksPtr
+	}
+}
+
 // void __usercall(char id@<al>, __int16 count@<bx>)
 static const void *const AddLivesPtr = (void*)0x44CB10;
 static inline void AddLives(char id, __int16 count)
@@ -1977,6 +2002,22 @@ static inline void * LoadSETFile(int _size, char *name_s, char *name_u)
 		mov ecx, [name_s]
 		mov eax, [_size]
 		call LoadSETFilePtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+// void* __usercall@<eax>(char *filename@<ecx>, int size)
+static const void* const LoadStageSETFilePtr = (void*)0x488F60;
+static inline void* LoadStageSETFile_(char* filename, int buffersize)
+{
+	void* result;
+	__asm
+	{
+		push[buffersize]
+		mov ecx, [filename]
+		call LoadStageSETFilePtr
 		add esp, 4
 		mov result, eax
 	}
