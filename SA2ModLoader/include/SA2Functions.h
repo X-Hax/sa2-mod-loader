@@ -1058,7 +1058,7 @@ FunctionPointer(int, TSUBO, (ObjectMaster *a1), 0x715110);
 FunctionPointer(void, LoadSonic, (int playerNum), 0x716E00);
 FunctionPointer(void, LoadAmy, (int playerNum), 0x7170E0);
 FunctionPointer(void, LoadShadow, (int playerNum), 0x717360);
-FunctionPointer(int, LoadMetalSonic, (int a2), 0x717640);
+FunctionPointer(void, LoadMetalSonic, (int playerNum), 0x717640);
 ObjectFunc(Sonic_Main, 0x717840);
 FunctionPointer(void, Sonic_ChecksForDamage, (EntityData1 *a1, EntityData2 *a2, CharObj2Base *a3, SonicCharObj2 *a5), 0x719920);
 ObjectFunc(Sonic_Delete, 0x71E300);
