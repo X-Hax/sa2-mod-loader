@@ -495,7 +495,9 @@ DataArray(BlackMarketItem, BlackMarketInventory, 0x1DBEDC0, 32);
 DataArray(char, MemoryCard, 0x1DBEE00, 104);
 DataPointer(ChaoData *, ChaoDataArray, 0x1DC0FC8); // TODO: fix
 DataPointer(ObjectMaster *, ChaoObjectArray, 0x1DC0FFC); // TODO: fix
-DataPointer(CameraInfo, CameraInfoPtr, 0x1DCFF40);
+DataPointer(CameraInfo, CameraData, 0x1DCFF40);
+DataPointer(int, CurrentScreen, 0x1DD92A0);
+DataArray(CameraScreenInfo*, CameraScreensInfoArray, 0x1DD92B0, 2);
 DataPointer(int, SplitscreenMode, 0x1DD946C);
 DataArray(FogData, stg27_fogB, 0x1DDA160, 34);
 DataPointer(LandTable, BasicLandTable, 0x1DDA3C0);

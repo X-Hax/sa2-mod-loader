@@ -2083,6 +2083,11 @@ struct ChaoMotionTableEntry
 	float PlaySpeed;
 };
 
+struct CameraScreenInfo {
+	NJS_VECTOR pos;
+	Rotation rot;
+};
+
 struct CameraInfo
 {
 	int field_0;
@@ -2094,8 +2099,8 @@ struct CameraInfo
 	float field_15C;
 	int field_160;
 	char gap164[48];
-	NJS_VECTOR position;
-	Rotation rotation;
+	NJS_VECTOR Position;
+	Rotation Rotation;
 	char gap1AC[9000];
 	int field_24D4;
 };
