@@ -134,6 +134,7 @@ FunctionPointer(signed int, ScreenFadeOut, (), 0x4786E0);
 ObjectFunc(dmyEnemy_Main, 0x47AB30);
 FunctionPointer(signed int, LoadLandManager, (LandTable *a1), 0x47BD30);
 ObjectFunc(LandManager_Main, 0x47C180);
+FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0);
 FunctionPointer(int, ResetGravity, (), 0x47D880);
 ObjectFunc(Extra_Exec_Main, 0x487390);
 FunctionPointer(signed int, LoadSetObject, (ObjectListHead *list, void *setfile), 0x487E40);
@@ -155,6 +156,7 @@ ThiscallFunctionPointer(unsigned int, PRSDec, (unsigned __int8 *src, uint8_t *ds
 FunctionPointer(signed int, LoadStagePaths, (LoopHead **a1), 0x490110);
 FunctionPointer(void, LoadPathObjects, (LoopHead **a1), 0x490180);
 ObjectFunc(ParticleCoreTask_Load, 0x491C20);
+FunctionPointer(float, GetGroundHeight, (float x, float y, float z, Rotation* outrotation), 0x494C30);
 ObjectFunc(MissionMessageDisplayerExecutor, 0x496B60);
 FunctionPointer(int, LoadBossLast2Module, (), 0x498890);
 VoidFunc(FinalHazard_Init, 0x4988A0);
@@ -1934,6 +1936,19 @@ static inline int ScreenFade(int targetAlpha)
 		mov result, eax
 	}
 	return result;
+}
+
+//void __usercall DynCol_Add(SurfaceFlags flags@<eax>, ObjectMaster *obj@<edx>, NJS_OBJECT *object@<esi>)
+static const void* const DynCol_AddPtr = (void*)0x47D6B0;
+static inline void DynCol_Add(SurfaceFlags flags, ObjectMaster* obj, NJS_OBJECT* object)
+{
+	__asm
+	{
+		mov esi, [object]
+		mov edx, [obj]
+		mov eax, [flags]
+		call DynCol_AddPtr
+	}
 }
 
 // signed int __usercall@<eax>(ObjectMaster *obj@<eax>, CollisionData *collision, int count, unsigned __int8 a4)
