@@ -380,6 +380,7 @@ DataArray(char, CurrentSongName, 0x1936268, 32);
 DataPointer(NJS_TEXLIST *, LastTexList, 0x1942070);
 DataPointer(LevelHeader *, CurrentLevelHeader, 0x19420FC);
 DataPointer(LandTable *, CurrentLandTable, 0x19459DC);
+DataPointer(Uint16, LandTable_VisibleEntriesCount, 0x1945A00);
 DataPointer(ObjectMaster *, LandManagerPtr, 0x1945A04);
 DataPointer(DWORD, ChaoSaveStart, 0x19F6460);
 DataPointer(int, ChaoGardensUnlocked, 0x19F646C);
@@ -440,6 +441,7 @@ DataPointer(void*, SomethingFunc_ptr, 0x1A5A2B4);
 DataPointer(void*, SomethingFuncB_ptr, 0x1A5A2B8);
 DataPointer(void*, SomethingFuncC_ptr, 0x1A5A2C0);
 DataPointer(int, LandTableSA2BModels, 0x1A5A2D8);
+DataPointer(COL**, LandTable_VisibleEntries, 0x1A5A2E4);
 DataPointer(ObjectMaster *, SetObject_ptr, 0x1A5A340);
 DataPointer(FogData **, FogDataPtrPtr, 0x1A5A34C);
 DataPointer(ObjectMaster *, ParticleCoreTask, 0x1A5A3B8);
@@ -493,6 +495,9 @@ DataArray(BlackMarketItem, BlackMarketInventory, 0x1DBEDC0, 32);
 DataArray(char, MemoryCard, 0x1DBEE00, 104);
 DataPointer(ChaoData *, ChaoDataArray, 0x1DC0FC8); // TODO: fix
 DataPointer(ObjectMaster *, ChaoObjectArray, 0x1DC0FFC); // TODO: fix
+DataPointer(CameraInfo, CameraData, 0x1DCFF40);
+DataPointer(int, CurrentScreen, 0x1DD92A0);
+DataArray(CameraScreenInfo*, CameraScreensInfoArray, 0x1DD92B0, 2);
 DataPointer(int, SplitscreenMode, 0x1DD946C);
 DataArray(FogData, stg27_fogB, 0x1DDA160, 34);
 DataPointer(LandTable, BasicLandTable, 0x1DDA3C0);
