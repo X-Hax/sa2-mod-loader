@@ -1403,3 +1403,12 @@ enum SurfaceFlags
 	SurfaceFlag_Dynamic = 0x8000000,
 	SurfaceFlag_Visible = 0x80000000,
 };
+
+enum CollisionShapes : Uint8 {
+	CollisionShape_Sphere,
+	CollisionShape_Cyl1,
+	CollisionShape_Cyl2,
+	CollisionShape_Cube1,
+	CollisionShape_Cube2,
+	CollisionShape_Wall = 0x9
+};

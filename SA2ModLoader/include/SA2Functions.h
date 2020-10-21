@@ -23,9 +23,13 @@ FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (const char *a1, ...), 0x426740);
 FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
+FastcallFunctionPointer(float, njSin, (Angle angle), 0x42AAB0);
+FastcallFunctionPointer(float, njCos, (Angle angle), 0x42AC30);
 VoidFunc(ResetRenderSpace, 0x42D340);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int (__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
+ThiscallFunctionPointer(void, njSetTexlist, (NJS_TEXLIST* texlist), 0x42ED20);
+FastcallFunctionPointer(void, njSetTexture, (int id), 0x42ED30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST *), 0x42FD10);
 VoidFunc(main_gc_free, 0x433E60);
 FunctionPointer(int, GameLoop, (), 0x433EE0);
@@ -158,6 +162,9 @@ FunctionPointer(void, LoadPathObjects, (LoopHead **a1), 0x490180);
 ObjectFunc(ParticleCoreTask_Load, 0x491C20);
 FunctionPointer(float, GetGroundHeight, (float x, float y, float z, Rotation* outrotation), 0x494C30);
 ObjectFunc(MissionMessageDisplayerExecutor, 0x496B60);
+ObjectFunc(LoopPath, 0x497B50);
+ObjectFunc(RailPath, 0x4980C0);
+ObjectFunc(RailPath_Inverted, 0x498140);
 FunctionPointer(int, LoadBossLast2Module, (), 0x498890);
 VoidFunc(FinalHazard_Init, 0x4988A0);
 ObjectFunc(LastBoss2Exec, 0x49A640);
@@ -579,6 +586,8 @@ FunctionPointer(int, LoadStg17Module, (), 0x5AD710);
 FunctionPointer(int, MissionStreet_Init, (), 0x5AD720);
 VoidFunc(LoadMissionStreetCharAnims, 0x5ADDF0);
 ObjectFunc(ObjectSand, 0x5B3080);
+ObjectFunc(ObjectFunc_ClipObject, 0x5B4250);
+ObjectFunc(DeleteFunc_ResetWK, 0x5BCCF0);
 ObjectFunc(ObjectCarCrashExec_1, 0x5B61C0);
 ObjectFunc(EfMsPaper3DExec_Delete, 0x5B9180);
 ObjectFunc(EfMsPaper3DExec, 0x5B91E0);
@@ -626,6 +635,7 @@ ObjectFunc(BgmStart_GreenForest, 0x5ED5D0);
 ObjectFunc(BgExec_11, 0x5ED650);
 ObjectFunc(HosiExec_2, 0x5EE270);
 VoidFunc(LoadGreenForestCharAnims, 0x5EE920);
+ObjectFunc(DeleteFunc_DynCol, 0x5F12B0);
 FunctionPointer(int, MODMOD, (ObjectMaster *a1), 0x5F5580);
 ObjectFunc(ObjectSonicJump, 0x5F66A0);
 FunctionPointer(int, LoadMcwarnModule, (), 0x5F71D0);
@@ -1207,8 +1217,10 @@ FunctionPointer(int, GetDllData, (LPCSTR lpProcName), 0x77DEF0);
 FunctionPointer(void *, MemoryManager__Allocate, (int size, char *file, int line), 0x77DFA0);
 FunctionPointer(void *, MemoryManager__AllocateArray, (int count, int size), 0x77DFB0);
 FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem *a1, size_t count), 0x77DFE0);
+FunctionPointer(void, SetDrawingPlanes, (Float _min, Float _max), 0x77E700);
 VoidFunc(UpdateControllers, 0x77E780);
 FunctionPointer(void, FreeTexList, (NJS_TEXLIST* texlist), 0x77F9F0);
+FunctionPointer(void, DrawObjMotion, (NJS_OBJECT* a1), 0x782420);
 FunctionPointer(int, LoadStg00Module, (), 0x786500);
 FunctionPointer(int, LoadStg24Module, (), 0x786770);
 FunctionPointer(int, EternalEngine_Init, (), 0x786780);
@@ -1320,6 +1332,34 @@ static inline int ReadSaveFileThing(char *path, void *buffer, size_t _size)
 	return result;
 }
 
+//void __usercall njCalcVector@<eax>(NJS_MATRIX* result@<eax>, NJS_VECTOR* out@<edx>, NJS_VECTOR* a3@<ecx>, char a4)
+static const void* const njCalcVectorPtr = (void*)0x426CC0;
+static inline void njCalcVector(float* matrix, NJS_VECTOR* out, NJS_VECTOR* transform, bool add)
+{
+	__asm
+	{
+		push[something]
+		mov ecx, [transform]
+		mov edx, [out]
+		mov eax, [matrix]
+		call njCalcVectorPtr
+		add esp, 4;
+	}
+}
+
+//void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *out@<edx>, float *matrix@<ecx>)
+static const void* const njCalcPointPtr = (void*)0x4273B0;
+static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, float* matrix)
+{
+	__asm
+	{
+		mov ecx, [matrix]
+		mov edx, [out]
+		mov eax, [transform]
+		call njCalcPointPtr
+	}
+}
+
 // void __usercall(float *a1@<eax>, float a2, float a3, float a4)
 static const void *const njTranslatePtr = (void*)0x427470;
 static inline void njTranslate(float *a1, float a2, float a3, float a4)
@@ -1388,6 +1428,19 @@ static inline char IsByteswapped(void *a1)
 	return result;
 }
 
+// void __usercall LoadStageSounds(char *filename@<esi>, void *address)
+static const void* const LoadStageSoundsPtr = (void*)0x4355A0;
+static inline void LoadStageSounds(const char* filename, void* address)
+{
+	__asm
+	{
+		push[address]
+		mov esi, [filename]
+		call LoadStageSoundsPtr
+		add esp, 4
+	}
+}
+
 // void __usercall(int a1@<esi>, int a2, char a3, char a4)
 static const void *const PlaySoundProbablyPtr = (void*)0x437260;
 static inline void PlaySoundProbably(int a1, int a2, char a3, char a4)
@@ -1403,6 +1456,43 @@ static inline void PlaySoundProbably(int a1, int a2, char a3, char a4)
 		call PlaySoundProbablyPtr
 		add esp, 12
 	}
+}
+
+//char __usercall Play3DSound_Pos@<al>(int id@<edi>, NJS_VECTOR *pos@<esi>, int unk, char bank, char volume)
+static const void* const Play3DSound_PosPtr = (void*)0x4372E0;
+static inline char Play3DSound_Pos(int id, NJS_VECTOR* pos, int unk, char bank, char volume)
+{
+	char result;
+	__asm
+	{
+		push[volume]
+		push[bank]
+		push[unk]
+		mov esi, [pos]
+		mov edi, [id]
+		call Play3DSound_PosPtr
+		mov result, al
+		add esp, 12
+	}
+	return result;
+}
+
+//char __usercall Play3DSound_EntityAndPos@<al>(EntityData1* entity@<ebx>, int id@<edi>, int pos@<esi>, char volume)
+static const void* const Play3DSound_EntityAndPosPtr = (void*)0x437420;
+static inline char Play3DSound_EntityAndPos(EntityData1* entity, int id, NJS_VECTOR* pos, char volume)
+{
+	char result;
+	__asm
+	{
+		push[volume]
+		mov esi, [pos]
+		mov edi, [id]
+		mov ebx, [entity]
+		call Play3DSound_EntityAndPosPtr
+		mov result, al
+		add esp, 4
+	}
+	return result;
 }
 
 // void __usercall(int pnum@<eax>, signed int a2@<edx>, signed int a3@<ecx>, int a4)
@@ -2000,6 +2090,20 @@ static inline void AddToCollisionList(ObjectMaster* object)
 	}
 }
 
+//ObjectMaster *__usercall GetCollidingPlayer@<eax>(ObjectMaster *obj@<eax>)
+static const void* const GetCollidingPlayerPtr = (void*)0x486500;
+static inline ObjectMaster* GetCollidingPlayer(ObjectMaster* obj)
+{
+	ObjectMaster* result;
+	__asm
+	{
+		mov eax, [obj]
+		call GetCollidingPlayerPtr
+		mov result, eax
+	}
+	return result;
+}
+
 // bool __usercall@<eax>(NJS_VECTOR *a1@<ecx>, float x, float y, float z, float distance_maybe)
 static const void *const SETDistanceCheckThingPtr = (void*)0x488340;
 static inline bool SETDistanceCheckThing(NJS_VECTOR *a1, float x, float y, float z, float distance_maybe)
@@ -2017,6 +2121,17 @@ static inline bool SETDistanceCheckThing(NJS_VECTOR *a1, float x, float y, float
 		mov result, al
 	}
 	return result;
+}
+
+//void __usercall UpdateSetDateAndDelete(ObjectMaster *obj@<eax>)
+static const void* const UpdateSetDateAndDeletePtr = (void*)0x488DA0;
+static inline void UpdateSetDateAndDelete(ObjectMaster* obj)
+{
+	__asm
+	{
+		mov eax, [obj]
+		call UpdateSetDateAndDeletePtr
+	}
 }
 
 // void *__usercall@<eax>(int size@<eax>, char *name_s@<ecx>, char *name_u)
@@ -2060,6 +2175,17 @@ static inline void ChaosDrive_Load(NJS_VECTOR *a1)
 	{
 		mov ebx, [a1]
 		call ChaosDrive_LoadPtr
+	}
+}
+
+//void __usercall DrawSA2BModel(SA2B_Model *model@<eax>)
+static const void* const DrawSA2BModelPtr = (void*)0x4932C0;
+static inline void DrawSA2BModel(SA2B_Model* model)
+{
+	__asm
+	{
+		mov eax, [model]
+		call DrawSA2BModelPtr
 	}
 }
 
@@ -2713,6 +2839,19 @@ static inline PDS_PERIPHERAL * pdGetPeripheral(signed int a1, int a2)
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall njSetMotion(NJS_MOTION *motion@<ecx>, float frame);
+static const void* const njSetMotionPtr = (void*)0x7819A0;
+static inline void njSetMotion(NJS_MOTION* motion, float frame)
+{
+	__asm
+	{
+		push[frame]
+		mov ecx, [motion]
+		call njSetMotionPtr
+		add esp, 4
+	}
 }
 
 // void __usercall(ObjectMaster* a1@<eax>, int(__cdecl* bhav)(ObjectMaster*), int timer)
