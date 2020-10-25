@@ -317,11 +317,10 @@ void QueueDebugMessage(DebugStringInfo* a1)
 		{
 			v2 = strlen(v1);
 			v3 = v2;
-			// FIXME: why deliberately change the sign of the right operand here and cause a sign/unsigned mismatch?
-			if (DebugMessageCount < (unsigned int)DebugMessageMax)
+			if (DebugMessageCount < DebugMessageMax)
 			{
 				v5 = DebugTextBufferLength;
-				if (v2 < DebugTextBufferMax - DebugTextBufferLength)
+				if (v2 < (unsigned int)(DebugTextBufferMax - DebugTextBufferLength))
 				{
 					v6 = &DebugMessages[DebugMessageCount];
 					v6->column = a1->column;
