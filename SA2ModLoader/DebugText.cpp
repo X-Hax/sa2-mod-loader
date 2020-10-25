@@ -97,25 +97,17 @@ int RenderColor;
 void __cdecl Direct3D_DrawQuad(NJS_QUAD_TEXTURE_EX* quad)
 {
 	NJS_QUAD_TEXTURE_EX* q; // esi
-	float base_z; // ST10_4
 	float v3; // ST1C_4
-	double zValue; // st7
-	double v5; // st6
-	double v6; // st5
+	float zValue; // st7 (originally double)
+	float v5; // st6 (originally double)
+	float v6; // st5 (originally double)
 	FVFStruct_K* v7; // eax
 	NJS_COLOR v8; // ecx
-	double v9; // st4
-	float v10; // ST1C_4
-	float v11; // ST20_4
-	double v12; // st6
-	double v13; // st5
 	float x_halfoffset; // [esp+14h] [ebp+4h]
-	float pointsb; // [esp+14h] [ebp+4h]
 
 	q = quad;
-	base_z = quad->z;
-	x_halfoffset = quad->x + 0.5;
-	v3 = q->y + 0.5;
+	x_halfoffset = quad->x + 0.5f;
+	v3 = q->y + 0.5f;
 	zValue = -1.0f;//DoWeirdProjectionThings(base_z);
 	v5 = q->u;
 	v6 = q->v;
@@ -160,18 +152,18 @@ void __cdecl Direct3D_DrawQuad(NJS_QUAD_TEXTURE_EX* quad)
 	dword_1A557C0->pointerToDevice->SetVertexDeclaration(declaration);
 	dword_1A557C0->pointerToDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, &GiantVertexBuffer_ptr[0], 24);
 
-	dword_1A557C0->pointerToDevice->SetStreamSource(0, 0, 0, 0);
+	dword_1A557C0->pointerToDevice->SetStreamSource(0, nullptr, 0, 0);
 
 }
 void __cdecl DrawRectPoints(NJS_POINT2* points, float scale)
 {
-	double widthmaybe; // st7
+	float widthmaybe; // st7 (originally double)
 	Float base_x; // ecx
 	Float v4; // edx
-	double v5; // st7
+	float v5; // st7 (originally double)
 	Float v6; // ecx
-	double v7; // st7
-	double v8; // st7
+	float v7; // st7 (originally double)
+	float v8; // st7 (originally double)
 	NJS_QUAD_TEXTURE_EX _points; // [esp+0h] [ebp-40h]
 
 	widthmaybe = points[1].x - points->x;
@@ -198,27 +190,27 @@ void __cdecl DrawRectPoints(NJS_POINT2* points, float scale)
 }
 void sub_793B20(unsigned __int8 a1, __int16 a2, __int16 a3, __int16 a4)
 {
-	double v4; // st7
-	double v5; // st6
-	double v6; // st5
-	double v7; // st4
-	double v8; // st3
+	float v4; // st7 (originally double)
+	float v5; // st6 (originally double)
+	float v6; // st5 (originally double)
+	float v7; // st4 (originally double)
+	float v8; // st3 (originally double)
 	NJS_POINT2 idk[4]; // [esp+4h] [ebp-20h]
 
-	v4 = (double)(a1 & 0xF) * 0.0625;
-	v5 = (double)(a1 >> 4) * 0.0625;
-	v6 = (double)a2;
+	v4 = (float)(a1 & 0xF) * 0.0625f;
+	v5 = (float)(a1 >> 4) * 0.0625f;
+	v6 = (float)a2;
 	idk[0].x = v6;
-	v7 = (double)a3;
+	v7 = (float)a3;
 	idk[0].y = v7;
-	v8 = (double)a4;
+	v8 = (float)a4;
 	idk[1].x = v8 + v6;
 	idk[1].y = v8 + v7;
 	idk[2].x = v4;
 	idk[2].y = v5;
-	idk[3].x = v4 + 0.0625;
-	idk[3].y = v5 + 0.0625;
-	DrawRectPoints(idk, 1.0);
+	idk[3].x = v4 + 0.0625f;
+	idk[3].y = v5 + 0.0625f;
+	DrawRectPoints(idk, 1.0f);
 }
 
 void __cdecl njDrawPolygon(NJS_POLYGON_VTX* polygon, Int count, Int trans)
@@ -226,9 +218,9 @@ void __cdecl njDrawPolygon(NJS_POLYGON_VTX* polygon, Int count, Int trans)
 	Int primitives; // ebx
 	FVFStruct_J* v4; // esi
 	NJS_POLYGON_VTX* v5; // edi
-	double v6; // st7
-	double v7; // st6
-	double v8; // st6
+	float v6; // st7 (originally double)
+	float v7; // st6 (originally double)
+	float v8; // st6 (originally double)
 
 	//backup last shader
 	int prebackup = *(int*)0x01A5579C;
@@ -252,13 +244,13 @@ void __cdecl njDrawPolygon(NJS_POLYGON_VTX* polygon, Int count, Int trans)
 			do
 			{
 				v6 = -1;// DoWeirdProjectionThings(v5->z);
-				v7 = v5->x + 0.5;
+				v7 = v5->x + 0.5f;
 				++v5;
 				++v4;
 				--primitives;
 				v4[-1].x = v7;
 				v8 = v5[-1].y;
-				v4[-1].y = v8 + 0.5;
+				v4[-1].y = v8 + 0.5f;
 				v4[-1].z = v6;
 				v4[-1].diffuse = v5[-1].col;
 
@@ -269,11 +261,11 @@ void __cdecl njDrawPolygon(NJS_POLYGON_VTX* polygon, Int count, Int trans)
 			primitives = count;
 		}
 		
-		dword_1A557C0->pointerToDevice->SetTexture(0, 0);
+		dword_1A557C0->pointerToDevice->SetTexture(0, nullptr);
 		dword_1A557C0->pointerToDevice->SetVertexDeclaration(njDrawPolygonDeclaration);
 		dword_1A557C0->pointerToDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, primitives - 2, &GiantVertexBuffer_ptr[0], 16);
 
-		dword_1A557C0->pointerToDevice->SetStreamSource(0, 0, 0, 0);
+		dword_1A557C0->pointerToDevice->SetStreamSource(0, nullptr, 0, 0);
 	}
 	//Direct3D_TextureFilterLinear();
 	SetShaders(prebackup);
@@ -315,10 +307,8 @@ void QueueDebugMessage(DebugStringInfo* a1)
 	char* v1; // eax
 	unsigned int v2; // eax
 	unsigned int v3; // ebx
-	int v4; // esi
 	int v5; // edi
 	DebugStringInfo* v6; // eax
-	char* v7; // edx
 
 	if (a1)
 	{
@@ -326,8 +316,8 @@ void QueueDebugMessage(DebugStringInfo* a1)
 		if (v1)
 		{
 			v2 = strlen(v1);
-			v4 = DebugMessageCount;
 			v3 = v2;
+			// FIXME: why deliberately change the sign of the right operand here and cause a sign/unsigned mismatch?
 			if (DebugMessageCount < (unsigned int)DebugMessageMax)
 			{
 				v5 = DebugTextBufferLength;
@@ -353,9 +343,9 @@ extern "C" {
 	{
 		signed __int16* locshort = (__int16*)& loc;
 		DebugStringInfo info;
-		info.column = (locshort[1] * DebugFontSize);
-		info.row = (locshort[0] * DebugFontSize);
-		info.fontsize = DebugFontSize;
+		info.column = (short)(locshort[1] * DebugFontSize);
+		info.row = (short)(locshort[0] * DebugFontSize);
+		info.fontsize = (int)DebugFontSize;
 		info.text = s;
 		info.color = DebugFontColor;
 		QueueDebugMessage(&info);
@@ -377,9 +367,9 @@ extern "C" {
 		Format[2] += v3;
 		sprintf(Dest, Format, value);
 		signed __int16* locshort = (__int16*)& position;
-		v4.column = (locshort[1] * DebugFontSize);
-		v4.row = (locshort[0] * DebugFontSize);
-		v4.fontsize = DebugFontSize;
+		v4.column = (short)(locshort[1] * DebugFontSize);
+		v4.row = (short)(locshort[0] * DebugFontSize);
+		v4.fontsize = (int)DebugFontSize;
 		v4.color = DebugFontColor;
 		v4.text = Dest;
 		QueueDebugMessage(&v4);
@@ -402,10 +392,10 @@ extern "C" {
 	__declspec(dllexport) void sub_759AA0(int a1, int a2, int a3, int a4, int a5)
 	{
 		int v5; // esi
-		double v6; // st7
-		double v7; // st6
-		double v8; // st5
-		double v9; // st5
+		float v6; // st7 (originally double)
+		float v7; // st6 (originally double)
+		float v8; // st5 (originally double)
+		float v9; // st5 (originally double)
 		NJS_POLYGON_VTX a2a[4]; // [esp+4h] [ebp-40h]
 		Float v11; // [esp+48h] [ebp+4h]
 		int v12; // [esp+50h] [ebp+Ch]
@@ -416,20 +406,20 @@ extern "C" {
 		{
 			v5 = 1;
 		}
-		v6 = (double)(12 * a1);
+		v6 = (float)(12 * a1);
 		a2a[0].x = v6;
-		v7 = (double)(12 * a2 + 1);
+		v7 = (float)(12 * a2 + 1);
 		a2a[0].y = v7;
 		a2a[1].x = v6;
 		a2a[0].z = 2.0;
-		v8 = (double)(12 * a2 + 11);
+		v8 = (float)(12 * a2 + 11);
 		v12 = v5 + 12 * a1;
 		a2a[0].col = a4;
 		a2a[1].z = 2.0;
 		v11 = v8;
 		a2a[1].col = a4;
 		a2a[1].y = v8;
-		v9 = (double)(unsigned int)v12;
+		v9 = (float)(unsigned int)v12;
 		v13 = v9;
 		a2a[2].x = v9;
 		a2a[2].y = v7;
@@ -533,7 +523,7 @@ static const uint32_t fadecolors[] = {
 };
 void PrintDebugMessages()
 {
-	const int numrows = (VerticalResolution / (int)DebugFontSize);
+	const int numrows = (int)(VerticalResolution / (int)DebugFontSize);
 	int pos = (int)msgqueue.size() <= numrows - 1 ? numrows - 1 - (msgqueue.size() - 1) : 0;
 
 	if (msgqueue.empty())
@@ -606,7 +596,7 @@ void DebugText_Init()
 
 	LPD3DXBUFFER pUIShaderBuffer;
 
-	if (SUCCEEDED(D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", 0, 0, "main", "vs_3_0", 0, &pUIShaderBuffer, 0, 0)))
+	if (SUCCEEDED(D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", nullptr, nullptr, "main", "vs_3_0", 0, &pUIShaderBuffer, nullptr, nullptr)))
 	{
 		dword_1A557C0->pointerToDevice->CreateVertexShader((DWORD*)pUIShaderBuffer->GetBufferPointer(), &uiShader);
 		D3DXCreateTextureFromFileA(dword_1A557C0->pointerToDevice, "mods\\DebugFontTexture.dds", &texture);
