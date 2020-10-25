@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "d3d9.h"
-#include "d3dx9.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include "SA2ModLoader.h"
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <cstdio>
+#include <cstdarg>
 #include <string>
 #include <deque>
 #include <iostream>
+#include "SA2ModLoader.h"
 #include "DebugText.h"
 
 const int SetShadersPtr = 0x0041B1F0;
@@ -26,7 +26,7 @@ VoidFunc(sub_429070, 0x429070);
 VoidFunc(sub_4293B0, 0x4293B0);
 VoidFunc(sub_4292E0, 0x4292E0);
 VoidFunc(DoSomethingBlendingMode, 0x0429170);
-FunctionPointer(void, __cdecl GXSetViewport, (float arg0, float a2, float a3, float a4, float MinZ, float MaxZ), 0x00420210);
+FunctionPointer(void, GXSetViewport, (float arg0, float a2, float a3, float a4, float MinZ, float MaxZ), 0x00420210);
 
 IDirect3DDevice9* device;
 ID3DXFont* font = nullptr;

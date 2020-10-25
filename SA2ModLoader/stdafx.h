@@ -11,9 +11,9 @@
 // Windows Header Files:
 #include <Windows.h>
 
+#include <d3d9.h>
+#include <d3dx9.h>
 
-
-// TODO: reference additional headers your program requires here
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
