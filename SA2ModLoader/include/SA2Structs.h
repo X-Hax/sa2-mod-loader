@@ -1266,7 +1266,7 @@ struct CharacterVoiceBank
 
 struct DeathZone
 {
-	int Flags;
+	uint32_t Flags;
 	NJS_OBJECT *Model;
 };
 
