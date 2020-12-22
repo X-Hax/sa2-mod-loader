@@ -2123,6 +2123,36 @@ static inline bool SETDistanceCheckThing(NJS_VECTOR *a1, float x, float y, float
 	return result;
 }
 
+//signed int __usercall ClipSetObject@<eax>(ObjectMaster *obj@<edx>)
+static const void* const ClipSetObjectPtr = (void*)0x488C50;
+static inline int ClipSetObject(ObjectMaster* obj)
+{
+	int result;
+	__asm
+	{
+		mov edx, [obj]
+		call ClipSetObjectPtr
+		mov result, eax
+	}
+	return result;
+}
+
+//int __usercall ClipObject@<eax>(ObjectMaster* obj@<edx>, float distance)
+static const void* const ClipObjectPtr = (void*)0x488C80;
+static inline int ClipObject(ObjectMaster* obj, float distance)
+{
+	int result;
+	__asm
+	{
+		push [distance]
+		mov edx, [obj]
+		call ClipObjectPtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
 //void __usercall UpdateSetDateAndDelete(ObjectMaster *obj@<eax>)
 static const void* const UpdateSetDateAndDeletePtr = (void*)0x488DA0;
 static inline void UpdateSetDateAndDelete(ObjectMaster* obj)
