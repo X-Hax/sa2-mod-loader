@@ -54,9 +54,33 @@ int AnimationFile::getmodelcount() const { return modelcount; }
 
 bool AnimationFile::isshortrot() const { return shortrot; }
 
-const string& AnimationFile::getlabel() const
+const string& AnimationFile::getlabel()
 {
-	return label;
+	return getlabel(motion);
+}
+
+static const string empty;
+const string& AnimationFile::getlabel(void* data)
+{
+	auto elem = labels1.find(data);
+	if (elem == labels1.end())
+		return empty;
+	else
+		return elem->second;
+}
+
+void* AnimationFile::getdata(const string& label)
+{
+	auto elem = labels2.find(label);
+	if (elem == labels2.end())
+		return nullptr;
+	else
+		return elem->second;
+}
+
+const std::unordered_map<std::string, void*>* AnimationFile::getlabels() const
+{
+	return &labels2;
 }
 
 static string getstring(istream& stream)
@@ -116,7 +140,7 @@ void AnimationFile::init(istream& stream)
 	uint8_t version = magic >> 56;
 	magic &= FormatMask;
 
-	if (version != CurrentVersion) // unrecognized file version
+	if (version > CurrentVersion) // unrecognized file version
 	{
 		return;
 	}
@@ -216,5 +240,45 @@ void AnimationFile::init(istream& stream)
 	}
 
 	fixedpointers.clear();
-	label = getstring(stream);
+	if (version < 2)
+	{
+		string label = getstring(stream);
+		labels1[motion] = label;
+		labels2[label] = motion;
+	}
+	else
+	{
+		uint32_t chunktype;
+		readdata(stream, chunktype);
+		while (chunktype != ChunkTypes_End)
+		{
+			uint32_t chunksz;
+			readdata(stream, chunksz);
+			auto chunkbase = stream.tellg();
+			auto nextchunk = chunkbase + (streamoff)chunksz;
+			switch (chunktype)
+			{
+			case ChunkTypes_Label:
+				while (true)
+				{
+					void* dataptr;
+					readdata(stream, dataptr);
+					uint32_t labelptr;
+					readdata(stream, labelptr);
+					if (dataptr == (void*)-1 && labelptr == UINT32_MAX)
+						break;
+					dataptr = (uint8_t*)dataptr + motionbase;
+					tmpaddr = (uint32_t)stream.tellg();
+					stream.seekg((uint32_t)chunkbase + labelptr);
+					string label = getstring(stream);
+					stream.seekg(tmpaddr);
+					labels1[dataptr] = label;
+					labels2[label] = dataptr;
+				}
+				break;
+			}
+			stream.seekg(nextchunk);
+			readdata(stream, chunktype);
+		}
+	}
 }
