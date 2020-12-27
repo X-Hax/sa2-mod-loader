@@ -23,6 +23,7 @@ FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (const char *a1, ...), 0x426740);
 FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
+VoidFunc(ResetRenderSpace, 0x42D340);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL *a1), 0x42D650);
 FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT *object, int (__cdecl *callback)(NJS_CNK_MODEL *)), 0x42EB30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST *), 0x42FD10);
@@ -86,6 +87,7 @@ FunctionPointer(void, CountDownTimerForTimeLimit2P_Load, (char a1), 0x451B00);
 ObjectFunc(CountDownTimerForGameOver, 0x451DF0);
 ObjectFunc(execTotalBossScore, 0x452400);
 ObjectFunc(DisplayTotalRings, 0x453150);
+VoidFunc(LoadStageCameraFile, 0x453A90);
 ObjectFunc(CardIndicatorExec_Delete, 0x455E40);
 ObjectFunc(CardIndicatorExec_Main, 0x456280);
 ObjectFunc(CardCloseOperationExec, 0x4566F0);
@@ -132,6 +134,7 @@ FunctionPointer(signed int, ScreenFadeOut, (), 0x4786E0);
 ObjectFunc(dmyEnemy_Main, 0x47AB30);
 FunctionPointer(signed int, LoadLandManager, (LandTable *a1), 0x47BD30);
 ObjectFunc(LandManager_Main, 0x47C180);
+FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0);
 FunctionPointer(int, ResetGravity, (), 0x47D880);
 ObjectFunc(Extra_Exec_Main, 0x487390);
 FunctionPointer(signed int, LoadSetObject, (ObjectListHead *list, void *setfile), 0x487E40);
@@ -141,7 +144,6 @@ ObjectFunc(SetObject_Main, 0x487F60);
 FunctionPointer(int, ByteswapSETFile, (), 0x487FC0);
 VoidFunc(ReadSET_2P, 0x4883D0);
 VoidFunc(ReadSET_1P, 0x488630);
-ThiscallFunctionPointer(void *, LoadStageSETFile, (char *filename, int size), 0x488F60);
 VoidFunc(CountPerfectRings, 0x4890E0);
 ObjectFunc(MinimalCounterExecutor, 0x489240);
 ObjectFunc(MinimalCaptureEffect_Exec, 0x489650);
@@ -154,6 +156,7 @@ ThiscallFunctionPointer(unsigned int, PRSDec, (unsigned __int8 *src, uint8_t *ds
 FunctionPointer(signed int, LoadStagePaths, (LoopHead **a1), 0x490110);
 FunctionPointer(void, LoadPathObjects, (LoopHead **a1), 0x490180);
 ObjectFunc(ParticleCoreTask_Load, 0x491C20);
+FunctionPointer(float, GetGroundHeight, (float x, float y, float z, Rotation* outrotation), 0x494C30);
 ObjectFunc(MissionMessageDisplayerExecutor, 0x496B60);
 FunctionPointer(int, LoadBossLast2Module, (), 0x498890);
 VoidFunc(FinalHazard_Init, 0x4988A0);
@@ -1205,6 +1208,7 @@ FunctionPointer(void *, MemoryManager__Allocate, (int size, char *file, int line
 FunctionPointer(void *, MemoryManager__AllocateArray, (int count, int size), 0x77DFB0);
 FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem *a1, size_t count), 0x77DFE0);
 VoidFunc(UpdateControllers, 0x77E780);
+FunctionPointer(void, FreeTexList, (NJS_TEXLIST* texlist), 0x77F9F0);
 FunctionPointer(int, LoadStg00Module, (), 0x786500);
 FunctionPointer(int, LoadStg24Module, (), 0x786770);
 FunctionPointer(int, EternalEngine_Init, (), 0x786780);
@@ -1607,6 +1611,31 @@ static inline void LoadTextures(TexPackInfo *pack)
 	}
 }
 
+// void __usercall(TexPackInfo* a1@<eax>, NJS_TEXLIST*** a2)
+static const void* const LoadTexPacksPtr = (void*)0x44C7B0;
+static inline void LoadTexPacks(TexPackInfo* TexPackList, NJS_TEXLIST*** Texlists)
+{
+	__asm
+	{
+		push[Texlists]
+		mov eax, [TexPackList]
+		call LoadTexPacksPtr
+		add esp, 4
+	}
+}
+
+// void __usercall(NJS_TEXLIST*** a1@<eax>, TexPackInfo* a2@<ecx>)
+static const void* const FreeTexPacksPtr = (void*)0x44C810;
+static inline void FreeTexPacks(NJS_TEXLIST*** Texlists, TexPackInfo* TexPackList)
+{
+	__asm
+	{
+		mov ecx, [TexPackList]
+		mov eax, [Texlists]
+		call FreeTexPacksPtr
+	}
+}
+
 // void __usercall(char id@<al>, __int16 count@<bx>)
 static const void *const AddLivesPtr = (void*)0x44CB10;
 static inline void AddLives(char id, __int16 count)
@@ -1909,6 +1938,19 @@ static inline int ScreenFade(int targetAlpha)
 	return result;
 }
 
+//void __usercall DynCol_Add(SurfaceFlags flags@<eax>, ObjectMaster *obj@<edx>, NJS_OBJECT *object@<esi>)
+static const void* const DynCol_AddPtr = (void*)0x47D6B0;
+static inline void DynCol_Add(SurfaceFlags flags, ObjectMaster* obj, NJS_OBJECT* object)
+{
+	__asm
+	{
+		mov esi, [object]
+		mov edx, [obj]
+		mov eax, [flags]
+		call DynCol_AddPtr
+	}
+}
+
 // signed int __usercall@<eax>(ObjectMaster *obj@<eax>, CollisionData *collision, int count, unsigned __int8 a4)
 static const void *const InitCollisionPtr = (void*)0x47E520;
 static inline signed int InitCollision(ObjectMaster *obj, CollisionData *collision, int count, unsigned __int8 a4)
@@ -1947,6 +1989,17 @@ static inline signed int InitCollision_0(unsigned __int8 a1, ObjectMaster *a2, C
 	return result;
 }
 
+// void __usercall(ObjectMaster *a1@<esi>)
+static const void* const AddToCollisionListPtr = (void*)0x47E750;
+static inline void AddToCollisionList(ObjectMaster* object)
+{
+	__asm
+	{
+		mov esi, [object]
+		call AddToCollisionListPtr
+	}
+}
+
 // bool __usercall@<eax>(NJS_VECTOR *a1@<ecx>, float x, float y, float z, float distance_maybe)
 static const void *const SETDistanceCheckThingPtr = (void*)0x488340;
 static inline bool SETDistanceCheckThing(NJS_VECTOR *a1, float x, float y, float z, float distance_maybe)
@@ -1977,6 +2030,22 @@ static inline void * LoadSETFile(int _size, char *name_s, char *name_u)
 		mov ecx, [name_s]
 		mov eax, [_size]
 		call LoadSETFilePtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+// void* __usercall@<eax>(char *filename@<ecx>, int size)
+static const void* const LoadStageSETFilePtr = (void*)0x488F60;
+static inline void* LoadStageSETFile(char* filename, int buffersize)
+{
+	void* result;
+	__asm
+	{
+		push[buffersize]
+		mov ecx, [filename]
+		call LoadStageSETFilePtr
 		add esp, 4
 		mov result, eax
 	}

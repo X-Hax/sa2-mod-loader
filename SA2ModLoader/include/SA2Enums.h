@@ -1396,3 +1396,10 @@ enum StoryEntryType
 	StoryEntryType_End = 0x2,
 	StoryEntryType_Credits = 0x3,
 };
+
+enum SurfaceFlags
+{
+	SurfaceFlag_Solid = 0x1,
+	SurfaceFlag_Dynamic = 0x8000000,
+	SurfaceFlag_Visible = 0x80000000,
+};

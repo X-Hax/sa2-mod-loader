@@ -2082,4 +2082,26 @@ struct ChaoMotionTableEntry
 	float EndFrame;
 	float PlaySpeed;
 };
+
+struct CameraScreenInfo {
+	NJS_VECTOR pos;
+	Rotation rot;
+};
+
+struct CameraInfo
+{
+	int field_0;
+	int field_4;
+	int field_8;
+	char gapC[328];
+	float field_154;
+	float field_158;
+	float field_15C;
+	int field_160;
+	char gap164[48];
+	NJS_VECTOR Position;
+	Rotation Rotation;
+	char gap1AC[9000];
+	int field_24D4;
+};
 #pragma pack(pop)
