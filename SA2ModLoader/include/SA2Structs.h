@@ -612,7 +612,9 @@ struct CharObj2Base
 	float MechHP;
 	int field_4C[6];
 	NJS_VECTOR Speed;
-	char gap70[32];
+	char gap70[24];
+	SurfaceFlags CurrentSurfaceFlags;
+	SurfaceFlags PreviousSurfaceFlags;
 	float* field_90;
 	ObjectMaster* HeldObject;
 	char gap98[4];
@@ -626,11 +628,11 @@ struct CharObj2Base
 	CharAnimInfo AnimInfo;
 	float idk;
 	float idk2;
-	int CollisionFlags;
+	SurfaceFlags SurfaceFlagsBelow;
 	float idk4;
 	float idk5;
 	float idk6;
-	float idk7;
+	SurfaceFlags SurfaceFlagsAbove;
 };
 
 struct SETEntry

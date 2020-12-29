@@ -1928,6 +1928,21 @@ static inline void SetPhysicsParamsAndGiveUpgrades(ObjectMaster *a1, int a2)
 	}
 }
 
+//signed int __usercall GetAnalog@<eax>(EntityData1 *data@<eax>, CharObj2Base *co2, signed int *angle, float* magnitude)
+static const void* const GetAnalogPtr = (void*)0x45A870;
+static inline void GetAnalog(EntityData1* data, CharObj2Base* co2, Angle* angle, Float* magnitude)
+{
+	__asm
+	{
+		push[magnitude]
+		push[angle]
+		push[co2]
+		mov eax, [data]
+		call GetAnalogPtr
+		add esp, 12
+	}
+}
+
 //void __usercall CalcVector_PlayerRot(EntityData1 *data@<edi>, NJS_VECTOR *v@<esi>)
 static const void* const CalcVector_PlayerRotPtr = (void*)0x468E70;
 static inline void CalcVector_PlayerRot(EntityData1* data, NJS_VECTOR* v)

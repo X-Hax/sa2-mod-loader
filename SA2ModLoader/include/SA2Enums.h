@@ -1397,11 +1397,15 @@ enum StoryEntryType
 	StoryEntryType_Credits = 0x3,
 };
 
-enum SurfaceFlags
+enum SurfaceFlags : __int32
 {
 	SurfaceFlag_Solid = 0x1,
+	SurfaceFlag_Water = 0x2,
+	SurfaceFlag_Stairs = 0x100, // treat the surface as flat
+	SurfaceFlag_WaterNoAlpha = 0x2000,
+	SurfaceFlag_Accelerate = 0x100000,
 	SurfaceFlag_Dynamic = 0x8000000,
-	SurfaceFlag_Visible = 0x80000000,
+	SurfaceFlag_Visible = 0x80000000
 };
 
 enum CollisionShapes : unsigned __int8
