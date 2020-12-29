@@ -1404,7 +1404,8 @@ enum SurfaceFlags
 	SurfaceFlag_Visible = 0x80000000,
 };
 
-enum CollisionShapes : Uint8 {
+enum CollisionShapes : unsigned __int8
+{
 	CollisionShape_Sphere,
 	CollisionShape_Cyl1,
 	CollisionShape_Cyl2,

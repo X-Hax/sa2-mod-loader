@@ -23,6 +23,8 @@ FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem *data, char *a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (const char *a1, ...), 0x426740);
 FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
+FunctionPointer(int, njPopMatrixEx, (), 0x429000);
+FunctionPointer(int, njPushMatrixEx, (), 0x429710);
 FastcallFunctionPointer(float, njSin, (Angle angle), 0x42AAB0);
 FastcallFunctionPointer(float, njCos, (Angle angle), 0x42AC30);
 VoidFunc(ResetRenderSpace, 0x42D340);
@@ -64,6 +66,7 @@ ObjectFunc(JingleTask, 0x4433D0);
 FunctionPointer(int, ProbablySavesSaveFile, (), 0x4436A0);
 FunctionPointer(int, ProbablyLoadsSave, (char), 0x445100);
 FunctionPointer(int, SetWorkingSaveD, (), 0x445330);
+FunctionPointer(int, njPushUnitMatrix, (NJS_MATRIX_PTR m), 0x44B210);
 ObjectFunc(DrawLine3DExec, 0x44B680);
 FunctionPointer(int, Get_dword_1A559C8, (), 0x44BFE0);
 FunctionPointer(double, MaybeThisIsDeltaTimeOrSomething, (), 0x44C1A0);
@@ -1347,13 +1350,13 @@ static inline void njCalcVector(float* matrix, NJS_VECTOR* out, NJS_VECTOR* tran
 	}
 }
 
-//void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *out@<edx>, float *matrix@<ecx>)
+//void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *out@<edx>, NJS_MATRIX_PTR m@<ecx>)
 static const void* const njCalcPointPtr = (void*)0x4273B0;
-static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, float* matrix)
+static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRIX_PTR m)
 {
 	__asm
 	{
-		mov ecx, [matrix]
+		mov ecx, [m]
 		mov edx, [out]
 		mov eax, [transform]
 		call njCalcPointPtr
@@ -1414,6 +1417,45 @@ static inline void njRotateZ(float *a1, signed int a2)
 	}
 }
 
+//void __usercall njRotateEx(Rotation *rot@<eax>, int use_yxz)
+static const void* const njRotateExPtr = (void*)0x4277B0;
+static inline char njRotateEx(Rotation* rot, int use_yxz)
+{
+	__asm
+	{
+		push [use_yxz]
+		mov eax, [rot]
+		call njRotateExPtr
+		add esp, 4
+	}
+}
+
+// void __usercall njTranslateEx(NJS_VECTOR* v@<eax>)
+static const void* const njTranslateExPtr = (void*)0x428A30;
+static inline void njTranslateEx(NJS_VECTOR* v)
+{
+	__asm
+	{
+		mov eax, [v]
+		call njTranslateExPtr
+	}
+}
+
+//void __usercall njRotateZYX(signed int x@<eax>, signed int y@<edi>, NJS_MATRIX_PTR m@<esi>, signed int z)
+static const void* const njRotateZYXPtr = (void*)0x429020;
+static inline void njRotateZYX(Angle x, Angle y, NJS_MATRIX_PTR m, Angle z)
+{
+	__asm
+	{
+		push[z]
+		mov esi, [m]
+		mov edi, [y]
+		mov eax, [x]
+		call njRotateZYXPtr
+		add esp, 4
+	}
+}
+
 // char __usercall@<al>(void *a1@<esi>)
 static const void *const IsByteswappedPtr = (void*)0x429840;
 static inline char IsByteswapped(void *a1)
@@ -1426,6 +1468,55 @@ static inline char IsByteswapped(void *a1)
 		mov result, al
 	}
 	return result;
+}
+
+//void __usercall njRotateX_(signed int x@<eax>, NJS_MATRIX_PTR m@<ecx>)
+static const void* const njRotateX_Ptr = (void*)0x42ADB0;
+static inline void njRotateX_(Angle x, NJS_MATRIX_PTR m)
+{
+	__asm
+	{
+		mov ecx, [m]
+		mov eax, [x]
+		call njRotateX_Ptr
+	}
+}
+
+//void __usercall njRotateY_(signed int y@<eax>, NJS_MATRIX_PTR m@<ecx>)
+static const void* const njRotateY_Ptr = (void*)0x42ADD0;
+static inline void njRotateY_(Angle y, NJS_MATRIX_PTR m)
+{
+	__asm
+	{
+		mov ecx, [m]
+		mov eax, [y]
+		call njRotateY_Ptr
+	}
+}
+
+//void __usercall njRotateZ_(signed int z@<eax>, NJS_MATRIX_PTR m@<ecx>)
+static const void* const njRotateZ_Ptr = (void*)0x42ADD0;
+static inline void njRotateZ_(Angle z, NJS_MATRIX_PTR m)
+{
+	__asm
+	{
+		mov ecx, [m]
+		mov eax, [z]
+		call njRotateZ_Ptr
+	}
+}
+
+//void __usercall njCalcPoint_(NJS_VECTOR *transform@<eax>, NJS_VECTOR *output@<edx>, NJS_MATRIX_PTR m@<ecx>)
+static const void* const njCalcPoint_Ptr = (void*)0x42F980;
+static inline void njCalcPoint_(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRIX_PTR m)
+{
+	__asm
+	{
+		mov ecx, [m]
+		mov edx, [out]
+		mov eax, [transform]
+		call njCalcPoint_Ptr
+	}
 }
 
 // void __usercall LoadStageSounds(char *filename@<esi>, void *address)
@@ -1834,6 +1925,18 @@ static inline void SetPhysicsParamsAndGiveUpgrades(ObjectMaster *a1, int a2)
 		mov ecx, [a2]
 		mov eax, [a1]
 		call SetPhysicsParamsAndGiveUpgradesPtr
+	}
+}
+
+//void __usercall CalcVector_PlayerRot(EntityData1 *data@<edi>, NJS_VECTOR *v@<esi>)
+static const void* const CalcVector_PlayerRotPtr = (void*)0x468E70;
+static inline void CalcVector_PlayerRot(EntityData1* data, NJS_VECTOR* v)
+{
+	__asm
+	{
+		mov esi, [v]
+		mov edi, [data]
+		call CalcVector_PlayerRotPtr
 	}
 }
 
