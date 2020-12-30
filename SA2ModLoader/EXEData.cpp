@@ -447,7 +447,7 @@ static vector<TexPackInfo> ProcessTexListINI_Internal(const IniFile *texlistdata
 		if (!texlistdata->hasGroup(key)) break;
 		const IniGroup *pvmdata = texlistdata->getGroup(key);
 		TexPackInfo entry;
-		entry.TexName = strdup(pvmdata->getString("Name").c_str());
+		entry.TexName = _strdup(pvmdata->getString("Name").c_str());
 		entry.TexList = (NJS_TEXLIST *)pvmdata->getIntRadix("Textures", 16);
 		texs.push_back(entry);
 	}
@@ -479,7 +479,7 @@ static vector<char *> ProcessStringArrayINI_Internal(const wchar_t *filename, ui
 		string str;
 		getline(fstr, str);
 		str = DecodeUTF8(UnescapeNewlines(str), language);
-		strs.push_back(strdup(str.c_str()));
+		strs.push_back(_strdup(str.c_str()));
 	}
 	fstr.close();
 	return strs;
@@ -729,12 +729,12 @@ static void ProcessAnimIndexListINI(const IniGroup* group, const wstring& mod_di
 	do
 	{
 		wchar_t *end;
-		auto ind = wcstol(data.cFileName, &end, 10);
+		const auto ind = static_cast<uint16_t>(wcstol(data.cFileName, &end, 10));
 		if (end == data.cFileName) continue; // filename was not a number
 		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
 			mod_dir.c_str(), group->getWString("filename").c_str(), data.cFileName);
 		auto animfile = new AnimationFile(filename);
-		AnimationIndex entry { ind, animfile->getmodelcount(), animfile->getmotion() };
+		AnimationIndex entry { ind, static_cast<uint16_t>(animfile->getmodelcount()), animfile->getmotion() };
 		anims.push_back(entry);
 	} while (FindNextFile(hFind, &data));
 	auto numents = anims.size();
@@ -766,8 +766,8 @@ static void ProcessStorySequenceINI(const IniGroup* group, const wstring& mod_di
 		if (seqdata->hasKeyNonEmpty("Events"))
 		{
 			auto events = split(seqdata->getString("Events", "-1"), ',');
-			for (int i = 0; i < min(events.size(), 4); ++i)
-				entry.Events[i] = strtol(events[i].c_str(), nullptr, 10);
+			for (size_t j = 0; j < min(events.size(), 4u); ++j)
+				entry.Events[j] = static_cast<int16_t>(strtol(events[j].c_str(), nullptr, 10));
 		}
 		seqs.push_back(entry);
 	}
@@ -797,7 +797,7 @@ static void ProcessStringINI(const IniGroup* group, const wstring& mod_dir)
 		str.append(DecodeUTF8(str2, language));
 	}
 	fstr.close();
-	ProcessPointerList(group->getString("pointer"), strdup(str.c_str()));
+	ProcessPointerList(group->getString("pointer"), _strdup(str.c_str()));
 }
 
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
