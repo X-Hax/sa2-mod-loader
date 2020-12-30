@@ -1397,14 +1397,23 @@ enum StoryEntryType
 	StoryEntryType_Credits = 0x3,
 };
 
-enum SurfaceFlags : __int32
+enum SurfaceFlags
 {
 	SurfaceFlag_Solid = 0x1,
 	SurfaceFlag_Water = 0x2,
+	SurfaceFlag_Diggable = 0x20,
+	SurfaceFlag_Unclimbable = 0x80,
 	SurfaceFlag_Stairs = 0x100, // treat the surface as flat
+	SurfaceFlag_Hurt = 0x400,
+	SurfaceFlag_FeetSound = 0x800,
+	SurfaceFlag_CannotLand = 0x1000,
 	SurfaceFlag_WaterNoAlpha = 0x2000,
+	SurfaceFlag_NoShadow = 0x8000,
 	SurfaceFlag_Accelerate = 0x100000,
+	SurfaceFlag_NoFog = 0x400000,
 	SurfaceFlag_Dynamic = 0x8000000,
+	SurfaceFlag_Unknown1 = 0x20000000, // Usually medium-sized collisions
+	SurfaceFlag_Unknown2 = 0x40000000, // Usually small-sized collisions
 	SurfaceFlag_Visible = 0x80000000
 };
 
