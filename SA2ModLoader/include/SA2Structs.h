@@ -612,7 +612,9 @@ struct CharObj2Base
 	float MechHP;
 	int field_4C[6];
 	NJS_VECTOR Speed;
-	char gap70[32];
+	char gap70[24];
+	SurfaceFlags CurrentSurfaceFlags;
+	SurfaceFlags PreviousSurfaceFlags;
 	float* field_90;
 	ObjectMaster* HeldObject;
 	char gap98[4];
@@ -626,11 +628,11 @@ struct CharObj2Base
 	CharAnimInfo AnimInfo;
 	float idk;
 	float idk2;
-	int CollisionFlags;
+	SurfaceFlags SurfaceFlagsBelow;
 	float idk4;
 	float idk5;
 	float idk6;
-	float idk7;
+	SurfaceFlags SurfaceFlagsAbove;
 };
 
 struct SETEntry
@@ -855,17 +857,17 @@ struct AnimationInfo
 
 struct CollisionData
 {
-	__int16 field_0;
-	__int16 field_2;
-	int field_4;
-	NJS_VECTOR some_vector;
-	float anonymous_1;
-	float anonymous_2;
-	float anonymous_3;
-	int field_20;
-	int field_24;
-	int field_28;
-	int field_2C;
+	char kind;
+	CollisionShapes form;
+	char push;
+	char damage;
+	unsigned int attr;
+	NJS_VECTOR center;
+	Float param1;
+	Float param2;
+	Float param3;
+	Float param4;
+	Rotation rotation;
 };
 
 struct JiggleInfo
@@ -2103,5 +2105,19 @@ struct CameraInfo
 	Rotation Rotation;
 	char gap1AC[9000];
 	int field_24D4;
+};
+
+struct PathControl
+{
+	Uint8 Action;
+	Uint8 Player;
+	Uint16 Unknown;
+	Uint16 CounterA;
+	Uint16 CounterB;
+	Sint32 padding[3];
+	NJS_VECTOR minimum;
+	NJS_VECTOR maximum;
+	NJS_VECTOR direction;
+	LoopHead* loophead;
 };
 #pragma pack(pop)
