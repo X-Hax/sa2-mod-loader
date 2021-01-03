@@ -1341,7 +1341,7 @@ static inline void njCalcVector(float* matrix, NJS_VECTOR* out, NJS_VECTOR* tran
 {
 	__asm
 	{
-		push[something]
+		push[add]
 		mov ecx, [transform]
 		mov edx, [out]
 		mov eax, [matrix]
