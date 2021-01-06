@@ -775,6 +775,7 @@ ObjectFunc(BgExec_26, 0x6642B0);
 FunctionPointer(int, Menu_MainMenu, (), 0x664EC0);
 FunctionPointer(signed int, RunMenus, (), 0x666270);
 FunctionPointer(int, SetsMenuToTitle, (), 0x666600);
+ObjectFunc(keepMessage_Delete, 0x00666C10);
 ObjectFunc(keepMessage, 0x666C80);
 ObjectFunc(screenEffectExec, 0x667D60);
 ObjectFunc(newMenuExec, 0x669200);
@@ -1606,6 +1607,17 @@ static inline void KnockBackRumble(int pnum, signed int a2, signed int a3, int a
 	}
 }
 
+// void __usercall(const char* file@<edi>)
+static const void* const WriteDemoBufferToFile_ptr = (void*)0x43A730;
+static inline void WriteDemoBufferToFile(const char* file)
+{
+	__asm
+	{
+		mov edi, [file]
+		call WriteDemoBufferToFile_ptr
+	}
+}
+
 // void __usercall(__int16 stageNumber@<ax>)
 static const void* const SetCurrentLevelPtr = (void*)0x43D8A0;
 static inline void SetCurrentLevel(__int16 stageNumber)
@@ -1899,6 +1911,17 @@ static inline void DispTechniqueScore_Load(signed int a1)
 	{
 		mov ebx, [a1]
 		call DispTechniqueScore_LoadPtr
+	}
+}
+
+// void __usercall(DemoInput* buffer@<eax>)
+static const void* const ByteswapDemoInput_ptr = (void*)0x454450;
+static inline void ByteswapDemoInput(DemoInput* buffer)
+{
+	__asm
+	{
+		mov eax, [buffer]
+		call ByteswapDemoInput_ptr
 	}
 }
 

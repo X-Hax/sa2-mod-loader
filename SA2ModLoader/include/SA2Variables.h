@@ -3,6 +3,7 @@
 #include "MemAccess.h"
 #include "SA2Structs.h"
 
+DataPointer(char*, DemoPath, 0x8B9110);
 DataArray(int, CommonActionWindowTextIndexes, 0x96EBF8, 34);
 DataArray(int, SonicActionWindowTextIndexes, 0x96EC80, 20);
 DataArray(int, AmyActionWindowTextIndexes, 0x96ECD0, 18);
@@ -85,6 +86,7 @@ DataArray(StageSelectLevel, StageSelectLevels, 0xC75078, 33);
 DataArray(int, ChaoWorldCharacters, 0xC75368, 6);
 DataPointer(LevelHeader, AdvertiseHeader, 0xC76914);
 DataArray(int, CharacterFromCostume, 0xC77448, 15);
+DataPointer(MenuData*, StageSelectData, 0xC77F08);
 DataPointer(MenuData *, MainMenuData, 0xC77F14);
 DataPointer(LevelHeader, PlanetQuestHeader, 0xC86DA8);
 DataArray(ObjectListEntry, TailsVsEggman2_ObjectArray, 0xC87138, 39);
@@ -315,7 +317,7 @@ DataArray(LevelEndPosition, RougeMission23EndArray, 0x174A540, 6);
 DataArray(LevelEndPosition, MechEggmanMission23EndArray, 0x174A600, 7);
 DataArray(LevelEndPosition, MechTailsMission23EndArray, 0x174A6E0, 6);
 DataPointer(NJS_TEXLIST, PRESSSTART_TEXLIST, 0x174A9E0);
-DataPointer(char, isLoading, 0x174AFC0);
+DataPointer(uint8_t, DemoState, 0x174AFC0);
 DataPointer(char, TextLanguage, 0x174AFD1);
 DataPointer(char, PlayerPaused, 0x174AFD7);
 DataPointer(char, TimerMinutes, 0x174AFDB);
@@ -374,6 +376,7 @@ DataPointer(int, CurrentCharacter, 0x1934B80);
 DataPointer(__int16, LastLevel, 0x1934B84);
 DataPointer(__int16, GameState, 0x1934BE0);
 DataPointer(int, CurrentCharacter2P, 0x1934BE4);
+DataPointer(short, TimesRestartedOrDied, 0x1934BE8);
 DataPointer(__int16, NextLevel, 0x1934BEC);
 DataArray(int, MenuButtons_RepeatTimer, 0x1934BF0, 4);
 DataArray(char, CurrentSongName, 0x1936268, 32);
@@ -453,6 +456,7 @@ DataPointer(AL_GBAManagerExecutor_Data *, AL_GBAManagerExecutor_ptr, 0x1A5CB54);
 DataPointer(ObjectMaster *, ALO_RadicaseExecutor_ptr, 0x1AED2E0);
 DataPointer(int, CrappyReplacementDepartureMachine, 0x1AED320);
 DataPointer(ObjectMaster *, ALO_BoxExecutor_ptr, 0x1AED32C);
+DataPointer(int, MenuControlsVisible, 0x1AEE2FC);
 DataPointer(int, LastMenu, 0x1AEE300);
 DataArray(int, PlayerReady, 0x1AEE598, 2);
 DataPointer(int, CharacterSelectTimer, 0x1AEE5B0);
@@ -583,4 +587,5 @@ DataArray(PDS_PERIPHERAL, Controllers, 0x1DEFC00, 4);
 DataArray(byte, IsThings, 0x1DEFDA0, 4);
 DataArray(int, RumblePort_A, 0x1DEFDB0, 4);
 DataPointer(int, SomeBuffer, 0x1DEFE20);
+DataPointer(int, DemoBuffer, 0x24CFE20);
 DataPointer(int, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
