@@ -497,7 +497,7 @@ enum GameStates : __int16
 enum StatusBits
 {
 	StatusBits_Ground,
-	StatusBits_Unknown1,
+	StatusBits_OnObjectColli,
 	StatusBits_Hurt,
 	StatusBits_ObjectInteract,
 	StatusBits_Unknown2,
@@ -517,7 +517,7 @@ enum StatusBits
 enum Status : uint16_t
 {
 	makemask(Status, Ground),
-	makemask(Status, Unknown1),
+	makemask(Status, OnObjectColli),
 	makemask(Status, Hurt),
 	makemask(Status, ObjectInteract),
 	makemask(Status, Unknown2),
@@ -1425,4 +1425,18 @@ enum CollisionShapes : unsigned __int8
 	CollisionShape_Cube1,
 	CollisionShape_Cube2,
 	CollisionShape_Wall = 0x9
+};
+
+enum CollisionLists
+{
+	CollisionList_Players,
+	CollisionList_Projectiles,
+	CollisionList_Targetable,
+	CollisionList_Enemies,
+	CollisionList_Regular,
+	CollisionList_Unknown_5,
+	CollisionList_Rings,
+	CollisionList_Unknown_7,
+	CollisionList_Unknown_8,
+	CollisionList_Chao
 };

@@ -510,21 +510,13 @@ struct ObjUnknownB
 struct EntityData2
 {
 	CharObj2Base *CharacterData;
-	int field_4;
-	int field_8;
-	int field_C;
-	int field_10;
-	int field_14;
-	int field_18;
-	int field_1C;
-	int field_20;
-	int field_24;
-	int field_28;
-	int field_2C;
-	int field_30;
-	float field_34;
-	int field_38;
-	float field_3C;
+	NJS_POINT3 Velocity;
+	NJS_POINT3 Acceleration;
+	Rotation Forward;
+	Rotation SpeedAngle;
+	float Radius;
+	float Height;
+	float Weight;
 };
 
 struct PhysicsData
@@ -590,6 +582,18 @@ struct CharAnimInfo
   NJS_MOTION *Motion;
 };
 
+struct CharSurfaceInfo
+{
+	Angle AngX;
+	Angle AngZ;
+	SurfaceFlags TopSurface;
+	SurfaceFlags BottomSurface;
+	Float TopSurfaceDist;
+	Float BottomSurfaceDist;
+	SurfaceFlags PrevTopSurface;
+	SurfaceFlags PrevBottomSurface;
+};
+
 struct CharObj2Base
 {
 	char PlayerNum;
@@ -610,9 +614,11 @@ struct CharObj2Base
 	int field_2C;
 	char field_30[24];
 	float MechHP;
-	int field_4C[6];
+	NJS_POINT3 Eff;
+	NJS_POINT3 Acceleration;
 	NJS_VECTOR Speed;
-	char gap70[24];
+	NJS_POINT3 WallNormal;
+	NJS_POINT3 FloorNormal;
 	SurfaceFlags CurrentSurfaceFlags;
 	SurfaceFlags PreviousSurfaceFlags;
 	float* field_90;
@@ -624,15 +630,9 @@ struct CharObj2Base
 	char gapA8[20];
 	NJS_MOTION** Animation;
 	PhysicsData PhysData;
-	int field_144[12];
+	NJS_VECTOR SomeVectors[4];
 	CharAnimInfo AnimInfo;
-	float idk;
-	float idk2;
-	SurfaceFlags SurfaceFlagsBelow;
-	float idk4;
-	float idk5;
-	float idk6;
-	SurfaceFlags SurfaceFlagsAbove;
+	CharSurfaceInfo SurfaceInfo;
 };
 
 struct SETEntry
@@ -645,19 +645,28 @@ struct SETEntry
 	NJS_VECTOR Scale;
 };
 
+struct CollisionHitInfo
+{
+	__int8 my_num;
+	__int8 hit_num;
+	unsigned __int16 flag;
+	EntityData1* hit_entity;
+};
+
 struct CollisionInfo
 {
-	__int16 char0;
-	__int16 field_2;
-	uint16_t word4;
-	uint16_t Count;
-	float field_8;
-	CollisionData *CollisionArray;
-	uint8_t f10[140];
-	ObjectMaster *Object;
-	__int16 field_A0;
-	__int16 field_A2;
-	int field_A4;
+	unsigned __int16 Id;
+	__int16 HitCount;
+	unsigned __int16 Flag;
+	unsigned __int16 Count;
+	float Range;
+	CollisionData* CollisionArray;
+	CollisionHitInfo CollisionHits[16]; // the first 16 entities that collide with this
+	NJS_POINT3 Normal;
+	ObjectMaster* Object;
+	__int16 my_num;
+	__int16 hit_num;
+	CollisionInfo* CollidingObject; // the first colliding object
 };
 
 struct ChaoCharacterBond
@@ -857,7 +866,7 @@ struct AnimationInfo
 
 struct CollisionData
 {
-	char kind;
+	char kind; // an identifier for colliding entities
 	CollisionShapes form;
 	char push;
 	char damage;
