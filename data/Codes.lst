@@ -157,6 +157,9 @@ write8 00442CF0 0xC3
 Patch "Disable Voices"
 write8 00443130 0xC3
 
+Patch "Disable Subtitles"
+write8 0174B011 0
+
 Patch "Instant Spin Dash"
 writenop 00723E19 2
 
@@ -176,3 +179,9 @@ write16 0073A7BD 0x0FEB
 
 Patch "Enable Cutscene Debug Features"
 writenop 005FBB86 6
+
+Patch "Disable HUD"
+write8 0174AFCC 0
+
+Patch "Disable HUD: Prompts/Radar (Stops EQ Guards/No Titlecards)"
+write8 0174AFCB 0
