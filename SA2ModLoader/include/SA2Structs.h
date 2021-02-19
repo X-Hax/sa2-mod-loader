@@ -2157,6 +2157,44 @@ struct ef_message {
 	unsigned char field_43;
 	NJS_TEXLIST TexList;
 	NJS_TEXNAME TexName;
+};
+
+struct ef_message_b {
+	uint8_t Hide;
+	unsigned char field_1;
+	unsigned short XPos;
+	unsigned short YPos;
+	unsigned char field_6;
+	unsigned char field_7;
+	float XScale;
+	float YScale;
+	float shadow_offset;
+	unsigned short field_14;
+	unsigned short field_16;
+	unsigned short XScale_q;
+	unsigned short YScale_q;
+	unsigned short field_1C;
+	unsigned short field_1E;
+	short field_20;
+	short field_22;
+	short field_24;
+	unsigned short BackgroundXPos;
+	unsigned short BackgroundYPos;
+	unsigned short BackgroundYScale;
+	unsigned char field_2C;
+	unsigned char field_2D;
+	unsigned char field_2E;
+	unsigned char field_2F;
+	NJS_COLOR TextColor;
+	NJS_COLOR ShadowColor;
+	NJS_COLOR BackgroundColor;
+	unsigned int* field_3C;
+	unsigned char field_40;
+	unsigned char field_41;
+	unsigned char field_42;
+	unsigned char field_43;
+	NJS_TEXLIST TexList;
+	NJS_TEXNAME TexName;
 	unsigned char field_58;
 	unsigned char field_59;
 	unsigned char field_5A;
@@ -2209,5 +2247,14 @@ struct DemoInput {
 	float JoyMagnitudeP1;
 	int JoyAngleP2;
 	float JoyMagnitudeP2;
+};
+
+struct Number {
+	unsigned int mode;
+	signed int max_number;
+	signed int number;
+	NJS_VECTOR pos;
+	float scale;
+	NJS_COLOR color;
 };
 #pragma pack(pop)

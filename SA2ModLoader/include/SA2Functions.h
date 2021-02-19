@@ -775,7 +775,7 @@ ObjectFunc(BgExec_26, 0x6642B0);
 FunctionPointer(int, Menu_MainMenu, (), 0x664EC0);
 FunctionPointer(signed int, RunMenus, (), 0x666270);
 FunctionPointer(int, SetsMenuToTitle, (), 0x666600);
-ObjectFunc(keepMessage_Delete, 0x00666C10);
+ObjectFunc(keepMessage_Delete, 0x666C10);
 ObjectFunc(keepMessage, 0x666C80);
 ObjectFunc(screenEffectExec, 0x667D60);
 ObjectFunc(newMenuExec, 0x669200);
@@ -871,6 +871,7 @@ ObjectFunc(BgExec_30, 0x6AA970);
 ObjectFunc(BgClip_13, 0x6AB7D0);
 ObjectFunc(ObjectSandglassExec, 0x6ABDE0);
 VoidFunc(LoadDeathChamberCharAnims, 0x6AD4E0);
+FunctionPointer(ObjectMaster *, EfMsgWnd0Exec_New, (int a1, const char* message, int displayTime, int language), 0x6B6E20);
 ObjectFunc(EfMsgWnd0Exec_LevelUpDai, 0x6B7170);
 ObjectFunc(EfMsgWnd0Exec, 0x6B79D0);
 ObjectFunc(Omochao_Main, 0x6C0780);
@@ -1262,6 +1263,7 @@ ObjectFunc(DrrTamaExec_Main, 0x79ECA0);
 ObjectFunc(DrrTamaExec_Delete, 0x79EF30);
 ObjectFunc(DrrTamaExec_Display, 0x79EFB0);
 ObjectFunc(ManGCylExecutor, 0x7A36F0);
+VoidFunc(sa2_rand, 0x7A89D8);
 FunctionPointer(int, nullsub_2, (), 0x7B4AEF);
 FunctionPointer(int, nullsub_3, (), 0x7F4700);
 StdcallFunctionPointer(int, nullsub_7, (int), 0x8331D0);
@@ -1911,6 +1913,17 @@ static inline void DispTechniqueScore_Load(signed int a1)
 	{
 		mov ebx, [a1]
 		call DispTechniqueScore_LoadPtr
+	}
+}
+
+// void __usercall(const Number* number@<eax>)
+static const void* const RenderNumber_ptr = (void*)0x44EB00;
+static inline void* RenderNumber(const Number* number)
+{
+	__asm
+	{
+		mov eax, [number]
+		call RenderNumber_ptr
 	}
 }
 
