@@ -591,5 +591,5 @@ DataArray(PDS_PERIPHERAL, Controllers, 0x1DEFC00, 4);
 DataArray(byte, IsThings, 0x1DEFDA0, 4);
 DataArray(int, RumblePort_A, 0x1DEFDB0, 4);
 DataPointer(int, SomeBuffer, 0x1DEFE20);
-DataPointer(int, DemoBuffer, 0x24CFE20);
+DataPointer(int, FileBuffer, 0x24CFE20);
 DataPointer(int, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
