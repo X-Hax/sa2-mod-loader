@@ -135,9 +135,9 @@
             this.modDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.modDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.modDescription.Location = new System.Drawing.Point(7, 368);
+            this.modDescription.Location = new System.Drawing.Point(7, 367);
             this.modDescription.Name = "modDescription";
-            this.modDescription.Size = new System.Drawing.Size(457, 69);
+            this.modDescription.Size = new System.Drawing.Size(453, 69);
             this.modDescription.TabIndex = 5;
             this.modDescription.Text = "Description: No mod selected.";
             // 
@@ -148,7 +148,7 @@
             this.modDownButton.Enabled = false;
             this.modDownButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.modDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.modDownButton.Location = new System.Drawing.Point(433, 91);
+            this.modDownButton.Location = new System.Drawing.Point(429, 91);
             this.modDownButton.Name = "modDownButton";
             this.modDownButton.Size = new System.Drawing.Size(37, 35);
             this.modDownButton.TabIndex = 2;
@@ -163,7 +163,7 @@
             this.modUpButton.Enabled = false;
             this.modUpButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.modUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.modUpButton.Location = new System.Drawing.Point(433, 50);
+            this.modUpButton.Location = new System.Drawing.Point(429, 50);
             this.modUpButton.Name = "modUpButton";
             this.modUpButton.Size = new System.Drawing.Size(37, 35);
             this.modUpButton.TabIndex = 1;
@@ -187,7 +187,7 @@
             this.modListView.HideSelection = false;
             this.modListView.Location = new System.Drawing.Point(7, 7);
             this.modListView.Name = "modListView";
-            this.modListView.Size = new System.Drawing.Size(423, 323);
+            this.modListView.Size = new System.Drawing.Size(419, 322);
             this.modListView.TabIndex = 0;
             this.modListView.UseCompatibleStateImageBehavior = false;
             this.modListView.View = System.Windows.Forms.View.Details;
@@ -219,7 +219,7 @@
             this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.saveButton.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.saveButton.Location = new System.Drawing.Point(106, 473);
+            this.saveButton.Location = new System.Drawing.Point(106, 472);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(91, 29);
             this.saveButton.TabIndex = 102;
@@ -233,7 +233,7 @@
             this.saveAndPlayButton.AutoSize = true;
             this.saveAndPlayButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.saveAndPlayButton.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.saveAndPlayButton.Location = new System.Drawing.Point(5, 473);
+            this.saveAndPlayButton.Location = new System.Drawing.Point(5, 472);
             this.saveAndPlayButton.Name = "saveAndPlayButton";
             this.saveAndPlayButton.Size = new System.Drawing.Size(95, 29);
             this.saveAndPlayButton.TabIndex = 101;
@@ -247,7 +247,7 @@
             this.installButton.AutoSize = true;
             this.installButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.installButton.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.installButton.Location = new System.Drawing.Point(204, 473);
+            this.installButton.Location = new System.Drawing.Point(204, 472);
             this.installButton.Name = "installButton";
             this.installButton.Size = new System.Drawing.Size(101, 29);
             this.installButton.TabIndex = 103;
@@ -268,7 +268,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(480, 469);
+            this.tabControl1.Size = new System.Drawing.Size(476, 468);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -285,7 +285,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(472, 441);
+            this.tabPage1.Size = new System.Drawing.Size(468, 440);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mods";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -296,7 +296,7 @@
             this.configureModButton.Enabled = false;
             this.configureModButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.configureModButton.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.configureModButton.Location = new System.Drawing.Point(101, 336);
+            this.configureModButton.Location = new System.Drawing.Point(101, 335);
             this.configureModButton.Name = "configureModButton";
             this.configureModButton.Size = new System.Drawing.Size(87, 27);
             this.configureModButton.TabIndex = 9;
@@ -311,7 +311,7 @@
             this.modBottomButton.Enabled = false;
             this.modBottomButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.modBottomButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.modBottomButton.Location = new System.Drawing.Point(433, 132);
+            this.modBottomButton.Location = new System.Drawing.Point(429, 132);
             this.modBottomButton.Name = "modBottomButton";
             this.modBottomButton.Size = new System.Drawing.Size(37, 38);
             this.modBottomButton.TabIndex = 8;
@@ -326,7 +326,7 @@
             this.modTopButton.Enabled = false;
             this.modTopButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.modTopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold);
-            this.modTopButton.Location = new System.Drawing.Point(433, 7);
+            this.modTopButton.Location = new System.Drawing.Point(429, 7);
             this.modTopButton.Name = "modTopButton";
             this.modTopButton.Size = new System.Drawing.Size(37, 38);
             this.modTopButton.TabIndex = 7;
@@ -339,7 +339,7 @@
             this.buttonNewMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonNewMod.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.buttonNewMod.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.buttonNewMod.Location = new System.Drawing.Point(343, 336);
+            this.buttonNewMod.Location = new System.Drawing.Point(339, 335);
             this.buttonNewMod.Name = "buttonNewMod";
             this.buttonNewMod.Size = new System.Drawing.Size(87, 27);
             this.buttonNewMod.TabIndex = 5;
@@ -352,7 +352,7 @@
             this.buttonRefreshModList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonRefreshModList.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.buttonRefreshModList.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.buttonRefreshModList.Location = new System.Drawing.Point(7, 336);
+            this.buttonRefreshModList.Location = new System.Drawing.Point(7, 335);
             this.buttonRefreshModList.Name = "buttonRefreshModList";
             this.buttonRefreshModList.Size = new System.Drawing.Size(87, 27);
             this.buttonRefreshModList.TabIndex = 3;
@@ -614,7 +614,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(478, 534);
+            this.ClientSize = new System.Drawing.Size(474, 533);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.installButton);
             this.Controls.Add(this.saveAndPlayButton);
