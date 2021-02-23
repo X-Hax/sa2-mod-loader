@@ -2160,41 +2160,7 @@ struct ef_message {
 };
 
 struct ef_message_b {
-	uint8_t Hide;
-	unsigned char field_1;
-	unsigned short XPos;
-	unsigned short YPos;
-	unsigned char field_6;
-	unsigned char field_7;
-	float XScale;
-	float YScale;
-	float shadow_offset;
-	unsigned short field_14;
-	unsigned short field_16;
-	unsigned short XScale_q;
-	unsigned short YScale_q;
-	unsigned short field_1C;
-	unsigned short field_1E;
-	short field_20;
-	short field_22;
-	short field_24;
-	unsigned short BackgroundXPos;
-	unsigned short BackgroundYPos;
-	unsigned short BackgroundYScale;
-	unsigned char field_2C;
-	unsigned char field_2D;
-	unsigned char field_2E;
-	unsigned char field_2F;
-	NJS_COLOR TextColor;
-	NJS_COLOR ShadowColor;
-	NJS_COLOR BackgroundColor;
-	unsigned int* field_3C;
-	unsigned char field_40;
-	unsigned char field_41;
-	unsigned char field_42;
-	unsigned char field_43;
-	NJS_TEXLIST TexList;
-	NJS_TEXNAME TexName;
+	ef_message Message;
 	unsigned char field_58;
 	unsigned char field_59;
 	unsigned char field_5A;
@@ -2241,8 +2207,8 @@ struct DemoInput {
 	short TransformedJoyYP2;
 	uint8_t StickPushedP1;
 	uint8_t StickPushedP2;
-	unsigned char field_0x1a;
-	unsigned char field_0x1b;
+	unsigned char field_1A;
+	unsigned char field_1B;
 	int JoyAngleP1;
 	float JoyMagnitudeP1;
 	int JoyAngleP2;
@@ -2250,11 +2216,16 @@ struct DemoInput {
 };
 
 struct Number {
-	unsigned int mode;
-	signed int max_number;
-	signed int number;
-	NJS_VECTOR pos;
-	float scale;
+	unsigned int Mode;
+	signed int MaxNumber;
+	signed int Number;
+	NJS_VECTOR Pos;
+	float Scale;
+	NJS_COLOR Color;
+};
+
+struct PolygonPoint {
+	NJS_POINT3 pos;
 	NJS_COLOR color;
 };
 
