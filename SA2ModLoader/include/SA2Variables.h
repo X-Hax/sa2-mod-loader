@@ -317,7 +317,7 @@ DataArray(LevelEndPosition, RougeMission23EndArray, 0x174A540, 6);
 DataArray(LevelEndPosition, MechEggmanMission23EndArray, 0x174A600, 7);
 DataArray(LevelEndPosition, MechTailsMission23EndArray, 0x174A6E0, 6);
 DataPointer(NJS_TEXLIST, PRESSSTART_TEXLIST, 0x174A9E0);
-DataPointer(uint8_t, DemoState, 0x174AFC0);
+DataPointer(DemoState, CurrentDemoState, 0x174AFC0);
 DataPointer(char, TextLanguage, 0x174AFD1);
 DataPointer(char, PlayerPaused, 0x174AFD7);
 DataPointer(char, TimerMinutes, 0x174AFDB);
