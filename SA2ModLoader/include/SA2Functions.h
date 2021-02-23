@@ -871,7 +871,7 @@ ObjectFunc(BgExec_30, 0x6AA970);
 ObjectFunc(BgClip_13, 0x6AB7D0);
 ObjectFunc(ObjectSandglassExec, 0x6ABDE0);
 VoidFunc(LoadDeathChamberCharAnims, 0x6AD4E0);
-FunctionPointer(ObjectMaster *, EfMsgWnd0Exec_New, (int a1, const char* message, int displayTime, int language), 0x6B6E20);
+FunctionPointer(ObjectMaster *, EfMsgWnd0Exec_New, (int a1, const char* str, int displayTime, int language), 0x6B6E20);
 ObjectFunc(EfMsgWnd0Exec_LevelUpDai, 0x6B7170);
 ObjectFunc(EfMsgWnd0Exec, 0x6B79D0);
 FunctionPointer(ef_message*, ef_message_New, (const char* str, int language, short a3, short a4), 0x6B7F40);
@@ -2648,8 +2648,8 @@ static inline void njDrawSprite2D_0(NJS_SPRITE* _sp, Int n, Float pri, Uint32 at
 }
 
 // void __usercall(ef_message *message@<eax>, const NJS_COLOR *color@<edx>, float x
-static const void* const InitMenuString_ptr = (void*)0x6B5A60;
-static inline void InitMenuString(ef_message* message, const NJS_COLOR* color, float x_pos, float y_pos, float x_scale, float y_scale)
+static const void* const InitMessage_ptr = (void*)0x6B5A60;
+static inline void InitMessage(ef_message* message, const NJS_COLOR* color, float x_pos, float y_pos, float x_scale, float y_scale)
 {
 	__asm
 	{
@@ -2659,7 +2659,7 @@ static inline void InitMenuString(ef_message* message, const NJS_COLOR* color, f
 		push[x_pos]
 		mov edx, [color]
 		mov eax, [message]
-		call InitMenuString_ptr
+		call InitMessage_ptr
 		add esp, 0x10
 	}
 }
