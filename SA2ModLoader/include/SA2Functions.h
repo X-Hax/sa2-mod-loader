@@ -775,6 +775,7 @@ ObjectFunc(BgExec_26, 0x6642B0);
 FunctionPointer(int, Menu_MainMenu, (), 0x664EC0);
 FunctionPointer(signed int, RunMenus, (), 0x666270);
 FunctionPointer(int, SetsMenuToTitle, (), 0x666600);
+ObjectFunc(keepMessage_Delete, 0x666C10);
 ObjectFunc(keepMessage, 0x666C80);
 ObjectFunc(screenEffectExec, 0x667D60);
 ObjectFunc(newMenuExec, 0x669200);
@@ -870,8 +871,10 @@ ObjectFunc(BgExec_30, 0x6AA970);
 ObjectFunc(BgClip_13, 0x6AB7D0);
 ObjectFunc(ObjectSandglassExec, 0x6ABDE0);
 VoidFunc(LoadDeathChamberCharAnims, 0x6AD4E0);
+FunctionPointer(ObjectMaster *, EfMsgWnd0Exec_New, (int a1, const char* str, int displayTime, int language), 0x6B6E20);
 ObjectFunc(EfMsgWnd0Exec_LevelUpDai, 0x6B7170);
 ObjectFunc(EfMsgWnd0Exec, 0x6B79D0);
+FunctionPointer(ef_message*, ef_message_New, (const char* str, int language, short a3, short a4), 0x6B7F40);
 ObjectFunc(Omochao_Main, 0x6C0780);
 ObjectFunc(MsgerDmyTaskExec, 0x6C0A50);
 ObjectFunc(RingMain, 0x6C0F80);
@@ -1261,6 +1264,8 @@ ObjectFunc(DrrTamaExec_Main, 0x79ECA0);
 ObjectFunc(DrrTamaExec_Delete, 0x79EF30);
 ObjectFunc(DrrTamaExec_Display, 0x79EFB0);
 ObjectFunc(ManGCylExecutor, 0x7A36F0);
+FunctionPointer(void, sa2_srand, (unsigned int), 0x7A89C6);
+VoidFunc(sa2_rand, 0x7A89D8);
 FunctionPointer(int, nullsub_2, (), 0x7B4AEF);
 FunctionPointer(int, nullsub_3, (), 0x7F4700);
 StdcallFunctionPointer(int, nullsub_7, (int), 0x8331D0);
@@ -1606,6 +1611,17 @@ static inline void KnockBackRumble(int pnum, signed int a2, signed int a3, int a
 	}
 }
 
+// void __usercall(const char* file@<edi>)
+static const void* const WriteDemoBufferToFile_ptr = (void*)0x43A730;
+static inline void WriteDemoBufferToFile(const char* file)
+{
+	__asm
+	{
+		mov edi, [file]
+		call WriteDemoBufferToFile_ptr
+	}
+}
+
 // void __usercall(__int16 stageNumber@<ax>)
 static const void* const SetCurrentLevelPtr = (void*)0x43D8A0;
 static inline void SetCurrentLevel(__int16 stageNumber)
@@ -1899,6 +1915,28 @@ static inline void DispTechniqueScore_Load(signed int a1)
 	{
 		mov ebx, [a1]
 		call DispTechniqueScore_LoadPtr
+	}
+}
+
+// void __usercall(const Number* number@<eax>)
+static const void* const RenderNumber_ptr = (void*)0x44EB00;
+static inline void* RenderNumber(const Number* number)
+{
+	__asm
+	{
+		mov eax, [number]
+		call RenderNumber_ptr
+	}
+}
+
+// void __usercall(DemoInput* buffer@<eax>)
+static const void* const ByteswapDemoInput_ptr = (void*)0x454450;
+static inline void ByteswapDemoInput(DemoInput* buffer)
+{
+	__asm
+	{
+		mov eax, [buffer]
+		call ByteswapDemoInput_ptr
 	}
 }
 
@@ -2579,6 +2617,21 @@ static inline ObjectMaster* ALO_LobbyGateDarkExecutor_Load(NJS_VECTOR* position)
 	return result;
 }
 
+//void __usercall(const char *str@<ecx>, const NJS_VECTOR* pos@<eax>, float scale, const NJS_COLOR* color)
+static const void* const CreateAndDrawMessage_ptr = (void*)0x667410;
+static inline void CreateAndDrawMessage(const char* str, const NJS_VECTOR* pos, float scale, const NJS_COLOR* color)
+{
+	__asm
+	{
+		push[color]
+		push[scale]
+		mov eax, [pos]
+		mov ecx, [str]
+		call CreateAndDrawMessage_ptr
+		add esp, 0x8
+	}
+}
+
 // void __usercall(NJS_SPRITE *_sp@<ebx>, Int n@<eax>, Float pri, Uint32 attr)
 static const void* const njDrawSprite2D_0Ptr = (void*)0x66EF40;
 static inline void njDrawSprite2D_0(NJS_SPRITE* _sp, Int n, Float pri, Uint32 attr)
@@ -2591,6 +2644,23 @@ static inline void njDrawSprite2D_0(NJS_SPRITE* _sp, Int n, Float pri, Uint32 at
 		mov ebx, [_sp]
 		call njDrawSprite2D_0Ptr
 		add esp, 8
+	}
+}
+
+// void __usercall(ef_message *message@<eax>, const NJS_COLOR *color@<edx>, float x
+static const void* const InitMessage_ptr = (void*)0x6B5A60;
+static inline void InitMessage(ef_message* message, const NJS_COLOR* color, float x_pos, float y_pos, float x_scale, float y_scale)
+{
+	__asm
+	{
+		push[y_scale]
+		push[x_scale]
+		push[y_pos]
+		push[x_pos]
+		mov edx, [color]
+		mov eax, [message]
+		call InitMessage_ptr
+		add esp, 0x10
 	}
 }
 
@@ -3026,6 +3096,20 @@ static inline PDS_PERIPHERAL* pdGetPeripheral(signed int a1, int a2)
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall(int numPoints@<ecx>, int readAlpha_q@<eax>, const PolygonPoint *pointArray)
+static const void* const DrawPolygon_ptr = (void*)0x77F7F0;
+static inline void DrawPolygon(int numPoints, int readAlpha_q, const PolygonPoint* pointArray)
+{
+	__asm
+	{
+		push[pointArray]
+		mov eax, [readAlpha_q]
+		mov ecx, [numPoints]
+		call DrawPolygon_ptr
+		add esp, 0x4
+	}
 }
 
 // void __usercall njSetMotion(NJS_MOTION *motion@<ecx>, float frame);

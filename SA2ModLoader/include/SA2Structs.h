@@ -2121,8 +2121,115 @@ struct PathControl
 	LoopHead* loophead;
 };
 
-struct player_parameter
-{
+struct ef_message {
+	uint8_t Hide;
+	unsigned char field_1;
+	unsigned short XPos;
+	unsigned short YPos;
+	unsigned char field_6;
+	unsigned char field_7;
+	float XScale;
+	float YScale;
+	float shadow_offset;
+	unsigned short field_14;
+	unsigned short field_16;
+	unsigned short XScale_q;
+	unsigned short YScale_q;
+	unsigned short field_1C;
+	unsigned short field_1E;
+	short field_20;
+	short field_22;
+	short field_24;
+	unsigned short BackgroundXPos;
+	unsigned short BackgroundYPos;
+	unsigned short BackgroundYScale;
+	unsigned char field_2C;
+	unsigned char field_2D;
+	unsigned char field_2E;
+	unsigned char field_2F;
+	NJS_COLOR TextColor;
+	NJS_COLOR ShadowColor;
+	NJS_COLOR BackgroundColor;
+	unsigned int* field_3C;
+	unsigned char field_40;
+	unsigned char field_41;
+	unsigned char field_42;
+	unsigned char field_43;
+	NJS_TEXLIST TexList;
+	NJS_TEXNAME TexName;
+};
+
+struct ef_message_b {
+	ef_message Message;
+	unsigned char field_58;
+	unsigned char field_59;
+	unsigned char field_5A;
+	unsigned char field_5B;
+	unsigned char field_5C;
+	unsigned char field_5D;
+	unsigned char field_5E;
+	unsigned char field_5F;
+	int MessageTimer;
+	unsigned char field_64;
+	unsigned char field_65;
+	unsigned char field_66;
+	unsigned char field_67;
+	int AutoAdvanceText;
+	char* OriginalString;
+	char* RemainingString;
+	unsigned char field_74;
+	unsigned char field_75;
+	unsigned char field_76;
+	unsigned char field_77;
+	unsigned char field_78;
+	unsigned char field_79;
+	unsigned char field_7A;
+	unsigned char field_7B;
+	unsigned char field_7C;
+	unsigned char field_7D;
+	unsigned char field_7E;
+	unsigned char field_7F;
+	int State_q;
+	unsigned char field_84;
+	unsigned char field_85;
+	unsigned char field_86;
+	unsigned char field_87;
+};
+
+struct DemoInput {
+	Buttons ButtonsP1;
+	Buttons ButtonsP2;
+	Buttons ButtonsPressedP1;
+	Buttons ButtonsPressedP2;
+	short TransformedJoyXP1;
+	short TransformedJoyXP2;
+	short TransformedJoyYP1;
+	short TransformedJoyYP2;
+	uint8_t StickPushedP1;
+	uint8_t StickPushedP2;
+	unsigned char field_1A;
+	unsigned char field_1B;
+	int JoyAngleP1;
+	float JoyMagnitudeP1;
+	int JoyAngleP2;
+	float JoyMagnitudeP2;
+};
+
+struct Number {
+	unsigned int Mode;
+	signed int MaxNumber;
+	signed int Number;
+	NJS_VECTOR Pos;
+	float Scale;
+	NJS_COLOR Color;
+};
+
+struct PolygonPoint {
+	NJS_POINT3 pos;
+	NJS_COLOR color;
+};
+
+struct player_parameter {
 	int jump2_timer;
 	float pos_error;
 	float lim_h_spd;

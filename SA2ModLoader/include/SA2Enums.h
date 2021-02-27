@@ -1426,3 +1426,10 @@ enum CollisionShapes : unsigned __int8
 	CollisionShape_Cube2,
 	CollisionShape_Wall = 0x9
 };
+
+enum DemoState : unsigned __int8
+{
+	DemoState_None,
+	DemoState_Playback,
+	DemoState_Recording
+};
