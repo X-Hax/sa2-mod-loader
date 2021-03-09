@@ -1440,3 +1440,10 @@ enum CollisionLists
 	CollisionList_Unknown_8,
 	CollisionList_Chao
 };
+
+enum DemoState : unsigned __int8
+{
+	DemoState_None,
+	DemoState_Playback,
+	DemoState_Recording
+};
