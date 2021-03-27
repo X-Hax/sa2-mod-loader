@@ -30,6 +30,7 @@ struct ChaoData1;
 struct ObjUnknownA;
 struct ObjUnknownB;
 struct ObjectMaster;
+struct LoopHead;
 
 using ObjectFuncPtr = void(__cdecl*)(ObjectMaster*);
 

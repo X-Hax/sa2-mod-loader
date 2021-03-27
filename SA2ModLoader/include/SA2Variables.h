@@ -625,4 +625,4 @@ DataPointer(int, FileBuffer, 0x24CFE20);
 DataPointer(NJS_MATRIX, _nj_unit_matrix_, 0x25F02A0);
 DataPointer(LPVOID, MatricStack_MinPtr, 0x267053C);
 DataPointer(RenderInfo, RenferInfo_, 0x2670544);
-DataPointer(LPVOID, MatricStack_MinPtr, 0x2670588);
+DataPointer(LPVOID, MatricStack_MaxPtr, 0x2670588);
