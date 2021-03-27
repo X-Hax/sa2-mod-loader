@@ -1202,6 +1202,9 @@ void __cdecl InitMods(void)
 	// Expand chunk model vertex buffer from 512 to 32768 verts
 	*(void**)0x25EFE48 = calloc(1, 0x100004);
 
+	// Fix env map condition bug in chDrawCnk
+	WriteData<6>((char*)0x0056DE7D, (char)0x90);
+
 	InitScreenFadeFix();
 
 	// Map of files to replace.
