@@ -2279,4 +2279,18 @@ struct player_parameter {
 	float eyes_height;
 	float center_height;
 };
+
+struct RenderInfo
+{
+	char gap0[8];
+	int texparplus4;
+	int Thing;
+	int unknown2;
+	int texparbuf;
+	int DrawPlaneMin;
+	int DrawPlaneMax;
+	NJS_TEXLIST* CurrentTexlist;
+	int unknown;
+	int CurrentTexid;
+};
 #pragma pack(pop)

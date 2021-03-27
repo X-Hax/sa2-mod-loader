@@ -624,5 +624,5 @@ DataPointer(int, SomeBuffer, 0x1DEFE20);
 DataPointer(int, FileBuffer, 0x24CFE20);
 DataPointer(NJS_MATRIX, _nj_unit_matrix_, 0x25F02A0);
 DataPointer(LPVOID, MatricStack_MinPtr, 0x267053C);
-DataPointer(int, Has_texlist_batadvPlayerChara_in_it, 0x2670544);
+DataPointer(RenderInfo, RenferInfo_, 0x2670544);
 DataPointer(LPVOID, MatricStack_MinPtr, 0x2670588);
