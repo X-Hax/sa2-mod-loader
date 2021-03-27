@@ -22,7 +22,7 @@ FunctionPointer(int, GetCrappyReplacementDepartureMachine, (), 0x41DFB0);
 FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem* data, char* a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (const char* a1, ...), 0x426740);
-FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
+FunctionPointer(void, njScale_, (float x, float y, float z), 0x427750);
 FunctionPointer(int, njPopMatrixEx, (), 0x429000);
 FunctionPointer(int, njPushMatrixEx, (), 0x429710);
 FastcallFunctionPointer(float, njSin, (Angle angle), 0x42AAB0);
@@ -70,7 +70,7 @@ VoidFunc(SaveConstantAttr, 0x446CB0);
 VoidFunc(LoadConstantAttr, 0x446CD0);
 VoidFunc(njControl3D_Backup, 0x446D00);
 VoidFunc(njControl3D_Restore, 0x446D10);
-FunctionPointer(int, njPushUnitMatrix, (NJS_MATRIX_PTR m), 0x44B210);
+FunctionPointer(int, njPushUnitMatrix, (), 0x44B210);
 FunctionPointer(void, SetMaterial, (float a1, float a2, float a3, float a4), 0x44B2E0);
 ObjectFunc(DrawLine3DExec, 0x44B680);
 FunctionPointer(int, Get_dword_1A559C8, (), 0x44BFE0);
@@ -148,6 +148,13 @@ FunctionPointer(signed int, LoadLandManager, (LandTable* a1), 0x47BD30);
 ObjectFunc(LandManager_Main, 0x47C180);
 FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0);
 FunctionPointer(int, ResetGravity, (), 0x47D880);
+FunctionPointer(void, CheckCollision, (ObjectMaster* entity, ObjectMaster* test), 0x485850);
+VoidFunc(RunPlayerCollision, 0x485920);
+VoidFunc(RunProjectileCollisionn, 0x485B20);
+VoidFunc(RunChaoCollision, 0x485C70);
+VoidFunc(RunEnemyCollision, 0x485E10);
+VoidFunc(RunRegularCollision, 0x485EF0);
+VoidFunc(RunObjectCollisions, 0x486190);
 ObjectFunc(Extra_Exec_Main, 0x487390);
 FunctionPointer(signed int, LoadSetObject, (ObjectListHead* list, void* setfile), 0x487E40);
 FunctionPointer(int, DeleteSetObject, (), 0x487F00);
@@ -427,6 +434,7 @@ FunctionPointer(int, AL_GBAManagerExecutor_Load, (), 0x532710);
 ObjectFunc(AL_GBAManagerExecutor, 0x532A60);
 ObjectFunc(AL_GBAManagerExecutor_Delete, 0x532C70);
 ObjectFunc(AL_EntranceMenuManagerExecutor, 0x533100);
+VoidFunc(AL_LoadPalette, 0x534350);
 ObjectFunc(ALO_StageTitleExec_Delete, 0x535110);
 FunctionPointer(int, ALO_StageTitleExec_Unknown, (int), 0x535130);
 ObjectFunc(ALO_StageTitleExec_Main, 0x535190);
@@ -1140,7 +1148,7 @@ FunctionPointer(void, LoadMechTails, (int playerNum), 0x740EB0);
 FunctionPointer(void, LoadChaoWalker, (int playerNum), 0x741110);
 FunctionPointer(void, LoadDarkChaoWalker, (int playerNum), 0x7412F0);
 ObjectFunc(MechEggman_Main, 0x741530);
-FunctionPointer(double, MechEggman_ChecksDamage, (EntityData1* a1, signed int a3, SonicCharObj2* a4, int a2), 0x742C10);
+FunctionPointer(void, MechEggman_RunActions, (EntityData1* data, signed int a3, MechEggmanCharObj2* co2, int a2), 0x742C10);
 ObjectFunc(MechEggman_Delete, 0x743E90);
 ObjectFunc(MechEggman_Display, 0x7444F0);
 ObjectFunc(MechEggman_1C, 0x7454B0);
@@ -1156,7 +1164,7 @@ ObjectFunc(EWalker2PSpecialMan, 0x749A30);
 ObjectFunc(EWalker2PLaserMan, 0x749E60);
 ObjectFunc(WalkerTimeSubtractingTask, 0x74AA90);
 ObjectFunc(Tails_Main, 0x74D170);
-FunctionPointer(void, Tails_ChecksDamage, (EntityData1* a1, int a2, CharObj2Base* a3, int a4), 0x74DC60);
+FunctionPointer(void, Tails_RunActions, (EntityData1* data1, EntityData2* data2, CharObj2Base* co2, TailsCharObj2* tco2), 0x74DC60);
 ObjectFunc(Tails_Delete, 0x74FC60);
 ObjectFunc(Tails_Display, 0x7507D0);
 FunctionPointer(int, NBarrier_Load, (char), 0x753210);
@@ -1231,6 +1239,7 @@ FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem* a1, size_t coun
 FunctionPointer(void, SetDrawingPlanes, (Float _min, Float _max), 0x77E700);
 VoidFunc(UpdateControllers, 0x77E780);
 FunctionPointer(void, FreeTexList, (NJS_TEXLIST* texlist), 0x77F9F0);
+VoidFunc(njUnitMatrix_, 0x780E70);
 FunctionPointer(void, DrawObjMotion, (NJS_OBJECT* a1), 0x782420);
 FunctionPointer(int, LoadStg00Module, (), 0x786500);
 FunctionPointer(int, LoadStg24Module, (), 0x786770);
@@ -1360,6 +1369,21 @@ static inline void njCalcVector(float* matrix, NJS_VECTOR* out, NJS_VECTOR* tran
 	}
 }
 
+//void __usercall njUnitMatrixV(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njUnitMatrixVPtr = (void*)0x426FF0;
+static inline void njUnitMatrixV(NJS_MATRIX_PTR m, float x, float y, float z)
+{
+	__asm
+	{
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njUnitMatrixVPtr
+		add esp, 12
+	}
+}
+
 //void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *out@<edx>, NJS_MATRIX_PTR m@<ecx>)
 static const void* const njCalcPointPtr = (void*)0x4273B0;
 static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRIX_PTR m)
@@ -1373,17 +1397,17 @@ static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRI
 	}
 }
 
-// void __usercall(float *a1@<eax>, float a2, float a3, float a4)
-static const void* const njTranslatePtr = (void*)0x427470;
-static inline void njTranslate(float* a1, float a2, float a3, float a4)
+// void __usercall(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njTranslate_Ptr = (void*)0x427470;
+static inline void njTranslate_(NJS_MATRIX_PTR m, float x, float y, float z)
 {
 	__asm
 	{
-		push[a4]
-		push[a3]
-		push[a2]
-		mov eax, [a1]
-		call njTranslatePtr
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njTranslate_Ptr
 		add esp, 12
 	}
 }
@@ -1463,6 +1487,17 @@ static inline void njRotateZYX(Angle x, Angle y, NJS_MATRIX_PTR m, Angle z)
 		mov eax, [x]
 		call njRotateZYXPtr
 		add esp, 4
+	}
+}
+
+//void __usercall njScaleV_(NJS_VECTOR *v@<eax>)
+static const void* const njScaleV_Ptr = (void*)0x429740;
+static inline void njScaleV_(NJS_VECTOR* v)
+{
+	__asm
+	{
+		mov eax, [v]
+		call njScaleV_Ptr
 	}
 }
 
@@ -2007,8 +2042,9 @@ static inline void SetPhysicsParamsAndGiveUpgrades(ObjectMaster* a1, int a2)
 
 //signed int __usercall GetAnalog@<eax>(EntityData1 *data@<eax>, CharObj2Base *co2, signed int *angle, float* magnitude)
 static const void* const GetAnalogPtr = (void*)0x45A870;
-static inline void GetAnalog(EntityData1* data, CharObj2Base* co2, Angle* angle, Float* magnitude)
+static inline signed int GetAnalog(EntityData1* data, CharObj2Base* co2, Angle* angle, Float* magnitude)
 {
+	signed int result;
 	__asm
 	{
 		push[magnitude]
@@ -2016,8 +2052,10 @@ static inline void GetAnalog(EntityData1* data, CharObj2Base* co2, Angle* angle,
 		push[co2]
 		mov eax, [data]
 		call GetAnalogPtr
+		mov result, eax
 		add esp, 12
 	}
+	return result;
 }
 
 //void __usercall CalcVector_PlayerRot(EntityData1 *data@<edi>, NJS_VECTOR *v@<esi>)
@@ -2274,6 +2312,17 @@ static inline signed int InitCollision_0(unsigned __int8 a1, ObjectMaster* a2, C
 	return result;
 }
 
+//void __usercall Collision_InitThings(ObjectMaster *obj@<eax>)
+static const void* const Collision_InitThingsPtr = (void*)0x47E6C0;
+static inline void Collision_InitThings(ObjectMaster* obj)
+{
+	__asm
+	{
+		mov eax, [obj]
+		call Collision_InitThingsPtr
+	}
+}
+
 // void __usercall(ObjectMaster *a1@<esi>)
 static const void* const AddToCollisionListPtr = (void*)0x47E750;
 static inline void AddToCollisionList(ObjectMaster* object)
@@ -2295,6 +2344,26 @@ static inline ObjectMaster* GetCollidingPlayer(ObjectMaster* obj)
 		mov eax, [obj]
 		call GetCollidingPlayerPtr
 		mov result, eax
+	}
+	return result;
+}
+
+//bool __usercall SETDistanceCheckThing2P@<eax>(NJS_VECTOR *from@<eax>, NJS_VECTOR *p2pos@<ecx>, float x, float y, float z, float dist)
+static const void* const SETDistanceCheckThing2PPtr = (void*)0x4881F0;
+static inline bool SETDistanceCheckThing2P(NJS_VECTOR* from, NJS_VECTOR* p2pos, float x, float y, float z, float dist)
+{
+	int result;
+	__asm
+	{
+		push[dist]
+		push[z]
+		push[y]
+		push[x]
+		mov ecx, [p2pos]
+		mov eax, [from]
+		call SETDistanceCheckThing2PPtr
+		mov result, eax
+		add esp, 16
 	}
 	return result;
 }
@@ -3109,6 +3178,88 @@ static inline void DrawPolygon(int numPoints, int readAlpha_q, const PolygonPoin
 		mov ecx, [numPoints]
 		call DrawPolygon_ptr
 		add esp, 0x4
+	}
+}
+
+//signed int __usercall njPopMatrix@<eax>(NJS_MATRIX_PTR m@<eax>)
+static const void* const njPopMatrixPtr = (void*)0x77FD60;
+static inline signed int njPopMatrix(NJS_MATRIX_PTR m)
+{
+	signed int result;
+	__asm
+	{
+		mov eax, [m]
+		call njPopMatrixPtr
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall njTranslate(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njTranslatePtr = (void*)0x77FD90;
+static inline void njTranslate(NJS_MATRIX_PTR m, float x, float y, float z)
+{
+	__asm
+	{
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njTranslatePtr
+		add esp, 12
+	}
+}
+
+//void __usercall njSetMatrix(NJS_MATRIX_PTR md@<eax>, NJS_MATRIX_CONST_PTR ms@<ecx>)
+static const void* const njSetMatrixPtr = (void*)0x77FDF0;
+static inline void njSetMatrix(NJS_MATRIX_PTR md, NJS_MATRIX_PTR ms)
+{
+	__asm
+	{
+		mov ecx, [ms]
+		mov eax, [md]
+		call njSetMatrixPtr
+	}
+}
+
+//signed int __usercall njPushMatrix@<eax>(NJS_MATRIX_PTR m@<ecx>)
+static const void* const njPushMatrixPtr = (void*)0x77FE10;
+static inline signed int njPushMatrix(NJS_MATRIX_PTR m)
+{ 
+	signed int result;
+	__asm
+	{
+		mov ecx, [m]
+		call njPushMatrixPtr
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall njScale(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njScalePtr = (void*)0x7802B0;
+static inline void njScale(NJS_MATRIX_PTR m, float x, float y, float z)
+{
+	__asm
+	{
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njScalePtr
+		add esp, 12
+	}
+}
+
+//void __usercall njTranslateV(NJS_MATRIX_PTR m@<ecx>, NJS_VECTOR *v@<eax>)
+static const void* const njTranslateVPtr = (void*)0x7806A0;
+static inline void njTranslateV(NJS_MATRIX_PTR m, NJS_VECTOR* v)
+{
+	__asm
+	{
+		mov eax, [v]
+		mov ecx, [m]
+		call njTranslateVPtr
 	}
 }
 

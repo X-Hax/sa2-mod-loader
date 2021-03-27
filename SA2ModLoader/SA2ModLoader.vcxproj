@@ -93,6 +93,7 @@
     <ClInclude Include="FileReplacement.h" />
     <ClInclude Include="include\MemAccess.h" />
     <ClInclude Include="include\ninja.h" />
+    <ClInclude Include="include\SA2ModInfo.h" />
     <ClInclude Include="include\SA2ModLoader.h" />
     <ClInclude Include="include\SA2Enums.h" />
     <ClInclude Include="include\SA2Functions.h" />
