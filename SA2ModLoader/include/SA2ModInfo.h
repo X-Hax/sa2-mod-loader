@@ -6,8 +6,7 @@
 #ifndef SA2MODLOADER_SA2MODINFO_H
 #define SA2MODLOADER_SA2MODINFO_H
 
-#include <WTypes.h>
-#include <cstdint>
+#include "SA2Structs.h"
 
 static const int ModLoaderVer = 7;
 

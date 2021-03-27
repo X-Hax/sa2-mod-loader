@@ -22,7 +22,7 @@ FunctionPointer(int, GetCrappyReplacementDepartureMachine, (), 0x41DFB0);
 FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem* data, char* a2, int a3), 0x425B50);
 FunctionPointer(int, PrintDebug, (const char* a1, ...), 0x426740);
-FunctionPointer(void, njScale, (float a1, float a2, float a3), 0x427750);
+FunctionPointer(void, njScale_, (float x, float y, float z), 0x427750);
 FunctionPointer(int, njPopMatrixEx, (), 0x429000);
 FunctionPointer(int, njPushMatrixEx, (), 0x429710);
 FastcallFunctionPointer(float, njSin, (Angle angle), 0x42AAB0);
@@ -1239,6 +1239,7 @@ FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem* a1, size_t coun
 FunctionPointer(void, SetDrawingPlanes, (Float _min, Float _max), 0x77E700);
 VoidFunc(UpdateControllers, 0x77E780);
 FunctionPointer(void, FreeTexList, (NJS_TEXLIST* texlist), 0x77F9F0);
+VoidFunc(njUnitMatrix_, 0x780E70);
 FunctionPointer(void, DrawObjMotion, (NJS_OBJECT* a1), 0x782420);
 FunctionPointer(int, LoadStg00Module, (), 0x786500);
 FunctionPointer(int, LoadStg24Module, (), 0x786770);
@@ -1368,6 +1369,21 @@ static inline void njCalcVector(float* matrix, NJS_VECTOR* out, NJS_VECTOR* tran
 	}
 }
 
+//void __usercall njUnitMatrixV(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njUnitMatrixVPtr = (void*)0x426FF0;
+static inline void njUnitMatrixV(NJS_MATRIX_PTR m, float x, float y, float z)
+{
+	__asm
+	{
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njUnitMatrixVPtr
+		add esp, 12
+	}
+}
+
 //void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *out@<edx>, NJS_MATRIX_PTR m@<ecx>)
 static const void* const njCalcPointPtr = (void*)0x4273B0;
 static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRIX_PTR m)
@@ -1381,17 +1397,17 @@ static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRI
 	}
 }
 
-// void __usercall(float *a1@<eax>, float a2, float a3, float a4)
-static const void* const njTranslatePtr = (void*)0x427470;
-static inline void njTranslate(float* a1, float a2, float a3, float a4)
+// void __usercall(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njTranslate_Ptr = (void*)0x427470;
+static inline void njTranslate_(NJS_MATRIX_PTR m, float x, float y, float z)
 {
 	__asm
 	{
-		push[a4]
-		push[a3]
-		push[a2]
-		mov eax, [a1]
-		call njTranslatePtr
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njTranslate_Ptr
 		add esp, 12
 	}
 }
@@ -1471,6 +1487,17 @@ static inline void njRotateZYX(Angle x, Angle y, NJS_MATRIX_PTR m, Angle z)
 		mov eax, [x]
 		call njRotateZYXPtr
 		add esp, 4
+	}
+}
+
+//void __usercall njScaleV_(NJS_VECTOR *v@<eax>)
+static const void* const njScaleV_Ptr = (void*)0x429740;
+static inline void njScaleV_(NJS_VECTOR* v)
+{
+	__asm
+	{
+		mov eax, [v]
+		call njScaleV_Ptr
 	}
 }
 
@@ -3151,6 +3178,88 @@ static inline void DrawPolygon(int numPoints, int readAlpha_q, const PolygonPoin
 		mov ecx, [numPoints]
 		call DrawPolygon_ptr
 		add esp, 0x4
+	}
+}
+
+//signed int __usercall njPopMatrix@<eax>(NJS_MATRIX_PTR m@<eax>)
+static const void* const njPopMatrixPtr = (void*)0x77FD60;
+static inline signed int njPopMatrix(NJS_MATRIX_PTR m)
+{
+	signed int result;
+	__asm
+	{
+		mov eax, [m]
+		call njPopMatrixPtr
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall njTranslate(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njTranslatePtr = (void*)0x77FD90;
+static inline void njTranslate(NJS_MATRIX_PTR m, float x, float y, float z)
+{
+	__asm
+	{
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njTranslatePtr
+		add esp, 12
+	}
+}
+
+//void __usercall njSetMatrix(NJS_MATRIX_PTR md@<eax>, NJS_MATRIX_CONST_PTR ms@<ecx>)
+static const void* const njSetMatrixPtr = (void*)0x77FDF0;
+static inline void njSetMatrix(NJS_MATRIX_PTR md, NJS_MATRIX_PTR ms)
+{
+	__asm
+	{
+		mov ecx, [ms]
+		mov eax, [md]
+		call njSetMatrixPtr
+	}
+}
+
+//signed int __usercall njPushMatrix@<eax>(NJS_MATRIX_PTR m@<ecx>)
+static const void* const njPushMatrixPtr = (void*)0x77FE10;
+static inline signed int njPushMatrix(NJS_MATRIX_PTR m)
+{ 
+	signed int result;
+	__asm
+	{
+		mov ecx, [m]
+		call njPushMatrixPtr
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall njScale(NJS_MATRIX_PTR m@<eax>, float x, float y, float z)
+static const void* const njScalePtr = (void*)0x7802B0;
+static inline void njScale(NJS_MATRIX_PTR m, float x, float y, float z)
+{
+	__asm
+	{
+		push[z]
+		push[y]
+		push[x]
+		mov eax, [m]
+		call njScalePtr
+		add esp, 12
+	}
+}
+
+//void __usercall njTranslateV(NJS_MATRIX_PTR m@<ecx>, NJS_VECTOR *v@<eax>)
+static const void* const njTranslateVPtr = (void*)0x7806A0;
+static inline void njTranslateV(NJS_MATRIX_PTR m, NJS_VECTOR* v)
+{
+	__asm
+	{
+		mov eax, [v]
+		mov ecx, [m]
+		call njTranslateVPtr
 	}
 }
 
