@@ -941,7 +941,7 @@ struct JiggleInfo
 struct SonicCharObj2
 {
 	CharObj2Base base;
-	char gap1BC[92];
+	char gap1BC[88];
 	NJS_VECTOR HeadNodePos;
 	char gap224[313];
 	char SomersaultNextAction;
@@ -1356,7 +1356,7 @@ struct EmeManObj2
 struct KnucklesCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[564];
+	char field_1BC[560];
 	NJS_TEXLIST *TextureList;
 	NJS_TEXLIST *EffectTextureList;
 	ModelIndex *ModelList;
@@ -1367,7 +1367,7 @@ struct KnucklesCharObj2
 struct EggmanCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[420];
+	char field_1BC[416];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
@@ -1376,7 +1376,7 @@ struct EggmanCharObj2
 struct MechEggmanCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[128];
+	char field_1BC[124];
 	float field_23C;
 	char field_240[4];
 	float field_244;
@@ -1435,7 +1435,7 @@ struct MechEggmanCharObj2
 struct TailsCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[500];
+	char field_1BC[496];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
@@ -1445,7 +1445,7 @@ struct TailsCharObj2
 struct SuperSonicCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[436];
+	char field_1BC[432];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
