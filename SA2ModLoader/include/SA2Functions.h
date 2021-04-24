@@ -3183,12 +3183,12 @@ static inline void DrawPolygon(int numPoints, int readAlpha_q, const PolygonPoin
 
 //signed int __usercall njPopMatrix@<eax>(NJS_MATRIX_PTR m@<eax>)
 static const void* const njPopMatrixPtr = (void*)0x77FD60;
-static inline signed int njPopMatrix(NJS_MATRIX_PTR m)
+static inline signed int njPopMatrix(int count)
 {
 	signed int result;
 	__asm
 	{
-		mov eax, [m]
+		mov eax, [count]
 		call njPopMatrixPtr
 		mov result, eax
 	}
