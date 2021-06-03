@@ -1447,3 +1447,13 @@ enum DemoState : unsigned __int8
 	DemoState_Playback,
 	DemoState_Recording
 };
+
+enum GravityDirectionType
+{
+	DownwardX,
+	UpwardX,
+	DownwardY,
+	UpwardY,
+	DownwardZ,
+	UpwardZ
+};

@@ -47,6 +47,7 @@ FunctionPointer(signed int, GameStateHandler, (), 0x43A780);
 FunctionPointer(int, SetNextLevel, (), 0x43C4D0);
 VoidFunc(MissionStartVariableSetup, 0x43C8B0);
 VoidFunc(InitCurrentLevelAndScreenCount, 0x43CB10);
+VoidFunc(LoadLevelManager, 0x43CB50);
 VoidFunc(CallControlAndDoOtherThings, 0x43D240);
 FunctionPointer(int, PauseMenu_Main, (), 0x43D310);
 FunctionPointer(int, LoadCharacters, (), 0x43D630);
@@ -154,6 +155,7 @@ VoidFunc(RunProjectileCollisionn, 0x485B20);
 VoidFunc(RunChaoCollision, 0x485C70);
 VoidFunc(RunEnemyCollision, 0x485E10);
 VoidFunc(RunRegularCollision, 0x485EF0);
+VoidFunc(ClearCollisionLists, 0x485FD0);
 VoidFunc(RunObjectCollisions, 0x486190);
 ObjectFunc(Extra_Exec_Main, 0x487390);
 FunctionPointer(signed int, LoadSetObject, (ObjectListHead* list, void* setfile), 0x487E40);
@@ -2417,14 +2419,14 @@ static inline int ClipObject(ObjectMaster* obj, float distance)
 	return result;
 }
 
-//void __usercall UpdateSetDateAndDelete(ObjectMaster *obj@<eax>)
-static const void* const UpdateSetDateAndDeletePtr = (void*)0x488DA0;
-static inline void UpdateSetDateAndDelete(ObjectMaster* obj)
+//void __usercall UpdateSetDataAndDelete(ObjectMaster *obj@<eax>)
+static const void* const UpdateSetDataAndDeletePtr = (void*)0x488DA0;
+static inline void UpdateSetDataAndDelete(ObjectMaster* obj)
 {
 	__asm
 	{
 		mov eax, [obj]
-		call UpdateSetDateAndDeletePtr
+		call UpdateSetDataAndDeletePtr
 	}
 }
 
@@ -3181,7 +3183,7 @@ static inline void DrawPolygon(int numPoints, int readAlpha_q, const PolygonPoin
 	}
 }
 
-//signed int __usercall njPopMatrix@<eax>(NJS_MATRIX_PTR m@<eax>)
+//signed int __usercall njPopMatrix@<eax>(int count@<eax>)
 static const void* const njPopMatrixPtr = (void*)0x77FD60;
 static inline signed int njPopMatrix(int count)
 {
