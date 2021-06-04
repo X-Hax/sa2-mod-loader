@@ -1542,7 +1542,7 @@ static inline void njRotateY(NJS_MATRIX_PTR m, Angle y)
 }
 
 //void __usercall njRotateZ_(signed int z@<eax>, NJS_MATRIX_PTR m@<ecx>)
-static const void* const njRotateZPtr = (void*)0x42ADD0;
+static const void* const njRotateZPtr = (void*)0x42ADF0;
 static inline void njRotateZ(NJS_MATRIX_PTR m, Angle z)
 {
 	__asm
