@@ -240,8 +240,8 @@ void LandTableInfo::fixlandtablepointers(LandTable *landtable, intptr_t base)
 				{
 					fixedpointers.insert(landtable->COLList[i].Model);
 					bool chunk = false;
-					if (landtable->ChunkModelCount != -1)
-						chunk = i < landtable->ChunkModelCount;
+					if (landtable->VisibleModelCount != -1)
+						chunk = i < landtable->VisibleModelCount;
 					else
 						chunk = landtable->COLList[i].Flags < 0;
 					fixobjectpointers(landtable->COLList[i].Model, base, chunk);
