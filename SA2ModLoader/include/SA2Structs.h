@@ -69,10 +69,10 @@ struct ObjectMaster
 	ObjectFuncPtr MainSub;
 	ObjectFuncPtr DisplaySub;
 	ObjectFuncPtr DeleteSub;
-	ObjectFuncPtr field_1C;
-	ObjectFuncPtr field_20;
-	ObjectFuncPtr SomethingSub;
-	ObjectFuncPtr field_28;
+	ObjectFuncPtr DisplaySub_Delayed1;
+	ObjectFuncPtr DisplaySub_Delayed2;
+	ObjectFuncPtr DisplaySub_Delayed3;
+	ObjectFuncPtr DisplaySub_Delayed4;
 	void *field_2C;
 	SETObjectData *SETData;
 	Data1Ptr Data1;
@@ -510,7 +510,6 @@ struct ObjUnknownB
 
 struct EntityData2
 {
-	CharObj2Base *CharacterData;
 	NJS_POINT3 Velocity;
 	NJS_POINT3 Acceleration;
 	Rotation Forward;
@@ -559,28 +558,28 @@ struct PhysicsData
 
 struct CharAnimInfo
 {
-  __int16 AnimationFrame;
-  __int16 Next;
-  __int16 Current;
-  __int16 Animation3;
-  __int16 field_8;
-  __int16 field_A;
-  __int16 field_C;
-  char field_E;
-  char field_F;
-  float field_10;
-  float field_14;
-  float field_18;
-  char field_1C;
-  char field_1D;
-  char field_1E;
-  char field_1F;
-  char field_20;
-  char field_21;
-  char field_22;
-  char field_23;
-  AnimationInfo *Animations;
-  NJS_MOTION *Motion;
+	__int16 AnimationFrame;
+	__int16 Next;
+	__int16 Current;
+	__int16 Animation3;
+	__int16 field_8;
+	__int16 field_A;
+	__int16 field_C;
+	char field_E;
+	char field_F;
+	float field_10;
+	float field_14;
+	float field_18;
+	char field_1C;
+	char field_1D;
+	char field_1E;
+	char field_1F;
+	char field_20;
+	char field_21;
+	char field_22;
+	char field_23;
+	AnimationInfo *Animations;
+	NJS_MOTION *Motion;
 };
 
 struct CharSurfaceInfo
@@ -627,7 +626,7 @@ struct CharObj2Base
 	NJS_POINT3 FloorNormal;
 	SurfaceFlags CurrentSurfaceFlags;
 	SurfaceFlags PreviousSurfaceFlags;
-	float* field_90;
+	void* csts;
 	ObjectMaster* HeldObject;
 	char gap98[4];
 	ObjectMaster* HoldTarget;
@@ -720,7 +719,7 @@ struct ChaoDNA
 	char gap_4D6[6];
 };
 
-struct  ChaoEmotions
+struct ChaoEmotions
 {
 	__int16 field_124;
 	__int16 Category1Timer;
@@ -941,7 +940,7 @@ struct JiggleInfo
 struct SonicCharObj2
 {
 	CharObj2Base base;
-	char gap1BC[92];
+	char gap1BC[88];
 	NJS_VECTOR HeadNodePos;
 	char gap224[313];
 	char SomersaultNextAction;
@@ -1086,16 +1085,16 @@ struct SaveData
 struct LandTable
 {
 	__int16 COLCount;
-	__int16 ChunkModelCount;
+	__int16 VisibleModelCount;
 	__int16 field_4;
-	__int16 field_6;
-	__int16 field_8;
-	__int16 field_A;
-	float field_C;
-	COL *COLList;
-	float *field_14;
-	char *TextureName;
-	NJS_TEXLIST *TextureList;
+	__int16 AnimCount;
+	__int16 Attrs;
+	__int16 IsTextureLoaded;
+	float ClippingDistance;
+	COL* COLList;
+	void* AnimData;
+	const char* TextureName;
+	NJS_TEXLIST* TextureList;
 };
 
 struct COL
@@ -1104,7 +1103,7 @@ struct COL
 	float Radius;
 	NJS_OBJECT *Model;
 	int field_14;
-	int field_18;
+	int Chunks;
 	int Flags;
 };
 
@@ -1132,7 +1131,7 @@ struct LevelHeader
 	char Name[8];
 	int field_8;
 	void(__cdecl *Init)();
-	void *anonymous_2;
+	void(__cdecl* Free)();
 	ObjectFuncPtr subprgmanager;
 };
 
@@ -1356,7 +1355,7 @@ struct EmeManObj2
 struct KnucklesCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[564];
+	char field_1BC[560];
 	NJS_TEXLIST *TextureList;
 	NJS_TEXLIST *EffectTextureList;
 	ModelIndex *ModelList;
@@ -1367,7 +1366,7 @@ struct KnucklesCharObj2
 struct EggmanCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[420];
+	char field_1BC[416];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
@@ -1376,7 +1375,7 @@ struct EggmanCharObj2
 struct MechEggmanCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[128];
+	char field_1BC[124];
 	float field_23C;
 	char field_240[4];
 	float field_244;
@@ -1435,7 +1434,7 @@ struct MechEggmanCharObj2
 struct TailsCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[500];
+	char field_1BC[496];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
@@ -1445,7 +1444,7 @@ struct TailsCharObj2
 struct SuperSonicCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[436];
+	char field_1BC[432];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
