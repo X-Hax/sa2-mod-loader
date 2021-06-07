@@ -96,9 +96,7 @@ struct SETObjectData
 
 struct Rotation
 {
-	int x;
-	int y;
-	int z;
+	Angle x, y, z;
 };
 
 struct EntityData1
@@ -114,7 +112,6 @@ struct EntityData1
 	NJS_VECTOR Scale;
 	CollisionInfo *Collision;
 };
-
 
 struct MotionTableData
 {
@@ -508,6 +505,7 @@ struct ObjUnknownB
 	int field_C;
 };
 
+// Movement information (motionwk internally)
 struct EntityData2
 {
 	NJS_POINT3 Velocity;
@@ -582,6 +580,7 @@ struct CharAnimInfo
 	NJS_MOTION *Motion;
 };
 
+// Vertical surface information for shadows and ripples
 struct CharSurfaceInfo
 {
 	Angle AngX;
@@ -594,7 +593,7 @@ struct CharSurfaceInfo
 	SurfaceFlags PrevBottomSurface;
 };
 
-// Contains input (first 4 variables) and output information for the dynamic collision system
+// Contains input (first 4 variables) and output information for the dynamic collision system.
 struct csts
 {
 	float radius;
@@ -615,6 +614,7 @@ struct csts
 	NJS_POINT3 anaspdv;
 };
 
+// Player-specific data, common base for all characters.
 struct CharObj2Base
 {
 	char PlayerNum;
@@ -2121,6 +2121,7 @@ struct ChaoMotionTableEntry
 	float PlaySpeed;
 };
 
+// Camera information for one screen, see CameraScreensInfoArray.
 struct CameraScreenInfo {
 	NJS_VECTOR pos;
 	Rotation rot;
@@ -2143,6 +2144,7 @@ struct CameraInfo
 	int field_24D4;
 };
 
+// Additional object data for path controllers.
 struct PathControl
 {
 	Uint8 Action;
@@ -2265,6 +2267,7 @@ struct PolygonPoint {
 	NJS_COLOR color;
 };
 
+// Physics struct from SADX symbols
 struct player_parameter {
 	int jump2_timer;
 	float pos_error;
@@ -2322,6 +2325,7 @@ struct DynColInfo
 	ObjectMaster* Task;
 };
 
+// Information output from GetPathStatus.
 struct PathInfo
 {
 	int angx;
@@ -2338,6 +2342,7 @@ struct PathInfo
 	NJS_POINT3 front;
 };
 
+// Information output from CalcPathTbl.
 struct pathtbl
 {
 	__int16 angx;
