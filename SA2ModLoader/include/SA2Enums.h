@@ -1397,7 +1397,7 @@ enum StoryEntryType
 	StoryEntryType_Credits = 0x3,
 };
 
-enum SurfaceFlags
+enum SurfaceFlags : uint32_t
 {
 	SurfaceFlag_Solid = 0x1,
 	SurfaceFlag_Water = 0x2,

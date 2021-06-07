@@ -147,6 +147,7 @@ FunctionPointer(signed int, ScreenFadeOut, (), 0x4786E0);
 ObjectFunc(dmyEnemy_Main, 0x47AB30);
 FunctionPointer(signed int, LoadLandManager, (LandTable* a1), 0x47BD30);
 ObjectFunc(LandManager_Main, 0x47C180);
+FunctionPointer(void, ListGroundForCollision, (float x, float y, float z, float radius), 0x47CD60); // Finds dynamic collisions within radius and fills LandColList and LandColList_Count
 FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0);
 FunctionPointer(int, ResetGravity, (), 0x47D880);
 FunctionPointer(void, CheckCollision, (ObjectMaster* entity, ObjectMaster* test), 0x485850);
@@ -170,6 +171,7 @@ ObjectFunc(MinimalCounterExecutor, 0x489240);
 ObjectFunc(MinimalCaptureEffect_Exec, 0x489650);
 ObjectFunc(Minimal_Exec, 0x4898B0);
 FunctionPointer(int, MINIMAL, (ObjectMaster* a1), 0x48ADE0);
+FunctionPointer(void, CL_ColPolListUpNear, (csts* ctp), 0x48BAF0); // Finds dynamic collisions within the csts input position and radius
 FunctionPointer(int, ChaosDrive_Unknown, (int), 0x48F0E0);
 ObjectFunc(ChaosDrive_Delete, 0x48F7C0);
 ObjectFunc(ChaosDrive_Load2, 0x48F810);
@@ -177,7 +179,7 @@ ThiscallFunctionPointer(unsigned int, PRSDec, (unsigned __int8* src, uint8_t* ds
 FunctionPointer(signed int, LoadStagePaths, (LoopHead** a1), 0x490110);
 FunctionPointer(void, LoadPathObjects, (LoopHead** a1), 0x490180);
 ObjectFunc(ParticleCoreTask_Load, 0x491C20);
-FunctionPointer(float, GetGroundHeight, (float x, float y, float z, Rotation* outrotation), 0x494C30);
+FunctionPointer(double, GetGroundHeight, (float x, float y, float z, Rotation* out_rotation), 0x494C30);
 ObjectFunc(MissionMessageDisplayerExecutor, 0x496B60);
 ObjectFunc(LoopPath, 0x497B50);
 ObjectFunc(RailPath, 0x4980C0);
@@ -2458,6 +2460,24 @@ static inline void* LoadStageSETFile(char* filename, int buffersize)
 		mov ecx, [filename]
 		call LoadStageSETFilePtr
 		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+// signed int __usercall CL_ColPolCheckTouchRe@<eax>(csts* a1@<eax>, NJS_OBJECT* object, SurfaceFlags attribute)
+static const void* const CL_ColPolCheckTouchRePtr = (void*)0x48CE40;
+// Checks intersection between a basic object and the input data from csts, and fills the csts output data
+static inline int CL_ColPolCheckTouchRe(csts* ctp, NJS_OBJECT* chkobj, SurfaceFlags attribute)
+{
+	int result;
+	__asm
+	{
+		push[attribute]
+		push[chkobj]
+		mov eax, [ctp]
+		call CL_ColPolCheckTouchRePtr
+		add esp, 8
 		mov result, eax
 	}
 	return result;

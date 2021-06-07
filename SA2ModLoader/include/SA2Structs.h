@@ -594,6 +594,27 @@ struct CharSurfaceInfo
 	SurfaceFlags PrevBottomSurface;
 };
 
+// Contains input (first 4 variables) and output information for the dynamic collision system
+struct csts
+{
+	float radius;
+	NJS_POINT3 pos;
+	NJS_POINT3 spd;
+	NJS_POINT3 tnorm;
+	unsigned __int16 find_count;
+	unsigned __int16 selected_nmb;
+	float yt;
+	float yb;
+	int angx;
+	int angz;
+	NJS_POINT3 normal;
+	NJS_POINT3 normal2;
+	NJS_POINT3 onpoly;
+	NJS_POINT3 pshbk;
+	NJS_POINT3 anaspdh;
+	NJS_POINT3 anaspdv;
+};
+
 struct CharObj2Base
 {
 	char PlayerNum;
@@ -626,7 +647,7 @@ struct CharObj2Base
 	NJS_POINT3 FloorNormal;
 	SurfaceFlags CurrentSurfaceFlags;
 	SurfaceFlags PreviousSurfaceFlags;
-	void* csts;
+	csts* DynColInfo;
 	ObjectMaster* HeldObject;
 	char gap98[4];
 	ObjectMaster* HoldTarget;
@@ -2293,4 +2314,12 @@ struct RenderInfo
 	int unknown;
 	int CurrentTexid;
 };
+
+struct DynColInfo
+{
+	SurfaceFlags  Attribute;
+	NJS_OBJECT*   Object;
+	ObjectMaster* Task;
+};
+
 #pragma pack(pop)
