@@ -2322,4 +2322,32 @@ struct DynColInfo
 	ObjectMaster* Task;
 };
 
+struct PathInfo
+{
+	int angx;
+	int angz;
+	int angax;
+	int angaz;
+	float onpathpos; // distance from start (input)
+	NJS_POINT3 pos;
+	float xpos;
+	float ypos;
+	float zpos;
+	NJS_POINT3 normal;
+	NJS_POINT3 normala;
+	NJS_POINT3 front;
+};
+
+struct pathtbl
+{
+	__int16 angx;
+	__int16 angz;
+	float length;
+	float xpos;
+	float ypos;
+	float zpos;
+	__int16 angx_;
+	__int16 angz_;
+};
+
 #pragma pack(pop)
