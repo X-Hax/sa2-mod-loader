@@ -2355,4 +2355,45 @@ struct pathtbl
 	__int16 angz_;
 };
 
+// Linked list for dyncol polygon information.
+struct CL_PolyInfo
+{
+	CL_PolyInfo* next;
+	CL_PolyInfo* before;
+	float cx;
+	float cy;
+	float cz;
+	float ndlenmax2;
+	NJS_POINT3 vrt[3];
+	unsigned int polatflg;
+};
+
+// Linked list for dyncol tasks.
+struct CL_ObjInfo
+{
+	CL_ObjInfo* next;
+	CL_ObjInfo* before;
+	NJS_OBJECT* objptr;
+	int objatt;
+	CL_PolyInfo* pri_start;
+	CL_PolyInfo* pri_end;
+	int pri_nmb;
+	CL_PolyInfo** pni_start;
+	CL_PolyInfo** pni_end;
+	int pni_nmb;
+	float zelen;
+	float xelen;
+	float cx;
+	float cy;
+	float cz;
+	float dummy;
+};
+
+// Links a color to a bitfield of chunks.
+struct ChunkMapColor
+{
+	unsigned int color;
+	unsigned int chunks;
+};
+
 #pragma pack(pop)

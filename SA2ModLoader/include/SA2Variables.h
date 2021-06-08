@@ -271,13 +271,17 @@ DataPointer(NJS_TEXLIST, GAME2PTEX_TEXLIST, 0x171A988);
 DataPointer(NJS_COLOR, ScreenFadeARGB, 0x171CDA0);
 DataPointer(NJS_TEXLIST, MISSIONTEX_XX_TEXLIST, 0x1738D90);
 DataPointer(NJS_TEXLIST, MISSIONTEX_XX2_TEXLIST, 0x1738DB0);
-DataArray(PhysicsData, PhysicsArray, 0x17391E8, 19);
+DataArray(PhysicsData, PhysicsArray, 0x17391E8, 19); // Physics data per characters, see "Characters" enum.
 DataPointer(TexPackInfo *, CommonTextureInfoPtr, 0x1739BD4);
 DataArray(RELFileInfo, RELFiles, 0x173A9A0, 77);
 DataArray(LevelRankScores, Mission1Scores, 0x173AD40, 30);
 DataArray(LevelRankScores, Mission4Scores, 0x173AE70, 30);
 DataArray(LevelRankScores, Mission5Scores, 0x173AFA0, 30);
 DataPointer(char, CurrentLevelRank, 0x174B001);
+DataPointer(Uint32, CurrentChunks_P1, 0x174B060); // Visible chunks around P1
+DataPointer(Uint32, CurrentChunks_P2, 0x174B064); // Visible chunks around P2
+DataPointer(Uint32, CurrentChunksMask_P1, 0x174B068);
+DataPointer(Uint32, CurrentChunksMask_P2, 0x174B06C);
 DataArray(LevelRankTimes, Mission2Times, 0x173B0D0, 34);
 DataArray(LevelRankTimes, Mission3Times, 0x173B208, 30);
 DataArray(NJS_TEXLIST *, LifeIconTexs, 0x173B3D8, 17);
@@ -338,7 +342,8 @@ DataArray(char, P2SpecialAttacks, 0x174AFF0, 3);
 DataArray(char, SpecialActivateTimer, 0x174AFF3, 2);
 DataArray(char, RoundsWon, 0x174AFF5, 2);
 DataPointer(char, TimeStopped, 0x174AFF7);
-DataArray(char, ControllerEnabled, 0x174AFFF, 2);
+DataPointer(char, LandChunksEnabled, 0x174AFFB); // Specify if a chunk map is loaded and should be used.
+DataArray(char, ControllerEnabled, 0x174AFFF, 2); // Toggle controller movement for a player.
 DataPointer(char, HaveChaoKey, 0x174B004);
 DataPointer(char, isEnglishIGuess, 0x174B008);
 DataPointer(char, Pose2PStart_PlayerNum, 0x174B009);
@@ -392,8 +397,9 @@ DataArray(char, CurrentSongName, 0x1936268, 32);
 DataPointer(char*, DemoStringSuffix, 0x194086C);
 DataPointer(NJS_TEXLIST *, LastTexList, 0x1942070);
 DataPointer(LevelHeader *, CurrentLevelHeader, 0x19420FC);
+DataPointer(int, MobileColList_Count, 0x19459D4); // The number of object dynamic collision entries.
 DataPointer(LandTable *, CurrentLandTable, 0x19459DC);
-DataPointer(Uint16, LandTable_VisibleEntriesCount, 0x1945A00);
+DataPointer(Uint16, LandDisplayEntries_Count, 0x1945A00); // The number of LandDisplayEntries.
 DataPointer(ObjectMaster *, LandManagerPtr, 0x1945A04);
 DataArray(ObjectMaster*, CollisionList_8_List, 0x1945A08, 256);
 DataPointer(GravityDirectionType, GravityDirection, 0x1945E08);
@@ -470,12 +476,14 @@ DataPointer(void*, SomethingFunc_ptr, 0x1A5A2B4);
 DataPointer(void*, SomethingFuncB_ptr, 0x1A5A2B8);
 DataPointer(void*, SomethingFuncC_ptr, 0x1A5A2C0);
 DataPointer(int, LandTableSA2BModels, 0x1A5A2D8);
-DataPointer(DynColInfo*, LandColList, 0x1A5A2DC);
-DataPointer(COL**, LandTable_VisibleEntries, 0x1A5A2E4);
+DataPointer(DynColInfo*, LandColList, 0x1A5A2DC); // Contains dynamic collision entries for landtables, filled by ListGroundForCollision.
+DataPointer(DynColInfo*, MobileColList, 0x1A5A2E0); // Contains dynamic collision entries for objects, filled by DynCol_Add.
+DataPointer(COL**, LandDisplayEntries, 0x1A5A2E4); // Landtable entries to draw, filled by ListGroundForDrawing.
 DataPointer(ObjectMaster *, SetObject_ptr, 0x1A5A340);
 DataPointer(FogData **, FogDataPtrPtr, 0x1A5A34C);
 DataPointer(ObjectMaster *, ParticleCoreTask, 0x1A5A3B8);
 DataPointer(ef_message *, MissionMessage, 0x1A5A3F4);
+DataPointer(CL_ObjInfo*, DynColQueue, 0x1A5A400); // Linked list of dynamic collision tasks.
 DataPointer(ObjectMaster *, Super_ManTex_ptr, 0x1A5A42C);
 DataPointer(ObjectMaster **, ManGCylExecutor_ptr, 0x1A5A768);
 DataPointer(ObjectMaster *, cameraCons_ptr, 0x1A5A77C);

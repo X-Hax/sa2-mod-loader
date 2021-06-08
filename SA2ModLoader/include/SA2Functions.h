@@ -145,12 +145,15 @@ ObjectFunc(psExecuteFlute, 0x478370);
 FunctionPointer(signed int, ScreenFadeIn, (), 0x478690);
 FunctionPointer(signed int, ScreenFadeOut, (), 0x4786E0);
 ObjectFunc(dmyEnemy_Main, 0x47AB30);
-FunctionPointer(signed int, LoadLandManager, (LandTable* a1), 0x47BD30);
+FunctionPointer(signed int, LoadLandManager, (LandTable* land), 0x47BD30); // Loads the LandTable Manager with a given LandTable.
+FunctionPointer(bool, LoadChunkMap, (const char* bmp_path, ChunkMapColor* color_list, NJS_VECTOR* bound1, NJS_VECTOR* bound2), 0x47BE40); // Loads a flat map of the level as a bmp image to get chunk positions. Each colour represent a bitfield of chunks, bounds are used to translate 3D coordinates to an image pixel.
 ObjectFunc(LandManager_Main, 0x47C180);
+FunctionPointer(int, GetLandChunksAt, (float x, float z), 0x47C8D0); // Returns visible chunks at X and Z coordinates.
+VoidFunc(ListGroundForDrawing, 0x47CAE0); // Determines landtable entries to draw based on players position and on visible chunks in LandDisplayEntries.
 FunctionPointer(void, ListGroundForCollision, (float x, float y, float z, float radius), 0x47CD60); // Finds dynamic collisions within radius and fills LandColList and LandColList_Count.
-FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0);
+FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0); // Returns an NJS_OBJECT to be used with DynCol_Add.
 FunctionPointer(int, ResetGravity, (), 0x47D880);
-FunctionPointer(void, CheckCollision, (ObjectMaster* entity, ObjectMaster* test), 0x485850);
+FunctionPointer(void, CheckCollision, (ObjectMaster* entity, ObjectMaster* test), 0x485850); // Checks shape collision intersection between two entities.
 VoidFunc(RunPlayerCollision, 0x485920);
 VoidFunc(RunProjectileCollisionn, 0x485B20);
 VoidFunc(RunChaoCollision, 0x485C70);
@@ -159,14 +162,14 @@ VoidFunc(RunRegularCollision, 0x485EF0);
 VoidFunc(ClearCollisionLists, 0x485FD0);
 VoidFunc(RunObjectCollisions, 0x486190);
 ObjectFunc(Extra_Exec_Main, 0x487390);
-FunctionPointer(signed int, LoadSetObject, (ObjectListHead* list, void* setfile), 0x487E40);
+FunctionPointer(signed int, LoadSetObject, (ObjectListHead* list, void* setfile), 0x487E40); // Loads the SET Manager with given Objectlist and SETFile data.
 FunctionPointer(int, DeleteSetObject, (), 0x487F00);
 ObjectFunc(SetObject_Delete, 0x487F20);
 ObjectFunc(SetObject_Main, 0x487F60);
 FunctionPointer(int, ByteswapSETFile, (), 0x487FC0);
-VoidFunc(ReadSET_2P, 0x4883D0);
-VoidFunc(ReadSET_1P, 0x488630);
-VoidFunc(CountPerfectRings, 0x4890E0);
+VoidFunc(ReadSET_2P, 0x4883D0); // Loads SET objects around P1 & P2.
+VoidFunc(ReadSET_1P, 0x488630); // Loads SET objects around P1.
+VoidFunc(CountPerfectRings, 0x4890E0); // Counts the amount of rings in the SET.
 ObjectFunc(MinimalCounterExecutor, 0x489240);
 ObjectFunc(MinimalCaptureEffect_Exec, 0x489650);
 ObjectFunc(Minimal_Exec, 0x4898B0);
