@@ -2468,17 +2468,17 @@ static inline void* LoadStageSETFile(char* filename, int buffersize)
 	return result;
 }
 
-// signed int __usercall CL_ColPolCheckTouchRe@<eax>(csts* a1@<eax>, NJS_OBJECT* object, SurfaceFlags attribute)
+// signed int __usercall CL_ColPolCheckTouchRe@<eax>(NJS_OBJECT* chkobj@<eax>, csts* ctp, SurfaceFlags attribute)
 static const void* const CL_ColPolCheckTouchRePtr = (void*)0x48CE40;
 // Checks intersection between a basic object and the input data from csts, and fills the csts output data.
-static inline int CL_ColPolCheckTouchRe(csts* ctp, NJS_OBJECT* chkobj, SurfaceFlags attribute)
+static inline int CL_ColPolCheckTouchRe(NJS_OBJECT* chkobj, csts* ctp, bool skip_thing)
 {
 	int result;
 	__asm
 	{
-		push[attribute]
-		push[chkobj]
-		mov eax, [ctp]
+		push[skip_thing]
+		push[ctp]
+		mov eax, [chkobj]
 		call CL_ColPolCheckTouchRePtr
 		add esp, 8
 		mov result, eax
