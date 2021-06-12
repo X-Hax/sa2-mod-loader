@@ -33,6 +33,8 @@ FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT* object, int(_
 ThiscallFunctionPointer(void, njSetTexture, (NJS_TEXLIST* texlist), 0x42ED20);
 FastcallFunctionPointer(void, njSetTextureNum, (int id), 0x42ED30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST*), 0x42FD10);
+FunctionPointer(void, SetMaterial_Grayscale, (float color), 0x433D00); // Sets each ConstantMaterial elements to "color".
+VoidFunc(ResetMaterial, 0x433D40); // Resets ConstantMaterial & 3D controls.
 VoidFunc(main_gc_free, 0x433E60);
 FunctionPointer(int, GameLoop, (), 0x433EE0);
 FunctionPointer(signed int, GameModeHandler, (), 0x434160);
@@ -72,7 +74,7 @@ VoidFunc(LoadConstantAttr, 0x446CD0);
 VoidFunc(njControl3D_Backup, 0x446D00);
 VoidFunc(njControl3D_Restore, 0x446D10);
 FunctionPointer(int, njPushUnitMatrix, (), 0x44B210);
-FunctionPointer(void, SetMaterial, (float a1, float a2, float a3, float a4), 0x44B2E0);
+FunctionPointer(void, SetMaterial, (float a, float r, float g, float b), 0x44B2E0); // Sets ConstantMaterial.
 ObjectFunc(DrawLine3DExec, 0x44B680);
 FunctionPointer(int, Get_dword_1A559C8, (), 0x44BFE0);
 FunctionPointer(double, MaybeThisIsDeltaTimeOrSomething, (), 0x44C1A0);

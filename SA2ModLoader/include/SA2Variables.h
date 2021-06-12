@@ -635,6 +635,7 @@ DataArray(int, RumblePort_A, 0x1DEFDB0, 4);
 DataPointer(int, SomeBuffer, 0x1DEFE20);
 DataPointer(int, FileBuffer, 0x24CFE20);
 DataPointer(NJS_MATRIX, _nj_unit_matrix_, 0x25F02A0);
+DataPointer(NJS_ARGB, ConstantMaterial, 0x25EFFD0);
 DataPointer(LPVOID, MatrixStack_MinPtr, 0x267053C);
 DataPointer(RenderInfo, RenferInfo_, 0x2670544);
 DataPointer(LPVOID, MatrixStack_MaxPtr, 0x2670588);
