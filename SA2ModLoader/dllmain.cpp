@@ -374,7 +374,7 @@ int __cdecl SA2DebugOutput(const char *Format, ...)
 	if (dbgConsole)
 		cout << buf << "\n";
 	if (dbgScreen)
-		PrintDebug_Screen(buf);
+		debug_text::DisplayGameDebug(buf);
 	if (dbgFile && dbgstr.good())
 	{
 		char *utf8 = ShiftJISToUTF8(buf);
@@ -1127,8 +1127,57 @@ const HelperFunctions helperFunctions = {
 	HookExport,
 	GetReplaceablePath,
 	_ReplaceFile,
-	SetWindowTitle
+	SetWindowTitle,
+	debug_text::SetFontSize,
+	debug_text::SetFontColor,
+	debug_text::DisplayString,
+	debug_text::DisplayStringFormatted,
+	debug_text::DisplayNumber
 };
+
+// Backward compatibility exports
+// Remove when it is safe to assume that no mod are using these.
+extern "C"
+{
+	__declspec(dllexport) void __cdecl SetDebugFontSize(float size)
+	{
+		debug_text::SetFontSize(size);
+	}
+
+	__declspec(dllexport) void __cdecl SetDebugFontColor(int color)
+	{
+		debug_text::SetFontColor(color);
+	}
+
+	__declspec(dllexport) void __cdecl DisplayDebugString(int loc, const char* str)
+	{
+		debug_text::DisplayString(loc, str);
+	}
+
+	__declspec(dllexport) void __cdecl PrintDebugNumber(int loc, int value, signed int numdigits)
+	{
+		debug_text::DisplayNumber(loc, value, numdigits);
+	}
+
+	__declspec(dllexport) void __cdecl DisplayDebugStringFormatted(int loc, const char* Format, ...)
+	{
+		va_list ap;
+		va_start(ap, Format);
+		int result = vsnprintf(nullptr, 0, Format, ap) + 1;
+		va_end(ap);
+		char* buf = new char[result + 1];
+		va_start(ap, Format);
+		result = vsnprintf(buf, result + 1, Format, ap);
+		va_end(ap);
+
+		debug_text::DisplayString(loc, buf);
+	}
+
+	__declspec(dllexport) void __cdecl sub_759AA0(int a1, int a2, int a3, int a4, int a5)
+	{
+		debug_text::sub_759AA0(a1, a2, a3, a4, a5);
+	}
+}
 
 void __cdecl InitMods(void)
 {
@@ -1166,7 +1215,7 @@ void __cdecl InitMods(void)
 		dbgstr = ofstream("mods\\SA2ModLoader.log", ios_base::ate | ios_base::app);
 		dbgFile = dbgstr.is_open();
 	}
-	DebugText_Init();
+	debug_text::Initialize();
 	if (dbgConsole || dbgFile || dbgScreen)
 	{
 		WriteJump(PrintDebug, SA2DebugOutput);

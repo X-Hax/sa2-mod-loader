@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 7;
+static const int ModLoaderVer = 8;
 
 struct PatchInfo
 {
@@ -90,6 +90,24 @@ struct HelperFunctions
 	// Sets the window title.
 	// Requires version >= 7.
 	void(__cdecl* SetWindowTitle)(const wchar_t* title);
+	// Sets the size of the debug font, defaults to 12.
+	// Requires version >= 8
+	void(__cdecl* SetDebugFontSize)(float size);
+	// Sets the argb color of the debug font, defaults to 0xFFBFBFBF.
+	// Requires version >= 8
+	void(__cdecl* SetDebugFontColor)(int color);
+	// Displays a string on screen at a specific location (using NJM_LOCATION)
+	// Example: DisplayDebugString(NJM_LOCATION(x, y), "string");
+	// Requires version >= 8
+	void(__cdecl* DisplayDebugString)(int loc, const char* str);
+	// Displays a formatted string on screen at a specific location (using NJM_LOCATION)
+	// Requires version >= 8
+	void(__cdecl* DisplayDebugStringFormatted)(int loc, const char* Format, ...);
+	// Displays a number on screen at a specific location (using NJM_LOCATION)
+	// If the number of digits is superior, it will add leading zeroes.
+	// Example: DisplayDebugNumber(NJM_LOCATION(x, y), 123, 5); will display 00123.
+	// Requires version >= 8
+	void(__cdecl* DisplayDebugNumber)(int loc, int value, int numdigits);
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);

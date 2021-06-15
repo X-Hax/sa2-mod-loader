@@ -444,10 +444,12 @@ DataArray(PDS_PERIPHERALINFO, PeripheralInfo, 0x1A52A68, 4);
 DataPointer(int, HaveBattleDLC, 0x1A556F4);
 DataPointer(int, HaveBattleDLC2, 0x1A556F8);
 DataPointer(char, AnalyticsEnabled, 0x1A55708);
+DataPointer(char, SetShaders_ObjectMode, 0x1A55709); // Use CurrentShaderID instead of the passed value in the SetShaders function.
 DataPointer(int, CheatsEnabled, 0x1A55770);
 DataPointer(int, Cheats_GiveMaxRings, 0x1A55774);
 DataPointer(int, Cheats_GiveAllUpgrades, 0x1A55778);
 DataPointer(int, Cheats_GiveAllEmblems, 0x1A5577C);
+DataPointer(int, CurrentShaderID, 0x1A5579C);
 DataPointer(int, P2Start, 0x1A557C4);
 DataPointer(NJS_MATRIX_PTR, _nj_current_matrix_ptr_, 0x1A557FC);
 DataArray(ObjectMaster *, VibTasks, 0x1A5588C, 4);

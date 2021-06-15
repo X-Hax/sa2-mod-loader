@@ -1332,6 +1332,17 @@ static inline UserConfigData* ReadConfig(LaunchConfig* a1)
 	return result;
 }
 
+// void __usercall SetShaders(int id@<eax>)
+static const void* const SetShadersPtr = (void*)0x41B1F0;
+static inline void SetShaders(int id)
+{
+	__asm
+	{
+		mov eax, id
+		call SetShadersPtr
+	}
+}
+
 // int __usercall@<eax>(char *path@<ecx>, void *a2@<edx>, size_t count)
 static const void* const WriteSaveFileThingPtr = (void*)0x426760;
 static inline int WriteSaveFileThing(char* path, void* a2, size_t count)
