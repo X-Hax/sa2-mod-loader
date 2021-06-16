@@ -96,9 +96,7 @@ struct SETObjectData
 
 struct Rotation
 {
-	int x;
-	int y;
-	int z;
+	Angle x, y, z;
 };
 
 struct EntityData1
@@ -114,7 +112,6 @@ struct EntityData1
 	NJS_VECTOR Scale;
 	CollisionInfo *Collision;
 };
-
 
 struct MotionTableData
 {
@@ -508,6 +505,7 @@ struct ObjUnknownB
 	int field_C;
 };
 
+// Movement information (motionwk internally)
 struct EntityData2
 {
 	NJS_POINT3 Velocity;
@@ -582,6 +580,7 @@ struct CharAnimInfo
 	NJS_MOTION *Motion;
 };
 
+// Vertical surface information for shadows and ripples
 struct CharSurfaceInfo
 {
 	Angle AngX;
@@ -594,6 +593,28 @@ struct CharSurfaceInfo
 	SurfaceFlags PrevBottomSurface;
 };
 
+// Contains input (first 4 variables) and output information for the dynamic collision system.
+struct csts
+{
+	float radius;
+	NJS_POINT3 pos;
+	NJS_POINT3 spd;
+	NJS_POINT3 tnorm;
+	unsigned __int16 find_count;
+	unsigned __int16 selected_nmb;
+	float yt;
+	float yb;
+	int angx;
+	int angz;
+	NJS_POINT3 normal;
+	NJS_POINT3 normal2;
+	NJS_POINT3 onpoly;
+	NJS_POINT3 pshbk;
+	NJS_POINT3 anaspdh;
+	NJS_POINT3 anaspdv;
+};
+
+// Player-specific data, common base for all characters.
 struct CharObj2Base
 {
 	char PlayerNum;
@@ -626,7 +647,7 @@ struct CharObj2Base
 	NJS_POINT3 FloorNormal;
 	SurfaceFlags CurrentSurfaceFlags;
 	SurfaceFlags PreviousSurfaceFlags;
-	void* csts;
+	csts* DynColInfo;
 	ObjectMaster* HeldObject;
 	char gap98[4];
 	ObjectMaster* HoldTarget;
@@ -2100,6 +2121,7 @@ struct ChaoMotionTableEntry
 	float PlaySpeed;
 };
 
+// Camera information for one screen, see CameraScreensInfoArray.
 struct CameraScreenInfo {
 	NJS_VECTOR pos;
 	Rotation rot;
@@ -2122,6 +2144,7 @@ struct CameraInfo
 	int field_24D4;
 };
 
+// Additional object data for path controllers.
 struct PathControl
 {
 	Uint8 Action;
@@ -2244,6 +2267,7 @@ struct PolygonPoint {
 	NJS_COLOR color;
 };
 
+// Physics struct from SADX symbols
 struct player_parameter {
 	int jump2_timer;
 	float pos_error;
@@ -2293,4 +2317,83 @@ struct RenderInfo
 	int unknown;
 	int CurrentTexid;
 };
+
+struct DynColInfo
+{
+	SurfaceFlags  Attribute;
+	NJS_OBJECT*   Object;
+	ObjectMaster* Task;
+};
+
+// Information output from GetPathStatus.
+struct PathInfo
+{
+	int angx;
+	int angz;
+	int angax;
+	int angaz;
+	float onpathpos; // distance from start (input)
+	NJS_POINT3 pos;
+	float xpos;
+	float ypos;
+	float zpos;
+	NJS_POINT3 normal;
+	NJS_POINT3 normala;
+	NJS_POINT3 front;
+};
+
+// Information output from CalcPathTbl.
+struct pathtbl
+{
+	__int16 angx;
+	__int16 angz;
+	float length;
+	float xpos;
+	float ypos;
+	float zpos;
+	__int16 angx_;
+	__int16 angz_;
+};
+
+// Linked list for dyncol polygon information.
+struct CL_PolyInfo
+{
+	CL_PolyInfo* next;
+	CL_PolyInfo* before;
+	float cx;
+	float cy;
+	float cz;
+	float ndlenmax2;
+	NJS_POINT3 vrt[3];
+	unsigned int polatflg;
+};
+
+// Linked list for dyncol tasks.
+struct CL_ObjInfo
+{
+	CL_ObjInfo* next;
+	CL_ObjInfo* before;
+	NJS_OBJECT* objptr;
+	int objatt;
+	CL_PolyInfo* pri_start;
+	CL_PolyInfo* pri_end;
+	int pri_nmb;
+	CL_PolyInfo** pni_start;
+	CL_PolyInfo** pni_end;
+	int pni_nmb;
+	float zelen;
+	float xelen;
+	float cx;
+	float cy;
+	float cz;
+	float dummy;
+};
+
+// Links a color to a bitfield of chunks.
+struct ChunkMapColor
+{
+	unsigned int color;
+	unsigned int chunks;
+};
+
 #pragma pack(pop)

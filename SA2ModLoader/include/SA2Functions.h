@@ -33,6 +33,8 @@ FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT* object, int(_
 ThiscallFunctionPointer(void, njSetTexture, (NJS_TEXLIST* texlist), 0x42ED20);
 FastcallFunctionPointer(void, njSetTextureNum, (int id), 0x42ED30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST*), 0x42FD10);
+FunctionPointer(void, SetMaterial_Grayscale, (float color), 0x433D00); // Sets each ConstantMaterial elements to "color".
+VoidFunc(ResetMaterial, 0x433D40); // Resets ConstantMaterial & 3D controls.
 VoidFunc(main_gc_free, 0x433E60);
 FunctionPointer(int, GameLoop, (), 0x433EE0);
 FunctionPointer(signed int, GameModeHandler, (), 0x434160);
@@ -72,7 +74,7 @@ VoidFunc(LoadConstantAttr, 0x446CD0);
 VoidFunc(njControl3D_Backup, 0x446D00);
 VoidFunc(njControl3D_Restore, 0x446D10);
 FunctionPointer(int, njPushUnitMatrix, (), 0x44B210);
-FunctionPointer(void, SetMaterial, (float a1, float a2, float a3, float a4), 0x44B2E0);
+FunctionPointer(void, SetMaterial, (float a, float r, float g, float b), 0x44B2E0); // Sets ConstantMaterial.
 ObjectFunc(DrawLine3DExec, 0x44B680);
 FunctionPointer(int, Get_dword_1A559C8, (), 0x44BFE0);
 FunctionPointer(double, MaybeThisIsDeltaTimeOrSomething, (), 0x44C1A0);
@@ -145,11 +147,15 @@ ObjectFunc(psExecuteFlute, 0x478370);
 FunctionPointer(signed int, ScreenFadeIn, (), 0x478690);
 FunctionPointer(signed int, ScreenFadeOut, (), 0x4786E0);
 ObjectFunc(dmyEnemy_Main, 0x47AB30);
-FunctionPointer(signed int, LoadLandManager, (LandTable* a1), 0x47BD30);
+FunctionPointer(signed int, LoadLandManager, (LandTable* land), 0x47BD30); // Loads the LandTable Manager with a given LandTable.
+FunctionPointer(bool, LoadChunkMap, (const char* bmp_path, ChunkMapColor* color_list, NJS_VECTOR* bound1, NJS_VECTOR* bound2), 0x47BE40); // Loads a flat map of the level as a bmp image to get chunk positions. Each colour represent a bitfield of chunks, bounds are used to translate 3D coordinates to an image pixel.
 ObjectFunc(LandManager_Main, 0x47C180);
-FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0);
+FunctionPointer(int, GetLandChunksAt, (float x, float z), 0x47C8D0); // Returns visible chunks at X and Z coordinates.
+VoidFunc(ListGroundForDrawing, 0x47CAE0); // Determines landtable entries to draw based on players position and on visible chunks in LandDisplayEntries.
+FunctionPointer(void, ListGroundForCollision, (float x, float y, float z, float radius), 0x47CD60); // Finds dynamic collisions within radius and fills LandColList and LandColList_Count.
+FunctionPointer(NJS_OBJECT*, GetFreeDyncolObjectEntry, (), 0x47D7F0); // Returns an NJS_OBJECT to be used with DynCol_Add.
 FunctionPointer(int, ResetGravity, (), 0x47D880);
-FunctionPointer(void, CheckCollision, (ObjectMaster* entity, ObjectMaster* test), 0x485850);
+FunctionPointer(void, CheckCollision, (ObjectMaster* entity, ObjectMaster* test), 0x485850); // Checks shape collision intersection between two entities.
 VoidFunc(RunPlayerCollision, 0x485920);
 VoidFunc(RunProjectileCollisionn, 0x485B20);
 VoidFunc(RunChaoCollision, 0x485C70);
@@ -158,26 +164,30 @@ VoidFunc(RunRegularCollision, 0x485EF0);
 VoidFunc(ClearCollisionLists, 0x485FD0);
 VoidFunc(RunObjectCollisions, 0x486190);
 ObjectFunc(Extra_Exec_Main, 0x487390);
-FunctionPointer(signed int, LoadSetObject, (ObjectListHead* list, void* setfile), 0x487E40);
+FunctionPointer(signed int, LoadSetObject, (ObjectListHead* list, void* setfile), 0x487E40); // Loads the SET Manager with given Objectlist and SETFile data.
 FunctionPointer(int, DeleteSetObject, (), 0x487F00);
 ObjectFunc(SetObject_Delete, 0x487F20);
 ObjectFunc(SetObject_Main, 0x487F60);
 FunctionPointer(int, ByteswapSETFile, (), 0x487FC0);
-VoidFunc(ReadSET_2P, 0x4883D0);
-VoidFunc(ReadSET_1P, 0x488630);
-VoidFunc(CountPerfectRings, 0x4890E0);
+VoidFunc(ReadSET_2P, 0x4883D0); // Loads SET objects around P1 & P2.
+VoidFunc(ReadSET_1P, 0x488630); // Loads SET objects around P1.
+VoidFunc(CountPerfectRings, 0x4890E0); // Counts the amount of rings in the SET.
 ObjectFunc(MinimalCounterExecutor, 0x489240);
 ObjectFunc(MinimalCaptureEffect_Exec, 0x489650);
 ObjectFunc(Minimal_Exec, 0x4898B0);
 FunctionPointer(int, MINIMAL, (ObjectMaster* a1), 0x48ADE0);
+FunctionPointer(void, CL_ColPolListUpNear, (csts* ctp), 0x48BAF0); // Finds dynamic collisions within the csts input position and radius.
 FunctionPointer(int, ChaosDrive_Unknown, (int), 0x48F0E0);
 ObjectFunc(ChaosDrive_Delete, 0x48F7C0);
 ObjectFunc(ChaosDrive_Load2, 0x48F810);
 ThiscallFunctionPointer(unsigned int, PRSDec, (unsigned __int8* src, uint8_t* dst), 0x48F980);
-FunctionPointer(signed int, LoadStagePaths, (LoopHead** a1), 0x490110);
-FunctionPointer(void, LoadPathObjects, (LoopHead** a1), 0x490180);
+FunctionPointer(signed int, LoadStagePaths, (LoopHead** list), 0x490110);
+FunctionPointer(void, LoadPathObjects, (LoopHead** list), 0x490180);
+FunctionPointer(void, CalcPathTbl, (LoopHead* path, int index, pathtbl* pt), 0x4902A0); // Outputs path information at index in pt.
+FunctionPointer(bool, GetPathStatus, (LoopHead* path, PathInfo* pi), 0x4905A0); // Outputs path information in pi based on pi->onpathpos.
+FunctionPointer(double, CheckPathIntersect, (LoopHead* path, NJS_VECTOR* point, NJS_VECTOR* intersec_point, float* onpathpos), 0x490E40); // Checks intersection between path and point. Outputs: intersec_point, onpathpos. Returns perpendcular distance from intersec_point.
 ObjectFunc(ParticleCoreTask_Load, 0x491C20);
-FunctionPointer(float, GetGroundHeight, (float x, float y, float z, Rotation* outrotation), 0x494C30);
+FunctionPointer(double, GetGroundHeight, (float x, float y, float z, Rotation* out_rotation), 0x494C30);
 ObjectFunc(MissionMessageDisplayerExecutor, 0x496B60);
 ObjectFunc(LoopPath, 0x497B50);
 ObjectFunc(RailPath, 0x4980C0);
@@ -1322,6 +1332,17 @@ static inline UserConfigData* ReadConfig(LaunchConfig* a1)
 	return result;
 }
 
+// void __usercall SetShaders(int id@<eax>)
+static const void* const SetShadersPtr = (void*)0x41B1F0;
+static inline void SetShaders(int id)
+{
+	__asm
+	{
+		mov eax, id
+		call SetShadersPtr
+	}
+}
+
 // int __usercall@<eax>(char *path@<ecx>, void *a2@<edx>, size_t count)
 static const void* const WriteSaveFileThingPtr = (void*)0x426760;
 static inline int WriteSaveFileThing(char* path, void* a2, size_t count)
@@ -2458,6 +2479,24 @@ static inline void* LoadStageSETFile(char* filename, int buffersize)
 		mov ecx, [filename]
 		call LoadStageSETFilePtr
 		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+// signed int __usercall CL_ColPolCheckTouchRe@<eax>(NJS_OBJECT* chkobj@<eax>, csts* ctp, SurfaceFlags attribute)
+static const void* const CL_ColPolCheckTouchRePtr = (void*)0x48CE40;
+// Checks intersection between a basic object and the input data from csts, and fills the csts output data.
+static inline int CL_ColPolCheckTouchRe(NJS_OBJECT* chkobj, csts* ctp, bool skip_thing)
+{
+	int result;
+	__asm
+	{
+		push[skip_thing]
+		push[ctp]
+		mov eax, [chkobj]
+		call CL_ColPolCheckTouchRePtr
+		add esp, 8
 		mov result, eax
 	}
 	return result;
