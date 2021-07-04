@@ -284,6 +284,7 @@ DataPointer(Uint32, CurrentChunksMask_P1, 0x174B068);
 DataPointer(Uint32, CurrentChunksMask_P2, 0x174B06C);
 DataArray(LevelRankTimes, Mission2Times, 0x173B0D0, 34);
 DataArray(LevelRankTimes, Mission3Times, 0x173B208, 30);
+DataArray(LevelRankTimes, KartMissionTimes, 0x173B378, 10);
 DataArray(NJS_TEXLIST *, LifeIconTexs, 0x173B3D8, 17);
 DataArray(int, SonicRankVoices, 0x173B7D0, 5);
 DataArray(int, TailsRankVoices, 0x173B7E4, 5);
