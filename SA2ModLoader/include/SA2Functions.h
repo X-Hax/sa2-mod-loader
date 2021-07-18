@@ -30,14 +30,15 @@ FastcallFunctionPointer(float, njCos, (Angle angle), 0x42AC30);
 VoidFunc(ResetRenderSpace, 0x42D340);
 FunctionPointer(int, ProcessChunkModel, (NJS_CNK_MODEL* a1), 0x42D650);
 FunctionPointer(void, ProcessChunkModelsWithCallback, (NJS_OBJECT* object, int(__cdecl* callback)(NJS_CNK_MODEL*)), 0x42EB30);
-ThiscallFunctionPointer(void, njSetTexture, (NJS_TEXLIST* texlist), 0x42ED20);
-FastcallFunctionPointer(void, njSetTextureNum, (int id), 0x42ED30);
+ThiscallFunctionPointer(int, njSetTexture, (NJS_TEXLIST* texlist), 0x42ED20);
+FastcallFunctionPointer(int, njSetTextureNum, (int id), 0x42ED30);
 FunctionPointer(void, LoadTextureList_NoName, (NJS_TEXLIST*), 0x42FD10);
 FunctionPointer(void, SetMaterial_Grayscale, (float color), 0x433D00); // Sets each ConstantMaterial elements to "color".
 VoidFunc(ResetMaterial, 0x433D40); // Resets ConstantMaterial & 3D controls.
 VoidFunc(main_gc_free, 0x433E60);
 FunctionPointer(int, GameLoop, (), 0x433EE0);
 FunctionPointer(signed int, GameModeHandler, (), 0x434160);
+VoidFunc(ResetViewStuff, 0x434CD0);
 VoidFunc(main_gc_alloc, 0x434F00);
 ThiscallFunctionPointer(int, LoadMLT, (const char* name), 0x435880);
 FunctionPointer(int, Menu_Unknown_13, (), 0x436040);
@@ -1571,6 +1572,32 @@ static inline void njRotateZ(NJS_MATRIX_PTR m, Angle z)
 		mov ecx, [m]
 		mov eax, [z]
 		call njRotateZPtr
+	}
+}
+
+//void __usercall SetViewStuff(signed int fov@<esi>, float screen_ratio, float min_dist, float max_dist)
+static const void* const SetViewStuffPtr = (void*)0x42B300;
+static inline void SetViewStuff(signed int fov, float screen_ratio, float min_dist, float max_dist)
+{
+	__asm
+	{
+		push[max_dist]
+		push[min_dist]
+		push[screen_ratio]
+		mov esi, [fov]
+		call SetViewStuffPtr
+		add esp, 12
+	}
+}
+
+// void __usercall SetFOV(signed int bams@<eax>)
+static const void* const SetFOVPtr = (void*)0x42C390;
+static inline void SetFOV(signed int bams)
+{
+	__asm
+	{
+		mov eax, [bams]
+		call SetFOVPtr
 	}
 }
 

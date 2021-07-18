@@ -2308,13 +2308,13 @@ struct RenderInfo
 {
 	char gap0[8];
 	int texparplus4;
-	int Thing;
+	int unknown1;
 	int unknown2;
 	int texparbuf;
-	int DrawPlaneMin;
-	int DrawPlaneMax;
+	int unknown3;
+	int unknown4;
 	NJS_TEXLIST* CurrentTexlist;
-	int unknown;
+	int unknown5;
 	int CurrentTexid;
 };
 
