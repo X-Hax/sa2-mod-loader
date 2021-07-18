@@ -133,7 +133,7 @@ void TestSpawnCheckArgs(const HelperFunctions &helperFunctions)
 
 	char level = -1;
 	short event = -1;
-	char chara = -1;
+	char chara = Characters_Sonic;
 
 	for (int i = 1; i < argc; i++)
 	{
@@ -189,7 +189,7 @@ void TestSpawnCheckArgs(const HelperFunctions &helperFunctions)
 	}
 
 	StoryEntry* story = (StoryEntry*)0x173A5E0;
-	if (level != -1 && chara != -1)
+	if (level != -1)
 	{
 		story->Type = StoryEntryType_Level;
 		story->Level = level;
