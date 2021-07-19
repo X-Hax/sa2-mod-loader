@@ -126,35 +126,57 @@ static uint8_t ParseCharacter(const wstring& str)
 		return (uint8_t)wcstol(str.c_str(), nullptr, 10);
 }
 
-void TestSpawnCheckArgs(const HelperFunctions &helperFunctions)
+static const auto loc_434213 = reinterpret_cast<const void*>(0x00434213);
+
+static void __cdecl ForceLevelMode_()
+{
+	LoadTipsTexs(TextLanguage); // this is only loaded within the copyright module for some reason.
+	GameMode = 4;
+}
+
+__declspec(naked) void ForceLevelMode()
+{
+	__asm
+	{
+		call ForceLevelMode_;
+		jmp loc_434213
+	}
+}
+
+void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 {
 	int argc = 0;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-	char level = -1;
+	bool level_set = false;
 	short event = -1;
-	char chara = Characters_Sonic;
 
 	for (int i = 1; i < argc; i++)
 	{
 		if (!wcscmp(argv[i], L"--level") || !wcscmp(argv[i], L"-l"))
 		{
-			level = ParseLevelID(argv[++i]);
-			PrintDebug("Loading level: %d\n", level);
+			CurrentLevel = ParseLevelID(argv[++i]);
+			PrintDebug("Loading level: %d\n", CurrentLevel);
+			level_set = true;
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
 		{
-			chara = ParseCharacter(argv[++i]);
-			PrintDebug("Loading character: %d\n", chara);
+			CurrentCharacter = ParseCharacter(argv[++i]);
+			PrintDebug("Loading character: %d\n", CurrentCharacter);
+
+			// NOP. Prevents CurrentCharacter from being overwritten.
+			WriteData<10>(reinterpret_cast<void*>(0x4395F3), 0x90);
 		}
 		else if (!wcscmp(argv[i], L"--event") || !wcscmp(argv[i], L"-e"))
-			event = (short)wcstol(argv[++i], nullptr, 10);
+		{
+			event = static_cast<short>(wcstol(argv[++i], nullptr, 10));
+		}
 		else if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))
 		{
-			if (level == -1 || chara == -1)
+			if (level_set == false)
 			{
 				MessageBoxA(nullptr, "Insufficient arguments for parameter: --position.\n"
-					"--level and --character must be specified before --position.",
+					"--level must be specified before --position.",
 					"Insufficient arguments", MB_OK);
 
 				continue;
@@ -169,17 +191,15 @@ void TestSpawnCheckArgs(const HelperFunctions &helperFunctions)
 				continue;
 			}
 
-			NJS_VECTOR pos = { (float)_wtof(argv[++i]), (float)_wtof(argv[++i]), (float)_wtof(argv[++i]) };
+			NJS_VECTOR pos = { std::stof(argv[++i]), std::stof(argv[++i]), std::stof(argv[++i]) };
 
 			StartPosition position = {
-				level,
-				// YRot
-				0, 0, 0,
-				// Position
-				pos, pos, pos
+				CurrentLevel,
+				0, 0, 0,		// YRot
+				pos, pos, pos	// Position
 			};
 
-			helperFunctions.RegisterStartPosition(chara, position);
+			helperFunctions.RegisterStartPosition(CurrentCharacter, position);
 		}
 		else if (!wcscmp(argv[i], L"--savenum") || !wcscmp(argv[i], L"-s"))
 		{
@@ -188,15 +208,15 @@ void TestSpawnCheckArgs(const HelperFunctions &helperFunctions)
 		}
 	}
 
-	StoryEntry* story = (StoryEntry*)0x173A5E0;
-	if (level != -1)
+	if (level_set == true)
 	{
-		story->Type = StoryEntryType_Level;
-		story->Level = level;
-		story->Character = chara;
+		WriteJump((void*)0x434A7D, ForceLevelMode);
 	}
 	else if (event != -1)
+	{
+		StoryEntry* story = (StoryEntry*)0x173A5E0;
 		story->Events[0] = event;
+	}
 
 	LocalFree(argv);
 }

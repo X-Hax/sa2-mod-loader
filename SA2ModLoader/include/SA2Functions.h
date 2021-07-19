@@ -109,6 +109,7 @@ ObjectFunc(CardIndicatorExec_Main, 0x456280);
 ObjectFunc(CardCloseOperationExec, 0x4566F0);
 ObjectFunc(WriteTaskWithWaiting, 0x456820);
 ObjectFunc(miniEventExec, 0x4579E0);
+FastcallFunctionPointer(void, LoadStoryEntry, (int a1, StoryEntry* story), 0x4589D0);
 FunctionPointer(int, LoadCharacterSoundBanks, (int, int a1), 0x459100);
 VoidFunc(Load_PLCOMMTN_Stuff, 0x459370);
 ObjectFunc(GamePlayerMissed, 0x46ABD0);
@@ -1485,6 +1486,17 @@ static inline char njRotateEx(Rotation* rot, int use_yxz)
 		mov eax, [rot]
 		call njRotateExPtr
 		add esp, 4
+	}
+}
+
+//void __usercall LoadOmochaoHint(int language@<esi>)
+static const void* const LoadTipsTexsPtr = (void*)0x427EF0;
+static inline void LoadTipsTexs(int language)
+{
+	__asm
+	{
+		mov esi, [language]
+		call LoadTipsTexsPtr
 	}
 }
 
