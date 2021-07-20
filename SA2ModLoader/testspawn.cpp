@@ -158,6 +158,12 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			CurrentLevel = ParseLevelID(argv[++i]);
 			PrintDebug("Loading level: %d\n", CurrentLevel);
 			level_set = true;
+
+			// Allow Chao World save to work
+			if (CurrentLevel == LevelIDs_ChaoWorld)
+			{
+				ChaoSaveIndexThing = 0;
+			}
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
 		{
