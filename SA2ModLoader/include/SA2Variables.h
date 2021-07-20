@@ -454,6 +454,7 @@ DataPointer(int, Cheats_GiveAllEmblems, 0x1A5577C);
 DataPointer(int, CurrentShaderID, 0x1A5579C);
 DataPointer(int, P2Start, 0x1A557C4);
 DataPointer(NJS_MATRIX_PTR, _nj_current_matrix_ptr_, 0x1A557FC);
+DataPointer(int, MenuButtonImage, 0x1A55868);
 DataArray(ObjectMaster *, VibTasks, 0x1A5588C, 4);
 DataPointer(__int16, Cheats_ExitStage, 0x1A558A4);
 DataPointer(int, MenuButtons_SomethingWasPressed, 0x1A558C0);

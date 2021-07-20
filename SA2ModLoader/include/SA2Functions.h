@@ -18,6 +18,7 @@ FunctionPointer(int, Menu_HowToPlay, (), 0x40C680);
 FunctionPointer(int, Menu_Controls, (), 0x40D0F0);
 FunctionPointer(int, SteamStatisticsStuff, (), 0x40E880);
 StdcallFunctionPointer(int, nullsub_5, (int), 0x411600);
+FastcallFunctionPointer(int, LoadPNG, (const char* path), 0x41D490);
 FunctionPointer(int, GetCrappyReplacementDepartureMachine, (), 0x41DFB0);
 FunctionPointer(int, controller_useless, (), 0x425700);
 FunctionPointer(void, MemoryManager__Deallocate, (AllocatedMem* data, char* a2, int a3), 0x425B50);

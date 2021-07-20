@@ -542,6 +542,20 @@ enum SpecialTier
 	SpecialTier_3 = 0x4,
 };
 
+enum ChaoArea
+{
+	ChaoArea_Lobby,
+	ChaoArea_NeutralGarden,
+	ChaoArea_HeroGarden,
+	ChaoArea_DarkGarden,
+	ChaoArea_Race,
+	ChaoArea_Entrance,
+	ChaoArea_Kindergarten,
+	ChaoArea_Stadium = 9,
+	ChaoArea_Karate,
+	ChaoArea_NameMachine = 12,
+};
+
 enum SADXChaoArea : __int8
 {
 	SADXChaoArea_None = -1,

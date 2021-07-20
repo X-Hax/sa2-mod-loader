@@ -126,12 +126,53 @@ static uint8_t ParseCharacter(const wstring& str)
 		return (uint8_t)wcstol(str.c_str(), nullptr, 10);
 }
 
+static const unordered_map<wstring, int> chaoareamap = {
+	{ L"lobby", ChaoArea_Lobby },
+	{ L"neutralgarden", ChaoArea_NeutralGarden },
+	{ L"herogarden", ChaoArea_HeroGarden },
+	{ L"darkgarden", ChaoArea_DarkGarden },
+	{ L"race", ChaoArea_Race },
+	{ L"entrance", ChaoArea_Entrance },
+	{ L"kindergarten", ChaoArea_Kindergarten },
+	{ L"stadium", ChaoArea_Stadium },
+	{ L"karate", ChaoArea_Karate },
+	{ L"namemachine", ChaoArea_NameMachine }
+};
+
+static int ParseChaoArea(const wstring& str)
+{
+	wstring str2 = trim(str);
+	std::transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+	auto area = chaoareamap.find(str2);
+	if (area != chaoareamap.end())
+		return area->second;
+	else
+		return (uint8_t)wcstol(str.c_str(), nullptr, 10);
+}
+
 static const auto loc_434213 = reinterpret_cast<const void*>(0x00434213);
 
 static void __cdecl ForceLevelMode_()
 {
-	LoadTipsTexs(TextLanguage); // this is only loaded within the copyright module for some reason.
-	GameMode = 4;
+	// Start level GameMode
+	GameMode = 6;
+
+	// Loading Screen tips map
+	LoadTipsTexs(TextLanguage);
+
+	// Menu button map
+	char buffer[40];
+
+	if (*(int*)0x174B5FC)
+	{
+		sprintf(buffer, "\\SOC\\menuButton%d\\menu_button_%d.png", TextLanguage, TextLanguage);
+	}
+	else
+	{
+		sprintf(buffer, "\\SOC\\menuButtonK%d\\menu_button_%d.png", TextLanguage, TextLanguage);
+	}
+
+	MenuButtonImage = LoadPNG(buffer);
 }
 
 __declspec(naked) void ForceLevelMode()
@@ -218,6 +259,10 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		{
 			SetWorkingSave(wcstol(argv[++i], nullptr, 10));
 			ProbablyLoadsSave(0);
+		}
+		else if (!wcscmp(argv[i], L"--chaoarea"))
+		{
+			WriteData((int*)0x52AD5B, ParseChaoArea(argv[++i]));
 		}
 	}
 
