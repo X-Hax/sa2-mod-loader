@@ -10,6 +10,9 @@ write16 0174B024 99
 Code "Infinite Lives P2"
 write16 0174B026 99
 
+Patch "Disable Lives Bonus"
+writenop 0044CEA6 5
+
 Code "Low Time"
 write8 0174AFDB 0 x2
 
@@ -93,6 +96,10 @@ write8 0174B004 1
 Patch "Always Get A Rank"
 writenop 0044F799 2
 writenop 00450688 2
+
+Patch "Don't Lose Rings When Hit"
+writenop 006C1B3A 5
+write16 006C1B41 0xE990
 
 Code "Have Invincibility"
 or16 p01DEA6E0|40|10 0x8000
