@@ -2396,4 +2396,53 @@ struct ChunkMapColor
 	unsigned int chunks;
 };
 
+struct SoundEntry
+{
+	__int8 Unknown1;
+	__int8 Unknown2;
+	__int8 Bank;
+	__int8 Panning;
+	__int8 Volume3D;
+	__int8 Volume;
+	__int8 MaxVolume;
+	__int8 Unknown3;
+	SoundFlags Flags;
+	__int16 DistanceShort;
+	__int16 PlayTime;
+	__int16 PlayTime2;
+	ObjectMaster* Entity;
+	int SoundID;
+	NJS_VECTOR* PositionPtr;
+	NJS_VECTOR Position;
+	float Unknow4;
+	float DistanceFloat;
+};
+
+struct MLTSoundEntry
+{
+	char Bank;
+	char ID;
+	char Unknown3;
+	char Unknown4;
+	char Unknown5;
+	char Unknown6;
+};
+
+struct MLTSoundList
+{
+	int Size;
+	MLTSoundEntry* List;
+};
+
+struct SoundSystem
+{
+	int StartIndex;
+	int OverflowIndex;
+	int Unknown1;
+	int Unknown2;
+	SoundEntry SoundEntries[43];
+	void* SomePointers[8];
+	MLTSoundList MLTSoundLists[8];
+};
+
 #pragma pack(pop)

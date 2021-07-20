@@ -457,6 +457,7 @@ DataPointer(NJS_MATRIX_PTR, _nj_current_matrix_ptr_, 0x1A557FC);
 DataPointer(int, MenuButtonImage, 0x1A55868);
 DataArray(ObjectMaster *, VibTasks, 0x1A5588C, 4);
 DataPointer(__int16, Cheats_ExitStage, 0x1A558A4);
+DataPointer(SoundSystem*, SoundSystemPtr, 0x1A55874);
 DataPointer(int, MenuButtons_SomethingWasPressed, 0x1A558C0);
 DataPointer(__int16, IsDPadPressed, 0x1A5592C);
 DataPointer(PDS_PERIPHERAL, NullController, 0x1A55954);
