@@ -155,7 +155,7 @@ static const auto loc_434213 = reinterpret_cast<const void*>(0x00434213);
 static void __cdecl ForceLevelMode_()
 {
 	// Start level GameMode
-	GameMode = 6;
+	GameMode = GameMode_StartLevel;
 
 	// Loading Screen tips map
 	LoadTipsTexs(TextLanguage);

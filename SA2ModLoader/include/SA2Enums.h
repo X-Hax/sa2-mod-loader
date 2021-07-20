@@ -439,6 +439,25 @@ enum Buttons : int
 	makemasks(Button, L)
 };
 
+enum GameMode
+{
+	GameMode_Initialize,
+	GameMode_StartLevel = 4,
+	GameMode_Level,
+	GameMode_ResetLevel,
+	GameMode_StartEvent,
+	GameMode_Event,
+	GameMode_LoadStory = 12,
+	GameMode_LoadAdvertise,
+	GameMode_Advertise,
+	GameMode_LoadEnding,
+	GameMode_Ending,
+	GameMode_LoadEmblemScreen,
+	GameMode_EmblemScreen,
+	GameMode_LoadIntro = 21,
+	GameMode_Intro
+};
+
 enum GameStates : __int16
 {
 	GameStates_Inactive = 0,
