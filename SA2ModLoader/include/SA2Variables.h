@@ -578,6 +578,7 @@ DataArray(ModelIndex, CharacterModels, 0x1DE9620, 532);
 DataArray(EntityData1 *, MainCharObj1, 0x1DEA6C0, 2);
 DataArray(ObjectMaster *, MainCharacter, 0x1DEA6E0, 2);
 DataArray(AnimationIndex, CharacterAnimations, 0x1DEA700, 300);
+DataArray(int, EventQueue, 0x1DEB060, 4);
 DataPointer(char, SonicLightShoesGot, 0x1DEB300);
 DataPointer(char, SonicAncientLightGot, 0x1DEB301);
 DataPointer(char, SonicMagicGlovesGot, 0x1DEB302);

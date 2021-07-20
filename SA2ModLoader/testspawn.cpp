@@ -167,6 +167,13 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			// NOP. Prevents CurrentCharacter from being overwritten.
 			WriteData<10>(reinterpret_cast<void*>(0x4395F3), 0x90);
 		}
+		else if (!wcscmp(argv[i], L"--player2") || !wcscmp(argv[i], L"-p2"))
+		{
+			CurrentCharacter2P = ParseCharacter(argv[++i]);
+			PrintDebug("Loading player 2: %d\n", CurrentCharacter2P);
+
+			TwoPlayerMode = 1;
+		}
 		else if (!wcscmp(argv[i], L"--event") || !wcscmp(argv[i], L"-e"))
 		{
 			event = static_cast<short>(wcstol(argv[++i], nullptr, 10));
