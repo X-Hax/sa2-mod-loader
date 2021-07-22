@@ -178,6 +178,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		if (!wcscmp(argv[i], L"--level") || !wcscmp(argv[i], L"-l"))
 		{
 			CurrentLevel = ParseLevelID(argv[++i]);
+			PrintDebug("Loading level: %d\n", CurrentLevel);
 			
 			LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
 			LoadMenuButtonsTex(); // Skipped. Loaded during menu initialization.
@@ -189,7 +190,6 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			// Swap GameMode
 			WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_StartLevel));
 
-			PrintDebug("Loading level: %d\n", CurrentLevel);
 			level_set = true;
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
