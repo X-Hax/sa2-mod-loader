@@ -150,17 +150,8 @@ static int ParseChaoArea(const wstring& str)
 		return (uint8_t)wcstol(str.c_str(), nullptr, 10);
 }
 
-static const auto loc_434213 = reinterpret_cast<const void*>(0x00434213);
-
-static void __cdecl ForceLevelMode_()
+static void LoadMenuButtonsTex()
 {
-	// Start level GameMode
-	GameMode = GameMode_StartLevel;
-
-	// Loading Screen tips map
-	LoadTipsTexs(TextLanguage);
-
-	// Menu button map
 	char buffer[40];
 
 	if (*(int*)0x174B5FC)
@@ -175,20 +166,11 @@ static void __cdecl ForceLevelMode_()
 	MenuButtonImage = LoadPNG(buffer);
 }
 
-__declspec(naked) void ForceLevelMode()
-{
-	__asm
-	{
-		call ForceLevelMode_;
-		jmp loc_434213
-	}
-}
-
 void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 {
 	int argc = 0;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-
+	
 	bool level_set = false;
 	short event = -1;
 
@@ -273,7 +255,9 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 
 	if (level_set == true)
 	{
-		WriteJump((void*)0x434A7D, ForceLevelMode);
+		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
+		LoadMenuButtonsTex(); // Skipped. Loaded during menu initialization.
+		WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_StartLevel));
 	}
 	else if (event != -1)
 	{
