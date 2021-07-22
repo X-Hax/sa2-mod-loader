@@ -172,26 +172,25 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 	
 	bool level_set = false;
-	short event = -1;
-
+	
 	for (int i = 1; i < argc; i++)
 	{
 		if (!wcscmp(argv[i], L"--level") || !wcscmp(argv[i], L"-l"))
 		{
 			CurrentLevel = ParseLevelID(argv[++i]);
+			
+			LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
+			LoadMenuButtonsTex(); // Skipped. Loaded during menu initialization.
+			ChaoSaveIndexThing = 0; // Allow Chao World saves to work.
+
+			// NOP. Prevents CurrentLevel from being overwritten for illegal level.
+			WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90);
+
+			// Swap GameMode
+			WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_StartLevel));
+
 			PrintDebug("Loading level: %d\n", CurrentLevel);
 			level_set = true;
-
-			// Allow Chao World save to work
-			if (CurrentLevel == LevelIDs_ChaoWorld)
-			{
-				ChaoSaveIndexThing = 0;
-			}
-			else if (CurrentLevel <= LevelIDs_SonicTest)
-			{
-				//Prevents CurrentLevel from being overwritten for illegal level.
-				WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90);
-			}
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
 		{
@@ -210,7 +209,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		}
 		else if (!wcscmp(argv[i], L"--event") || !wcscmp(argv[i], L"-e"))
 		{
-			event = static_cast<short>(wcstol(argv[++i], nullptr, 10));
+			((StoryEntry*)0x173A5E0)->Events[0] = static_cast<int16_t>(_wtoi(argv[++i]));
 		}
 		else if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))
 		{
@@ -244,25 +243,13 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		}
 		else if (!wcscmp(argv[i], L"--savenum") || !wcscmp(argv[i], L"-s"))
 		{
-			SetWorkingSave(wcstol(argv[++i], nullptr, 10));
+			SetWorkingSave(_wtoi(argv[++i]));
 			ProbablyLoadsSave(0);
 		}
 		else if (!wcscmp(argv[i], L"--chaoarea"))
 		{
 			WriteData((int*)0x52AD5B, ParseChaoArea(argv[++i]));
 		}
-	}
-
-	if (level_set == true)
-	{
-		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
-		LoadMenuButtonsTex(); // Skipped. Loaded during menu initialization.
-		WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_StartLevel));
-	}
-	else if (event != -1)
-	{
-		StoryEntry* story = (StoryEntry*)0x173A5E0;
-		story->Events[0] = event;
 	}
 
 	LocalFree(argv);
