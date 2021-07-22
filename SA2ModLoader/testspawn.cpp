@@ -205,6 +205,11 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			{
 				ChaoSaveIndexThing = 0;
 			}
+			else if (CurrentLevel <= LevelIDs_SonicTest)
+			{
+				//Prevents CurrentLevel from being overwritten for illegal level.
+				WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90);
+			}
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
 		{
