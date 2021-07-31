@@ -2420,12 +2420,12 @@ struct SoundEntry
 
 struct MLTSoundEntry
 {
-	char Bank;
-	char ID;
-	char Unknown3;
-	char Unknown4;
-	char Unknown5;
-	char Unknown6;
+	__int8 Bank;
+	__int8 ID;
+	__int8 SecondaryBank;
+	__int8 DefaultFlags;
+	__int16 Unknown;
+	__int16 DefaultDistance;
 };
 
 struct MLTSoundList

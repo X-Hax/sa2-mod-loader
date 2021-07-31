@@ -3,6 +3,16 @@
 #include "MemAccess.h"
 #include "SA2Structs.h"
 
+DataPointer(MLTSoundList, MetalHarborSoundList, 0x89F348);
+DataPointer(MLTSoundList, GreenForestSoundList, 0x8A0F60);
+DataPointer(MLTSoundList, CityEscapeSoundList, 0x8A0FF8);
+DataPointer(MLTSoundList, MeteorHerdSoundList, 0x8A1610);
+DataPointer(MLTSoundList, CommonSoundList, 0x8AC908);
+DataPointer(MLTSoundList, SonicShadowSoundList, 0x8ACB28);
+DataPointer(MLTSoundList, KnucklesRougeSoundList, 0x8ACC20);
+DataPointer(MLTSoundList, MechsSoundList, 0x8ACD30);
+DataPointer(MLTSoundList, TailsEggmanSoundList, 0x8ACD98);
+DataPointer(MLTSoundList, Slot7SoundList, 0x8ACF28);
 DataPointer(char*, DemoPath, 0x8B9110);
 DataArray(int, CommonActionWindowTextIndexes, 0x96EBF8, 34);
 DataArray(int, SonicActionWindowTextIndexes, 0x96EC80, 20);
