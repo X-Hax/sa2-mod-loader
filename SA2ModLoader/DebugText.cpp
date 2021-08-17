@@ -217,8 +217,8 @@ namespace debug_text
 		
 		rect[0].x = x;
 		rect[0].y = y;
-		rect[1].x = size + x;
-		rect[1].y = size + y;
+		rect[1].x =(float)(size + x);
+		rect[1].y =(float)(size + y);
 		rect[2].x = u;
 		rect[2].y = v;
 		rect[3].x = u + char_size;
