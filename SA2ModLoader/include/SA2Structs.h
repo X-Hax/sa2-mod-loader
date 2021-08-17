@@ -1285,21 +1285,37 @@ struct LevelEndPosition
 	NJS_VECTOR Mission3Position;
 };
 
+struct MLTSoundEntry
+{
+	__int8 Bank;
+	__int8 ID;
+	__int8 SecondaryBank;
+	__int8 DefaultFlags;
+	__int16 Unknown;
+	__int16 DefaultDistance;
+};
+
+struct MLTSoundList
+{
+	int Size;
+	MLTSoundEntry* List;
+};
+
 struct CharacterSoundBank
 {
 	int Character;
-	char *Name;
-	void *anonymous_1;
+	const char *Name;
+	MLTSoundList* SoundList;
 };
 
 struct CharacterVoiceBank
 {
-	char anonymous_0;
+	char Mode;
 	char Character;
-	char anonymous_2[2];
-	void *anonymous_3;
-	void *anonymous_4;
-	void *anonymous_5;
+	short Padding;
+	const char* Filename_JP;
+	const char* Filename_EN;
+	MLTSoundList* SoundList;
 };
 
 struct DeathZone
@@ -2416,22 +2432,6 @@ struct SoundEntry
 	NJS_VECTOR Position;
 	float Unknow4;
 	float DistanceFloat;
-};
-
-struct MLTSoundEntry
-{
-	__int8 Bank;
-	__int8 ID;
-	__int8 SecondaryBank;
-	__int8 DefaultFlags;
-	__int16 Unknown;
-	__int16 DefaultDistance;
-};
-
-struct MLTSoundList
-{
-	int Size;
-	MLTSoundEntry* List;
 };
 
 struct SoundSystem

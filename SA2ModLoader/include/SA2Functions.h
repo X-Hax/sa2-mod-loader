@@ -43,7 +43,8 @@ VoidFunc(ResetViewStuff, 0x434CD0);
 VoidFunc(main_gc_alloc, 0x434F00);
 VoidFunc(InitSoundSystem, 0x435440);
 VoidFunc(FreeSoundSystem, 0x435510);
-ThiscallFunctionPointer(int, LoadMLT, (const char* name), 0x435880);
+ThiscallFunctionPointer(int, LoadMLT, (const char* name), 0x435880); // Loads csb files in "resource/gd_PC/MLT"
+FunctionPointer(void, LoadMPB, (const char* name), 0x435C00); // Loads a 3.csb file in "resource/gd_PC/MPB"
 VoidFunc(FreeSoundQueue, 0x435F10);
 VoidFunc(ResetSoundSystem, 0x435F80);
 FunctionPointer(int, Menu_Unknown_13, (), 0x436040);
@@ -115,7 +116,6 @@ ObjectFunc(CardCloseOperationExec, 0x4566F0);
 ObjectFunc(WriteTaskWithWaiting, 0x456820);
 ObjectFunc(miniEventExec, 0x4579E0);
 FastcallFunctionPointer(void, LoadStoryEntry, (int a1, StoryEntry* story), 0x4589D0);
-FunctionPointer(int, LoadCharacterSoundBanks, (int, int a1), 0x459100);
 VoidFunc(Load_PLCOMMTN_Stuff, 0x459370);
 ObjectFunc(GamePlayerMissed, 0x46ABD0);
 ObjectFunc(DeathZoneObject_Delete, 0x46AD40);
@@ -449,6 +449,7 @@ ObjectFunc(ALW_Control_Main, 0x530850);
 ObjectFunc(ALW_Control_Display, 0x530B00);
 ObjectFunc(ALW_Control_Delete, 0x530B70);
 FunctionPointer(int, SpawnAllChaoInGarden, (), 0x531B10);
+VoidFunc(AL_LoadVoices, 0x5320B0);
 FunctionPointer(int, AL_GBAManagerExecutor_Load, (), 0x532710);
 ObjectFunc(AL_GBAManagerExecutor, 0x532A60);
 ObjectFunc(AL_GBAManagerExecutor_Delete, 0x532C70);
@@ -2054,6 +2055,20 @@ static inline void* LoadPRSFile(const char* a1)
 		mov result, eax
 	}
 	return result;
+}
+
+//void __usercall LoadCharacterSoundBanks(int character@<ebx>, MLTSoundList *OutputSoundList, MLTSoundList *OutputVoiceList)
+static const void* const LoadCharacterSoundBanksPtr = (void*)0x459100;
+static inline void* LoadCharacterSoundBanks(int character, MLTSoundList* OutputSoundList, MLTSoundList* OutputVoiceList)
+{
+	__asm
+	{
+		push[OutputVoiceList]
+		push[OutputSoundList]
+		mov ebx, [character]
+		call LoadCharacterSoundBanksPtr
+		add esp, 8
+	}
 }
 
 // ModelIndex *__usercall@<eax>(char *filename@<eax>)
