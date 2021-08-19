@@ -5,7 +5,7 @@
 #include "SA2Structs.h"
 #include "SA2Enums.h"
 
-#define ObjectFunc(NAME, ADDRESS) FunctionPointer(void,NAME,(ObjectMaster *obj),ADDRESS)
+#define ObjectFunc(NAME, ADDRESS) FunctionPointer(void,NAME,(ObjectMaster* obj),ADDRESS)
 // SA2 Functions
 StdcallFunctionPointer(LRESULT, WndProc, (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam), 0x401810);
 ThiscallFunctionPointer(int, CopyString_, (void* _this, const char* Src), 0x401E90);
@@ -43,7 +43,8 @@ VoidFunc(ResetViewStuff, 0x434CD0);
 VoidFunc(main_gc_alloc, 0x434F00);
 VoidFunc(InitSoundSystem, 0x435440);
 VoidFunc(FreeSoundSystem, 0x435510);
-ThiscallFunctionPointer(int, LoadMLT, (const char* name), 0x435880);
+ThiscallFunctionPointer(int, LoadMLT, (const char* name), 0x435880); // Loads csb files in "resource/gd_PC/MLT"
+FunctionPointer(void, LoadMPB, (const char* name), 0x435C00); // Loads a 3.csb file in "resource/gd_PC/MPB"
 VoidFunc(FreeSoundQueue, 0x435F10);
 VoidFunc(ResetSoundSystem, 0x435F80);
 FunctionPointer(int, Menu_Unknown_13, (), 0x436040);
@@ -115,7 +116,6 @@ ObjectFunc(CardCloseOperationExec, 0x4566F0);
 ObjectFunc(WriteTaskWithWaiting, 0x456820);
 ObjectFunc(miniEventExec, 0x4579E0);
 FastcallFunctionPointer(void, LoadStoryEntry, (int a1, StoryEntry* story), 0x4589D0);
-FunctionPointer(int, LoadCharacterSoundBanks, (int, int a1), 0x459100);
 VoidFunc(Load_PLCOMMTN_Stuff, 0x459370);
 ObjectFunc(GamePlayerMissed, 0x46ABD0);
 ObjectFunc(DeathZoneObject_Delete, 0x46AD40);
@@ -449,6 +449,7 @@ ObjectFunc(ALW_Control_Main, 0x530850);
 ObjectFunc(ALW_Control_Display, 0x530B00);
 ObjectFunc(ALW_Control_Delete, 0x530B70);
 FunctionPointer(int, SpawnAllChaoInGarden, (), 0x531B10);
+VoidFunc(AL_LoadVoices, 0x5320B0);
 FunctionPointer(int, AL_GBAManagerExecutor_Load, (), 0x532710);
 ObjectFunc(AL_GBAManagerExecutor, 0x532A60);
 ObjectFunc(AL_GBAManagerExecutor_Delete, 0x532C70);
@@ -898,7 +899,7 @@ ObjectFunc(BgExec_30, 0x6AA970);
 ObjectFunc(BgClip_13, 0x6AB7D0);
 ObjectFunc(ObjectSandglassExec, 0x6ABDE0);
 VoidFunc(LoadDeathChamberCharAnims, 0x6AD4E0);
-FunctionPointer(ObjectMaster *, EfMsgWnd0Exec_New, (int a1, const char* str, int displayTime, int language), 0x6B6E20);
+FunctionPointer(ObjectMaster* , EfMsgWnd0Exec_New, (int a1, const char* str, int displayTime, int language), 0x6B6E20);
 ObjectFunc(EfMsgWnd0Exec_LevelUpDai, 0x6B7170);
 ObjectFunc(EfMsgWnd0Exec, 0x6B79D0);
 FunctionPointer(ef_message*, ef_message_New, (const char* str, int language, short a3, short a4), 0x6B7F40);
@@ -1384,15 +1385,16 @@ static inline int ReadSaveFileThing(char* path, void* buffer, size_t _size)
 	return result;
 }
 
-//void __usercall njCalcVector@<eax>(NJS_MATRIX* result@<eax>, NJS_VECTOR* out@<edx>, NJS_VECTOR* a3@<ecx>, char a4)
+//void __usercall njCalcVector@<eax>(NJS_MATRIX* result@<eax>, NJS_VECTOR* v@<edx>, NJS_VECTOR* transform@<ecx>, char additive)
 static const void* const njCalcVectorPtr = (void*)0x426CC0;
-static inline void njCalcVector(float* matrix, NJS_VECTOR* out, NJS_VECTOR* transform, bool add)
+static inline void njCalcVector(float* matrix, NJS_VECTOR* v, NJS_VECTOR* transform, char additive)
 {
 	__asm
 	{
-		push[add]
+		movzx eax, [additive]
+		push eax
 		mov ecx, [transform]
-		mov edx, [out]
+		mov edx, [v]
 		mov eax, [matrix]
 		call njCalcVectorPtr
 		add esp, 4;
@@ -1414,14 +1416,14 @@ static inline void njUnitMatrixV(NJS_MATRIX_PTR m, float x, float y, float z)
 	}
 }
 
-//void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *out@<edx>, NJS_MATRIX_PTR m@<ecx>)
+//void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *v@<edx>, NJS_MATRIX_PTR m@<ecx>)
 static const void* const njCalcPointPtr = (void*)0x4273B0;
-static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRIX_PTR m)
+static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* v, NJS_MATRIX_PTR m)
 {
 	__asm
 	{
 		mov ecx, [m]
-		mov edx, [out]
+		mov edx, [v]
 		mov eax, [transform]
 		call njCalcPointPtr
 	}
@@ -1618,14 +1620,14 @@ static inline void SetFOV(signed int bams)
 	}
 }
 
-//void __usercall njCalcPoint_(NJS_VECTOR *transform@<eax>, NJS_VECTOR *output@<edx>, NJS_MATRIX_PTR m@<ecx>)
+//void __usercall njCalcPoint_(NJS_VECTOR *transform@<eax>, NJS_VECTOR *v@<edx>, NJS_MATRIX_PTR m@<ecx>)
 static const void* const njCalcPoint_Ptr = (void*)0x42F980;
-static inline void njCalcPoint_(NJS_VECTOR* transform, NJS_VECTOR* out, NJS_MATRIX_PTR m)
+static inline void njCalcPoint_(NJS_VECTOR* transform, NJS_VECTOR* v, NJS_MATRIX_PTR m)
 {
 	__asm
 	{
 		mov ecx, [m]
-		mov edx, [out]
+		mov edx, [v]
 		mov eax, [transform]
 		call njCalcPoint_Ptr
 	}
@@ -1668,8 +1670,10 @@ static inline char Play3DSound_Pos(int id, NJS_VECTOR* pos, int unk, char bank, 
 	char result;
 	__asm
 	{
-		push[volume]
-		push[bank]
+		movzx esi, [volume]
+		push esi
+		movzx esi, [bank]
+		push esi
 		push[unk]
 		mov esi, [pos]
 		mov edi, [id]
@@ -1687,7 +1691,8 @@ static inline char Play3DSound_EntityAndPos(EntityData1* entity, int id, NJS_VEC
 	char result;
 	__asm
 	{
-		push[volume]
+		movzx esi, [volume]
+		push esi
 		mov esi, [pos]
 		mov edi, [id]
 		mov ebx, [entity]
@@ -2054,6 +2059,20 @@ static inline void* LoadPRSFile(const char* a1)
 		mov result, eax
 	}
 	return result;
+}
+
+//void __usercall LoadCharacterSoundBanks(int character@<ebx>, MLTSoundList *OutputSoundList, MLTSoundList *OutputVoiceList)
+static const void* const LoadCharacterSoundBanksPtr = (void*)0x459100;
+static inline void* LoadCharacterSoundBanks(int character, MLTSoundList* OutputSoundList, MLTSoundList* OutputVoiceList)
+{
+	__asm
+	{
+		push[OutputVoiceList]
+		push[OutputSoundList]
+		mov ebx, [character]
+		call LoadCharacterSoundBanksPtr
+		add esp, 8
+	}
 }
 
 // ModelIndex *__usercall@<eax>(char *filename@<eax>)
@@ -2528,10 +2547,10 @@ static inline void* LoadStageSETFile(char* filename, int buffersize)
 	return result;
 }
 
-// signed int __usercall CL_ColPolCheckTouchRe@<eax>(NJS_OBJECT* chkobj@<eax>, csts* ctp, SurfaceFlags attribute)
+// signed int __usercall CL_ColPolCheckTouchRe@<eax>(NJS_OBJECT* chkobj@<eax>, csts* ctp, int skip_thing)
 static const void* const CL_ColPolCheckTouchRePtr = (void*)0x48CE40;
 // Checks intersection between a basic object and the input data from csts, and fills the csts output data.
-static inline int CL_ColPolCheckTouchRe(NJS_OBJECT* chkobj, csts* ctp, bool skip_thing)
+static inline int CL_ColPolCheckTouchRe(NJS_OBJECT* chkobj, csts* ctp, int skip_thing)
 {
 	int result;
 	__asm
@@ -2773,14 +2792,14 @@ static inline ObjectMaster* ALO_LobbyGateDarkExecutor_Load(NJS_VECTOR* position)
 
 //void __usercall(const char *str@<ecx>, const NJS_VECTOR* pos@<eax>, float scale, const NJS_COLOR* color)
 static const void* const CreateAndDrawMessage_ptr = (void*)0x667410;
-static inline void CreateAndDrawMessage(const char* str, const NJS_VECTOR* pos, float scale, const NJS_COLOR* color)
+static inline void CreateAndDrawMessage(const char* text, const NJS_VECTOR* pos, float scale, const NJS_COLOR* color)
 {
 	__asm
 	{
 		push[color]
 		push[scale]
 		mov eax, [pos]
-		mov ecx, [str]
+		mov ecx, [text]
 		call CreateAndDrawMessage_ptr
 		add esp, 0x8
 	}

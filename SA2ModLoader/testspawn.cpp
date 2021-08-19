@@ -185,7 +185,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			ChaoSaveIndexThing = 0; // Allow Chao World saves to work.
 
 			// NOP. Prevents CurrentLevel from being overwritten for illegal level.
-			WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90);
+			WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90u);
 
 			// Swap GameMode
 			WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_StartLevel));
@@ -198,7 +198,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			PrintDebug("Loading character: %d\n", CurrentCharacter);
 
 			// NOP. Prevents CurrentCharacter from being overwritten.
-			WriteData<10>(reinterpret_cast<void*>(0x4395F3), 0x90);
+			WriteData<10>(reinterpret_cast<void*>(0x4395F3), 0x90u);
 		}
 		else if (!wcscmp(argv[i], L"--player2") || !wcscmp(argv[i], L"-p2"))
 		{
