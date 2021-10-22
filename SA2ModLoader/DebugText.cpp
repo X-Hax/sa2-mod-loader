@@ -195,8 +195,8 @@ namespace debug_text
 
 		const float char_size = 0.0625f;
 
-		float u = (float)(c & 0xF) * char_size;
-		float v = (float)(c >> 4) * char_size;
+		float u = (float)(c & 0xF) * char_size + 0.001f;
+		float v = (float)(c >> 4) * char_size + 0.001f;
 
 		rect[0].x = x;
 		rect[0].y = y;
@@ -324,6 +324,9 @@ namespace debug_text
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 
+		// Backup last shader ID
+		int prebackup = CurrentShaderID;
+
 		// Init 2D stuff, sets UI shader
 		sub_429070();
 		// We overwrite the UI vertex shader with ours, to scale the text correctly
@@ -358,6 +361,7 @@ namespace debug_text
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
 		// Restore shader, tevmode, and vertex declaration
+		SetShaders(prebackup); // We still run this, so that the CurrentShaderID gets reset back to the last thing, even if the actual shader gets overwritten
 		dword_1A557C0->pointerToDevice->SetVertexShader(backupVertShader);
 		dword_1A557C0->pointerToDevice->SetPixelShader(backupPixelShader);
 		dword_1A557C0->pointerToDevice->SetPixelShaderConstantF(0, backupTev, 1);
