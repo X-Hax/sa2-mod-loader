@@ -1711,7 +1711,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
 		sa2dir += "\\";
 		sadx_fileMap.setSA2Dir(sa2dir);
-		WriteJump((void *)0x77DEEA, InitMods);
+		WriteJump((void *)0x0077DD5C, InitMods);
+		WriteJump((void *)0x0077DD43, InitMods);
 		break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
