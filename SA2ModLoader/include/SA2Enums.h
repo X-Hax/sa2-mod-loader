@@ -1325,6 +1325,7 @@ enum Actions
 {
 	Action_None,
 	Action_Run,
+	Action_SpiralLoop,  // Used at the end of Radical Highway
 	Action_SpinCharge = 3,
 	Action_SpinRelease,
 	Action_Jump = 6,
@@ -1338,24 +1339,35 @@ enum Actions
 	Action_Push,
 	Action_Pain,
 	Action_WallBump,
+	Action_SlideGrounded, // Used when neutral sticking on surfaces where you can't stand still on (CW's pyramids, DL's underwater columns, IG's elevator's ramps and MH's starting ramp)
 	Action_ObjectControl = 18,
 	Action_PickUp,
 	Action_PutDown,
 	Action_HoldObject,
 	Action_GrabObject, // Pushable/pullable boxes in Wild Canyon. Only set when facing toward the object.
 	Action_GrabObject2, // Only set when facing away from the object
+	Action_ReleaseObject,
 	Action_MoveWithObject = 25,
+	Action_ThrowGrounded,
 	Action_SkidWithObject = 27,
 	Action_FallWithObject,
 	Action_JumpWithObject,
+	Action_HourglassSpringWithObject,
+	Action_SpringWithObject,
 	Action_PullObject = 32, // Boxes in Wild Canyon, like Action_GrabObject
 	Action_Throw,
+	Action_ShakeTree,
 	Action_ShakeObject = 35,
 	Action_Bound = 38, // Caught by ghost or blue shot from GUN robot
+	Action_LedgeGrab,
 	Action_StepUp = 40, // Stepping up to ledges
 	Action_Whistle = 42,
 	Action_Pet,
+	Action_ThrowChaoOnMachine,
+	Action_ActivateMM,
+	Action_ActivateMMFail,
 	Action_MysticMelodyFail = 47,
+	Action_LookAtMMShrine,
 	Action_MonitorLook = 50,
 	Action_Pulley,
 	Action_Slide,
@@ -1363,6 +1375,9 @@ enum Actions
 	Action_Sunglasses = Action_MysticMelody,
 	Action_GhostScare = Action_Sunglasses,
 	Action_AirBubble = Action_GhostScare,
+	Action_CutsceneAnimation, // Used before 2p matches, using powerups on 2p mode and some story cutscenes
+	Action_Drown,
+	Action_Quicksand,
 	Action_Death = 57,
 	Action_Noclip, // Doesn't work for Knuckles.
 	Action_LightDash,
