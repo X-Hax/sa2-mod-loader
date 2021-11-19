@@ -46,6 +46,9 @@ namespace SA2ModManager
 		BackgroundWorker updateChecker;
 		private bool manualModUpdate;
 
+		private Dictionary<int, string> TestSpawnCutsceneList;
+		private Dictionary<int, string> TestSpawnLevelList;
+
 		private static bool UpdateTimeElapsed(UpdateUnit unit, int amount, DateTime start)
 		{
 			if (unit == UpdateUnit.Always)
@@ -142,6 +145,8 @@ namespace SA2ModManager
 
 			LoadModList();
 
+			InitTestSpawnLevelList();
+			InitTestSpawnCutsceneList();
 			consoleCheckBox.Checked = loaderini.DebugConsole;
 			screenCheckBox.Checked = loaderini.DebugScreen;
 			fileCheckBox.Checked = loaderini.DebugFile;
@@ -1241,6 +1246,226 @@ namespace SA2ModManager
 		{
 			using (ModConfigDialog dlg = new ModConfigDialog(Path.Combine("mods", (string)modListView.SelectedItems[0].Tag), modListView.SelectedItems[0].Text))
 				dlg.ShowDialog(this);
+		}
+
+		private void checkBoxTestSpawnPosition_CheckedChanged(object sender, EventArgs e)
+		{
+			labelTestSpawnX.Enabled = labelTestSpawnY.Enabled = labelTestSpawnZ.Enabled =
+				numericUpDownTestSpawnX.Enabled = numericUpDownTestSpawnY.Enabled = numericUpDownTestSpawnZ.Enabled = checkBoxTestSpawnPosition.Checked;
+		}
+
+		private void checkBoxTestSpawnLevel_CheckedChanged(object sender, EventArgs e)
+		{
+			comboBoxTestSpawnLevel.Enabled = checkBoxTestSpawnLevel.Checked;
+			if (comboBoxTestSpawnLevel.SelectedIndex == -1)
+				comboBoxTestSpawnLevel.SelectedIndex = 0;
+		}
+
+		private void checkBoxTestSpawnCharacter_CheckedChanged(object sender, EventArgs e)
+		{
+			comboBoxTestSpawnCharacter.Enabled = checkBoxTestSpawnCharacter.Checked;
+			if (comboBoxTestSpawnCharacter.SelectedIndex == -1)
+				comboBoxTestSpawnCharacter.SelectedIndex = 0;
+		}
+
+		private void checkBoxTestSpawnEvent_CheckedChanged(object sender, EventArgs e)
+		{
+			comboBoxTestSpawnEvent.Enabled = checkBoxTestSpawnEvent.Checked;
+			if (comboBoxTestSpawnEvent.SelectedIndex == -1)
+				comboBoxTestSpawnEvent.SelectedIndex = 0;
+		}
+
+		private void checkBoxTestSpawnSave_CheckStateChanged(object sender, EventArgs e)
+		{
+			numericUpDownTestSpawnSaveID.Enabled = checkBoxTestSpawnSave.Checked;
+		}
+
+		private void InitTestSpawnCutsceneList()
+		{
+			TestSpawnCutsceneList = new Dictionary<int, string>();
+			TestSpawnCutsceneList.Add(0, "Hero Story Intro");
+			TestSpawnCutsceneList.Add(2, "Sonic Encounters Shadow");
+			TestSpawnCutsceneList.Add(3, "Knuckles Meets Rouge");
+			TestSpawnCutsceneList.Add(4, "Tails Flies to Prison Island");
+			TestSpawnCutsceneList.Add(5, "Tails vs. Eggman Aftermath");
+			TestSpawnCutsceneList.Add(6, "Sonic Escapes from his Cell");
+			TestSpawnCutsceneList.Add(11, "Sonic and Friends Witness the ARK's Power");
+			TestSpawnCutsceneList.Add(14, "Where's Eggman?");
+			TestSpawnCutsceneList.Add(15, "Sonic And Tails intercept Eggman's Video.");
+			TestSpawnCutsceneList.Add(16, "Locate Eggman's Pyramid Base");
+			TestSpawnCutsceneList.Add(17, "Knuckles Begins Looking for the Gate Keys");
+			TestSpawnCutsceneList.Add(19, "Eggman Ambushes Sonic inside the Base.");
+			TestSpawnCutsceneList.Add(21, "Tails Explains His Plan to Destroy the Eclipse Cannon");
+			TestSpawnCutsceneList.Add(22, "Sonic Receives a Call for Ransom from Eggman");		
+			TestSpawnCutsceneList.Add(24, "Knuckles vs. Rouge Aftermath");
+			TestSpawnCutsceneList.Add(25, "Sonic and Eggman Face Off");
+			TestSpawnCutsceneList.Add(26, "Sonic Saves Himself");			
+			TestSpawnCutsceneList.Add(27, "Sonic and Shadow Final Battle");
+			TestSpawnCutsceneList.Add(28, "Hero Story Ending");
+
+			TestSpawnCutsceneList.Add(100, "Dark Story Intro");
+			TestSpawnCutsceneList.Add(101, "Eggman Awakens Shadow");		
+			TestSpawnCutsceneList.Add(102, "Shadow Instructs Eggman");		
+			TestSpawnCutsceneList.Add(103, "Rouge Meets Knuckles");			
+			TestSpawnCutsceneList.Add(105, "Eggman Hears of Shadow's Highway Robbery");			
+			TestSpawnCutsceneList.Add(106, "Shadow's Pathos");			
+			TestSpawnCutsceneList.Add(107, "Shadow Encounters Sonic");	
+			TestSpawnCutsceneList.Add(109, "Rouge Follows Eggman");		
+			TestSpawnCutsceneList.Add(111, "Gathering of the Dark");		
+			TestSpawnCutsceneList.Add(112, "Arrive on Prison Island");			
+			TestSpawnCutsceneList.Add(113, "Eggman's Plan is Complicated by Tails and Amy");
+			TestSpawnCutsceneList.Add(116, "Shadow's Conscience Begins to Surface");			
+			TestSpawnCutsceneList.Add(118, "Sonic vs. Shadow 1 Aftermath");		
+			TestSpawnCutsceneList.Add(119, "Shadow's Past Life with Maria");			
+			TestSpawnCutsceneList.Add(120, "Eggman Reworks His Plan");			
+			TestSpawnCutsceneList.Add(122, "Shadow Spots the Heroes approaching the Pyramid Base");			
+			TestSpawnCutsceneList.Add(123, "Eggman Fails to Ambush Sonic inside the base.");			
+			TestSpawnCutsceneList.Add(124, "Rouge Learns the Truth About Project Shadow.");
+			TestSpawnCutsceneList.Add(126, "Knuckles vs. Rouge Aftermath");			
+			TestSpawnCutsceneList.Add(127, "Eggman's Final Plan to Crush the Heroes");			
+			TestSpawnCutsceneList.Add(128, "Eggman Sets a Diabolical Trap for Sonic");		
+			TestSpawnCutsceneList.Add(129, "Mystery of Shadow the Hedgehog");		
+			TestSpawnCutsceneList.Add(130, "Shadow and Sonic Final Battle");				
+			TestSpawnCutsceneList.Add(131, "Dark Story Ending");		
+			
+			TestSpawnCutsceneList.Add(200, "Last Episode Intro");
+			TestSpawnCutsceneList.Add(201, "The ARK Falls");
+			TestSpawnCutsceneList.Add(203, "Gerald's Diary and Descent into Madness");
+			TestSpawnCutsceneList.Add(204, "Shadow and Amy.");		
+			TestSpawnCutsceneList.Add(205, "Gerald's Final Trump Card");
+			TestSpawnCutsceneList.Add(206, "Knuckles Stops the Chaos Emeralds");
+			TestSpawnCutsceneList.Add(207, "Sonic and Shadow Transform");
+			TestSpawnCutsceneList.Add(208, "Shadow gives his life to save the world");			
+			TestSpawnCutsceneList.Add(210, "Last Episode Ending/Credits");
+			TestSpawnCutsceneList.Add(211, "Epilogue");
+
+
+
+			comboBoxTestSpawnEvent.Items.Clear();
+			foreach (var item in TestSpawnCutsceneList)
+			{
+				comboBoxTestSpawnEvent.Items.Add("EV" + item.Key.ToString() + ": " + item.Value);
+			}
+		}
+
+
+		private void InitTestSpawnLevelList()
+		{
+			TestSpawnLevelList = new Dictionary<int, string>();
+			TestSpawnLevelList.Add(0, "Basic Test");
+			TestSpawnLevelList.Add(3, "Green Forest");
+			TestSpawnLevelList.Add(4, "White Jungle");
+			TestSpawnLevelList.Add(5, "Pumpkin Hill");
+			TestSpawnLevelList.Add(6, "Sky Rail");
+			TestSpawnLevelList.Add(7, "Aquatic Mine");
+			TestSpawnLevelList.Add(8, "Security Hall");
+			TestSpawnLevelList.Add(9, "Prison Lane");
+			TestSpawnLevelList.Add(10, "Metal Harbor");
+			TestSpawnLevelList.Add(11, "Iron Gate");
+			TestSpawnLevelList.Add(12, "Weapons Bed");
+			TestSpawnLevelList.Add(13, "City Escape");
+			TestSpawnLevelList.Add(14, "Radical Highway");
+			TestSpawnLevelList.Add(16, "Wild Canyon");
+			TestSpawnLevelList.Add(17, "Mission Street");
+			TestSpawnLevelList.Add(18, "Dry Lagoon");
+			TestSpawnLevelList.Add(19, "Sonic Vs. Shadow 1");
+			TestSpawnLevelList.Add(20, "Tails Vs. Eggman 1");
+			TestSpawnLevelList.Add(21, "Sand Ocean");
+			TestSpawnLevelList.Add(22, "Crazy Gadget");
+			TestSpawnLevelList.Add(23, "Hidden Base");
+			TestSpawnLevelList.Add(24, "Eternal Engine");
+			TestSpawnLevelList.Add(25, "Death Chamber");
+			TestSpawnLevelList.Add(26, "Egg Quarters");
+			TestSpawnLevelList.Add(27, "Lost Colony");
+			TestSpawnLevelList.Add(28, "Pyramid Cave");
+			TestSpawnLevelList.Add(29, "Tails Vs. Eggman 2");
+			TestSpawnLevelList.Add(30, "Final Rush");
+			TestSpawnLevelList.Add(31, "Green Hill");
+			TestSpawnLevelList.Add(32, "Meteor Herd");
+			TestSpawnLevelList.Add(33, "Knuckles Vs. Rouge");
+			TestSpawnLevelList.Add(34, "Cannon's Core (Sonic)");
+			TestSpawnLevelList.Add(35, "Cannon's Core (Eggman)");
+			TestSpawnLevelList.Add(36, "Cannon's Core (Tails)");
+			TestSpawnLevelList.Add(37, "Cannon's Core (Rouge)");
+			TestSpawnLevelList.Add(38, "Cannon's Core (Knuckles)");
+			TestSpawnLevelList.Add(40, "Final Chase");
+			TestSpawnLevelList.Add(42, "Sonic Vs. Shadow 2");
+			TestSpawnLevelList.Add(43, "Cosmic Wall");
+			TestSpawnLevelList.Add(44, "Mad Space");
+			TestSpawnLevelList.Add(60, "Big Foot");
+			TestSpawnLevelList.Add(61, "Hot Shot");
+			TestSpawnLevelList.Add(62, "Flying Dog");
+			TestSpawnLevelList.Add(63, "King Boom Boo");
+			TestSpawnLevelList.Add(64, "Egg Golem (Sonic)");
+			TestSpawnLevelList.Add(65, "Biolizard");
+			TestSpawnLevelList.Add(66, "FinalHazard");
+			TestSpawnLevelList.Add(67, "Egg Golem (Eggman)");
+			TestSpawnLevelList.Add(70, "Route 101/Route 280");
+			TestSpawnLevelList.Add(71, "Kart Race");
+			TestSpawnLevelList.Add(90, "Chao World");
+
+			comboBoxTestSpawnLevel.Items.Clear();
+			foreach (var item in TestSpawnLevelList)
+			{
+				comboBoxTestSpawnLevel.Items.Add(item.Key.ToString() + ": " + item.Value);
+			}
+		}
+
+		private string GetTestSpawnCommandLine()
+		{
+			List<string> cmdline = new List<string>();
+			if (checkBoxTestSpawnLevel.Checked)
+			{
+				int lvl = 0;
+				int lvl_result = 0;
+				foreach (var item in TestSpawnLevelList)
+				{
+					if (lvl == comboBoxTestSpawnLevel.SelectedIndex)
+					{
+						lvl_result = item.Key;
+						break;
+					}
+					lvl++;
+				}
+				cmdline.Add("-l " + lvl_result.ToString());
+			}
+
+
+			if (checkBoxTestSpawnCharacter.Checked)
+				cmdline.Add("-c " + comboBoxTestSpawnCharacter.SelectedIndex.ToString());
+			if (checkBoxTestSpawnPosition.Checked)
+				cmdline.Add("-p " + numericUpDownTestSpawnX.Value.ToString() + " " +
+					numericUpDownTestSpawnY.Value.ToString() + " " +
+					numericUpDownTestSpawnZ.Value.ToString());
+
+			if (checkBoxTestSpawnEvent.Checked)
+			{
+				int ev = 0;
+				int ev_result = 0;
+				foreach (var item in TestSpawnCutsceneList)
+				{
+					if (ev == comboBoxTestSpawnEvent.SelectedIndex)
+					{
+						ev_result = item.Key;
+						break;
+					}
+					ev++;
+				}
+				cmdline.Add("-e " + ev_result.ToString());
+			}
+
+			if (checkBoxTestSpawnSave.Checked)
+				cmdline.Add("-s " + numericUpDownTestSpawnSaveID.Value.ToString());
+
+
+
+			return string.Join(" ", cmdline);
+		}
+
+		private void buttonTestSpawnPlay_Click(object sender, EventArgs e)
+		{
+			Process process = Process.Start(loaderini.Mods.Select((item) => mods[item].EXEFile)
+												.FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "sonic2app.exe", GetTestSpawnCommandLine());
 		}
 	}
 }

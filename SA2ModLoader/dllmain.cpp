@@ -1505,6 +1505,8 @@ void __cdecl InitMods(void)
 	for (unsigned int i = 0; i < initfuncs.size(); i++)
 		initfuncs[i].first(initfuncs[i].second.c_str(), helperFunctions);
 
+	TestSpawnCheckArgs(helperFunctions);
+
 	if (StartPositionsModified)
 		WriteJump((void *)LoadStartPositionPtr, LoadStartPosition_r);
 	if (_2PIntroPositionsModified)
@@ -1656,7 +1658,6 @@ void __cdecl InitMods(void)
 	WriteJump((void*)0x00441D41, OnControl);
 	WriteJump((void*)0x00441EEB, OnControl);
 
-	TestSpawnCheckArgs(helperFunctions);
 
 	if (MainUserConfig->data.Fullscreen == 0)
 	{
