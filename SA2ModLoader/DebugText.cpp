@@ -13,28 +13,10 @@ struct Renderer
 	char field_3C[70];
 };
 
-struct __declspec(align(4)) VertexDeclarationInfo
-{
-	float gap0;
-	int field_4;
-	float field_8;
-	int field_C;
-	int field_10;
-	int field_14;
-	int field_18;
-	IDirect3DVertexDeclaration9* D3DVertexDeclaration;
-	int field_20;
-	int StrideSize;
-	int field_28;
-	int field_2C;
-	int field_30;
-};
-
 VoidFunc(sub_429070, 0x429070);
 VoidFunc(sub_4293B0, 0x4293B0);
 VoidFunc(sub_44C260, 0x44C260);
 DataPointer(Renderer*, dword_1A557C0, 0x1A557C0);
-DataPointer(VertexDeclarationInfo*, VertexDeclarationInfoInstance, 0x0174F7E8);
 
 namespace debug_text
 {
@@ -68,13 +50,14 @@ namespace debug_text
 		float v;
 	};
 
+	extern "C" { __declspec(dllexport) IDirect3DVertexShader9* uiShader; }
+
 	static IDirect3DVertexDeclaration9* declaration;
 	static IDirect3DVertexDeclaration9* njDrawPolygonDeclaration;
 	static IDirect3DTexture9* texture;
 	static D3DVIEWPORT9 viewport;
-	static IDirect3DVertexShader9* uiShader;
 	static FVFStruct_K GiantVertexBuffer_ptr[4];
-	
+
 	static DebugStringInfo* DebugMessages;
 	static int DebugMessageMax;
 	static int DebugTextBufferMax;
@@ -212,9 +195,9 @@ namespace debug_text
 
 		const float char_size = 0.0625f;
 
-		float u = (float)(c & 0xF) * char_size;
-		float v = (float)(c >> 4) * char_size;
-		
+		float u = (float)(c & 0xF) * char_size + 0.001f;
+		float v = (float)(c >> 4) * char_size + 0.001f;
+
 		rect[0].x = x;
 		rect[0].y = y;
 		rect[1].x =(float)(size + x);
@@ -324,30 +307,40 @@ namespace debug_text
 
 	void njDrawDebugInfo(DebugStringInfo* info)
 	{
+		// Backup important states
 		IDirect3DBaseTexture9* backupTexture;
-
+		IDirect3DVertexShader9* backupVertShader;
+		IDirect3DPixelShader9* backupPixelShader;
+		IDirect3DVertexDeclaration9* backupDeclaration;
+		float backupTev[4] = { 0,0,0,0 };
 		dword_1A557C0->pointerToDevice->GetTexture(0, &backupTexture);
+		dword_1A557C0->pointerToDevice->GetVertexShader(&backupVertShader);
+		dword_1A557C0->pointerToDevice->GetPixelShader(&backupPixelShader);
+		dword_1A557C0->pointerToDevice->GetPixelShaderConstantF(0, backupTev, 1);
+		dword_1A557C0->pointerToDevice->GetVertexDeclaration(&backupDeclaration);
 
 		// Enable point filtering
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MINFILTER, D3DTEXF_POINT);
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 
-		// Backup last shader
+		// Backup last shader ID
 		int prebackup = CurrentShaderID;
 
-		// Set to UI shader
-		SetShaders(0);
-		dword_1A557C0->pointerToDevice->SetVertexShader(uiShader);
-
-		// Init 2D stuff
+		// Init 2D stuff, sets UI shader
 		sub_429070();
+		// We overwrite the UI vertex shader with ours, to scale the text correctly
+		dword_1A557C0->pointerToDevice->SetVertexShader(uiShader); 
 
 		// Transparent blending
 		sub_4293B0();
 
 		// Set texture
 		dword_1A557C0->pointerToDevice->SetTexture(0, texture);
+
+		// Set TevMode for UI pixel shader, if its not 0 the text doesn't display correctly
+		float tevmode = 0;
+		dword_1A557C0->pointerToDevice->SetPixelShaderConstantF(0,&tevmode,1);
 
 		const char* str = info->text;
 		int strLength = strlen(info->text);
@@ -367,8 +360,12 @@ namespace debug_text
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
-		// Restore shader
-		SetShaders(prebackup);
+		// Restore shader, tevmode, and vertex declaration
+		SetShaders(prebackup); // We still run this, so that the CurrentShaderID gets reset back to the last thing, even if the actual shader gets overwritten
+		dword_1A557C0->pointerToDevice->SetVertexShader(backupVertShader);
+		dword_1A557C0->pointerToDevice->SetPixelShader(backupPixelShader);
+		dword_1A557C0->pointerToDevice->SetPixelShaderConstantF(0, backupTev, 1);
+		dword_1A557C0->pointerToDevice->SetVertexDeclaration(backupDeclaration);
 	}
 
 	void DrawDebugText()
