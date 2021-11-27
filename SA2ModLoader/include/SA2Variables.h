@@ -76,6 +76,13 @@ DataArray(ItemBoxItem, ItemBoxBalloon_Items, 0xB19928, 11);
 DataArray(LevelItemData, LevelItems, 0xB35390, 28);
 DataArray(ItemBoxItem, ItemBoxAir_Items, 0xB493A0, 11);
 DataArray(ItemBoxItem, ItemBox_Items, 0xB4D120, 11);
+DataPointer(NJS_OBJECT, SPRING_OBJECT, 0xB55540); // GC
+DataPointer(SA2B_Model, RINGFAR_MODEL, 0xB57134); // LOD
+DataPointer(NJS_OBJECT, RINGFAR_OBJECT, 0xB57580); // GC, LOD
+DataPointer(SA2B_Model, RINGNEAR_MODEL, 0xB575C4); // LOD
+DataPointer(NJS_OBJECT, RINGNEAR_OBJECT, 0xB57A90); // GC, LOD
+DataPointer(SA2B_Model, RING_MODEL, 0xB57AD4);
+DataPointer(NJS_OBJECT, RING_OBJECT, 0xB58020); // GC
 DataPointer(AnimationIndex, DeathChamberCharAnims, 0xB9EEB8);
 DataPointer(ObjectListEntry, DeathChamberObjectList, 0xBA5130);
 DataPointer(LevelHeader, DeathChamberHeader, 0xBAFDF0);
@@ -453,6 +460,10 @@ DataPointer(int, Old2PBattleTimerThing, 0x1A4A910);
 DataPointer(DWORD, dwMilliseconds, 0x1A51638);
 DataPointer(int, SonicGravityAngle_Z, 0x1A51644);
 DataPointer(int, SonicGravityAngle_X, 0x1A51960);
+DataPointer(NJS_MATRIX, MATRIX_BOUNCEBRACLET, 0x1A51A3C);
+DataPointer(NJS_MATRIX, MATRIX_LSSHOE_L, 0x1A51A6C);
+DataPointer(NJS_MATRIX, MATRIX_FLAMERING, 0x1A51AA0);
+DataPointer(NJS_MATRIX, MATRIX_LSSHOE_R, 0x1A519D0);
 DataPointer(NJS_VECTOR, SonicGravity, 0x1A51A30);
 DataPointer(Angle, KnucklesGravityAngle_Z, 0x1A51B78);
 DataPointer(Angle, KnucklesGravityAngle_X, 0x1A51BB8);

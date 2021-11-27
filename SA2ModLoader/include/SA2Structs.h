@@ -633,7 +633,7 @@ struct CharObj2Base
 	char gap1C[8];
 	int Upgrades;
 	float field_28;
-	int field_2C;
+	Angle TiltAngle;
 	float PathDist;
 	float Up;
 	char field_38[8];
@@ -651,7 +651,7 @@ struct CharObj2Base
 	ObjectMaster* HeldObject;
 	char gap98[4];
 	ObjectMaster* HoldTarget;
-	int field_A0;
+	ObjectMaster* CurrentDyncolTask;
 	int field_A4;
 	char gapA8[16];
 	LoopHead* PathData;
@@ -961,16 +961,32 @@ struct JiggleInfo
 struct SonicCharObj2
 {
 	CharObj2Base base;
-	char gap1BC[88];
-	NJS_VECTOR HeadNodePos;
-	char gap224[313];
+	char gap1BC[40];
+	NJS_POINT3 righthand_pos;
+	NJS_POINT3 lefthand_pos;
+	NJS_POINT3 rightfoot_pos;
+	NJS_POINT3 leftfoot_pos;
+	NJS_POINT3 head0_pos;
+	NJS_POINT3 head1_pos;
+	NJS_POINT3 head2_pos;
+	char gap224[48];
+	NJS_POINT3 righthand_vec0;
+	NJS_POINT3 lefthand_vec0;
+	NJS_POINT3 righthand_vec1;
+	NJS_POINT3 lefthand_vec1;
+	NJS_POINT3 rightfoot_vec;
+	NJS_POINT3 leftfoot_vec;
+	NJS_POINT3 head0_vec;
+	NJS_POINT3 head1_vec;
+	NJS_POINT3 head2_vec;
+	char gap290[133];
 	char SomersaultNextAction;
 	char gap35E[8];
 	__int16 SomersaultTime;
 	__int16 SpindashCounter;
 	char field_36A[14];
 	NJS_VECTOR SpineJigglePos;
-	char field_384[12];
+	NJS_VECTOR LightDashPos;
 	JiggleInfo* SpineJiggle;
 	NJS_TEXLIST* TextureList;
 	ModelIndex* ModelList;

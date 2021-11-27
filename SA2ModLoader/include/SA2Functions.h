@@ -182,7 +182,8 @@ VoidFunc(CountPerfectRings, 0x4890E0); // Counts the amount of rings in the SET.
 ObjectFunc(MinimalCounterExecutor, 0x489240);
 ObjectFunc(MinimalCaptureEffect_Exec, 0x489650);
 ObjectFunc(Minimal_Exec, 0x4898B0);
-FunctionPointer(int, MINIMAL, (ObjectMaster* a1), 0x48ADE0);
+FunctionPointer(ObjectMaster*, SpawnMinimal, (float posx, float posy, float posz, int type, int behaviour), 0x48AAD0);
+FunctionPointer(ObjectMaster*, Enemy_SpawnMinimal, (float posx, float posy, float posz), 0x48AD10);
 FunctionPointer(void, CL_ColPolListUpNear, (csts* ctp), 0x48BAF0); // Finds dynamic collisions within the csts input position and radius.
 FunctionPointer(int, ChaosDrive_Unknown, (int), 0x48F0E0);
 ObjectFunc(ChaosDrive_Delete, 0x48F7C0);
@@ -1115,6 +1116,7 @@ ObjectFunc(Sonic_Main, 0x717840);
 FunctionPointer(void, Sonic_ChecksForDamage, (EntityData1* a1, EntityData2* a2, CharObj2Base* a3, SonicCharObj2* a5), 0x719920);
 ObjectFunc(Sonic_Delete, 0x71E300);
 ObjectFunc(Sonic_2C, 0x71E520);
+FunctionPointer(void, SonicDrawCallBack, (NJS_OBJECT* obj), 0x71EAA0);
 ObjectFunc(Sonic_Display, 0x720090);
 ObjectFunc(Sonic_1C, 0x720B50);
 ObjectFunc(Shadow_1C, 0x720C10);
