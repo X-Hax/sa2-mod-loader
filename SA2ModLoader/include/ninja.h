@@ -2306,19 +2306,15 @@ static inline Sint16 *FindChunk(Sint16 *chunk, unsigned char type)
 	return chunk;
 }
 
-static inline Sint32 *NextChunk(Sint32 *chunk)
+static inline Sint32* NextChunk(Sint32* chunk)
 {
-	unsigned char v5 = (unsigned char)*chunk++;
+	unsigned char v5 = (unsigned char)*chunk;
 	if (v5 == NJD_CE)
 		return nullptr;
-	if (v5 >= NJD_TINYOFF)
-	{
-		if (v5 >= NJD_MATOFF)
-			return chunk + *chunk + 1;
-		else
-			return chunk + 1;
-	}
-	return chunk;
+	if (v5 >= NJD_VERTOFF)
+		return chunk + ((*chunk >> 16) & 0xFFFF) + 1;
+	else
+		return chunk + 1;
 }
 
 static inline Sint32 *FindChunk(Sint32 *chunk, unsigned char type)
