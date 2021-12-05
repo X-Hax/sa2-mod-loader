@@ -1308,6 +1308,17 @@ StdcallFunctionPointer(int, nullsub_11, (int, int), 0x868960);
 VoidFunc(nullsub_8, 0x8704F0);
 VoidFunc(nullsub_6, 0x870580);
 VoidFunc(nullsub_4, 0x870590);
+FunctionPointer(void, PGetRotation, (EntityData1* data, EntityData2* data2, CharObj2Base* co2), 0x45FA70);
+FunctionPointer(JiggleInfo*, LoadJiggle, (NJS_OBJECT* jiggle), 0x447580);
+FunctionPointer(void, DrawObject, (NJS_OBJECT* a1), 0x42E730);
+FunctionPointer(void, SuperSonicGetAccel, (EntityData1* data, EntityData2* data2, CharObj2Base* co2), 0x49D870);
+ObjectFunc(SpinDashAura_Display, 0x756040);
+ObjectFunc(JumpAura_Display, 0x756960);
+ObjectFunc(HomingAura_Display, 0x756520);
+ObjectFunc(Dynamite_Main, 0x6da880);
+ObjectFunc(DynamiteHiddenBase_Main, 0x714610);
+ObjectFunc(DynamiteSandOcean_Main, 0x65AEA0);
+ObjectFunc(PrisonLaneDoor, 0x606400);
 
 // HWND __usercall@<eax>(int nWidth@<eax>, HINSTANCE hInstance, int nHeight, unsigned __int8 isWindowed)
 static const void* const CreateMainWindowPtr = (void*)0x4019D0;
@@ -3516,5 +3527,124 @@ static inline float njScalor(const NJS_VECTOR* src)
 		fstp result
 	}
 	return result;
+}
+
+//void __usercall PresetPosition(EntityData1* a1@<eax>, EntityData2* a2@<ebx>, CharObj2Base* a3)
+static const void* const PResetPosPtr = (void*)0x469050;
+static inline void PResetPosition(EntityData1* a1, EntityData2* a2, CharObj2Base* a3)
+{
+	__asm
+	{
+		push[a3] // a3
+		mov ebx, a2 // a2
+		mov eax, a1 // a1
+		call PResetPosPtr
+		add esp, 4 // a2
+	}
+}
+
+//void __usercall PSetPosition(EntityData1* data@<eax>, EntityData2* data2, CharObj2Base* co2)
+static const void* const PSetPositionptr = (void*)0x4616E0;
+static inline int PSetPosition(EntityData1* a1, EntityData2* a2, CharObj2Base* a3)
+{
+	int result;
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov eax, [a1]
+		call PSetPositionptr
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall PGetSpeed(EntityData1* a1@<eax>, CharObj2Base* a2@<ebx>, EntityData2* a3)
+static const void* const PGetSpeedPtr = (void*)0x460860;
+static inline void PGetSpeed(EntityData1* a1, CharObj2Base* co2, EntityData2* data2)
+{
+	__asm
+	{
+		push[data2]
+		mov ebx, co2
+		mov eax, a1
+		call PGetSpeedPtr
+		add esp, 4
+	}
+}
+
+//void __usercall PlayerGetAccelerationAir(EntityData1* a1@<ecx>, CharObj2Base* eax0@<eax>, EntityData2* a4)
+static const void* const PGetAccelAirPtr = (void*)0x45D770;
+static inline void PGetAccelerationAir(EntityData1* a1, CharObj2Base* co2, EntityData2* data2)
+{
+	__asm
+	{
+		push[data2]
+		mov eax, [co2]
+		mov ecx, a1
+		call PGetAccelAirPtr
+		add esp, 4
+	}
+}
+
+//void __usercall Delete_Jiggle(JiggleInfo* Jiggle@<esi>)
+static const void* const jiggle_ptr = (void*)0x447910;
+static inline void Delete_Jiggle(JiggleInfo* jiggle)
+{
+	__asm
+	{
+		mov esi, jiggle
+		call jiggle_ptr
+	}
+}
+
+
+
+//void __usercall DrawMotionAndObject(NJS_MOTION* mtn@<ecx>, NJS_OBJECT* obj, float frame)
+static const void* const njDrawObjMotionPtr_ = (void*)0x780870;
+static inline void DrawMotionAndObject(NJS_MOTION* mtn, NJS_OBJECT* obj, float frame)
+{
+	__asm
+	{
+		push[frame]
+		push[obj]
+		mov ecx, mtn
+		call njDrawObjMotionPtr_
+		add esp, 8
+	}
+}
+
+//void __usercall DrawChunkModel(NJS_CNK_MODEL* a1@<eax>)
+static const void* const DrawChunkModelPtr = (void*)0x42E6C0;
+static inline void DrawChunkModel(NJS_CNK_MODEL* a1)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call DrawChunkModelPtr
+	}
+}
+
+//void __usercall PlayAnimationThing(CharAnimInfo* a1@<esi>)
+static const void* const PlayAnimPtr = (void*)0x4692A0;
+static inline void PlayAnimationThing(CharAnimInfo* a1)
+{
+	__asm
+	{
+		mov esi, [a1]
+		call PlayAnimPtr
+	}
+}
+
+//void __usercall UnloadAnimation(AnimationIndex* a1@<esi>)
+static const void* const UnloadAnimPtr = (void*)0x459890;
+static inline void UnloadAnimation(AnimationIndex* a1)
+{
+	__asm
+	{
+		mov esi, [a1]
+		call UnloadAnimPtr
+	}
 }
 

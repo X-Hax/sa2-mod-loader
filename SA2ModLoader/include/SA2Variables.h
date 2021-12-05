@@ -679,3 +679,4 @@ DataPointer(RenderInfo, RenferInfo_, 0x2670544);
 DataPointer(float, MaxDrawDistance, 0x2670560);
 DataPointer(float, MinDrawDistance, 0x2670564);
 DataPointer(LPVOID, MatrixStack_MaxPtr, 0x2670588);
+DataPointer(char, TimerStopped, 0x174afda);
