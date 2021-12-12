@@ -112,7 +112,13 @@ static const unordered_map<wstring, uint8_t> charnamemap = {
 	{ L"knuckles", Characters_Knuckles },
 	{ L"rouge", Characters_Rouge },
 	{ L"mechtails", Characters_MechTails },
-	{ L"mecheggman", Characters_MechEggman }
+	{ L"mecheggman", Characters_MechEggman },
+	{ L"amy", Characters_Amy },
+	{ L"metalsonic", Characters_MetalSonic },
+	{ L"chao", Characters_ChaoWalker },
+	{ L"darkchao", Characters_DarkChaoWalker },
+	{ L"tikal", Characters_Tikal },
+	{ L"chaos", Characters_Chaos },
 };
 
 static uint8_t ParseCharacter(const wstring& str)
@@ -166,12 +172,45 @@ static void LoadMenuButtonsTex()
 	MenuButtonImage = LoadPNG(buffer);
 }
 
+static void SetAltCharacter(uint8_t id) {
+
+	switch (id)
+	{
+	case Characters_Amy:
+		WriteJump(LoadSonic, LoadAmy);
+		CurrentCharacter = Characters_Sonic;
+		break;
+	case Characters_MetalSonic:
+		WriteJump(LoadShadow, LoadMetalSonic);
+		CurrentCharacter = Characters_Shadow;
+		break;
+	case Characters_ChaoWalker:
+		WriteJump(LoadMechTails, LoadChaoWalker);
+		CurrentCharacter = Characters_MechTails;
+		break;
+	case Characters_DarkChaoWalker:
+		WriteJump(LoadMechEggman, LoadDarkChaoWalker);
+		CurrentCharacter = Characters_MechEggman;
+		break;
+	case Characters_Tikal:
+		WriteJump(LoadKnuckles, LoadTikal);
+		CurrentCharacter = Characters_Knuckles;
+		break;
+	case Characters_Chaos:
+		WriteJump(LoadRouge, LoadChaos);
+		CurrentCharacter = Characters_Rouge;
+		break;
+	}
+}
+
 void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 {
 	int argc = 0;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 	
 	bool level_set = false;
+
+	uint8_t alt = 0;
 	
 	for (int i = 1; i < argc; i++)
 	{
@@ -197,7 +236,11 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
 		{
-			CurrentCharacter = ParseCharacter(argv[++i]);
+			alt = ParseCharacter(argv[++i]);
+
+			CurrentCharacter = alt;
+			SetAltCharacter(alt);
+	
 			PrintDebug("Loading character: %d\n", CurrentCharacter);
 
 			// NOP. Prevents CurrentCharacter from being overwritten.
