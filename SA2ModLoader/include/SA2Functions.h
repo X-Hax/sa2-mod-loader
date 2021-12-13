@@ -1117,6 +1117,9 @@ FunctionPointer(void, Sonic_ChecksForDamage, (EntityData1* a1, EntityData2* a2, 
 ObjectFunc(Sonic_Delete, 0x71E300);
 ObjectFunc(Sonic_2C, 0x71E520);
 FunctionPointer(void, SonicDrawCallBack, (NJS_OBJECT* obj), 0x71EAA0);
+FunctionPointer(void, AmyDrawCallBack, (NJS_OBJECT* obj), 0x71F040);
+FunctionPointer(void, ShadowDrawCallBack, (NJS_OBJECT* obj), 0x71F5E0);
+FunctionPointer(void, MetalSonicDrawCallBack, (NJS_OBJECT* obj), 0x71FBE0);
 ObjectFunc(Sonic_Display, 0x720090);
 ObjectFunc(Sonic_1C, 0x720B50);
 ObjectFunc(Shadow_1C, 0x720C10);
@@ -1144,7 +1147,9 @@ ObjectFunc(Knuckles_Delete, 0x72D8A0);
 ObjectFunc(Rouge_2C, 0x72E390);
 ObjectFunc(Knuckles_Display, 0x72EF20);
 ObjectFunc(Tikal_Display, 0x72FB10);
+FunctionPointer(void, RougeDrawCallBack, (NJS_OBJECT* obj), 0x7304D0);
 ObjectFunc(Rouge_Display, 0x730970);
+FunctionPointer(void, ChaosDrawCallBack, (NJS_OBJECT* obj), 0x7315E0);
 ObjectFunc(Chaos_Display, 0x731A30);
 ObjectFunc(Chaos_1C, 0x732100);
 FunctionPointer(int, Knuckles_CheckSunglasses, (), 0x735EC0);
@@ -1164,6 +1169,7 @@ FunctionPointer(int, ExecDisplayGottenEmeraldIcon_Load, (int), 0x73AEC0);
 ObjectFunc(Eggman_Main, 0x73C380);
 ObjectFunc(Eggman_Delete, 0x73E700);
 ObjectFunc(Eggman_Display, 0x73EF20);
+FunctionPointer(void, EggmanDrawCallBack, (NJS_OBJECT* obj), 0x73EAD0);
 FunctionPointer(int, FreeMovement_SonicEggman, (), 0x73F5A0);
 FunctionPointer(void, LoadMechEggman, (int playerNum), 0x740C50);
 FunctionPointer(void, LoadMechTails, (int playerNum), 0x740EB0);
@@ -1176,10 +1182,13 @@ ObjectFunc(MechEggman_Display, 0x7444F0);
 ObjectFunc(MechEggman_1C, 0x7454B0);
 ObjectFunc(MechEggman_28, 0x7458F0);
 ObjectFunc(MechEggman_2C, 0x745910);
+FunctionPointer(void, ChaoWalkerDrawCallBack, (NJS_OBJECT* obj), 0x745CC0);
 ObjectFunc(ChaoWalker_Display, 0x746290);
 ObjectFunc(ChaoWalker_1C, 0x746850);
+FunctionPointer(void, DarkChaoWalkerDrawCallBack, (NJS_OBJECT* obj), 0x746B00);
 ObjectFunc(DarkChaoWalker_Display, 0x7470D0);
 ObjectFunc(DarkChaoWalker_1C, 0x7476A0);
+FunctionPointer(void, MechTailsDrawCallBack, (NJS_OBJECT* obj), 0x747940);
 ObjectFunc(MechTails_Display, 0x747DD0);
 ObjectFunc(MechTails_1C, 0x748CA0);
 ObjectFunc(EWalker2PSpecialMan, 0x749A30);
@@ -1210,7 +1219,9 @@ ObjectFunc(WaveExecute, 0x7550D0);
 ObjectFunc(GunfireExecute, 0x7554F0);
 ObjectFunc(LineExecute, 0x755A60);
 FunctionPointer(int, LoadSonEffTex, (), 0x755DA0);
+FunctionPointer(int, LoadShadEffTex, (), 0x755DE0);
 FunctionPointer(int, LoadAmyEffTex, (), 0x755E20);
+FunctionPointer(int, LoadMetEffTex, (), 0x755E60);
 ObjectFunc(exec_2, 0x7578B0);
 ObjectFunc(LightAttackParticle_Render, 0x757B30);
 ObjectFunc(SonicEffectChaosControlEffectExecutor, 0x758B60);
@@ -2615,6 +2626,20 @@ static inline void SuperSonic_ChecksForDamage(CharObj2Base* _data2, EntityData1*
 	}
 }
 
+// void __usercall(CharObj2Base *a1@<edi>, EntityData1 *a2, SuperSonicCharObj2 *a3)
+static const void* const Super_AfterimagePtr = (void*)0x49C000;
+static inline void Super_Afterimage(CharObj2Base* a1, EntityData1* a2, SuperSonicCharObj2* a3)
+{
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov esi, [a1]
+		call Super_AfterimagePtr
+		add esp, 4
+	}
+}
+
 // ObjectMaster *__usercall@<eax>(ObjectMaster *parent@<eax>, NJS_VECTOR *position@<ebx>, int a1, int a2)
 static const void* const SpawnBombPtr = (void*)0x513FE0;
 static inline ObjectMaster* SpawnBomb(ObjectMaster* parent, NJS_VECTOR* position, int a1, int a2)
@@ -2904,6 +2929,20 @@ static inline void LoadChaoKey(NJS_VECTOR* a1, float a2, float a3)
 	}
 }
 
+// void __usercall(EntityData1 *a1@<esi>, CharObj2Base *a2, SonicCharObj2 *a3)
+static const void* const Sonic_AfterimagePtr = (void*)0x71E460;
+static inline void Sonic_Afterimage(EntityData1* a1, CharObj2Base* a2, SonicCharObj2* a3)
+{
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov esi, [a1]
+		call Sonic_AfterimagePtr
+		add esp, 4
+	}
+}
+
 // signed int __usercall@<eax>(EntityData1 *a1@<eax>, EntityData2 *a2@<edx>, CharObj2Base *a3@<ecx>, SonicCharObj2 *a4)
 static const void* const Sonic_CheckActionWindowPtr = (void*)0x7230E0;
 static inline signed int Sonic_CheckActionWindow(EntityData1* a1, EntityData2* a2, CharObj2Base* a3, SonicCharObj2* a4)
@@ -3010,6 +3049,34 @@ static inline signed int Sonic_PerformBounce(CharObj2Base* a1, EntityData1* a2)
 		mov result, eax
 	}
 	return result;
+}
+
+// void __usercall(EntityData1 *a1@<esi>, CharObj2Base *a2, KnucklesCharObj2 *a3)
+static const void* const Knuckles_DiveAfterimagePtr = (void*)0x72DA70;
+static inline void Knuckles_DiveAfterimage(EntityData1* a1, CharObj2Base* a2, KnucklesCharObj2* a3)
+{
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov esi, [a1]
+		call Knuckles_DiveAfterimagePtr
+		add esp, 4
+	}
+}
+
+// void __usercall(CharObj2Base *a1@<edi>, EntityData1 *a2, KnucklesCharObj2 *a3)
+static const void* const Knuckles_UppercutAfterimagePtr = (void*)0x72DB90;
+static inline void Knuckles_UppercutAfterimage(CharObj2Base* a1, EntityData1* a2, KnucklesCharObj2* a3)
+{
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov edi, [a1]
+		call Knuckles_UppercutAfterimagePtr
+		add esp, 4
+	}
 }
 
 // signed int __usercall@<eax>(KnucklesCharObj2 *a1@<eax>, int a2@<edx>, EntityData1 *a3, KnucklesCharObj2 *a4)
