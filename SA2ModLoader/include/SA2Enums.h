@@ -1329,8 +1329,8 @@ enum Actions
 	Action_SpinCharge = 3,
 	Action_SpinRelease,
 	Action_Jump = 6,
-	Action_HourglassSpring, // Also used for upside down spring in Crazy Gadget, and spring robots.
-	Action_Spring,
+	Action_Spring, // Movement via stick input is allowed
+	Action_SpringLock, // Trajectory cannot be influenced until the set path is finished
 	Action_Launch, // Used for the rocket in Metal Harbor and the vines in Green Forest/White Jungle
 	Action_Fall, // The panels that make you soar in Metal Harbor (black, blue, and red ones) use this, as well. Also pit floating.
 	Action_Balancing,
@@ -1352,10 +1352,10 @@ enum Actions
 	Action_SkidWithObject = 27,
 	Action_FallWithObject,
 	Action_JumpWithObject,
-	Action_HourglassSpringWithObject,
-	Action_SpringWithObject,
+	Action_SpringWithObject, // Movement via stick input is allowed
+	Action_SpringLockWithObject, // Trajectory cannot be influenced until the set path is finished
 	Action_PullObject = 32, // Boxes in Wild Canyon, like Action_GrabObject
-	Action_Throw,
+	Action_ThrowMidair,
 	Action_ShakeTree,
 	Action_ShakeObject = 35,
 	Action_Bound = 38, // Caught by ghost or blue shot from GUN robot
@@ -1370,12 +1370,12 @@ enum Actions
 	Action_LookAtMMShrine,
 	Action_MonitorLook = 50,
 	Action_Pulley,
-	Action_Slide,
-	Action_MysticMelody,
+	Action_WaterSlide,
+	Action_MysticMelody = 53, // These actions disable player inputs until the associated animation finishes
 	Action_Sunglasses = Action_MysticMelody,
 	Action_GhostScare = Action_Sunglasses,
 	Action_AirBubble = Action_GhostScare,
-	Action_CutsceneAnimation, // Used before 2p matches, using powerups on 2p mode and some story cutscenes
+	Action_CutsceneAnimation, // Used before 2p matches, using powerups on 2p mode and mini-event cutscenes
 	Action_Drown,
 	Action_Quicksand,
 	Action_Death = 57,
