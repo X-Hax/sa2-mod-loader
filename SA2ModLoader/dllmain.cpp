@@ -1248,7 +1248,7 @@ void __cdecl InitMods(void)
 	WriteData((char*)0x435EF5, (char)0x90u);
 	WriteCall((void*)0x435EF6, FindCSBClose);
 	
-	// Expand chunk model vertex buffer from 512 to 32768 verts
+	// Expand chunk model vertex buffer from 8192 to 32768 verts
 	*(void**)0x25EFE48 = calloc(1, 0x100004);
 
 	// Fix env map condition bug in chDrawCnk
