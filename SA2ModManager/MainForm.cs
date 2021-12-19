@@ -152,6 +152,7 @@ namespace SA2ModManager
 			fileCheckBox.Checked = loaderini.DebugFile;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
 			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
+			skipIntrocheckBox.Checked = loaderini.SkipIntro;
 			checkUpdateStartup.Checked = loaderini.UpdateCheck;
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
 			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
@@ -838,6 +839,7 @@ namespace SA2ModManager
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
 			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
+			loaderini.SkipIntro = skipIntrocheckBox.Checked;
 			loaderini.UpdateCheck = checkUpdateStartup.Checked;
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
 			loaderini.UpdateUnit = (UpdateUnit)comboUpdateFrequency.SelectedIndex;

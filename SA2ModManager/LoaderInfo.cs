@@ -14,6 +14,7 @@ namespace SA2ModManager
 		public bool PauseWhenInactive { get; set; }
 		[DefaultValue(false)]
 		public bool BorderlessWindow { get; set; }
+		public bool SkipIntro { get; set; }
 
 		public SA2LoaderInfo()
 		{

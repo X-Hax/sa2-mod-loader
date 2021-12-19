@@ -642,6 +642,7 @@ void Clear2PIntroPositionList(unsigned char character)
 	}
 }
 
+VoidFunc(sub_434CD0, 0x434CD0);
 DataArray(char, byte_1DE4664, 0x1DE4664, 2);
 DataPointer(void *, off_1DE95E0, 0x1DE95E0);
 
@@ -1055,6 +1056,17 @@ static void __declspec(naked) LoadEndPosition_Mission23_r()
 	}
 }
 
+bool isGameLoaded = false;
+void sub_434CD0_r() {
+
+	if (NextGameMode == 12 && !isGameLoaded) {
+		NextGameMode = 13;
+		isGameLoaded = true;
+	}
+
+	return sub_434CD0();
+}
+
 static const char *mainsavepath = "resource/gd_PC/SAVEDATA";
 static const char *GetMainSavePath()
 {
@@ -1226,6 +1238,13 @@ void __cdecl InitMods(void)
 	{
 		// JNE -> JMP
 		WriteData((Uint8*)0x00401897, (Uint8)0xEB);
+	}
+
+	if (settings->getBool("SkipIntro"))
+	{
+		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
+		WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_LoadAdvertise)); //change gamemode	
+		WriteCall((void*)0x434778, sub_434CD0_r);
 	}
 
 	// Unprotect the .rdata section.
