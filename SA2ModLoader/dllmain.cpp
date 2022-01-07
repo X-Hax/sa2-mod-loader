@@ -13,6 +13,7 @@
 #include <DbgHelp.h>
 #include <Shlwapi.h>
 #include "IniFile.hpp"
+#include "MediaFns.hpp"
 #include "FileSystem.h"
 #include "SA2ModLoader.h"
 #include "ModelInfo.h"
@@ -1289,6 +1290,8 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\MLT", 0);
 	ScanCSBFolder("resource\\gd_PC\\MPB", 0);
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
+
+	Init_AudioBassHook();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<string, string>> errors;
