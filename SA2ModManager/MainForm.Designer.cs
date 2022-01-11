@@ -453,6 +453,7 @@
 			// 
 			// buttonLoadProfile
 			// 
+			this.buttonLoadProfile.Enabled = false;
 			this.buttonLoadProfile.Location = new System.Drawing.Point(233, 22);
 			this.buttonLoadProfile.Name = "buttonLoadProfile";
 			this.buttonLoadProfile.Size = new System.Drawing.Size(75, 23);
