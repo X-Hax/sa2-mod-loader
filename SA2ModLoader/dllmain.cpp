@@ -13,6 +13,7 @@
 #include <DbgHelp.h>
 #include <Shlwapi.h>
 #include "IniFile.hpp"
+#include "MediaFns.hpp"
 #include "FileSystem.h"
 #include "SA2ModLoader.h"
 #include "ModelInfo.h"
@@ -642,6 +643,7 @@ void Clear2PIntroPositionList(unsigned char character)
 	}
 }
 
+VoidFunc(sub_434CD0, 0x434CD0);
 DataArray(char, byte_1DE4664, 0x1DE4664, 2);
 DataPointer(void *, off_1DE95E0, 0x1DE95E0);
 
@@ -1055,6 +1057,17 @@ static void __declspec(naked) LoadEndPosition_Mission23_r()
 	}
 }
 
+bool isGameLoaded = false;
+void sub_434CD0_r() {
+
+	if (NextGameMode == 12 && !isGameLoaded) {
+		NextGameMode = 13;
+		isGameLoaded = true;
+	}
+
+	return sub_434CD0();
+}
+
 static const char *mainsavepath = "resource/gd_PC/SAVEDATA";
 static const char *GetMainSavePath()
 {
@@ -1228,6 +1241,13 @@ void __cdecl InitMods(void)
 		WriteData((Uint8*)0x00401897, (Uint8)0xEB);
 	}
 
+	if (settings->getBool("SkipIntro"))
+	{
+		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
+		WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_LoadAdvertise)); //change gamemode	
+		WriteCall((void*)0x434778, sub_434CD0_r);
+	}
+
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
 	DWORD oldprot;
@@ -1270,6 +1290,8 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\MLT", 0);
 	ScanCSBFolder("resource\\gd_PC\\MPB", 0);
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
+
+	Init_AudioBassHook();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<string, string>> errors;

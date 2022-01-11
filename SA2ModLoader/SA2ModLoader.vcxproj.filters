@@ -75,6 +75,9 @@
     <ClInclude Include="include\UsercallFunctionHandler.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="MediaFns.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DebugText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaFns.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

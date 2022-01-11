@@ -92,6 +92,7 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.skipIntrocheckBox = new System.Windows.Forms.CheckBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
             groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -531,6 +532,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.skipIntrocheckBox);
             this.groupBox1.Controls.Add(this.borderlessWindowCheckBox);
             this.groupBox1.Controls.Add(this.pauseWhenInactiveCheckBox);
             this.groupBox1.Location = new System.Drawing.Point(7, 7);
@@ -900,6 +902,16 @@
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
+            // skipIntrocheckBox
+            // 
+            this.skipIntrocheckBox.AutoSize = true;
+            this.skipIntrocheckBox.Location = new System.Drawing.Point(310, 22);
+            this.skipIntrocheckBox.Name = "skipIntrocheckBox";
+            this.skipIntrocheckBox.Size = new System.Drawing.Size(76, 19);
+            this.skipIntrocheckBox.TabIndex = 2;
+            this.skipIntrocheckBox.Text = "Skip Intro";
+            this.skipIntrocheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1008,6 +1020,7 @@
 		private System.Windows.Forms.NumericUpDown numericUpDownTestSpawnY;
 		private System.Windows.Forms.ComboBox comboBoxTestSpawnLevel;
 		private System.Windows.Forms.NumericUpDown numericUpDownTestSpawnX;
+		private System.Windows.Forms.CheckBox skipIntrocheckBox;
 	}
 }
 
