@@ -143,10 +143,20 @@ namespace SA2ModManager
 				mainCodes = new CodeList();
 			}
 
-			LoadModList();
-
+			LoadSettings();
 			InitTestSpawnLevelList();
 			InitTestSpawnCutsceneList();
+			profileNameBox.BeginUpdate();
+			foreach (var item in Directory.EnumerateFiles("mods", "*.ini"))
+				if (!item.EndsWith("SA2ModLoader.ini", StringComparison.OrdinalIgnoreCase) && !item.EndsWith("desktop.ini", StringComparison.OrdinalIgnoreCase))
+					profileNameBox.Items.Add(Path.GetFileNameWithoutExtension(item));
+			profileNameBox.EndUpdate();
+		}
+
+		private void LoadSettings()
+		{
+			LoadModList();
+
 			consoleCheckBox.Checked = loaderini.DebugConsole;
 			screenCheckBox.Checked = loaderini.DebugScreen;
 			fileCheckBox.Checked = loaderini.DebugFile;
@@ -1298,46 +1308,46 @@ namespace SA2ModManager
 			TestSpawnCutsceneList.Add(17, "Knuckles Begins Looking for the Gate Keys");
 			TestSpawnCutsceneList.Add(19, "Eggman Ambushes Sonic inside the Base.");
 			TestSpawnCutsceneList.Add(21, "Tails Explains His Plan to Destroy the Eclipse Cannon");
-			TestSpawnCutsceneList.Add(22, "Sonic Receives a Call for Ransom from Eggman");		
+			TestSpawnCutsceneList.Add(22, "Sonic Receives a Call for Ransom from Eggman");
 			TestSpawnCutsceneList.Add(24, "Knuckles vs. Rouge Aftermath");
 			TestSpawnCutsceneList.Add(25, "Sonic and Eggman Face Off");
-			TestSpawnCutsceneList.Add(26, "Sonic Saves Himself");			
+			TestSpawnCutsceneList.Add(26, "Sonic Saves Himself");
 			TestSpawnCutsceneList.Add(27, "Sonic and Shadow Final Battle");
 			TestSpawnCutsceneList.Add(28, "Hero Story Ending");
 
 			TestSpawnCutsceneList.Add(100, "Dark Story Intro");
-			TestSpawnCutsceneList.Add(101, "Eggman Awakens Shadow");		
-			TestSpawnCutsceneList.Add(102, "Shadow Instructs Eggman");		
-			TestSpawnCutsceneList.Add(103, "Rouge Meets Knuckles");			
-			TestSpawnCutsceneList.Add(105, "Eggman Hears of Shadow's Highway Robbery");			
-			TestSpawnCutsceneList.Add(106, "Shadow's Pathos");			
-			TestSpawnCutsceneList.Add(107, "Shadow Encounters Sonic");	
-			TestSpawnCutsceneList.Add(109, "Rouge Follows Eggman");		
-			TestSpawnCutsceneList.Add(111, "Gathering of the Dark");		
-			TestSpawnCutsceneList.Add(112, "Arrive on Prison Island");			
+			TestSpawnCutsceneList.Add(101, "Eggman Awakens Shadow");
+			TestSpawnCutsceneList.Add(102, "Shadow Instructs Eggman");
+			TestSpawnCutsceneList.Add(103, "Rouge Meets Knuckles");
+			TestSpawnCutsceneList.Add(105, "Eggman Hears of Shadow's Highway Robbery");
+			TestSpawnCutsceneList.Add(106, "Shadow's Pathos");
+			TestSpawnCutsceneList.Add(107, "Shadow Encounters Sonic");
+			TestSpawnCutsceneList.Add(109, "Rouge Follows Eggman");
+			TestSpawnCutsceneList.Add(111, "Gathering of the Dark");
+			TestSpawnCutsceneList.Add(112, "Arrive on Prison Island");
 			TestSpawnCutsceneList.Add(113, "Eggman's Plan is Complicated by Tails and Amy");
-			TestSpawnCutsceneList.Add(116, "Shadow's Conscience Begins to Surface");			
-			TestSpawnCutsceneList.Add(118, "Sonic vs. Shadow 1 Aftermath");		
-			TestSpawnCutsceneList.Add(119, "Shadow's Past Life with Maria");			
-			TestSpawnCutsceneList.Add(120, "Eggman Reworks His Plan");			
-			TestSpawnCutsceneList.Add(122, "Shadow Spots the Heroes approaching the Pyramid Base");			
-			TestSpawnCutsceneList.Add(123, "Eggman Fails to Ambush Sonic inside the base.");			
+			TestSpawnCutsceneList.Add(116, "Shadow's Conscience Begins to Surface");
+			TestSpawnCutsceneList.Add(118, "Sonic vs. Shadow 1 Aftermath");
+			TestSpawnCutsceneList.Add(119, "Shadow's Past Life with Maria");
+			TestSpawnCutsceneList.Add(120, "Eggman Reworks His Plan");
+			TestSpawnCutsceneList.Add(122, "Shadow Spots the Heroes approaching the Pyramid Base");
+			TestSpawnCutsceneList.Add(123, "Eggman Fails to Ambush Sonic inside the base.");
 			TestSpawnCutsceneList.Add(124, "Rouge Learns the Truth About Project Shadow.");
-			TestSpawnCutsceneList.Add(126, "Knuckles vs. Rouge Aftermath");			
-			TestSpawnCutsceneList.Add(127, "Eggman's Final Plan to Crush the Heroes");			
-			TestSpawnCutsceneList.Add(128, "Eggman Sets a Diabolical Trap for Sonic");		
-			TestSpawnCutsceneList.Add(129, "Mystery of Shadow the Hedgehog");		
-			TestSpawnCutsceneList.Add(130, "Shadow and Sonic Final Battle");				
-			TestSpawnCutsceneList.Add(131, "Dark Story Ending");		
-			
+			TestSpawnCutsceneList.Add(126, "Knuckles vs. Rouge Aftermath");
+			TestSpawnCutsceneList.Add(127, "Eggman's Final Plan to Crush the Heroes");
+			TestSpawnCutsceneList.Add(128, "Eggman Sets a Diabolical Trap for Sonic");
+			TestSpawnCutsceneList.Add(129, "Mystery of Shadow the Hedgehog");
+			TestSpawnCutsceneList.Add(130, "Shadow and Sonic Final Battle");
+			TestSpawnCutsceneList.Add(131, "Dark Story Ending");
+
 			TestSpawnCutsceneList.Add(200, "Last Episode Intro");
 			TestSpawnCutsceneList.Add(201, "The ARK Falls");
 			TestSpawnCutsceneList.Add(203, "Gerald's Diary and Descent into Madness");
-			TestSpawnCutsceneList.Add(204, "Shadow and Amy.");		
+			TestSpawnCutsceneList.Add(204, "Shadow and Amy.");
 			TestSpawnCutsceneList.Add(205, "Gerald's Final Trump Card");
 			TestSpawnCutsceneList.Add(206, "Knuckles Stops the Chaos Emeralds");
 			TestSpawnCutsceneList.Add(207, "Sonic and Shadow Transform");
-			TestSpawnCutsceneList.Add(208, "Shadow gives his life to save the world");			
+			TestSpawnCutsceneList.Add(208, "Shadow gives his life to save the world");
 			TestSpawnCutsceneList.Add(210, "Last Episode Ending/Credits");
 			TestSpawnCutsceneList.Add(211, "Epilogue");
 
@@ -1468,6 +1478,38 @@ namespace SA2ModManager
 		{
 			Process process = Process.Start(loaderini.Mods.Select((item) => mods[item].EXEFile)
 												.FirstOrDefault((item) => !string.IsNullOrEmpty(item)) ?? "sonic2app.exe", GetTestSpawnCommandLine());
+		}
+
+
+		private void profileNameBox_TextChanged(object sender, EventArgs e)
+		{
+			if (string.IsNullOrEmpty(profileNameBox.Text) || profileNameBox.Text.Equals("SA2ModLoader", StringComparison.OrdinalIgnoreCase)
+				|| profileNameBox.Text.Equals("mod", StringComparison.OrdinalIgnoreCase) || profileNameBox.Text.Equals("desktop", StringComparison.OrdinalIgnoreCase)
+				|| profileNameBox.Text.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+			{
+				buttonSaveProfile.Enabled = false;
+				buttonLoadProfile.Enabled = false;
+			}
+			else
+			{
+				buttonSaveProfile.Enabled = true;
+				buttonLoadProfile.Enabled = File.Exists($"mods/{profileNameBox.Text}.ini");
+			}
+		}
+
+		private void buttonLoadProfile_Click(object sender, EventArgs e)
+		{
+			loaderini = IniSerializer.Deserialize<SA2LoaderInfo>($"mods/{profileNameBox.Text}.ini");
+			LoadSettings();
+		}
+
+		private void buttonSaveProfile_Click(object sender, EventArgs e)
+		{
+			Save();
+			File.Copy(loaderinipath, $"mods/{profileNameBox.Text}.ini", true);
+			if (profileNameBox.FindStringExact(profileNameBox.Text) == -1)
+				profileNameBox.Items.Add(profileNameBox.Text);
+			buttonLoadProfile.Enabled = true;
 		}
 	}
 }
