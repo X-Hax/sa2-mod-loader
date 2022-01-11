@@ -53,6 +53,10 @@
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.buttonSaveProfile = new System.Windows.Forms.Button();
+			this.buttonLoadProfile = new System.Windows.Forms.Button();
+			this.profileNameBox = new System.Windows.Forms.ComboBox();
 			this.installURLHandlerButton = new System.Windows.Forms.Button();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.buttonCheckForUpdates = new System.Windows.Forms.Button();
@@ -93,16 +97,13 @@
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
 			this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.profileNameBox = new System.Windows.Forms.ComboBox();
-			this.buttonLoadProfile = new System.Windows.Forms.Button();
-			this.buttonSaveProfile = new System.Windows.Forms.Button();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.groupBox3.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpdateFrequency)).BeginInit();
 			this.groupBox1.SuspendLayout();
@@ -113,7 +114,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnY)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnX)).BeginInit();
 			this.modContextMenu.SuspendLayout();
-			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox2
@@ -123,9 +123,9 @@
 			groupBox2.Controls.Add(this.screenCheckBox);
 			groupBox2.Controls.Add(this.fileCheckBox);
 			groupBox2.Controls.Add(this.consoleCheckBox);
-			groupBox2.Location = new System.Drawing.Point(7, 62);
+			groupBox2.Location = new System.Drawing.Point(6, 60);
 			groupBox2.Name = "groupBox2";
-			groupBox2.Size = new System.Drawing.Size(457, 48);
+			groupBox2.Size = new System.Drawing.Size(456, 48);
 			groupBox2.TabIndex = 1;
 			groupBox2.TabStop = false;
 			groupBox2.Text = "Debug Messages";
@@ -426,10 +426,56 @@
 			this.tabPage3.Text = "Options";
 			this.tabPage3.UseVisualStyleBackColor = true;
 			// 
+			// groupBox3
+			// 
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this.buttonSaveProfile);
+			this.groupBox3.Controls.Add(this.buttonLoadProfile);
+			this.groupBox3.Controls.Add(this.profileNameBox);
+			this.groupBox3.Location = new System.Drawing.Point(6, 224);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(456, 60);
+			this.groupBox3.TabIndex = 4;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "Profiles";
+			// 
+			// buttonSaveProfile
+			// 
+			this.buttonSaveProfile.Enabled = false;
+			this.buttonSaveProfile.Location = new System.Drawing.Point(314, 22);
+			this.buttonSaveProfile.Name = "buttonSaveProfile";
+			this.buttonSaveProfile.Size = new System.Drawing.Size(75, 23);
+			this.buttonSaveProfile.TabIndex = 2;
+			this.buttonSaveProfile.Text = "Save";
+			this.buttonSaveProfile.UseVisualStyleBackColor = true;
+			this.buttonSaveProfile.Click += new System.EventHandler(this.buttonSaveProfile_Click);
+			// 
+			// buttonLoadProfile
+			// 
+			this.buttonLoadProfile.Location = new System.Drawing.Point(233, 22);
+			this.buttonLoadProfile.Name = "buttonLoadProfile";
+			this.buttonLoadProfile.Size = new System.Drawing.Size(75, 23);
+			this.buttonLoadProfile.TabIndex = 1;
+			this.buttonLoadProfile.Text = "Load";
+			this.buttonLoadProfile.UseVisualStyleBackColor = true;
+			this.buttonLoadProfile.Click += new System.EventHandler(this.buttonLoadProfile_Click);
+			// 
+			// profileNameBox
+			// 
+			this.profileNameBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.profileNameBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+			this.profileNameBox.FormattingEnabled = true;
+			this.profileNameBox.Location = new System.Drawing.Point(6, 23);
+			this.profileNameBox.Name = "profileNameBox";
+			this.profileNameBox.Size = new System.Drawing.Size(221, 23);
+			this.profileNameBox.TabIndex = 0;
+			this.profileNameBox.TextChanged += new System.EventHandler(this.profileNameBox_TextChanged);
+			// 
 			// installURLHandlerButton
 			// 
 			this.installURLHandlerButton.AutoSize = true;
-			this.installURLHandlerButton.Location = new System.Drawing.Point(6, 321);
+			this.installURLHandlerButton.Location = new System.Drawing.Point(6, 290);
 			this.installURLHandlerButton.Name = "installURLHandlerButton";
 			this.installURLHandlerButton.Size = new System.Drawing.Size(145, 29);
 			this.installURLHandlerButton.TabIndex = 3;
@@ -447,9 +493,9 @@
 			this.groupBox4.Controls.Add(this.numericUpdateFrequency);
 			this.groupBox4.Controls.Add(this.comboUpdateFrequency);
 			this.groupBox4.Controls.Add(this.checkUpdateStartup);
-			this.groupBox4.Location = new System.Drawing.Point(7, 118);
+			this.groupBox4.Location = new System.Drawing.Point(6, 114);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(457, 104);
+			this.groupBox4.Size = new System.Drawing.Size(456, 104);
 			this.groupBox4.TabIndex = 3;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Updates";
@@ -541,9 +587,9 @@
 			this.groupBox1.Controls.Add(this.skipIntrocheckBox);
 			this.groupBox1.Controls.Add(this.borderlessWindowCheckBox);
 			this.groupBox1.Controls.Add(this.pauseWhenInactiveCheckBox);
-			this.groupBox1.Location = new System.Drawing.Point(7, 7);
+			this.groupBox1.Location = new System.Drawing.Point(6, 6);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(457, 48);
+			this.groupBox1.Size = new System.Drawing.Size(456, 48);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Misc.";
@@ -918,52 +964,6 @@
 			this.generateManifestToolStripMenuItem.Text = "Generate manifest";
 			this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
 			// 
-			// groupBox3
-			// 
-			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox3.Controls.Add(this.buttonSaveProfile);
-			this.groupBox3.Controls.Add(this.buttonLoadProfile);
-			this.groupBox3.Controls.Add(this.profileNameBox);
-			this.groupBox3.Location = new System.Drawing.Point(7, 228);
-			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(457, 100);
-			this.groupBox3.TabIndex = 4;
-			this.groupBox3.TabStop = false;
-			this.groupBox3.Text = "Profiles";
-			// 
-			// profileNameBox
-			// 
-			this.profileNameBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-			this.profileNameBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-			this.profileNameBox.FormattingEnabled = true;
-			this.profileNameBox.Location = new System.Drawing.Point(6, 23);
-			this.profileNameBox.Name = "profileNameBox";
-			this.profileNameBox.Size = new System.Drawing.Size(221, 23);
-			this.profileNameBox.TabIndex = 0;
-			this.profileNameBox.TextChanged += new System.EventHandler(this.profileNameBox_TextChanged);
-			// 
-			// buttonLoadProfile
-			// 
-			this.buttonLoadProfile.Location = new System.Drawing.Point(233, 22);
-			this.buttonLoadProfile.Name = "buttonLoadProfile";
-			this.buttonLoadProfile.Size = new System.Drawing.Size(75, 23);
-			this.buttonLoadProfile.TabIndex = 1;
-			this.buttonLoadProfile.Text = "Load";
-			this.buttonLoadProfile.UseVisualStyleBackColor = true;
-			this.buttonLoadProfile.Click += new System.EventHandler(this.buttonLoadProfile_Click);
-			// 
-			// buttonSaveProfile
-			// 
-			this.buttonSaveProfile.Enabled = false;
-			this.buttonSaveProfile.Location = new System.Drawing.Point(314, 22);
-			this.buttonSaveProfile.Name = "buttonSaveProfile";
-			this.buttonSaveProfile.Size = new System.Drawing.Size(75, 23);
-			this.buttonSaveProfile.TabIndex = 2;
-			this.buttonSaveProfile.Text = "Save";
-			this.buttonSaveProfile.UseVisualStyleBackColor = true;
-			this.buttonSaveProfile.Click += new System.EventHandler(this.buttonSaveProfile_Click);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -990,6 +990,7 @@
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.tabPage3.PerformLayout();
+			this.groupBox3.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox4.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpdateFrequency)).EndInit();
@@ -1003,7 +1004,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnY)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnX)).EndInit();
 			this.modContextMenu.ResumeLayout(false);
-			this.groupBox3.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
