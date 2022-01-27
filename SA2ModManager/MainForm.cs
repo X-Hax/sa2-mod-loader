@@ -1280,6 +1280,13 @@ namespace SA2ModManager
 				comboBoxTestSpawnCharacter.SelectedIndex = 0;
 		}
 
+		private void checkBoxMission_CheckedChanged(object sender, EventArgs e)
+		{
+			comboBoxMission.Enabled = checkBoxMission.Checked;
+			if (comboBoxMission.SelectedIndex == -1)
+				comboBoxMission.SelectedIndex = 0;
+		}
+
 		private void checkBoxTestSpawnEvent_CheckedChanged(object sender, EventArgs e)
 		{
 			comboBoxTestSpawnEvent.Enabled = checkBoxTestSpawnEvent.Checked;
@@ -1465,6 +1472,9 @@ namespace SA2ModManager
 				}
 				cmdline.Add("-e " + ev_result.ToString());
 			}
+
+			if (checkBoxMission.Checked)
+				cmdline.Add("-m " + comboBoxMission.SelectedIndex.ToString());
 
 			if (checkBoxTestSpawnSave.Checked)
 				cmdline.Add("-s " + numericUpDownTestSpawnSaveID.Value.ToString());

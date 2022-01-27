@@ -296,6 +296,11 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		{
 			WriteData((int*)0x52AD5B, ParseChaoArea(argv[++i]));
 		}
+		else if (!wcscmp(argv[i], L"--mission") || !wcscmp(argv[i], L"-m"))
+		{
+			MissionNum = _wtoi(argv[++i]);
+			PrintDebug("Loading Mission: %d\n", MissionNum);
+		}
 	}
 
 	LocalFree(argv);
