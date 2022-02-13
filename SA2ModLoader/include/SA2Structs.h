@@ -894,7 +894,7 @@ struct AnimationInfo
 struct CollisionData
 {
 	char kind; // an identifier for colliding entities
-	CollisionShapes form;
+	char form;
 	char push;
 	char damage;
 	unsigned int attr;
@@ -1014,12 +1014,12 @@ struct ObjectListHead
 
 struct ObjectListEntry
 {
-	LoadObj LoadFlags;
+	char LoadFlags;
 	char List;
 	__int16 ObjectFlags;
 	float DistanceMaybe;
 	ObjectFuncPtr Function;
-	char *Name;
+	const char *Name;
 };
 
 struct LevelItemData
