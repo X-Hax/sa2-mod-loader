@@ -225,6 +225,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 
 			//Prevent the game to save (fix overwritten savedata.)
 			WriteData<1>((int*)0x4436A0, 0xC3);
+			WriteData<1>((int*)0x426760, 0xC3);
 
 			// NOP. Prevents CurrentLevel from being overwritten for illegal level.
 			WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90u);
