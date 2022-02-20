@@ -3877,9 +3877,9 @@ static inline int ResetCam(int a1, int a2)
 	return result;
 }
 
-//void __usercall Sonic_InitLightDash(EntityData1* data@<ecx>, CharObj2Base* co2@<eax>, motionwk2* data2, MilesCustomCharObj2* a5)
+//void __usercall Sonic_InitLightDash(EntityData1* data@<ecx>, CharObj2Base* co2@<eax>, motionwk2* data2, SonicCharObj2* a5)
 static const void* const lightdashptr = (void*)0x7215D0;
-static inline void Sonic_InitLightDash(EntityData1* data, CharObj2Base* co2, EntityData2* data2, TailsCharObj2* a5)
+static inline void Sonic_InitLightDash(EntityData1* data, CharObj2Base* co2, EntityData2* data2, SonicCharObj2* a5)
 {
 	__asm
 	{

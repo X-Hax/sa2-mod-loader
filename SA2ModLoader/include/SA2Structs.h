@@ -881,6 +881,14 @@ struct  ChaoDataBase
 	ChaoDNA DNA;
 };
 
+struct ChaoData2
+{
+	char gap0[4];
+	float float4;
+	char gap8[212];
+	float WaterHeight;
+};
+
 struct AnimationInfo
 {
 	__int16 AnimNum;
@@ -2459,6 +2467,12 @@ struct SoundSystem
 	SoundEntry SoundEntries[43];
 	void* SomePointers[8];
 	MLTSoundList MLTSoundLists[8];
+};
+
+struct __declspec(align(2)) HomingAttackTarget
+{
+	EntityData1* entity;
+	float distance;
 };
 
 #pragma pack(pop)
