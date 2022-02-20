@@ -1330,6 +1330,25 @@ ObjectFunc(Dynamite_Main, 0x6da880);
 ObjectFunc(DynamiteHiddenBase_Main, 0x714610);
 ObjectFunc(DynamiteSandOcean_Main, 0x65AEA0);
 ObjectFunc(PrisonLaneDoor, 0x606400);
+ObjectFunc(CGTubeGlass, 0x776060);
+ObjectFunc(MetalBox, 0x6D6490);
+ObjectFunc(MetalBoxGravity, 0x77BB90);
+ObjectFunc(RocketIG, 0x6A10A0);
+ObjectFunc(DoorIG, 0x69D1D0);
+ObjectFunc(DoorIG2, 0x69F460);
+ObjectFunc(DoorCCThing, 0x79AFB0);
+ObjectFunc(DoorHB, 0x715560);
+VoidFunc(ALCam_CameraManager, 0x57D4C0);
+VoidFunc(AL_MinimalCreate, 0x549490);
+VoidFunc(ALW_Control, 0x530B80);
+FunctionPointer(void, LoadWaterManager, (ObjectMaster* waterPtr), 0x56B040);
+VoidFunc(Chao_OOBLimit, 0x52B200);
+VoidFunc(LoadSplashTextures, 0x6EDE40);
+FunctionPointer(void, GetCharacterSurfaceInfo, (NJS_VECTOR* position, CharSurfaceInfo* surface), 0x494DF0);
+FunctionPointer(BOOL, PResetAccelerationAir, (EntityData2* a1, EntityData1* a2, CharObj2Base* a3), 0x46E630);
+FunctionPointer(void, PGetAcceleration, (EntityData1* data1, EntityData2* data2, CharObj2Base* co2), 0x45B610);
+FunctionPointer(void, PlayerAfterImage, (NJS_OBJECT* a1, int a2, NJS_TEXLIST* a3, float a4, char a5), 0x476C20);
+VoidFunc(InitCharacterSound, 0x438B00);
 
 // HWND __usercall@<eax>(int nWidth@<eax>, HINSTANCE hInstance, int nHeight, unsigned __int8 isWindowed)
 static const void* const CreateMainWindowPtr = (void*)0x4019D0;
@@ -3666,8 +3685,6 @@ static inline void Delete_Jiggle(JiggleInfo* jiggle)
 	}
 }
 
-
-
 //void __usercall DrawMotionAndObject(NJS_MOTION* mtn@<ecx>, NJS_OBJECT* obj, float frame)
 static const void* const njDrawObjMotionPtr_ = (void*)0x780870;
 static inline void DrawMotionAndObject(NJS_MOTION* mtn, NJS_OBJECT* obj, float frame)
@@ -3715,3 +3732,178 @@ static inline void UnloadAnimation(AnimationIndex* a1)
 	}
 }
 
+//void __usercall PResetAngle(EntityData1* data1@<eax>, CharObj2Base* data2@<ebx>)
+static const void* const PResetAnglePtr = (void*)0x460260;
+static inline void PResetAngle(EntityData1* a1, CharObj2Base* co2)
+{
+	__asm
+	{
+		mov ebx, [co2]
+		mov eax, [a1] // a1
+		call PResetAnglePtr
+	}
+}
+
+//void __usercall PGetFriction(EntityData1* a1@<ecx>, EntityData2* eax0@<eax>, CharObj2Base* a3)
+static const void* const PGetFrictionPtr = (void*)0x45F4D0;
+static inline void PGetFriction(EntityData1* data, EntityData2* data2, CharObj2Base* co2)
+{
+	__asm
+	{
+		push[co2]
+		mov eax, [data2]
+		mov ecx, [data]
+		call PGetFrictionPtr
+		add esp, 4
+
+	}
+}
+
+//int __usercall Sonic_CheckNextAction@<eax>(SonicCharObj2* a1@<eax>, EntityData1* a2, EntityData2* a3, CharObj2Base* a4)
+static const void* const Sonic_CheckNextActionPtr = (void*)0x7220E0;
+static inline signed int Sonic_CheckNextAction(SonicCharObj2* a1, EntityData1* a2, EntityData2* a3, CharObj2Base* a4)
+{
+	signed int result;
+	__asm
+	{
+		push[a4]
+		push[a3]
+		push[a2]
+		mov eax, [a1]
+		call Sonic_CheckNextActionPtr
+		add esp, 12
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall njdraw3DSprite(int a1@<eax>, NJS_SPRITE* a2, char a3)
+static const void* const njdrawsprite3Dptr = (void*)0x77D690;
+static inline void njDrawSprite3D(int a1, NJS_SPRITE* a2, char a3)
+{
+	__asm
+	{
+		push[a3]
+		push[a2]
+		mov eax, [a1]
+		call njdrawsprite3Dptr
+		add esp, 8
+	}
+}
+
+//int __usercall VibeThing@<eax>(int result@<eax>, int a2@<edx>, int a3@<ecx>, int a4)
+static const void* const VibeThingPtr = (void*)0x438E70;
+static inline void VibeThing(int a1, signed int a2, int a3, signed int a4)
+{
+	__asm
+	{
+		push[a4]  
+		mov ecx, a3 
+		mov edx, a2 
+		mov eax, a1 
+		call VibeThingPtr
+		add esp, 4 
+	}
+}
+
+//void __usercall TailsEggman_SpecialAttack(CharObj2Base *a1@<ebx>, EntityData1 *data, EntityData2 *data2, MechEggmanCharObj2 *a4)
+static const void* const TailsEggman_LaserAttack_ptr = (void*)0x749FE0;
+static inline void TailsEggman_LaserAttack(CharObj2Base* a1, EntityData1* data, EntityData2* data2, MechEggmanCharObj2* a4)
+{
+	__asm
+	{
+		push[a4]
+		push[data2]
+		push[data]
+		mov ebx, a1
+		call TailsEggman_LaserAttack_ptr
+		add esp, 12
+	}
+}
+
+//void __usercall SetCameraEvent(int playerNum@<eax>, _DWORD* a2@<ebx>)
+static const void* const cameventPtr = (void*)0x4EBBE0;
+static inline void SetCameraEvent(int a1, int a2)
+{
+	__asm
+	{
+		mov edx, [a2]
+		mov eax, [a1]
+		call cameventPtr
+	}
+}
+
+//void __usercall PAdjustAngleY(EntityData1 *data@<eax>, CharObj2Base *co2@<ebx>, int a3)
+static const void* const PadAdjustAngleYPtr = (void*)0x4603D0;
+static inline void PAdjustAngleY(EntityData1* data, CharObj2Base* co2, int a3)
+{
+	__asm
+	{
+		push[a3]
+		mov ebx, [co2]
+		mov eax, [data]
+		call PadAdjustAngleYPtr
+		add esp, 4
+	}
+}
+
+//void __usercall PAdjustAngleY(EntityData1 *data@<eax>, CharObj2Base *co2@<ebx>, int a3)
+static const void* const PAccelFlyPtr = (void*)0x752DF0;
+static inline void PGetAccelFly(EntityData1* data1, EntityData2* data2, CharObj2Base* co2, TailsCharObj2* co2Tails)
+{
+	__asm
+	{
+		push[co2Tails]
+		push[co2]
+		push[data2]
+		push[data1]
+		call PAccelFlyPtr
+		add esp, 16
+	}
+}
+
+//int __usercall ResetCam@<eax>(int a1@<eax>, int a2@<ecx>)
+static const void* const ResetCamPtr = (void*)0x4EBD30;
+static inline int ResetCam(int a1, int a2)
+{
+	int result;
+	__asm
+	{
+		mov ecx, [a2]
+		mov eax, [a1]
+		call ResetCamPtr
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall Sonic_InitLightDash(EntityData1* data@<ecx>, CharObj2Base* co2@<eax>, motionwk2* data2, MilesCustomCharObj2* a5)
+static const void* const lightdashptr = (void*)0x7215D0;
+static inline void Sonic_InitLightDash(EntityData1* data, CharObj2Base* co2, EntityData2* data2, TailsCharObj2* a5)
+{
+	__asm
+	{
+		push[a5]
+		push[data2]
+		mov eax, [co2]
+		mov ecx, [data]
+		call lightdashptr
+		add esp, 8
+	}
+}
+
+//int __usercall Tails_JumpStart@<eax>(CharObj2Base* co2@<eax>, EntityData1* data@<ecx>)
+static const void* const TailsJumpPtr = (void*)0x751B80;
+static inline int TailsJump(CharObj2Base* a1, EntityData1* a2)
+{
+	int result;
+	__asm
+	{
+		mov ecx, [a2]
+		mov eax, [a1]
+		call TailsJumpPtr
+		mov result, eax
+	}
+
+	return result;
+}

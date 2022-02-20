@@ -680,3 +680,7 @@ DataPointer(float, MaxDrawDistance, 0x2670560);
 DataPointer(float, MinDrawDistance, 0x2670564);
 DataPointer(LPVOID, MatrixStack_MaxPtr, 0x2670588);
 DataPointer(char, TimerStopped, 0x174afda);
+DataPointer(char, VoiceLanguage, 0x174AFD2);
+DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x1A51A9C);
+DataPointer(TailsCharObj2*, MilesCO2Extern, 0x1A521EC);
+DataArray(NJS_VECTOR, TreePos, 0x1366B30, 30);
