@@ -143,9 +143,10 @@ namespace SA2ModManager
 				mainCodes = new CodeList();
 			}
 
-			LoadSettings();
 			InitTestSpawnLevelList();
 			InitTestSpawnCutsceneList();
+			LoadSettings();
+
 			profileNameBox.BeginUpdate();
 			foreach (var item in Directory.EnumerateFiles("mods", "*.ini"))
 				if (!item.EndsWith("SA2ModLoader.ini", StringComparison.OrdinalIgnoreCase) && !item.EndsWith("desktop.ini", StringComparison.OrdinalIgnoreCase))
@@ -167,6 +168,19 @@ namespace SA2ModManager
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
 			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
 			numericUpdateFrequency.Value = loaderini.UpdateFrequency;
+
+			checkBoxTestSpawnLevel.Checked = loaderini.TestSpawnLevel != -1;
+			comboBoxTestSpawnLevel.SelectedIndex = loaderini.TestSpawnLevel;
+			checkBoxTestSpawnCharacter.Checked = loaderini.TestSpawnCharacter != -1;
+			comboBoxTestSpawnCharacter.SelectedIndex = loaderini.TestSpawnCharacter;
+			checkBoxTestSpawnPosition.Checked = loaderini.TestSpawnPositionEnabled;
+			numericUpDownTestSpawnX.Value = loaderini.TestSpawnX;
+			numericUpDownTestSpawnY.Value = loaderini.TestSpawnY;
+			numericUpDownTestSpawnZ.Value = loaderini.TestSpawnZ;
+			checkBoxTestSpawnEvent.Checked = loaderini.TestSpawnEvent != -1;
+			comboBoxTestSpawnEvent.SelectedIndex = loaderini.TestSpawnEvent;
+			checkBoxTestSpawnSave.Checked = loaderini.TestSpawnSaveID != -1;
+			numericUpDownTestSpawnSaveID.Value = Math.Max(1, loaderini.TestSpawnSaveID);
 		}
 
 		private void HandleUri(string uri)
@@ -842,8 +856,12 @@ namespace SA2ModManager
 		private void Save()
 		{
 			loaderini.Mods.Clear();
+
 			foreach (ListViewItem item in modListView.CheckedItems)
+			{
 				loaderini.Mods.Add((string)item.Tag);
+			}
+
 			loaderini.DebugConsole = consoleCheckBox.Checked;
 			loaderini.DebugScreen = screenCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
@@ -854,6 +872,15 @@ namespace SA2ModManager
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
 			loaderini.UpdateUnit = (UpdateUnit)comboUpdateFrequency.SelectedIndex;
 			loaderini.UpdateFrequency = (int)numericUpdateFrequency.Value;
+
+			loaderini.TestSpawnLevel = checkBoxTestSpawnLevel.Checked ? comboBoxTestSpawnLevel.SelectedIndex : -1;
+			loaderini.TestSpawnCharacter = checkBoxTestSpawnCharacter.Checked ? comboBoxTestSpawnCharacter.SelectedIndex : -1;
+			loaderini.TestSpawnPositionEnabled = checkBoxTestSpawnPosition.Checked;
+			loaderini.TestSpawnX = (int)numericUpDownTestSpawnX.Value;
+			loaderini.TestSpawnY = (int)numericUpDownTestSpawnY.Value;
+			loaderini.TestSpawnZ = (int)numericUpDownTestSpawnZ.Value;
+			loaderini.TestSpawnEvent = checkBoxTestSpawnEvent.Checked ? comboBoxTestSpawnEvent.SelectedIndex : -1;
+			loaderini.TestSpawnSaveID = checkBoxTestSpawnSave.Checked ? (int)numericUpDownTestSpawnSaveID.Value : -1;
 
 			IniSerializer.Serialize(loaderini, loaderinipath);
 
