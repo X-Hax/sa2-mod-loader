@@ -261,7 +261,7 @@ namespace SA2ModManager
 
 			if (!File.Exists(datadllpath))
 			{
-				MessageBox.Show(this, "Data_DLL.dll could not be found.\n\nCannot determine state of installation.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(this, "Data_DLL.dll could not be found.\n\nCannot determine state of installation.\n\nMake sure that the mod loader files are in the game folder.", Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				installButton.Hide();
 			}
 			else if (File.Exists(datadllorigpath))
