@@ -1428,9 +1428,9 @@ static inline int ReadSaveFileThing(char* path, void* buffer, size_t _size)
 	return result;
 }
 
-//void __usercall njCalcVector@<eax>(NJS_MATRIX* result@<eax>, NJS_VECTOR* v@<edx>, NJS_VECTOR* transform@<ecx>, char additive)
-static const void* const njCalcVectorPtr = (void*)0x426CC0;
-static inline void njCalcVector(float* matrix, NJS_VECTOR* v, NJS_VECTOR* transform, char additive)
+//void __usercall njCalcPoint@<eax>(NJS_MATRIX* result@<eax>, NJS_VECTOR* v@<edx>, NJS_VECTOR* transform@<ecx>, char additive)
+static const void* const njCalcPointPtr = (void*)0x426CC0;
+static inline void njCalcPoint(float* matrix, NJS_VECTOR* v, NJS_VECTOR* transform, char additive)
 {
 	__asm
 	{
@@ -1439,7 +1439,7 @@ static inline void njCalcVector(float* matrix, NJS_VECTOR* v, NJS_VECTOR* transf
 		mov ecx, [transform]
 		mov edx, [v]
 		mov eax, [matrix]
-		call njCalcVectorPtr
+		call njCalcPointPtr
 		add esp, 4;
 	}
 }
@@ -1459,16 +1459,16 @@ static inline void njUnitMatrixV(NJS_MATRIX_PTR m, float x, float y, float z)
 	}
 }
 
-//void __usercall njCalcPoint(NJS_VECTOR *transform@<eax>, NJS_VECTOR *v@<edx>, NJS_MATRIX_PTR m@<ecx>)
-static const void* const njCalcPointPtr = (void*)0x4273B0;
-static inline void njCalcPoint(NJS_VECTOR* transform, NJS_VECTOR* v, NJS_MATRIX_PTR m)
+//void __usercall njCalcVector(NJS_VECTOR *transform@<eax>, NJS_VECTOR *v@<edx>, NJS_MATRIX_PTR m@<ecx>)
+static const void* const njCalcVectorPtr = (void*)0x4273B0;
+static inline void njCalcVector(NJS_VECTOR* transform, NJS_VECTOR* v, NJS_MATRIX_PTR m)
 {
 	__asm
 	{
 		mov ecx, [m]
 		mov edx, [v]
 		mov eax, [transform]
-		call njCalcPointPtr
+		call njCalcVectorPtr
 	}
 }
 
