@@ -25,6 +25,11 @@ void __cdecl OnFrame()
 {
 	codeParser.processCodeList();
 	RaiseEvents(modFrameEvents);
+
+	//fix alt f4 not working
+	if (GetKeyState(VK_MENU) & 0x8000 && GetKeyState(VK_F4) & 0x8000)
+		SendMessage(GetForegroundWindow(), WM_CLOSE, NULL, NULL);
+
 }
 
 #pragma region OnFrame Initialization
