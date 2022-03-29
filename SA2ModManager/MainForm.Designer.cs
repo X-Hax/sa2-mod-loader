@@ -99,6 +99,8 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkBoxTestSpawnPlayer2 = new System.Windows.Forms.CheckBox();
+            this.comboBoxTestSpawnPlayer2 = new System.Windows.Forms.ComboBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
             groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -642,6 +644,8 @@
             // 
             this.groupBox12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox12.Controls.Add(this.checkBoxTestSpawnPlayer2);
+            this.groupBox12.Controls.Add(this.comboBoxTestSpawnPlayer2);
             this.groupBox12.Controls.Add(this.checkBoxMission);
             this.groupBox12.Controls.Add(this.comboBoxMission);
             this.groupBox12.Controls.Add(this.checkBoxTestSpawnPosition);
@@ -662,7 +666,7 @@
             this.groupBox12.Controls.Add(this.numericUpDownTestSpawnX);
             this.groupBox12.Location = new System.Drawing.Point(6, 9);
             this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(456, 269);
+            this.groupBox12.Size = new System.Drawing.Size(456, 318);
             this.groupBox12.TabIndex = 7;
             this.groupBox12.TabStop = false;
             this.groupBox12.Text = "Test Spawn";
@@ -670,7 +674,7 @@
             // checkBoxMission
             // 
             this.checkBoxMission.AutoSize = true;
-            this.checkBoxMission.Location = new System.Drawing.Point(6, 130);
+            this.checkBoxMission.Location = new System.Drawing.Point(6, 160);
             this.checkBoxMission.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxMission.Name = "checkBoxMission";
             this.checkBoxMission.Size = new System.Drawing.Size(70, 19);
@@ -690,7 +694,7 @@
             "Mission 3: Lost Chao",
             "Mission 4: Timer",
             "Mission 5: Hard Mode"});
-            this.comboBoxMission.Location = new System.Drawing.Point(83, 128);
+            this.comboBoxMission.Location = new System.Drawing.Point(83, 158);
             this.comboBoxMission.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxMission.Name = "comboBoxMission";
             this.comboBoxMission.Size = new System.Drawing.Size(149, 23);
@@ -699,7 +703,7 @@
             // checkBoxTestSpawnPosition
             // 
             this.checkBoxTestSpawnPosition.AutoSize = true;
-            this.checkBoxTestSpawnPosition.Location = new System.Drawing.Point(6, 66);
+            this.checkBoxTestSpawnPosition.Location = new System.Drawing.Point(6, 94);
             this.checkBoxTestSpawnPosition.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxTestSpawnPosition.Name = "checkBoxTestSpawnPosition";
             this.checkBoxTestSpawnPosition.Size = new System.Drawing.Size(72, 19);
@@ -710,7 +714,7 @@
             // 
             // buttonTestSpawnPlay
             // 
-            this.buttonTestSpawnPlay.Location = new System.Drawing.Point(5, 218);
+            this.buttonTestSpawnPlay.Location = new System.Drawing.Point(5, 248);
             this.buttonTestSpawnPlay.Margin = new System.Windows.Forms.Padding(2);
             this.buttonTestSpawnPlay.Name = "buttonTestSpawnPlay";
             this.buttonTestSpawnPlay.Size = new System.Drawing.Size(93, 28);
@@ -724,7 +728,7 @@
             this.comboBoxTestSpawnEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTestSpawnEvent.Enabled = false;
             this.comboBoxTestSpawnEvent.FormattingEnabled = true;
-            this.comboBoxTestSpawnEvent.Location = new System.Drawing.Point(67, 154);
+            this.comboBoxTestSpawnEvent.Location = new System.Drawing.Point(67, 184);
             this.comboBoxTestSpawnEvent.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxTestSpawnEvent.Name = "comboBoxTestSpawnEvent";
             this.comboBoxTestSpawnEvent.Size = new System.Drawing.Size(319, 23);
@@ -733,7 +737,7 @@
             // checkBoxTestSpawnEvent
             // 
             this.checkBoxTestSpawnEvent.AutoSize = true;
-            this.checkBoxTestSpawnEvent.Location = new System.Drawing.Point(6, 156);
+            this.checkBoxTestSpawnEvent.Location = new System.Drawing.Point(6, 186);
             this.checkBoxTestSpawnEvent.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxTestSpawnEvent.Name = "checkBoxTestSpawnEvent";
             this.checkBoxTestSpawnEvent.Size = new System.Drawing.Size(58, 19);
@@ -780,17 +784,17 @@
             "Rouge",
             "Mech Tails",
             "Mech Eggman"});
-            this.comboBoxTestSpawnCharacter.Location = new System.Drawing.Point(83, 42);
+            this.comboBoxTestSpawnCharacter.Location = new System.Drawing.Point(89, 42);
             this.comboBoxTestSpawnCharacter.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxTestSpawnCharacter.Name = "comboBoxTestSpawnCharacter";
-            this.comboBoxTestSpawnCharacter.Size = new System.Drawing.Size(149, 23);
+            this.comboBoxTestSpawnCharacter.Size = new System.Drawing.Size(165, 23);
             this.comboBoxTestSpawnCharacter.TabIndex = 22;
             // 
             // labelTestSpawnY
             // 
             this.labelTestSpawnY.AutoSize = true;
             this.labelTestSpawnY.Enabled = false;
-            this.labelTestSpawnY.Location = new System.Drawing.Point(114, 89);
+            this.labelTestSpawnY.Location = new System.Drawing.Point(114, 119);
             this.labelTestSpawnY.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelTestSpawnY.Name = "labelTestSpawnY";
             this.labelTestSpawnY.Size = new System.Drawing.Size(17, 15);
@@ -800,7 +804,7 @@
             // numericUpDownTestSpawnSaveID
             // 
             this.numericUpDownTestSpawnSaveID.Enabled = false;
-            this.numericUpDownTestSpawnSaveID.Location = new System.Drawing.Point(121, 181);
+            this.numericUpDownTestSpawnSaveID.Location = new System.Drawing.Point(121, 211);
             this.numericUpDownTestSpawnSaveID.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDownTestSpawnSaveID.Maximum = new decimal(new int[] {
             99,
@@ -824,7 +828,7 @@
             // checkBoxTestSpawnSave
             // 
             this.checkBoxTestSpawnSave.AutoSize = true;
-            this.checkBoxTestSpawnSave.Location = new System.Drawing.Point(6, 183);
+            this.checkBoxTestSpawnSave.Location = new System.Drawing.Point(6, 213);
             this.checkBoxTestSpawnSave.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxTestSpawnSave.Name = "checkBoxTestSpawnSave";
             this.checkBoxTestSpawnSave.Size = new System.Drawing.Size(116, 19);
@@ -837,7 +841,7 @@
             // 
             this.labelTestSpawnX.AutoSize = true;
             this.labelTestSpawnX.Enabled = false;
-            this.labelTestSpawnX.Location = new System.Drawing.Point(9, 89);
+            this.labelTestSpawnX.Location = new System.Drawing.Point(9, 119);
             this.labelTestSpawnX.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelTestSpawnX.Name = "labelTestSpawnX";
             this.labelTestSpawnX.Size = new System.Drawing.Size(17, 15);
@@ -848,7 +852,7 @@
             // 
             this.labelTestSpawnZ.AutoSize = true;
             this.labelTestSpawnZ.Enabled = false;
-            this.labelTestSpawnZ.Location = new System.Drawing.Point(221, 89);
+            this.labelTestSpawnZ.Location = new System.Drawing.Point(221, 119);
             this.labelTestSpawnZ.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelTestSpawnZ.Name = "labelTestSpawnZ";
             this.labelTestSpawnZ.Size = new System.Drawing.Size(17, 15);
@@ -858,7 +862,7 @@
             // numericUpDownTestSpawnZ
             // 
             this.numericUpDownTestSpawnZ.Enabled = false;
-            this.numericUpDownTestSpawnZ.Location = new System.Drawing.Point(242, 87);
+            this.numericUpDownTestSpawnZ.Location = new System.Drawing.Point(242, 117);
             this.numericUpDownTestSpawnZ.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDownTestSpawnZ.Maximum = new decimal(new int[] {
             999999,
@@ -877,7 +881,7 @@
             // numericUpDownTestSpawnY
             // 
             this.numericUpDownTestSpawnY.Enabled = false;
-            this.numericUpDownTestSpawnY.Location = new System.Drawing.Point(135, 87);
+            this.numericUpDownTestSpawnY.Location = new System.Drawing.Point(135, 117);
             this.numericUpDownTestSpawnY.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDownTestSpawnY.Maximum = new decimal(new int[] {
             999999,
@@ -898,16 +902,16 @@
             this.comboBoxTestSpawnLevel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTestSpawnLevel.Enabled = false;
             this.comboBoxTestSpawnLevel.FormattingEnabled = true;
-            this.comboBoxTestSpawnLevel.Location = new System.Drawing.Point(83, 19);
+            this.comboBoxTestSpawnLevel.Location = new System.Drawing.Point(89, 19);
             this.comboBoxTestSpawnLevel.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxTestSpawnLevel.Name = "comboBoxTestSpawnLevel";
-            this.comboBoxTestSpawnLevel.Size = new System.Drawing.Size(149, 23);
+            this.comboBoxTestSpawnLevel.Size = new System.Drawing.Size(165, 23);
             this.comboBoxTestSpawnLevel.TabIndex = 0;
             // 
             // numericUpDownTestSpawnX
             // 
             this.numericUpDownTestSpawnX.Enabled = false;
-            this.numericUpDownTestSpawnX.Location = new System.Drawing.Point(30, 87);
+            this.numericUpDownTestSpawnX.Location = new System.Drawing.Point(30, 117);
             this.numericUpDownTestSpawnX.Margin = new System.Windows.Forms.Padding(2);
             this.numericUpDownTestSpawnX.Maximum = new decimal(new int[] {
             999999,
@@ -997,6 +1001,38 @@
             this.generateManifestToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
+            // 
+            // checkBoxTestSpawnPlayer2
+            // 
+            this.checkBoxTestSpawnPlayer2.AutoSize = true;
+            this.checkBoxTestSpawnPlayer2.Location = new System.Drawing.Point(6, 69);
+            this.checkBoxTestSpawnPlayer2.Margin = new System.Windows.Forms.Padding(2);
+            this.checkBoxTestSpawnPlayer2.Name = "checkBoxTestSpawnPlayer2";
+            this.checkBoxTestSpawnPlayer2.Size = new System.Drawing.Size(70, 19);
+            this.checkBoxTestSpawnPlayer2.TabIndex = 36;
+            this.checkBoxTestSpawnPlayer2.Text = "Player 2:";
+            this.checkBoxTestSpawnPlayer2.UseVisualStyleBackColor = true;
+            this.checkBoxTestSpawnPlayer2.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnPlayer2_CheckedChanged);
+            // 
+            // comboBoxTestSpawnPlayer2
+            // 
+            this.comboBoxTestSpawnPlayer2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTestSpawnPlayer2.Enabled = false;
+            this.comboBoxTestSpawnPlayer2.FormattingEnabled = true;
+            this.comboBoxTestSpawnPlayer2.Items.AddRange(new object[] {
+            "Sonic",
+            "Shadow",
+            "Tails",
+            "Eggman",
+            "Knuckles",
+            "Rouge",
+            "Mech Tails",
+            "Mech Eggman"});
+            this.comboBoxTestSpawnPlayer2.Location = new System.Drawing.Point(89, 67);
+            this.comboBoxTestSpawnPlayer2.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxTestSpawnPlayer2.Name = "comboBoxTestSpawnPlayer2";
+            this.comboBoxTestSpawnPlayer2.Size = new System.Drawing.Size(165, 23);
+            this.comboBoxTestSpawnPlayer2.TabIndex = 35;
             // 
             // MainForm
             // 
@@ -1114,6 +1150,8 @@
 		private System.Windows.Forms.Button buttonSaveProfile;
 		private System.Windows.Forms.CheckBox checkBoxMission;
 		private System.Windows.Forms.ComboBox comboBoxMission;
+		private System.Windows.Forms.CheckBox checkBoxTestSpawnPlayer2;
+		private System.Windows.Forms.ComboBox comboBoxTestSpawnPlayer2;
 	}
 }
 

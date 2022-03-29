@@ -20,6 +20,8 @@ namespace SA2ModManager
 		[DefaultValue(-1)]
 		public int TestSpawnCharacter { get; set; } = -1;
 		[DefaultValue(0)]
+		public int TestSpawnPlayer2{ get; set; } = -1;
+		[DefaultValue(0)]
 		public int TestSpawnX { get; set; } = 0;
 		[DefaultValue(0)]
 		public int TestSpawnY { get; set; } = 0;

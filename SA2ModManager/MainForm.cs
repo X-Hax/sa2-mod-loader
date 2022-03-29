@@ -173,6 +173,8 @@ namespace SA2ModManager
 			comboBoxTestSpawnLevel.SelectedIndex = loaderini.TestSpawnLevel;
 			checkBoxTestSpawnCharacter.Checked = loaderini.TestSpawnCharacter != -1;
 			comboBoxTestSpawnCharacter.SelectedIndex = loaderini.TestSpawnCharacter;
+			checkBoxTestSpawnPlayer2.Checked = loaderini.TestSpawnPlayer2 != -1;
+			comboBoxTestSpawnPlayer2.SelectedIndex = loaderini.TestSpawnPlayer2;
 			checkBoxTestSpawnPosition.Checked = loaderini.TestSpawnPositionEnabled;
 			numericUpDownTestSpawnX.Value = loaderini.TestSpawnX;
 			numericUpDownTestSpawnY.Value = loaderini.TestSpawnY;
@@ -875,6 +877,7 @@ namespace SA2ModManager
 
 			loaderini.TestSpawnLevel = checkBoxTestSpawnLevel.Checked ? comboBoxTestSpawnLevel.SelectedIndex : -1;
 			loaderini.TestSpawnCharacter = checkBoxTestSpawnCharacter.Checked ? comboBoxTestSpawnCharacter.SelectedIndex : -1;
+			loaderini.TestSpawnPlayer2 = checkBoxTestSpawnPlayer2.Checked ? comboBoxTestSpawnPlayer2.SelectedIndex : -1;
 			loaderini.TestSpawnPositionEnabled = checkBoxTestSpawnPosition.Checked;
 			loaderini.TestSpawnX = (int)numericUpDownTestSpawnX.Value;
 			loaderini.TestSpawnY = (int)numericUpDownTestSpawnY.Value;
@@ -1479,6 +1482,10 @@ namespace SA2ModManager
 
 			if (checkBoxTestSpawnCharacter.Checked)
 				cmdline.Add("-c " + comboBoxTestSpawnCharacter.SelectedIndex.ToString());
+
+			if (checkBoxTestSpawnPlayer2.Checked)
+				cmdline.Add("-p2 " + comboBoxTestSpawnPlayer2.SelectedIndex.ToString());
+
 			if (checkBoxTestSpawnPosition.Checked)
 				cmdline.Add("-p " + numericUpDownTestSpawnX.Value.ToString() + " " +
 					numericUpDownTestSpawnY.Value.ToString() + " " +
@@ -1547,6 +1554,14 @@ namespace SA2ModManager
 			if (profileNameBox.FindStringExact(profileNameBox.Text) == -1)
 				profileNameBox.Items.Add(profileNameBox.Text);
 			buttonLoadProfile.Enabled = true;
+		}
+
+		private void checkBoxTestSpawnPlayer2_CheckedChanged(object sender, EventArgs e)
+		{
+			comboBoxTestSpawnPlayer2.Enabled = checkBoxTestSpawnPlayer2.Checked;
+
+			if (comboBoxTestSpawnPlayer2.SelectedIndex == -1)
+				comboBoxTestSpawnPlayer2.SelectedIndex = 0;
 		}
 	}
 }
