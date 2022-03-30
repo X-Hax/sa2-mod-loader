@@ -224,8 +224,8 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			ChaoSaveIndexThing = 0; // Allow Chao World saves to work.
 
 			//Prevent the game to save (fix overwritten savedata.)
-			WriteData<1>((int*)0x4436A0, 0xC3);
-			WriteData<1>((int*)0x426760, 0xC3);
+			WriteData((uint8_t*)0x4436A0, 0xC3ui8);
+			WriteData((uint8_t*)0x426760, 0xC3ui8);
 
 			// NOP. Prevents CurrentLevel from being overwritten for illegal level.
 			WriteData<13>(reinterpret_cast<void*>(0x43C983), 0x90u);
