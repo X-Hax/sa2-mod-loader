@@ -3783,7 +3783,8 @@ static inline void njDrawSprite3D(int a1, NJS_SPRITE* a2, char a3)
 {
 	__asm
 	{
-		push[a3]
+		movzx eax, [a3]
+		push eax
 		push[a2]
 		mov eax, [a1]
 		call njdrawsprite3Dptr
