@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Events.h"
+#include "Trampoline.h"
 #include "CodeParser.hpp"
 
 std::vector<ModEvent> modFrameEvents;
 std::vector<ModEvent> modInputEvents;
 std::vector<ModEvent> modControlEvents;
+std::vector<ModEvent> modExitEvents;
 CodeParser codeParser;
 
+Trampoline exitDetour(0x7ACA2E, 0x7ACA35, OnExit);
 /**
 * Registers an event to the specified event list.
 * @param eventList The event list to add to.
@@ -93,4 +96,11 @@ void __cdecl OnInput()
 void __cdecl OnControl()
 {
 	RaiseEvents(modControlEvents);
+}
+
+void __cdecl OnExit(UINT uExitCode, int a1, int a2)
+{
+	RaiseEvents(modExitEvents);
+	NonStaticFunctionPointer(void, original, (UINT, int, int), exitDetour.Target());
+	original(uExitCode, a1, a2);
 }

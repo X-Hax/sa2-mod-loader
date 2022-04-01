@@ -91,7 +91,7 @@ struct SETObjectData
 	__int16 Flags;
 	ObjectMaster *Object;
 	SETEntry *SETEntry;
-	float field_C;
+	float Distance;
 };
 
 struct Rotation
@@ -106,7 +106,7 @@ struct EntityData1
 	char field_2;
 	char Index;
 	__int16 Status;
-	__int16 field_6;
+	__int16 Timer;
 	Rotation Rotation;
 	NJS_VECTOR Position;
 	NJS_VECTOR Scale;
@@ -1025,7 +1025,7 @@ struct ObjectListEntry
 	char LoadFlags;
 	char List;
 	__int16 ObjectFlags;
-	float DistanceMaybe;
+	float Distance;
 	ObjectFuncPtr Function;
 	const char *Name;
 };

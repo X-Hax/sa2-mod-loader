@@ -1469,6 +1469,7 @@ void __cdecl InitMods(void)
 					RegisterEvent(modFrameEvents, module, "OnFrame");
 					RegisterEvent(modInputEvents, module, "OnInput");
 					RegisterEvent(modControlEvents, module, "OnControl");
+					RegisterEvent(modExitEvents, module, "OnExit");
 				}
 				else
 				{

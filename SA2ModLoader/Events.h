@@ -7,6 +7,7 @@
 extern std::vector<ModEvent> modFrameEvents;
 extern std::vector<ModEvent> modInputEvents;
 extern std::vector<ModEvent> modControlEvents;
+extern std::vector<ModEvent> modExitEvents;
 extern CodeParser codeParser;
 
 void RegisterEvent(std::vector<ModEvent>& eventList, HMODULE module, const char* name);
@@ -25,3 +26,4 @@ void InitOnFrame();
 void __cdecl OnFrame();
 void __cdecl OnInput();
 void __cdecl OnControl();
+void __cdecl OnExit(UINT uExitCode, int a1, int a2);

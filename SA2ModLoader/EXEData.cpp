@@ -394,7 +394,7 @@ static void ProcessObjListINI(const IniGroup *group, const wstring &mod_dir)
 		entry.LoadFlags = (LoadObj)objdata->getInt("Arg1");
 		entry.List = objdata->getInt("Arg2");
 		entry.ObjectFlags = objdata->getInt("Flags");
-		entry.DistanceMaybe = objdata->getFloat("Distance");
+		entry.Distance = objdata->getFloat("Distance");
 		entry.Function = (ObjectFuncPtr)objdata->getIntRadix("Code", 16);
 		entry.Name = UTF8toSJIS(objdata->getString("Name").c_str());
 		objs.push_back(entry);
