@@ -145,7 +145,7 @@
             groupBox2.Controls.Add(this.screenCheckBox);
             groupBox2.Controls.Add(this.fileCheckBox);
             groupBox2.Controls.Add(this.consoleCheckBox);
-            groupBox2.Location = new System.Drawing.Point(6, 60);
+            groupBox2.Location = new System.Drawing.Point(6, 6);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new System.Drawing.Size(456, 48);
             groupBox2.TabIndex = 1;
@@ -616,7 +616,6 @@
             this.tabPage3.Controls.Add(this.installURLHandlerButton);
             this.tabPage3.Controls.Add(this.groupBox4);
             this.tabPage3.Controls.Add(this.groupBox1);
-            this.tabPage3.Controls.Add(groupBox2);
             this.tabPage3.Location = new System.Drawing.Point(4, 24);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
@@ -632,7 +631,7 @@
             this.groupBox3.Controls.Add(this.buttonSaveProfile);
             this.groupBox3.Controls.Add(this.buttonLoadProfile);
             this.groupBox3.Controls.Add(this.profileNameBox);
-            this.groupBox3.Location = new System.Drawing.Point(6, 224);
+            this.groupBox3.Location = new System.Drawing.Point(6, 175);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(456, 60);
             this.groupBox3.TabIndex = 4;
@@ -675,7 +674,7 @@
             // installURLHandlerButton
             // 
             this.installURLHandlerButton.AutoSize = true;
-            this.installURLHandlerButton.Location = new System.Drawing.Point(6, 290);
+            this.installURLHandlerButton.Location = new System.Drawing.Point(6, 241);
             this.installURLHandlerButton.Name = "installURLHandlerButton";
             this.installURLHandlerButton.Size = new System.Drawing.Size(145, 29);
             this.installURLHandlerButton.TabIndex = 3;
@@ -693,7 +692,7 @@
             this.groupBox4.Controls.Add(this.numericUpdateFrequency);
             this.groupBox4.Controls.Add(this.comboUpdateFrequency);
             this.groupBox4.Controls.Add(this.checkUpdateStartup);
-            this.groupBox4.Location = new System.Drawing.Point(6, 114);
+            this.groupBox4.Location = new System.Drawing.Point(6, 65);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(456, 104);
             this.groupBox4.TabIndex = 3;
@@ -815,6 +814,7 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(groupBox2);
             this.tabPage4.Controls.Add(this.groupBox12);
             this.tabPage4.Location = new System.Drawing.Point(4, 24);
             this.tabPage4.Name = "tabPage4";
@@ -848,7 +848,7 @@
             this.groupBox12.Controls.Add(this.numericUpDownTestSpawnY);
             this.groupBox12.Controls.Add(this.comboBoxTestSpawnLevel);
             this.groupBox12.Controls.Add(this.numericUpDownTestSpawnX);
-            this.groupBox12.Location = new System.Drawing.Point(6, 9);
+            this.groupBox12.Location = new System.Drawing.Point(6, 61);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(456, 318);
             this.groupBox12.TabIndex = 7;
