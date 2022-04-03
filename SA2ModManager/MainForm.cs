@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Threading;
 using System.Net;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace SA2ModManager
 {
@@ -143,6 +144,13 @@ namespace SA2ModManager
 				mainCodes = new CodeList();
 			}
 
+			for (int i = 0; i < Screen.AllScreens.Length; i++)
+			{
+				Screen s = Screen.AllScreens[i];
+				screenNumComboBox.Items.Add($"{ i + 1 } { s.DeviceName } ({ s.Bounds.Location.X },{ s.Bounds.Y })"
+					+ $" { s.Bounds.Width }x{ s.Bounds.Height } { s.BitsPerPixel } bpp { (s.Primary ? "Primary" : "") }");
+			}
+
 			InitTestSpawnLevelList();
 			InitTestSpawnCutsceneList();
 			LoadSettings();
@@ -154,6 +162,32 @@ namespace SA2ModManager
 			profileNameBox.EndUpdate();
 		}
 
+		private void SetXMLConfig()
+		{
+			XmlDocument xdoc = new XmlDocument();
+			string configPath = Directory.GetCurrentDirectory() + "\\Config\\UserConfig.cfg";
+
+			if (File.Exists(configPath))
+			{
+				xdoc.Load(configPath);
+				XmlNode Configs = xdoc.FirstChild.NextSibling;
+				if (Configs.Attributes != null)
+				{
+					Configs.Attributes["Width"].Value = loaderini.HorizontalResolution.ToString();
+					Configs.Attributes["Height"].Value = loaderini.VerticalResolution.ToString();
+					Configs.Attributes["FullScreen"].Value = loaderini.FullScreen ? "1" : "0";
+					int screenID = screenNumComboBox.SelectedIndex;
+					if (screenID > 0)
+						screenID -= 1;
+
+					if (screenID > -1)
+						Configs.Attributes["Display"].Value = screenID.ToString();
+
+					xdoc.Save(configPath);
+				}
+			}
+		}
+
 		private void LoadSettings()
 		{
 			LoadModList();
@@ -162,12 +196,25 @@ namespace SA2ModManager
 			screenCheckBox.Checked = loaderini.DebugScreen;
 			fileCheckBox.Checked = loaderini.DebugFile;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
+			horizontalResolution.Value = Math.Max(horizontalResolution.Minimum, Math.Min(horizontalResolution.Maximum, loaderini.HorizontalResolution));
+			verticalResolution.Value = Math.Max(verticalResolution.Minimum, Math.Min(verticalResolution.Maximum, loaderini.VerticalResolution));
 			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
 			skipIntrocheckBox.Checked = loaderini.SkipIntro;
 			checkUpdateStartup.Checked = loaderini.UpdateCheck;
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
 			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
 			numericUpdateFrequency.Value = loaderini.UpdateFrequency;
+			radioFullscreen.Checked = loaderini.FullScreen;
+			radioWindowMode.Checked = loaderini.FullScreen == false;
+
+			int screenNum = Math.Min(Screen.AllScreens.Length, loaderini.ScreenNum);
+
+			screenNumComboBox.SelectedIndex = screenNum;
+
+			Rectangle rect = Screen.PrimaryScreen.Bounds;
+
+			foreach (Screen screen in Screen.AllScreens)
+				rect = Rectangle.Union(rect, screen.Bounds);
 
 			checkBoxTestSpawnLevel.Checked = loaderini.TestSpawnLevel != -1;
 			comboBoxTestSpawnLevel.SelectedIndex = loaderini.TestSpawnLevel;
@@ -869,6 +916,11 @@ namespace SA2ModManager
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
 			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
+			loaderini.HorizontalResolution = (int)horizontalResolution.Value;
+			loaderini.VerticalResolution = (int)verticalResolution.Value;
+			loaderini.FullScreen = radioFullscreen.Checked;
+			radioWindowMode.Checked = loaderini.FullScreen == false;
+			loaderini.ScreenNum = screenNumComboBox.SelectedIndex;
 			loaderini.SkipIntro = skipIntrocheckBox.Checked;
 			loaderini.UpdateCheck = checkUpdateStartup.Checked;
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
@@ -886,6 +938,7 @@ namespace SA2ModManager
 			loaderini.TestSpawnSaveID = checkBoxTestSpawnSave.Checked ? (int)numericUpDownTestSpawnSaveID.Value : -1;
 
 			IniSerializer.Serialize(loaderini, loaderinipath);
+			SetXMLConfig();
 
 			List<Code> selectedCodes = new List<Code>();
 			List<Code> selectedPatches = new List<Code>();
@@ -1413,7 +1466,7 @@ namespace SA2ModManager
 			TestSpawnLevelList.Add(11, "Iron Gate");
 			TestSpawnLevelList.Add(12, "Weapons Bed");
 			TestSpawnLevelList.Add(13, "City Escape");
-			TestSpawnLevelList.Add(14, "Radical Highway");			
+			TestSpawnLevelList.Add(14, "Radical Highway");
 			TestSpawnLevelList.Add(15, "Weapons Bed 2P");
 			TestSpawnLevelList.Add(16, "Wild Canyon");
 			TestSpawnLevelList.Add(17, "Mission Street");
@@ -1444,7 +1497,7 @@ namespace SA2ModManager
 			TestSpawnLevelList.Add(42, "Sonic Vs. Shadow 2");
 			TestSpawnLevelList.Add(43, "Cosmic Wall");
 			TestSpawnLevelList.Add(44, "Mad Space");
-			TestSpawnLevelList.Add(45, "Sand Ocean 2P");			
+			TestSpawnLevelList.Add(45, "Sand Ocean 2P");
 			TestSpawnLevelList.Add(46, "Dry Lagoon 2P");
 			TestSpawnLevelList.Add(47, "Pyramid Race");
 			TestSpawnLevelList.Add(48, "Hidden Base 2P");
@@ -1580,6 +1633,66 @@ namespace SA2ModManager
 
 			if (comboBoxTestSpawnPlayer2.SelectedIndex == -1)
 				comboBoxTestSpawnPlayer2.SelectedIndex = 0;
+		}
+
+
+		private void horizontalResolution_ValueChanged(object sender, EventArgs e)
+		{
+			if (!suppressEvent)
+				comboResolutionPreset.SelectedIndex = -1;
+		}
+
+		private void verticalResolution_ValueChanged(object sender, EventArgs e)
+		{
+			if (!suppressEvent)
+				comboResolutionPreset.SelectedIndex = -1;
+		}
+
+		static readonly Size[] resolutionPresets =
+		{
+			new Size(640, 480), // 640x480
+			new Size(800, 600), // 800x600
+			new Size(1024, 768), // 1024x768
+			new Size(1152, 864), // 1152x864
+			new Size(1280, 960), // 1280x960
+			new Size(1280, 1024), // 1280x1024
+			new Size(), // Native
+			new Size(), // 1/2x Native
+			new Size(), // 2x Native
+			new Size(1280, 720), // 720p
+			new Size(1920, 1080), // 1080p
+			new Size(3840, 2160), // 4K
+		};
+
+		private void comboResolutionPreset_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (comboResolutionPreset.SelectedIndex == -1)
+				return;
+
+			suppressEvent = true;
+			verticalResolution.Value = resolutionPresets[comboResolutionPreset.SelectedIndex].Height;
+			horizontalResolution.Value = resolutionPresets[comboResolutionPreset.SelectedIndex].Width;
+			suppressEvent = false;
+		}
+
+		private void screenNumComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			Size oldsize = resolutionPresets[6];
+			Rectangle rect = Screen.PrimaryScreen.Bounds;
+
+			if (screenNumComboBox.SelectedIndex > 0)
+				rect = Screen.AllScreens[screenNumComboBox.SelectedIndex - 1].Bounds;
+			else
+				foreach (Screen screen in Screen.AllScreens)
+					rect = Rectangle.Union(rect, screen.Bounds);
+
+			resolutionPresets[6] = rect.Size;
+			resolutionPresets[7] = new Size(rect.Width / 2, rect.Height / 2);
+			resolutionPresets[8] = new Size(rect.Width * 2, rect.Height * 2);
+
+			if (comboResolutionPreset.SelectedIndex > 4 && comboResolutionPreset.SelectedIndex < 8 && rect.Size != oldsize)
+				comboResolutionPreset.SelectedIndex = -1;
+
 		}
 	}
 }

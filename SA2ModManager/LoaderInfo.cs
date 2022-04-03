@@ -12,9 +12,17 @@ namespace SA2ModManager
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
 		[DefaultValue(true)]
 		public bool PauseWhenInactive { get; set; }
+		[DefaultValue(1)]
+		public int ScreenNum { get; set; } = 1;
 		[DefaultValue(false)]
 		public bool BorderlessWindow { get; set; }
+		[DefaultValue(false)]
+		public bool FullScreen { get; set; }
 		public bool SkipIntro { get; set; }
+		[DefaultValue(640)]
+		public int HorizontalResolution { get; set; } = 640;
+		[DefaultValue(480)]
+		public int VerticalResolution { get; set; } = 480;
 		[DefaultValue(-1)]
 		public int TestSpawnLevel { get; set; } = -1;
 		[DefaultValue(-1)]
