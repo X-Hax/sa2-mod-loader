@@ -192,3 +192,6 @@ write8 0174AFCC 0
 
 Patch "Disable HUD: Prompts/Radar (Stops EQ Guards/No Titlecards)"
 write8 0174AFCB 0
+
+Patch "Disable Omochao Tips"
+write8 00428010 0xC3

@@ -1241,9 +1241,9 @@ void __cdecl InitMods(void)
 		WriteData((Uint8*)0x00401897, (Uint8)0xEB);
 	}
 
-	if (settings->getBool("SkipIntro"))
+	bool SkipIntro = settings->getBool("SkipIntro");
+	if (SkipIntro)
 	{
-		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
 		WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_LoadAdvertise)); //change gamemode	
 		WriteCall((void*)0x434778, sub_434CD0_r);
 	}
@@ -1675,6 +1675,11 @@ void __cdecl InitMods(void)
 			PrintDebug("Code file is not in the correct format.\n");
 		}
 		codes_str.close();
+	}
+
+	if (SkipIntro && *(int*)0x428010 != 0xC3) //if the code to disable omochao hint is disabled
+	{
+		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
 	}
 
 	// Sets up code/event handling
