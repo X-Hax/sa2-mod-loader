@@ -810,6 +810,7 @@
             "German",
             "Spanish",
             "French",
+			"Italian",
             "Japanese"});
             this.comboTextLanguage.Location = new System.Drawing.Point(151, 64);
             this.comboTextLanguage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
