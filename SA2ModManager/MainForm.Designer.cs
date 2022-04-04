@@ -78,6 +78,10 @@
             this.comboUpdateFrequency = new System.Windows.Forms.ComboBox();
             this.checkUpdateStartup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.comboTextLanguage = new System.Windows.Forms.ComboBox();
+            this.comboVoiceLanguage = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.skipIntrocheckBox = new System.Windows.Forms.CheckBox();
             this.pauseWhenInactiveCheckBox = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -631,7 +635,7 @@
             this.groupBox3.Controls.Add(this.buttonSaveProfile);
             this.groupBox3.Controls.Add(this.buttonLoadProfile);
             this.groupBox3.Controls.Add(this.profileNameBox);
-            this.groupBox3.Location = new System.Drawing.Point(6, 175);
+            this.groupBox3.Location = new System.Drawing.Point(6, 221);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(456, 60);
             this.groupBox3.TabIndex = 4;
@@ -674,7 +678,7 @@
             // installURLHandlerButton
             // 
             this.installURLHandlerButton.AutoSize = true;
-            this.installURLHandlerButton.Location = new System.Drawing.Point(6, 241);
+            this.installURLHandlerButton.Location = new System.Drawing.Point(6, 287);
             this.installURLHandlerButton.Name = "installURLHandlerButton";
             this.installURLHandlerButton.Size = new System.Drawing.Size(145, 29);
             this.installURLHandlerButton.TabIndex = 3;
@@ -692,7 +696,7 @@
             this.groupBox4.Controls.Add(this.numericUpdateFrequency);
             this.groupBox4.Controls.Add(this.comboUpdateFrequency);
             this.groupBox4.Controls.Add(this.checkUpdateStartup);
-            this.groupBox4.Location = new System.Drawing.Point(6, 65);
+            this.groupBox4.Location = new System.Drawing.Point(6, 111);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(456, 104);
             this.groupBox4.TabIndex = 3;
@@ -783,14 +787,67 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.comboTextLanguage);
+            this.groupBox1.Controls.Add(this.comboVoiceLanguage);
+            this.groupBox1.Controls.Add(this.label9);
+            this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.skipIntrocheckBox);
             this.groupBox1.Controls.Add(this.pauseWhenInactiveCheckBox);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(456, 48);
+            this.groupBox1.Size = new System.Drawing.Size(456, 99);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Misc.";
+            // 
+            // comboTextLanguage
+            // 
+            this.comboTextLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboTextLanguage.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboTextLanguage.FormattingEnabled = true;
+            this.comboTextLanguage.Items.AddRange(new object[] {
+            "English",
+            "German",
+            "Spanish",
+            "French",
+            "Japanese"});
+            this.comboTextLanguage.Location = new System.Drawing.Point(151, 64);
+            this.comboTextLanguage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.comboTextLanguage.Name = "comboTextLanguage";
+            this.comboTextLanguage.Size = new System.Drawing.Size(110, 23);
+            this.comboTextLanguage.TabIndex = 11;
+            // 
+            // comboVoiceLanguage
+            // 
+            this.comboVoiceLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboVoiceLanguage.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboVoiceLanguage.FormattingEnabled = true;
+            this.comboVoiceLanguage.Items.AddRange(new object[] {
+            "Japanese",
+            "English"});
+            this.comboVoiceLanguage.Location = new System.Drawing.Point(7, 64);
+            this.comboVoiceLanguage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.comboVoiceLanguage.Name = "comboVoiceLanguage";
+            this.comboVoiceLanguage.Size = new System.Drawing.Size(108, 23);
+            this.comboVoiceLanguage.TabIndex = 10;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(148, 44);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(83, 15);
+            this.label9.TabIndex = 9;
+            this.label9.Text = "Text language:";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(4, 44);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(90, 15);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Voice language:";
             // 
             // skipIntrocheckBox
             // 
@@ -1349,6 +1406,10 @@
 		private System.Windows.Forms.NumericUpDown horizontalResolution;
 		private System.Windows.Forms.NumericUpDown verticalResolution;
 		private System.Windows.Forms.ComboBox screenNumComboBox;
+		private System.Windows.Forms.ComboBox comboTextLanguage;
+		private System.Windows.Forms.ComboBox comboVoiceLanguage;
+		private System.Windows.Forms.Label label9;
+		private System.Windows.Forms.Label label8;
 	}
 }
 

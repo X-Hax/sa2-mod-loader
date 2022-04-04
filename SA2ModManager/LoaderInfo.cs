@@ -23,6 +23,10 @@ namespace SA2ModManager
 		public int HorizontalResolution { get; set; } = 640;
 		[DefaultValue(480)]
 		public int VerticalResolution { get; set; } = 480;
+		[DefaultValue(1)]
+		public int VoiceLanguage { get; set; } = 1;
+		[DefaultValue(0)]
+		public int TextLanguage { get; set; } = 0;
 		[DefaultValue(-1)]
 		public int TestSpawnLevel { get; set; } = -1;
 		[DefaultValue(-1)]

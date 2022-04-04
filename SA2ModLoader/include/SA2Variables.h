@@ -684,3 +684,4 @@ DataPointer(char, VoiceLanguage, 0x174AFD2);
 DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x1A51A9C);
 DataPointer(TailsCharObj2*, MilesCO2Extern, 0x1A521EC);
 DataArray(NJS_VECTOR, TreePos, 0x1366B30, 30);
+DataPointer(float, landColRadius, 0x171CAA4); //default to 400, increased during Chao Race and kart levels.

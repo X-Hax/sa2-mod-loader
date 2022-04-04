@@ -183,6 +183,7 @@ namespace SA2ModManager
 					if (screenID > -1)
 						Configs.Attributes["Display"].Value = screenID.ToString();
 
+					Configs.Attributes["Language"].Value = loaderini.TextLanguage.ToString();
 					xdoc.Save(configPath);
 				}
 			}
@@ -204,6 +205,8 @@ namespace SA2ModManager
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
 			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
 			numericUpdateFrequency.Value = loaderini.UpdateFrequency;
+			comboVoiceLanguage.SelectedIndex = (int)loaderini.VoiceLanguage;
+			comboTextLanguage.SelectedIndex = (int)loaderini.TextLanguage;
 			radioFullscreen.Checked = loaderini.FullScreen;
 			radioWindowMode.Checked = loaderini.FullScreen == false;
 
@@ -926,6 +929,8 @@ namespace SA2ModManager
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
 			loaderini.UpdateUnit = (UpdateUnit)comboUpdateFrequency.SelectedIndex;
 			loaderini.UpdateFrequency = (int)numericUpdateFrequency.Value;
+			loaderini.VoiceLanguage = (int)comboVoiceLanguage.SelectedIndex;
+			loaderini.TextLanguage = (int)comboTextLanguage.SelectedIndex;
 
 			loaderini.TestSpawnLevel = checkBoxTestSpawnLevel.Checked ? comboBoxTestSpawnLevel.SelectedIndex : -1;
 			loaderini.TestSpawnCharacter = checkBoxTestSpawnCharacter.Checked ? comboBoxTestSpawnCharacter.SelectedIndex : -1;

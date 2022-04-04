@@ -1248,6 +1248,8 @@ void __cdecl InitMods(void)
 		WriteCall((void*)0x434778, sub_434CD0_r);
 	}
 
+	VoiceLanguage = (char)settings->getInt("VoiceLanguage");
+
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
 	DWORD oldprot;
