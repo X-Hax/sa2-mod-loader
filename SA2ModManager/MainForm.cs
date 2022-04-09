@@ -206,7 +206,7 @@ namespace SA2ModManager
 			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
 			numericUpdateFrequency.Value = loaderini.UpdateFrequency;
 			comboVoiceLanguage.SelectedIndex = (int)loaderini.VoiceLanguage;
-			comboTextLanguage.SelectedIndex = (int)loaderini.TextLanguage;
+			comboTextLanguage.SelectedIndex = loaderini.TextLanguage;
 			radioFullscreen.Checked = loaderini.FullScreen;
 			radioWindowMode.Checked = loaderini.FullScreen == false;
 

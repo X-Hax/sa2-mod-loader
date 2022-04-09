@@ -1248,7 +1248,7 @@ void __cdecl InitMods(void)
 		WriteCall((void*)0x434778, sub_434CD0_r);
 	}
 
-	VoiceLanguage = (char)settings->getInt("VoiceLanguage");
+	VoiceLanguage = settings->getInt("VoiceLanguage", 1);
 
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
@@ -1677,7 +1677,7 @@ void __cdecl InitMods(void)
 		codes_str.close();
 	}
 
-	if (SkipIntro && *(int*)0x428010 != 0xC3) //if the code to disable omochao hint is disabled
+	if (SkipIntro && *(int*)0x428010 != 0xC3) //if the code to disable loading hint is disabled
 	{
 		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
 	}
