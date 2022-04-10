@@ -91,7 +91,11 @@ else
 endif
 
 Code "Have Chao Garden Key"
-write8 0174B004 1
+ifeq8 01934B70 90
+    write8 0174B004 0
+else
+    write8 0174B004 1
+endif
 
 Patch "Always Get A Rank"
 writenop 0044F799 2
