@@ -384,6 +384,15 @@ namespace SA2ModManager
 			codes = new List<Code>(mainCodes.Codes);
 			string modDir = Path.Combine(Environment.CurrentDirectory, "mods");
 
+			if (File.Exists(Path.Combine(modDir, "mod.ini")))
+			{
+				MessageBox.Show(this, "There is a mod.ini in the mods folder."
+							+ "\n\nEach mod must be placed in a subfolder in the mods folder. Do not extract mods directly to the mods folder." +
+							"\n\nMove or delete mod.ini in the mods folder and run the Mod Manager again.", "SA2 Mod Manager Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Close();
+				return;
+			}
+
 			foreach (string filename in SA2ModInfo.GetModFiles(new DirectoryInfo(modDir)))
 				mods.Add((Path.GetDirectoryName(filename) ?? string.Empty).Substring(modDir.Length + 1), IniSerializer.Deserialize<SA2ModInfo>(filename));
 
