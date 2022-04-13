@@ -78,6 +78,9 @@
     <ClInclude Include="MediaFns.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CrashDump.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -111,6 +114,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MediaFns.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CrashDump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

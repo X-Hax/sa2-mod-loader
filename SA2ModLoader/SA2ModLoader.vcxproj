@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CrashDump.h" />
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="DLLData.h" />
     <ClInclude Include="Events.h" />
@@ -108,6 +109,7 @@
     <ClInclude Include="testspawn.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CrashDump.cpp" />
     <ClCompile Include="DLLData.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
