@@ -1600,6 +1600,8 @@ void __cdecl InitMods(void)
 
 	PrintDebug("Mod loading finished.");
 
+	CheckCrashMod();
+
 	ifstream patches_str("mods\\Patches.dat", ifstream::binary);
 	if (patches_str.is_open())
 	{
