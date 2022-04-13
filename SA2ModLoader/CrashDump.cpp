@@ -5,8 +5,11 @@
 
 //this uses decimal, convert your hex address to decimal if you want to add more crashes.
 static const std::unordered_map<intptr_t, std::string> crashes_addresses_map = {
-	{ 4375300, "Animation error: the game failed to play one or more animations."  },
-
+	{ 4375300, "Animation error: the game failed to play one or more animations."  },	
+	{ 4375793, "Texture error: the game failed to apply one or more textures."  },	
+	{ 4560977, "Animation error: the game failed to load the motion file of a character."  },
+	{ 4628938, "Animation error: the game failed to play a character animation."  },	
+	{ 4386618, "Draw Model error: the game failed to draw a model.\nIf you are making a character mod, this might be the jiggle.\nDisable the jiggle or make the head mesh 100% weighted to the head bone."  },
 };
 
 static const std::string getErrorMSG(intptr_t address)
@@ -28,11 +31,13 @@ void CopyAndRename_ModLoaderIni()
 	strftime(timeStr, 255, "_%d_%m_%Y_%H_%M_%S", &tM);
 	char tmp[256];
 	std::string directory = getcwd(tmp, 256);
-	std::string fullLine = "xcopy " + directory + "\\mods\\SA2ModLoader.ini " + directory + "\\CrashDump";
+
+	const std::string quote = "\"";
+	std::string fullLine = "xcopy " + quote + directory + "\\mods\\SA2ModLoader.ini" + quote + " " + quote + directory + "\\CrashDump" + quote;
 	int copyState = system(fullLine.c_str());
 
 	if (copyState != -1) {
-		std::string rename = "ren " + directory + "\\CrashDump\\SA2ModLoader.ini " + "ModList" + timeStr + ".ini";
+		std::string rename = "ren " + quote + directory + "\\CrashDump\\SA2ModLoader.ini" + quote + " " + quote + "ModList" + timeStr + ".ini" + quote;
 		system(rename.c_str());
 		PrintDebug("CrashDump: Successfully copied SA2ModLoader.ini to the CrashDump Folder.\n");
 	}
