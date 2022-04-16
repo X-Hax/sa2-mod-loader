@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <direct.h>
 #include <Psapi.h>
-#include <map>
+#include <shlwapi.h>
 
 using namespace std;
 
@@ -113,60 +113,24 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 
 		PrintDebug("Done.\n");
 
-		PrintDebug("Get modules name...\n");
-		map<intptr_t, string> dllMap;
-
-		HMODULE hMods[1024];
-		DWORD cbNeeded;
-
-		//browse process to get all the modules
-		if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded))
-		{
-			for (int i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
-			{
-				TCHAR szModName[MAX_PATH];
-
-				// Get the full path to the module's file.
-				if (GetModuleBaseName(hProcess, hMods[i], szModName,
-					sizeof(szModName) / sizeof(TCHAR)))
-				{
-					MODULEINFO moduleInfo;
-
-					if (GetModuleInformation(hProcess, hMods[i], &moduleInfo, sizeof(moduleInfo))) {
-
-						intptr_t address = (intptr_t)moduleInfo.lpBaseOfDll;
-
-						if (address > 0) { //store module address and name in the map
-							wstring getModName(&szModName[0]);
-							string modName(getModName.begin(), getModName.end());
-							dllMap.insert({ address, modName });
-						}
-					}
-				}
-			}
-		}
-
-		//sort map by address
-		for (auto const& entry : dllMap)
-		{
-			std::cout << entry.second << " -> (" << entry.first << " )" << '\n';
-		}
-
 		//get crash address
 		intptr_t crashID = (intptr_t)info.ExceptionPointers->ExceptionRecord->ExceptionAddress;
 		char hex[MAX_PATH];
 		sprintf_s(hex, "%x", crashID);
 		string address = hex;
 
-		string dllName;
+		PrintDebug("Get fault module name...\n");
 
-		//Browse the map to and do a comparison with the crash address to get the fault module name.
-		for (auto itr = dllMap.begin(); itr != dllMap.end(); itr++)
+		string dllName;
+		HMODULE handle;
+
+		if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)crashID, &handle))
 		{
-			//the last module whose address is less than the crash address is the correct one.
-			if (itr->first < crashID)
+			char path[MAX_PATH];
+			if (GetModuleFileNameA(handle, path, MAX_PATH))
 			{
-				dllName = itr->second;
+				auto filename = PathFindFileNameA(path);
+				dllName = filename;
 			}
 		}
 
@@ -185,7 +149,6 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 
 		PrintDebug("Crash Dump Done.\n");
 		MessageBoxA(0, fullMsg.c_str(), "SA2 ERROR", MB_ICONERROR);
-
 	}
 
 	return EXCEPTION_EXECUTE_HANDLER;
