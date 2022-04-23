@@ -33,7 +33,7 @@ void CopyAndRename_ModLoaderIni()
 	localtime_s(&tM, &t);
 	strftime(timeStr, 255, "_%d_%m_%Y_%H_%M_%S", &tM);
 	char tmp[256];
-	string directory = getcwd(tmp, 256);
+	string directory = _getcwd(tmp, 256);
 
 	const string quote = "\"";
 	string fullLine = "xcopy " + quote + directory + "\\mods\\SA2ModLoader.ini" + quote + " " + quote + directory + "\\CrashDump" + quote;
