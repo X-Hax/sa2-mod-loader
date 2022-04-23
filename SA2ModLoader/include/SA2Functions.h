@@ -2675,7 +2675,7 @@ static inline void CameraApplyScreenView(int num) // Apply the drawing view for 
 {
 	__asm
 	{
-		mov eax, [num]
+		mov esi, [num]
 		call CameraApplyScreenViewPtr
 	}
 }
