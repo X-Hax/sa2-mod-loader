@@ -7,6 +7,8 @@ DataPointer(MLTSoundList, MetalHarborSoundList, 0x89F348);
 DataPointer(MLTSoundList, GreenForestSoundList, 0x8A0F60);
 DataPointer(MLTSoundList, CityEscapeSoundList, 0x8A0FF8);
 DataPointer(MLTSoundList, MeteorHerdSoundList, 0x8A1610);
+DataArray(_OBJ_CAMERAMODE, CameraMode, 0x8ABD3C, 28); // The list of camera logic functions (triggered by the camera layout)
+DataArray(_OBJ_CAMERAADJUST, CameraAdjust, 0x8ABE8C, 13); // The list of camera adjust functions (when it switches between cameras)
 DataPointer(MLTSoundList, CommonSoundList, 0x8AC908);
 DataPointer(MLTSoundList, SonicShadowSoundList, 0x8ACB28);
 DataPointer(MLTSoundList, KnucklesRougeSoundList, 0x8ACC20);
@@ -443,6 +445,7 @@ DataPointer(unsigned __int16, CollisionList_9_Count, 0x1946ABC);
 DataPointer(unsigned __int16, CollisionList_5_Count, 0x1946AC0);
 DataArray(ObjectMaster*, CollisionList_6_List, 0x1946AC8, 128);
 DataArray(ObjectMaster*, CollisionList_7_List, 0x1946CC8, 128);
+DataPointer(BOOL, CameraEnabled, 0x19EF36C);
 DataPointer(DWORD, ChaoSaveStart, 0x19F6460);
 DataPointer(int, ChaoGardensUnlocked, 0x19F646C);
 DataArray(int, ChaoToysUnlocked, 0x19F6470, 3);
@@ -521,6 +524,7 @@ DataPointer(CL_ObjInfo*, DynColQueue, 0x1A5A400); // Linked list of dynamic coll
 DataPointer(ObjectMaster *, Super_ManTex_ptr, 0x1A5A42C);
 DataPointer(ObjectMaster **, ManGCylExecutor_ptr, 0x1A5A768);
 DataPointer(ObjectMaster *, cameraCons_ptr, 0x1A5A77C);
+DataPointer(EntityData1*, CameraData1, 0x1A5A784);
 DataPointer(ChaoSegmentData *, ChaoSegmentPtr, 0x1A5BE1C);
 DataPointer(AL_GBAManagerExecutor_Data *, AL_GBAManagerExecutor_ptr, 0x1A5CB54);
 DataPointer(ObjectMaster *, ALO_RadicaseExecutor_ptr, 0x1AED2E0);
@@ -570,10 +574,12 @@ DataArray(BlackMarketItem, BlackMarketInventory, 0x1DBEDC0, 32);
 DataArray(char, MemoryCard, 0x1DBEE00, 104);
 DataPointer(ChaoData *, ChaoDataArray, 0x1DC0FC8); // TODO: fix
 DataPointer(ObjectMaster *, ChaoObjectArray, 0x1DC0FFC); // TODO: fix
-DataPointer(CameraInfo, CameraData, 0x1DCFF40);
+DataArray(NJS_POINT3, __PlayerStatus_last_pos, 0x1DCFF0C, 4);
+DataArray(CameraInfo, CameraData, 0x1DCFF40, 4);
 DataPointer(int, CurrentScreen, 0x1DD92A0);
-DataArray(CameraScreenInfo*, CameraScreensInfoArray, 0x1DD92B0, 2);
+DataArray(CameraScreenInfo*, CameraScreensInfoArray, 0x1DD92B0, 4);
 DataPointer(int, SplitscreenMode, 0x1DD946C);
+DataPointer(int, CameraTimer, 0x1DD94AC);
 DataArray(FogData, stg27_fogB, 0x1DDA160, 34);
 DataPointer(LandTable, BasicLandTable, 0x1DDA3C0);
 DataPointer(LandTable, ChunkLandTable, 0x1DDA3E0);
@@ -638,6 +644,9 @@ DataPointer(char, RougeTreasureScopeGot, 0x1DEB31A);
 DataPointer(char, RougeIronBootsGot, 0x1DEB31B);
 DataPointer(__int16, RougeMysticMelodyGot, 0x1DEB31C);
 DataPointer(int, FrameIncrement, 0x1DEB50C);
+DataPointer(NJD_FLAG, _constant_attr_or_, 0x1DEB6A0); // Backup for nj_constant_attr_or_, see SaveConstantAttr and LoadConstantAttr
+DataPointer(NJD_CONTROL_3D, _control_3d_flag_, 0x1DEB6A4); // Backup for nj_control_3d_flag_, see SaveControl3D and LoadControl3D
+DataPointer(NJD_FLAG, _constant_attr_and_, 0x1DEB6A8); // Backup for nj_constant_attr_and_, see SaveConstantAttr and LoadConstantAttr
 DataPointer(int*, SaveFile, 0x1DEC600);
 DataPointer(char, TextLanguage_Save, 0x1DEC609);
 DataPointer(unsigned __int8, EmblemCount, 0x1DEC60E);
@@ -671,11 +680,14 @@ DataPointer(int, SomeBuffer, 0x1DEFE20);
 DataPointer(int, FileBuffer, 0x24CFE20);
 DataPointer(int, FOV_BAMS, 0x25EFEE8);
 DataPointer(NJS_MATRIX, _nj_unit_matrix_, 0x25F02A0);
-DataPointer(NJS_ARGB, ConstantMaterial, 0x25EFFD0);
+DataPointer(NJD_FLAG, nj_constant_attr_and_, 0x25F0268); // Constant material attributes to AND, needs NJD_CONTROL_3D_CNK_CONSTANT_ATTR control
+DataPointer(NJD_FLAG, nj_constant_attr_or_, 0x025F02D4); // Constant material attributes to OR, needs NJD_CONTROL_3D_CNK_CONSTANT_ATTR control
+DataPointer(NJD_CONTROL_3D, nj_control_3d_flag_, 0x25F02D8); // Current material override settings, effective for following draw calls. Can be backed up with SaveControl3D and restored with LoadControl3D.
+DataPointer(NJS_ARGB, nj_constant_material_, 0x25EFFD0); // Constant material color, needs NJD_CONTROL_3D_CONSTANT_MATERIAL
 DataPointer(float, HorizontalResolution_Float, 0x2670328);
-DataPointer(float, VerticalResolution_Float, 0x267032C);
+DataPointer(float, VerticalResolution_Float, 0x267032C); 
 DataPointer(LPVOID, MatrixStack_MinPtr, 0x267053C);
-DataPointer(RenderInfo, RenferInfo_, 0x2670544);
+DataPointer(RenderInfo*, RenferInfo_, 0x2670544);
 DataPointer(float, MaxDrawDistance, 0x2670560);
 DataPointer(float, MinDrawDistance, 0x2670564);
 DataPointer(LPVOID, MatrixStack_MaxPtr, 0x2670588);

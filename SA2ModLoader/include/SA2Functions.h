@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "ninja.h"
 #include "MemAccess.h"
 #include "SA2Structs.h"
 #include "SA2Enums.h"
@@ -78,8 +79,8 @@ FunctionPointer(int, ProbablyLoadsSave, (char), 0x445100);
 FunctionPointer(int, SetWorkingSaveD, (), 0x445330);
 VoidFunc(SaveConstantAttr, 0x446CB0);
 VoidFunc(LoadConstantAttr, 0x446CD0);
-VoidFunc(njControl3D_Backup, 0x446D00);
-VoidFunc(njControl3D_Restore, 0x446D10);
+VoidFunc(SaveControl3D, 0x446D00);
+VoidFunc(LoadControl3D, 0x446D10);
 FunctionPointer(int, njPushUnitMatrix, (), 0x44B210);
 FunctionPointer(void, SetMaterial, (float a, float r, float g, float b), 0x44B2E0); // Sets ConstantMaterial.
 ObjectFunc(DrawLine3DExec, 0x44B680);
@@ -342,6 +343,7 @@ FunctionPointer(int, ResetArbitraryGravity, (int), 0x4E94B0);
 ObjectFunc(ManGCylExecutor_Main, 0x4E9510);
 FunctionPointer(int, ManGCylExecutor_Load, (), 0x4E9570);
 FunctionPointer(void, InitSplitscreen, (int num), 0x4EB2B0);
+VoidFunc(CameraGetPlayerLastPos, 0x4EB650); // Store current player positions in __PlayerStatus_last_pos
 ObjectFunc(cameraCons_Display, 0x4EB8A0);
 ObjectFunc(cameraCons_Main, 0x4EB8E0);
 ObjectFunc(cameraCons_Delete, 0x4EBA40);
@@ -1269,7 +1271,7 @@ FunctionPointer(int, GetDllData, (LPCSTR lpProcName), 0x77DEF0);
 FunctionPointer(void*, MemoryManager__Allocate, (int size, char* file, int line), 0x77DFA0);
 FunctionPointer(void*, MemoryManager__AllocateArray, (int count, int size), 0x77DFB0);
 FunctionPointer(void, MemoryManager__Deallocate2, (AllocatedMem* a1, size_t count), 0x77DFE0);
-FunctionPointer(void, SetDrawingPlanes, (Float _min, Float _max), 0x77E700);
+FunctionPointer(void, ___njClipZ, (float nearZ, float farZ), 0x77E700);
 VoidFunc(UpdateControllers, 0x77E780);
 FunctionPointer(void, FreeTexList, (NJS_TEXLIST* texlist), 0x77F9F0);
 VoidFunc(njUnitMatrix_, 0x780E70);
@@ -1391,6 +1393,18 @@ static inline void SetShaders(int id)
 	{
 		mov eax, id
 		call SetShadersPtr
+	}
+}
+
+static const void* const njColorBlendingModePtr = (void*)0x426420; 
+static inline void njColorBlendingMode(NJD_COLOR_TARGET target, NJD_COLOR_BLENDING mode) // Needs NJD_CONTROL_3D_CNK_BLEND_MODE
+{
+	__asm
+	{
+		push[target]
+		mov eax, mode
+		call njColorBlendingModePtr
+		add esp, 4
 	}
 }
 
@@ -1652,14 +1666,14 @@ static inline void SetViewStuff(signed int fov, float screen_ratio, float min_di
 	}
 }
 
-// void __usercall SetFOV(signed int bams@<eax>)
-static const void* const SetFOVPtr = (void*)0x42C390;
-static inline void SetFOV(signed int bams)
+// void __usercall ___njSetPerspective(signed int a@<eax>)
+static const void* const ___njSetPerspectivePtr = (void*)0x42C390;
+static inline void ___njSetPerspective(Angle a)
 {
 	__asm
 	{
-		mov eax, [bams]
-		call SetFOVPtr
+		mov eax, [a]
+		call ___njSetPerspectivePtr
 	}
 }
 
@@ -1952,37 +1966,34 @@ static inline void SetWorkingSave(int a1)
 	}
 }
 
-// void __usercall(int a1@<eax>)
 static const void* const OnConstantAttrPtr = (void*)0x446CF0;
-static inline void OnConstantAttr(int a1, int a2)
+static inline void OnConstantAttr(int soc_and, int soc_or)
 {
 	__asm
 	{
-		mov eax, [a1]
-		mov ecx, [a2]
+		mov eax, [soc_and]
+		mov ecx, [soc_or]
 		call OnConstantAttrPtr
 	}
 }
 
-// void __usercall(int a1@<eax>)
-static const void* const njControl3D_AddPtr = (void*)0x446D20;
-static inline void njControl3D_Add(int a1)
+static const void* const OnControl3DPtr = (void*)0x446D20;
+static inline void OnControl3D(int flag)
 {
 	__asm
 	{
-		mov eax, [a1]
-		call njControl3D_AddPtr
+		mov eax, [flag]
+		call OnControl3DPtr
 	}
 }
 
-// void __usercall(int a1@<eax>)
-static const void* const njControl3D_RemovePtr = (void*)0x446D30;
-static inline void njControl3D_Remove(int a1)
+static const void* const OffControl3DPtr = (void*)0x446D30;
+static inline void OffControl3D(int flag)
 {
 	__asm
 	{
-		mov eax, [a1]
-		call njControl3D_RemovePtr
+		mov eax, [flag]
+		call OffControl3DPtr
 	}
 }
 
@@ -2656,6 +2667,37 @@ static inline void Super_Afterimage(CharObj2Base* a1, EntityData1* a2, SuperSoni
 		mov esi, [a1]
 		call Super_AfterimagePtr
 		add esp, 4
+	}
+}
+
+static const void* const CameraApplyScreenViewPtr = (void*)0x4EB550;
+static inline void CameraApplyScreenView(int num) // Apply the drawing view for camera "num" (the game supports 4 cameras)
+{
+	__asm
+	{
+		mov eax, [num]
+		call CameraApplyScreenViewPtr
+	}
+}
+
+static const void* const SetEventCameraPtr = (void*)0x4EBBE0;
+static inline void SetEventCamera(int num, int mode)
+{
+	__asm
+	{
+		mov eax, [num]
+		mov edx, [mode]
+		call SetEventCameraPtr
+	}
+}
+
+static const void* const CameraGetStopFlagPtr = (void*)0x4ECA50;
+static inline void CameraGetStopFlag(int num)
+{
+	__asm
+	{
+		mov eax, [num]
+		call CameraGetStopFlagPtr
 	}
 }
 
@@ -3558,6 +3600,16 @@ static inline void Chao_PlayAnimationSpeed(MotionTableData* a1, int a2, unsigned
 	}
 }
 
+static const void* const CameraApplyViewPtr = (void*)0x77E0C0;
+static inline void CameraApplyView(CameraViewInfo* view) // Apply the drawing view using information from CameraViewInfo
+{
+	__asm
+	{
+		mov ebx, [view]
+		call CameraApplyViewPtr
+	}
+}
+
 // int __usercall@<eax>(int buttons@<edx>)
 static const void* const XInputToDreamcastButtonsPtr = (void*)0x77E910;
 static inline int XInputToDreamcastButtons(int buttons)
@@ -3819,18 +3871,6 @@ static inline void TailsEggman_LaserAttack(CharObj2Base* a1, EntityData1* data, 
 		mov ebx, a1
 		call TailsEggman_LaserAttack_ptr
 		add esp, 12
-	}
-}
-
-//void __usercall SetCameraEvent(int playerNum@<eax>, _DWORD* a2@<ebx>)
-static const void* const cameventPtr = (void*)0x4EBBE0;
-static inline void SetCameraEvent(int a1, int a2)
-{
-	__asm
-	{
-		mov edx, [a2]
-		mov eax, [a1]
-		call cameventPtr
 	}
 }
 

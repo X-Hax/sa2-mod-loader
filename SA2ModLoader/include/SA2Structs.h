@@ -4,9 +4,17 @@
 #include "ninja.h"
 #include "SA2Enums.h"
 
-// SA2 Structs
+typedef Uint32 NJD_SPRITE;
+typedef Uint32 NJD_FLAG;
+typedef Uint32 NJD_CONTROL_3D;
+typedef DWORD _DWORD;
+typedef Uint32 NJD_COLOR_TARGET;
+typedef Uint32 NJD_COLOR_BLENDING;
+typedef Uint32 NJD_TEX_SHADING;
+typedef Uint32 NJD_DRAW;
+typedef Uint32 NJD_TEXATTR;
 
-using Vector3 = NJS_VECTOR;
+// SA2 Structs
 
 struct EntityData1;
 struct ObjectListEntry;
@@ -31,8 +39,10 @@ struct ObjUnknownA;
 struct ObjUnknownB;
 struct ObjectMaster;
 struct LoopHead;
+struct CameraInfo;
 
 using ObjectFuncPtr = void(__cdecl*)(ObjectMaster*);
+using CameraFuncPtr = void(__cdecl*)(CameraInfo*);
 
 // All structs should be packed.
 #pragma pack(push, 1)
@@ -98,6 +108,8 @@ struct Rotation
 {
 	Angle x, y, z;
 };
+
+using Angle3 = Rotation;
 
 struct EntityData1
 {
@@ -2161,26 +2173,53 @@ struct ChaoMotionTableEntry
 	float PlaySpeed;
 };
 
+struct _OBJ_CAMERAMODE
+{
+	CameraFuncPtr fnCamera;
+	int mode;
+	const char* name;
+};
+
+struct _OBJ_CAMERAADJUST
+{
+	CameraFuncPtr fnAdjust;
+	const char* name;
+};
+
 // Camera information for one screen, see CameraScreensInfoArray.
-struct CameraScreenInfo {
-	NJS_VECTOR pos;
-	Rotation rot;
+struct CameraScreenInfo
+{
+	NJS_POINT3 pos;
+	Angle3 ang;
+};
+
+// Drawing view information
+struct CameraViewInfo
+{
+	NJS_POINT3 pos;
+	NJS_POINT3 dir;
+	Angle roll;
+	Angle fov;
+	float unknown;
 };
 
 struct CameraInfo
 {
-	int field_0;
-	int field_4;
-	int field_8;
-	char gapC[328];
-	float field_154;
-	float field_158;
-	float field_15C;
+	Angle fov;
+	Angle field_4;
+	Angle roll;
+	int field_C;
+	BOOL Player_stop_flag;
+	char gap14[320];
+	NJS_POINT3 offset;
 	int field_160;
-	char gap164[48];
-	NJS_VECTOR Position;
-	Rotation Rotation;
-	char gap1AC[9000];
+	char gap164[8];
+	CameraViewInfo view;
+	int field_190;
+	NJS_POINT3 pos;
+	Angle3 ang;
+	NJS_POINT3 dir;
+	char gap1B8[8988];
 	int field_24D4;
 };
 
