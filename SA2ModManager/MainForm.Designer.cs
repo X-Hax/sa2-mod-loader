@@ -64,7 +64,8 @@
             this.borderlessWindowCheckBox = new System.Windows.Forms.CheckBox();
             this.horizontalResolution = new System.Windows.Forms.NumericUpDown();
             this.verticalResolution = new System.Windows.Forms.NumericUpDown();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.buttonSaveProfile = new System.Windows.Forms.Button();
             this.buttonLoadProfile = new System.Windows.Forms.Button();
@@ -116,6 +117,7 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.crashLogCheckBox = new System.Windows.Forms.CheckBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
             label5 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
@@ -146,6 +148,7 @@
             // 
             groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            groupBox2.Controls.Add(this.crashLogCheckBox);
             groupBox2.Controls.Add(this.screenCheckBox);
             groupBox2.Controls.Add(this.fileCheckBox);
             groupBox2.Controls.Add(this.consoleCheckBox);
@@ -184,7 +187,8 @@
             this.consoleCheckBox.Size = new System.Drawing.Size(69, 19);
             this.consoleCheckBox.TabIndex = 0;
             this.consoleCheckBox.Text = "Console";
-            this.consoleCheckBox.UseVisualStyleBackColor = true;
+			this.toolTip.SetToolTip(this.consoleCheckBox, "Shows a console and displays debug messages.");
+			this.consoleCheckBox.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -810,7 +814,7 @@
             "German",
             "Spanish",
             "French",
-			"Italian",
+            "Italian",
             "Japanese"});
             this.comboTextLanguage.Location = new System.Drawing.Point(151, 64);
             this.comboTextLanguage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -922,7 +926,8 @@
             this.checkBoxTestSpawnPlayer2.Size = new System.Drawing.Size(70, 19);
             this.checkBoxTestSpawnPlayer2.TabIndex = 36;
             this.checkBoxTestSpawnPlayer2.Text = "Player 2:";
-            this.checkBoxTestSpawnPlayer2.UseVisualStyleBackColor = true;
+			this.toolTip.SetToolTip(this.checkBoxTestSpawnPosition, "Select Player 2 character.");
+			this.checkBoxTestSpawnPlayer2.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnPlayer2.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnPlayer2_CheckedChanged);
             // 
             // comboBoxTestSpawnPlayer2
@@ -994,7 +999,8 @@
             this.buttonTestSpawnPlay.Size = new System.Drawing.Size(93, 28);
             this.buttonTestSpawnPlay.TabIndex = 31;
             this.buttonTestSpawnPlay.Text = "Play";
-            this.buttonTestSpawnPlay.UseVisualStyleBackColor = true;
+			this.toolTip.SetToolTip(this.buttonTestSpawnPlay, "Run the game with the above Test Spawn settings.");
+			this.buttonTestSpawnPlay.UseVisualStyleBackColor = true;
             this.buttonTestSpawnPlay.Click += new System.EventHandler(this.buttonTestSpawnPlay_Click);
             // 
             // comboBoxTestSpawnEvent
@@ -1007,10 +1013,11 @@
             this.comboBoxTestSpawnEvent.Name = "comboBoxTestSpawnEvent";
             this.comboBoxTestSpawnEvent.Size = new System.Drawing.Size(319, 23);
             this.comboBoxTestSpawnEvent.TabIndex = 14;
-            // 
-            // checkBoxTestSpawnEvent
-            // 
-            this.checkBoxTestSpawnEvent.AutoSize = true;
+			this.toolTip.SetToolTip(this.comboBoxTestSpawnEvent, "Start the game on a specific cutscene.");
+			// 
+			// checkBoxTestSpawnEvent
+			// 
+			this.checkBoxTestSpawnEvent.AutoSize = true;
             this.checkBoxTestSpawnEvent.Location = new System.Drawing.Point(6, 186);
             this.checkBoxTestSpawnEvent.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxTestSpawnEvent.Name = "checkBoxTestSpawnEvent";
@@ -1029,7 +1036,8 @@
             this.checkBoxTestSpawnCharacter.Size = new System.Drawing.Size(80, 19);
             this.checkBoxTestSpawnCharacter.TabIndex = 32;
             this.checkBoxTestSpawnCharacter.Text = "Character:";
-            this.checkBoxTestSpawnCharacter.UseVisualStyleBackColor = true;
+			this.toolTip.SetToolTip(this.checkBoxTestSpawnCharacter, "Start the game with a specific character.");
+			this.checkBoxTestSpawnCharacter.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnCharacter.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnCharacter_CheckedChanged);
             // 
             // checkBoxTestSpawnLevel
@@ -1041,7 +1049,8 @@
             this.checkBoxTestSpawnLevel.Size = new System.Drawing.Size(56, 19);
             this.checkBoxTestSpawnLevel.TabIndex = 20;
             this.checkBoxTestSpawnLevel.Text = "Level:";
-            this.checkBoxTestSpawnLevel.UseVisualStyleBackColor = true;
+			this.toolTip.SetToolTip(this.checkBoxTestSpawnLevel, "Start the game on a specific level.");
+			this.checkBoxTestSpawnLevel.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnLevel.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnLevel_CheckedChanged);
             // 
             // comboBoxTestSpawnCharacter
@@ -1063,10 +1072,11 @@
             this.comboBoxTestSpawnCharacter.Name = "comboBoxTestSpawnCharacter";
             this.comboBoxTestSpawnCharacter.Size = new System.Drawing.Size(165, 23);
             this.comboBoxTestSpawnCharacter.TabIndex = 22;
-            // 
-            // labelTestSpawnY
-            // 
-            this.labelTestSpawnY.AutoSize = true;
+			this.toolTip.SetToolTip(this.comboBoxTestSpawnCharacter, "Start the game with a specific character.");
+			// 
+			// labelTestSpawnY
+			// 
+			this.labelTestSpawnY.AutoSize = true;
             this.labelTestSpawnY.Enabled = false;
             this.labelTestSpawnY.Location = new System.Drawing.Point(114, 119);
             this.labelTestSpawnY.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -1108,7 +1118,8 @@
             this.checkBoxTestSpawnSave.Size = new System.Drawing.Size(116, 19);
             this.checkBoxTestSpawnSave.TabIndex = 16;
             this.checkBoxTestSpawnSave.Text = "Save Redirection:";
-            this.checkBoxTestSpawnSave.UseVisualStyleBackColor = true;
+			this.toolTip.SetToolTip(this.checkBoxTestSpawnSave, "Force the game to load a specific save file.");
+			this.checkBoxTestSpawnSave.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnSave.CheckStateChanged += new System.EventHandler(this.checkBoxTestSpawnSave_CheckStateChanged);
             // 
             // labelTestSpawnX
@@ -1276,9 +1287,21 @@
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
-            // MainForm
+            // crashLogCheckBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.crashLogCheckBox.AutoSize = true;
+            this.crashLogCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.crashLogCheckBox.Location = new System.Drawing.Point(224, 21);
+            this.crashLogCheckBox.Name = "crashLogCheckBox";
+            this.crashLogCheckBox.Size = new System.Drawing.Size(107, 20);
+            this.crashLogCheckBox.TabIndex = 4;
+            this.crashLogCheckBox.Text = "Crash Handler";
+			this.toolTip.SetToolTip(this.crashLogCheckBox, "Displays the crash address and generates a crash dump when the game crashes.");
+			this.crashLogCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// MainForm
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(474, 533);
             this.Controls.Add(this.tabControl1);
@@ -1360,6 +1383,7 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
 		private System.Windows.Forms.ToolStripMenuItem developerToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem generateManifestToolStripMenuItem;
+		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.Button buttonCheckForUpdates;
 		private System.Windows.Forms.Label label4;
@@ -1411,6 +1435,7 @@
 		private System.Windows.Forms.ComboBox comboVoiceLanguage;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label8;
+		private System.Windows.Forms.CheckBox crashLogCheckBox;
 	}
 }
 
