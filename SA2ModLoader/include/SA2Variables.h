@@ -365,6 +365,7 @@ DataPointer(char, Current2PLevelGroup, 0x174AFDF);
 DataPointer(char, MissionNum, 0x174AFE3);
 DataPointer(char, JinglesEnabled, 0x174AFE4);
 DataPointer(char, VoicesEnabled, 0x174AFE5);
+DataPointer(char, CameraCollisionDisabled, 0x174AFEB);
 DataArray(char, P1SpecialAttacks, 0x174AFED, 3);
 DataArray(char, P2SpecialAttacks, 0x174AFF0, 3);
 DataArray(char, SpecialActivateTimer, 0x174AFF3, 2);
@@ -574,8 +575,15 @@ DataArray(BlackMarketItem, BlackMarketInventory, 0x1DBEDC0, 32);
 DataArray(char, MemoryCard, 0x1DBEE00, 104);
 DataPointer(ChaoData *, ChaoDataArray, 0x1DC0FC8); // TODO: fix
 DataPointer(ObjectMaster *, ChaoObjectArray, 0x1DC0FFC); // TODO: fix
-DataArray(NJS_POINT3, __PlayerStatus_last_pos, 0x1DCFF0C, 4);
-DataArray(CameraInfo, CameraData, 0x1DCFF40, 4);
+DataPointer(int, CameraTargetMode, 0x1DCFF00); // Specify how to calculate the camera direction
+DataPointer(BOOL, boolCameraCollision, 0x1DCFF04); // Specify if collision should run for the current camera subtask
+DataPointer(BOOL, boolCameraRotate, 0x1DCFF08); // Specify if right analog control is authorized for the current camera subtask
+DataPointer(NJS_POINT3, CameraPos, 0x1DCFF0C); // The camera position for camera subtasks
+DataPointer(Angle3, CameraAng, 0x1DCFF18); // The camera angle for camera subtasks
+DataPointer(NJS_POINT3, CameraDir, 0x1DCFF24); // The camera direction for camera subtasks
+DataPointer(NJS_POINT3, CameraTgt, 0x1DCFF30); // The camera target for camera subtasks
+DataPointer(float, CameraSpeed, 0x1DCFF3C); // The camera speed for camera subtasks
+DataArray(CameraInfo, CameraData, 0x1DCFF40, 4); // Main camera task information
 DataPointer(int, CurrentScreen, 0x1DD92A0);
 DataArray(CameraScreenInfo*, CameraScreensInfoArray, 0x1DD92B0, 4);
 DataPointer(int, SplitscreenMode, 0x1DD946C);

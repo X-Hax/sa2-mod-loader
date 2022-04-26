@@ -40,9 +40,10 @@ struct ObjUnknownB;
 struct ObjectMaster;
 struct LoopHead;
 struct CameraInfo;
+struct CameraParam;
 
 using ObjectFuncPtr = void(__cdecl*)(ObjectMaster*);
-using CameraFuncPtr = void(__cdecl*)(CameraInfo*);
+using CameraFuncPtr = void(__cdecl*)(CameraInfo*, CameraParam*);
 
 // All structs should be packed.
 #pragma pack(push, 1)
@@ -2193,6 +2194,20 @@ struct CameraScreenInfo
 	Angle3 ang;
 };
 
+// Data for the camera collision system
+struct CameraColliInfo
+{
+	NJS_POINT3 current_pos;
+	NJS_POINT3 next_pos;
+	int flag_mask;
+	float float_1C;
+	NJS_POINT3 output_pos;
+	char gap2C[220];
+	NJS_POINT3 dir;
+	char gap114[36];
+	int field_138;
+};
+
 // Drawing view information
 struct CameraViewInfo
 {
@@ -2203,24 +2218,56 @@ struct CameraViewInfo
 	float unknown;
 };
 
-struct CameraInfo
+// Camera location information
+struct CameraLocation
 {
-	Angle fov;
-	Angle field_4;
-	Angle roll;
-	int field_C;
-	BOOL Player_stop_flag;
-	char gap14[320];
-	NJS_POINT3 offset;
-	int field_160;
-	char gap164[8];
-	CameraViewInfo view;
-	int field_190;
 	NJS_POINT3 pos;
 	Angle3 ang;
 	NJS_POINT3 dir;
-	char gap1B8[8988];
-	int field_24D4;
+	NJS_POINT3 tgt;
+	NJS_POINT3 diff; // difference with previous position
+	float spd;
+};
+
+// Free space for camera subtasks
+struct CameraWork
+{
+	char gap[256];
+};
+
+// Camera subtask information
+struct CameraParam
+{
+	int mode;
+	int field_4;
+	unsigned int ulTimer;
+	CameraFuncPtr pObjCameraMode;
+	int field_10;
+	CameraWork work;
+};
+
+// Main camera task information
+struct CameraInfo
+{
+	Angle fov_current;
+	Angle fov_target;
+	Angle fov_spd;
+	BOOL analog_control;
+	BOOL Player_stop_flag;
+	int field_14;
+	CameraColliInfo colliwk;
+	NJS_POINT3 shake_offset;
+	int shake_mode;
+	int shake_timer;
+	float shake_magnitude;
+	CameraViewInfo view;
+	int field_190;
+	CameraLocation location;
+	CameraLocation oldLocation;
+	CameraLocation oldLocation_; // this one is set before it runs collisions
+	int currentCameraSlot; // current slot for cameraModes & cameraAdjusts
+	CameraParam cameraModes[16];
+	CameraParam cameraAdjusts[16];
 };
 
 // Additional object data for path controllers.

@@ -81,6 +81,7 @@ VoidFunc(SaveConstantAttr, 0x446CB0);
 VoidFunc(LoadConstantAttr, 0x446CD0);
 VoidFunc(SaveControl3D, 0x446D00);
 VoidFunc(LoadControl3D, 0x446D10);
+FunctionPointer(BOOL, MSetPosition, (NJS_POINT3* p, NJS_POINT3* v, Angle3* a, float r), 0x446D40); // Move position "p" with direction "v" and angle "a"; outputs in "v" and "a"; handles intersection with any geometry collision in radius "r"; returns whether it touched a collision or not.
 FunctionPointer(int, njPushUnitMatrix, (), 0x44B210);
 FunctionPointer(void, SetMaterial, (float a, float r, float g, float b), 0x44B2E0); // Sets ConstantMaterial.
 ObjectFunc(DrawLine3DExec, 0x44B680);
@@ -343,12 +344,16 @@ FunctionPointer(int, ResetArbitraryGravity, (int), 0x4E94B0);
 ObjectFunc(ManGCylExecutor_Main, 0x4E9510);
 FunctionPointer(int, ManGCylExecutor_Load, (), 0x4E9570);
 FunctionPointer(void, InitSplitscreen, (int num), 0x4EB2B0);
-VoidFunc(CameraGetPlayerLastPos, 0x4EB650); // Store current player positions in __PlayerStatus_last_pos
+VoidFunc(CameraSetGlobalLocation, 0x4EB650); // Set CameraPos, CameraAng, CameraDir, CameraTgt and CameraSpd with information from current camera
+VoidFunc(RunCameraShake, 0x4EB6E0); // Run current camera shake
 ObjectFunc(cameraCons_Display, 0x4EB8A0);
 ObjectFunc(cameraCons_Main, 0x4EB8E0);
 ObjectFunc(cameraCons_Delete, 0x4EBA40);
 ObjectFunc(cameraCons, 0x4EBA50);
 FunctionPointer(int, CameraDebug_BOSSINIT, (int, int), 0x4EBF70);
+VoidFunc(RunCameraTarget, 0x4EC520); // Set camera direction, see CameraTargetMode
+VoidFunc(CameraUpdateFOV, 0x4EC920);
+VoidFunc(RunCameraCollision, 0x4EC9A0); // Run collision for current camera
 FunctionPointer(int, CameraDebug_COLLISION, (int, int), 0x4ECFC0);
 FunctionPointer(int, CameraDebug_BOSSPOINT, (int, int), 0x4ED5F0);
 FunctionPointer(int, CameraDebug_BOSSKLAMATH, (), 0x4ED840);
@@ -2688,6 +2693,16 @@ static inline void SetEventCamera(int num, int mode)
 		mov eax, [num]
 		mov edx, [mode]
 		call SetEventCameraPtr
+	}
+}
+
+static const void* const CameraUpdateLocationPtr = (void*)0x4EC770;
+static inline void CameraUpdateLocation(int num) // Backup camera location, then update it with CameraPos, CameraAng, CameraDir, CameraTgt and CameraSpd
+{
+	__asm
+	{
+		mov ecx, [num]
+		call CameraUpdateLocationPtr
 	}
 }
 
