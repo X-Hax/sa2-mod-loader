@@ -1575,3 +1575,13 @@ enum CameraAdjust
 	CameraAdjust_Relative5,
 	CameraAdjust_Relative6
 };
+
+enum Languages
+{
+	Language_Japanese,
+	Language_English,
+	Language_French,
+	Language_Spanish,
+	Language_German,
+	Language_Italian
+};
