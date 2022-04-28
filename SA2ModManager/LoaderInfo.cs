@@ -9,6 +9,8 @@ namespace SA2ModManager
 		public bool DebugConsole { get; set; }
 		public bool DebugScreen { get; set; }
 		public bool DebugFile { get; set; }
+		[DefaultValue(true)]
+		public bool DebugCrashLog { get; set; }
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
 		[DefaultValue(true)]
 		public bool PauseWhenInactive { get; set; }

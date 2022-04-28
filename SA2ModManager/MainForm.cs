@@ -196,6 +196,7 @@ namespace SA2ModManager
 			consoleCheckBox.Checked = loaderini.DebugConsole;
 			screenCheckBox.Checked = loaderini.DebugScreen;
 			fileCheckBox.Checked = loaderini.DebugFile;
+			crashLogCheckBox.Checked = loaderini.DebugCrashLog;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
 			horizontalResolution.Value = Math.Max(horizontalResolution.Minimum, Math.Min(horizontalResolution.Maximum, loaderini.HorizontalResolution));
 			verticalResolution.Value = Math.Max(verticalResolution.Minimum, Math.Min(verticalResolution.Maximum, loaderini.VerticalResolution));
@@ -926,6 +927,7 @@ namespace SA2ModManager
 			loaderini.DebugConsole = consoleCheckBox.Checked;
 			loaderini.DebugScreen = screenCheckBox.Checked;
 			loaderini.DebugFile = fileCheckBox.Checked;
+			loaderini.DebugCrashLog = crashLogCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
 			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
 			loaderini.HorizontalResolution = (int)horizontalResolution.Value;

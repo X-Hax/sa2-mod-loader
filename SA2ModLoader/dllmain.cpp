@@ -1295,7 +1295,9 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
 	Init_AudioBassHook();
-	initCrashDump();
+
+	if (settings->getBool("DebugCrashLog", true))
+		initCrashDump();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<string, string>> errors;
