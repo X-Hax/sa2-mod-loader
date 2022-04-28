@@ -2685,14 +2685,153 @@ static inline void CameraApplyScreenView(int num) // Apply the drawing view for 
 	}
 }
 
-static const void* const SetEventCameraPtr = (void*)0x4EBBE0;
-static inline void SetEventCamera(int num, int mode)
+static const void* const GetCurrentCameraSlotPtr = (void*)0x4EBAD6;
+static inline int GetCurrentCameraSlot(int pnum) // Get the slot of the currently running camera
+{
+	int slot;
+	__asm
+	{
+		mov eax, [pnum]
+		call GetCurrentCameraSlotPtr
+		mov slot, eax
+	}
+	return slot;
+}
+
+static const void* const GetPreviousCameraSlotPtr = (void*)0x4EBAE0;
+static inline int GetPreviousCameraSlot(int pnum) // Get the slot of the previous running camera
+{
+	int slot;
+	__asm
+	{
+		mov ecx, [pnum]
+		call GetPreviousCameraSlotPtr
+		mov slot, eax
+	}
+	return slot;
+}
+
+static const void* const GetCameraModePtr = (void*)0x4EBB20;
+static inline int GetCameraMode(int pnum, int slot) // Get the mode (see CameraModes enum) of a camera slot
+{
+	int mode;
+	__asm
+	{
+		mov ecx, [pnum]
+		mov eax, [slot]
+		call GetCameraModePtr
+		mov mode, eax
+	}
+	return mode;
+}
+
+static const void* const SetCameraModePtr = (void*)0x4EBB40;
+static inline CameraParam* SetCameraMode(int pnum, int slot, int mode) // Set the mode (see CameraModes enum) of a camera slot
+{
+	CameraParam* result;
+	__asm
+	{
+		push[mode]
+		push[slot]
+		mov eax, [pnum]
+		call SetCameraModePtr
+		mov result, eax
+		add esp, 8
+	}
+	return result;
+}
+
+static const void* const RegisterCameraModePtr = (void*)0x4EBBE0;
+static inline CameraParam* RegisterCameraMode(int pnum, int mode) // Set mode of a free camera slot and set it as current
+{
+	CameraParam* result;
+	__asm
+	{
+		mov eax, [pnum]
+		mov edx, [mode]
+		call RegisterCameraMode
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const SetEventCameraFuncPtr = (void*)0x4EBC50;
+static inline CameraParam* SetEventCameraFunc(int pnum, int slot, CameraFuncPtr func) // Set a custom camera function for camera slot
+{
+	CameraParam* result;
+	__asm
+	{
+		push[func]
+		mov esi, [slot]
+		mov eax, [pnum]
+		call SetEventCameraFuncPtr
+		mov result, eax
+		add esp, 4
+	}
+	return result;
+}
+
+static const void* const RegisterEventCameraFuncPtr = (void*)0x4EBCB0;
+static inline CameraParam* RegisterEventCameraFunc(int pnum, CameraFuncPtr func) // Set a custom function camera into a free slot and set it as current
+{
+	CameraParam* result;
+	__asm
+	{
+		mov edx, [func]
+		mov eax, [pnum]
+		call RegisterEventCameraFuncPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const SetAdjustModePtr = (void*)0x4EBCD0;
+static inline CameraParam* SetAdjustMode(int pnum, int slot, int adjust) // Set the adjust (see CameraAdjusts enum) of a camera slot
+{
+	CameraParam* result;
+	__asm
+	{
+		mov edi, [adjust]
+		mov eax, [slot]
+		mov ecx, [pnum]
+		call SetAdjustModePtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const ReleaseCameraPtr = (void*)0x4EBD30;
+static inline void ReleaseCamera(int pnum, int slot) // Remove the current camera slot and restore the previous one
 {
 	__asm
 	{
-		mov eax, [num]
-		mov edx, [mode]
-		call SetEventCameraPtr
+		mov eax, [slot]
+		mov ecx, [pnum]
+		call ReleaseCameraPtr
+	}
+}
+
+static const void* const SetMotionCameraPtr = (void*)0x4EBEC0;
+static inline CameraParam* SetMotionCamera(int pnum, CameraMotion* cam_mtn) // Set up a camera that follows a camera motion
+{
+	CameraParam* result;
+	__asm
+	{
+		mov ebx, [cam_mtn]
+		mov eax, [pnum]
+		call SetMotionCameraPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const ReleaseMotionCameraPtr = (void*)0x4EC330;
+static inline void ReleaseMotionCamera(int pnum) // Remove the current motion camera
+{
+	__asm
+	{
+		mov ebx, [pnum]
+		call ReleaseMotionCameraPtr
 	}
 }
 
@@ -3916,21 +4055,6 @@ static inline void PGetAccelFly(EntityData1* data1, EntityData2* data2, CharObj2
 		call PAccelFlyPtr
 		add esp, 16
 	}
-}
-
-//int __usercall ResetCam@<eax>(int a1@<eax>, int a2@<ecx>)
-static const void* const ResetCamPtr = (void*)0x4EBD30;
-static inline int ResetCam(int a1, int a2)
-{
-	int result;
-	__asm
-	{
-		mov ecx, [a2]
-		mov eax, [a1]
-		call ResetCamPtr
-		mov result, eax
-	}
-	return result;
 }
 
 //void __usercall Sonic_InitLightDash(EntityData1* data@<ecx>, CharObj2Base* co2@<eax>, motionwk2* data2, SonicCharObj2* a5)

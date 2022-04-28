@@ -7,8 +7,8 @@ DataPointer(MLTSoundList, MetalHarborSoundList, 0x89F348);
 DataPointer(MLTSoundList, GreenForestSoundList, 0x8A0F60);
 DataPointer(MLTSoundList, CityEscapeSoundList, 0x8A0FF8);
 DataPointer(MLTSoundList, MeteorHerdSoundList, 0x8A1610);
-DataArray(_OBJ_CAMERAMODE, CameraMode, 0x8ABD3C, 28); // The list of camera logic functions (triggered by the camera layout)
-DataArray(_OBJ_CAMERAADJUST, CameraAdjust, 0x8ABE8C, 13); // The list of camera adjust functions (when it switches between cameras)
+DataArray(_OBJ_CAMERAMODE, CameraMode, 0x8ABD38, 28); // The list of camera logic functions (triggered by the camera layout)
+DataArray(_OBJ_CAMERAADJUST, CameraAdjust, 0x8ABE88, 14); // The list of camera adjust functions (when it switches between cameras)
 DataPointer(MLTSoundList, CommonSoundList, 0x8AC908);
 DataPointer(MLTSoundList, SonicShadowSoundList, 0x8ACB28);
 DataPointer(MLTSoundList, KnucklesRougeSoundList, 0x8ACC20);
@@ -446,7 +446,7 @@ DataPointer(unsigned __int16, CollisionList_9_Count, 0x1946ABC);
 DataPointer(unsigned __int16, CollisionList_5_Count, 0x1946AC0);
 DataArray(ObjectMaster*, CollisionList_6_List, 0x1946AC8, 128);
 DataArray(ObjectMaster*, CollisionList_7_List, 0x1946CC8, 128);
-DataPointer(BOOL, CameraEnabled, 0x19EF36C);
+DataPointer(BOOL, CameraDisabled, 0x19EF36C);
 DataPointer(DWORD, ChaoSaveStart, 0x19F6460);
 DataPointer(int, ChaoGardensUnlocked, 0x19F646C);
 DataArray(int, ChaoToysUnlocked, 0x19F6470, 3);
@@ -585,7 +585,7 @@ DataPointer(NJS_POINT3, CameraTgt, 0x1DCFF30); // The camera target for camera s
 DataPointer(float, CameraSpeed, 0x1DCFF3C); // The camera speed for camera subtasks
 DataArray(CameraInfo, CameraData, 0x1DCFF40, 4); // Main camera task information
 DataPointer(int, CurrentScreen, 0x1DD92A0);
-DataArray(CameraScreenInfo*, CameraScreensInfoArray, 0x1DD92B0, 4);
+DataArray(CameraLocation*, pCameraLocations, 0x1DD92B0, 4); // Pointer to each camera's location information
 DataPointer(int, SplitscreenMode, 0x1DD946C);
 DataPointer(int, CameraTimer, 0x1DD94AC);
 DataArray(FogData, stg27_fogB, 0x1DDA160, 34);

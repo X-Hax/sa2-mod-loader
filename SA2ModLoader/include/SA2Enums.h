@@ -1525,3 +1525,53 @@ enum SoundFlags : unsigned __int16
 	SndFlag_Unknown2000 = 0x2000,
 	SndFlag_SecondaryTimer = 0x4000
 };
+
+enum CameraModes
+{
+	CameraMode_None,
+	CameraMode_User,
+	CameraMode_Follow,
+	CameraMode_Knuckles,
+	CameraMode_Editor,
+	CameraMode_Editor2,
+	CameraMode_Snapshot,
+	CameraMode_Klamath,
+	CameraMode_Point,
+	CameraMode_Ashland,
+	CameraMode_Fix,
+	CameraMode_Leave,
+	CameraMode_Space,
+	CameraMode_Carmel,
+	CameraMode_Motion,
+	CameraMode_BossInit,
+	CameraMode_BossPoint,
+	CameraMode_Collision,
+	CameraMode_Pstone,
+	CameraMode_Init,
+	CameraMode_Easyset,
+	CameraMode_BossKlamath,
+	CameraMode_Gakugaku,
+	CameraMode_Knuckles_L,
+	CameraMode_Fix2,
+	CameraMode_Pstone2,
+	CameraMode_SS,
+	CameraMode_Colli_LR
+};
+
+enum CameraAdjust
+{
+	CameraAdjust_None,
+	CameraAdjust_User,
+	CameraAdjust_Half,
+	CameraAdjust_Three1,
+	CameraAdjust_Three2,
+	CameraAdjust_Three3,
+	CameraAdjust_Three4,
+	CameraAdjust_Three5,
+	CameraAdjust_Relative1,
+	CameraAdjust_Relative2,
+	CameraAdjust_Relative3,
+	CameraAdjust_Relative4,
+	CameraAdjust_Relative5,
+	CameraAdjust_Relative6
+};

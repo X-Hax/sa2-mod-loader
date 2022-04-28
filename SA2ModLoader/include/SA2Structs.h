@@ -1858,13 +1858,6 @@ struct SOCControllerAll
 	int field_34;
 };
 
-struct DebugFunction
-{
-	void(__cdecl *Function)(void *_this);
-	int Enabled;
-	const char *Name;
-};
-
 struct ChaoUnknownC
 {
 	char gap_0[2];
@@ -2176,22 +2169,26 @@ struct ChaoMotionTableEntry
 
 struct _OBJ_CAMERAMODE
 {
+	const char* name;
 	CameraFuncPtr fnCamera;
 	int mode;
-	const char* name;
 };
 
 struct _OBJ_CAMERAADJUST
 {
-	CameraFuncPtr fnAdjust;
 	const char* name;
+	CameraFuncPtr fnAdjust;
 };
 
-// Camera information for one screen, see CameraScreensInfoArray.
-struct CameraScreenInfo
+// Information for motion cameras, see SetMotionCamera
+struct CameraMotion
 {
-	NJS_POINT3 pos;
-	Angle3 ang;
+	float speed;
+	Angle angy;
+	NJS_MOTION* mtn;
+	NJS_POINT3* pos;
+	int flag;
+	void* endcallback;
 };
 
 // Data for the camera collision system
