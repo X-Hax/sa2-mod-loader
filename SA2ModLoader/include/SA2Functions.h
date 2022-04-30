@@ -2749,7 +2749,7 @@ static inline CameraParam* RegisterCameraMode(int pnum, int mode) // Set mode of
 	{
 		mov eax, [pnum]
 		mov edx, [mode]
-		call RegisterCameraMode
+		call RegisterCameraModePtr
 		mov result, eax
 	}
 	return result;
