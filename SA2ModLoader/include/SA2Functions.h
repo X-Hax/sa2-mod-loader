@@ -146,7 +146,6 @@ ObjectFunc(LoopSECallForTheMode, 0x476F20);
 ObjectFunc(ChaonadeExec, 0x476FD0);
 ObjectFunc(PoseEffectMan_Display, 0x477160);
 ObjectFunc(PoseEffectMan, 0x4773C0);
-FunctionPointer(int, PoseEffectMan_Load, (int), 0x477490);
 ObjectFunc(PoseEffect2PStartMan_Main, 0x4778F0);
 FunctionPointer(int, PoseEffect2PStartMan_Load, (), 0x477A80);
 ObjectFunc(psExecuteNote, 0x477E70);
@@ -4086,4 +4085,50 @@ static inline int TailsJump(CharObj2Base* a1, EntityData1* a2)
 	}
 
 	return result;
+}
+
+//bool __usercall Player_CheckBreak@<eax>(int a1@<ecx>, EntityData1* a2@<edi>, CharObj2Base* a3@<esi>)
+static const void* const playerBreakPtr = (void*)0x45ABE0;
+static inline bool PlayerCheckBreak(int a1, EntityData1* a2, CharObj2Base* a3)
+{
+	int result;
+	__asm
+	{
+		mov esi, [a3]
+		mov edi, [a2]
+		mov ecx, [a1]
+
+		call playerBreakPtr
+		mov result, ecx
+	}
+	return result;
+}
+
+static const void* const playerStopPtr = (void*)0x475100;
+static inline signed int PlayerStop(EntityData1* a1, CharObj2Base* a2, EntityData2* a4)
+{
+	signed int result;
+	__asm
+	{
+		push[a4]
+		mov esi, [a2]
+		mov eax, [a1]
+		call playerStopPtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+//void __usercall PoseEffectMan_Load(int a1@<eax>, int arg0)
+static const void* const PoseEffectMan_ptr = (void*)0x477490;
+static inline void PoseEffectMan_Load(int a1, int a2)
+{
+	__asm
+	{
+		push[a2]
+		mov eax, [a1]
+		call PoseEffectMan_ptr
+		add esp, 4
+	}
 }

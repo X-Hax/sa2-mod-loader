@@ -588,6 +588,10 @@ DataPointer(int, CurrentScreen, 0x1DD92A0);
 DataArray(CameraLocation*, pCameraLocations, 0x1DD92B0, 4); // Pointer to each camera's location information
 DataPointer(int, SplitscreenMode, 0x1DD946C);
 DataPointer(int, CameraTimer, 0x1DD94AC);
+DataPointer(NJS_VECTOR, CamEventPos, 0x1DCFE10);
+DataPointer(int, CamEventAngleZ, 0x1DCFDF8);
+DataPointer(int, CamEventAngleY, 0x1DCFDFC);
+DataPointer(float, CameraEventZoom, 0x1DCFE1C);
 DataArray(FogData, stg27_fogB, 0x1DDA160, 34);
 DataPointer(LandTable, BasicLandTable, 0x1DDA3C0);
 DataPointer(LandTable, ChunkLandTable, 0x1DDA3E0);
