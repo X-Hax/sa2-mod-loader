@@ -216,10 +216,18 @@ namespace SA2ModManager
 			screenNumComboBox.SelectedIndex = screenNum;
 			customWindowSizeCheckBox.Checked = windowHeight.Enabled = loaderini.CustomWindowSize;
 			windowWidth.Enabled = loaderini.CustomWindowSize;
+
 			Rectangle rect = Screen.PrimaryScreen.Bounds;
 
 			foreach (Screen screen in Screen.AllScreens)
 				rect = Rectangle.Union(rect, screen.Bounds);
+
+			windowWidth.Maximum = rect.Width;
+			windowWidth.Value = Math.Max(windowWidth.Minimum, Math.Min(rect.Width, loaderini.WindowWidth));
+			windowHeight.Maximum = rect.Height;
+			windowHeight.Value = Math.Max(windowHeight.Minimum, Math.Min(rect.Height, loaderini.WindowHeight));
+
+			checkWindowResize.Checked = loaderini.ResizableWindow;
 
 			checkBoxTestSpawnLevel.Checked = loaderini.TestSpawnLevel != -1;
 			comboBoxTestSpawnLevel.SelectedIndex = loaderini.TestSpawnLevel;
@@ -1719,7 +1727,6 @@ namespace SA2ModManager
 		private void customWindowSizeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			windowHeight.Enabled = customWindowSizeCheckBox.Checked;
-			checkWindowResize.Enabled = !customWindowSizeCheckBox.Checked;
 			windowWidth.Enabled = customWindowSizeCheckBox.Checked;
 		}
 	}

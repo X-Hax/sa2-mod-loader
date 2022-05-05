@@ -1701,7 +1701,7 @@ void __cdecl InitMods(void)
 		UINT flags = 0;
 		LONG dwStyle = 0;
 
-		if (settings->getBool("customWindowSize", false))
+		if (settings->getBool("CustomWindowSize", false))
 		{
 			windRect.right = settings->getInt("WindowWidth", 640);
 			windRect.bottom = settings->getInt("WindowHeight", 480);
