@@ -29,10 +29,12 @@
 		private void InitializeComponent()
 		{            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.GroupBox groupBox2;
-            System.Windows.Forms.Label label5;
             System.Windows.Forms.Label label1;
+            System.Windows.Forms.Label label5;
             System.Windows.Forms.Label label3;
+            System.Windows.Forms.Label label2;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.crashLogCheckBox = new System.Windows.Forms.CheckBox();
             this.screenCheckBox = new System.Windows.Forms.CheckBox();
             this.fileCheckBox = new System.Windows.Forms.CheckBox();
             this.consoleCheckBox = new System.Windows.Forms.CheckBox();
@@ -56,16 +58,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.codesCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.groupBox_Display = new System.Windows.Forms.GroupBox();
-            this.screenNumComboBox = new System.Windows.Forms.ComboBox();
-            this.comboResolutionPreset = new System.Windows.Forms.ComboBox();
-            this.radioWindowMode = new System.Windows.Forms.RadioButton();
-            this.radioFullscreen = new System.Windows.Forms.RadioButton();
-            this.borderlessWindowCheckBox = new System.Windows.Forms.CheckBox();
-            this.horizontalResolution = new System.Windows.Forms.NumericUpDown();
-            this.verticalResolution = new System.Windows.Forms.NumericUpDown();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.buttonSaveProfile = new System.Windows.Forms.Button();
             this.buttonLoadProfile = new System.Windows.Forms.Button();
@@ -107,6 +100,7 @@
             this.numericUpDownTestSpawnY = new System.Windows.Forms.NumericUpDown();
             this.comboBoxTestSpawnLevel = new System.Windows.Forms.ComboBox();
             this.numericUpDownTestSpawnX = new System.Windows.Forms.NumericUpDown();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.modContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
@@ -117,19 +111,29 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.crashLogCheckBox = new System.Windows.Forms.CheckBox();
+            this.verticalResolution = new System.Windows.Forms.NumericUpDown();
+            this.horizontalResolution = new System.Windows.Forms.NumericUpDown();
+            this.borderlessWindowCheckBox = new System.Windows.Forms.CheckBox();
+            this.radioFullscreen = new System.Windows.Forms.RadioButton();
+            this.radioWindowMode = new System.Windows.Forms.RadioButton();
+            this.comboResolutionPreset = new System.Windows.Forms.ComboBox();
+            this.screenNumComboBox = new System.Windows.Forms.ComboBox();
+            this.groupBox_WindowMode = new System.Windows.Forms.GroupBox();
+            this.windowWidth = new System.Windows.Forms.NumericUpDown();
+            this.windowHeight = new System.Windows.Forms.NumericUpDown();
+            this.customWindowSizeCheckBox = new System.Windows.Forms.CheckBox();
+            this.checkWindowResize = new System.Windows.Forms.CheckBox();
+            this.groupBox_Display = new System.Windows.Forms.GroupBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
-            label5 = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
             groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage5.SuspendLayout();
-            this.groupBox_Display.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.horizontalResolution)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.verticalResolution)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -142,6 +146,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnX)).BeginInit();
             this.modContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.verticalResolution)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.horizontalResolution)).BeginInit();
+            this.groupBox_WindowMode.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.windowWidth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.windowHeight)).BeginInit();
+            this.groupBox_Display.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox2
@@ -158,6 +168,18 @@
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             groupBox2.Text = "Debug Messages";
+            // 
+            // crashLogCheckBox
+            // 
+            this.crashLogCheckBox.AutoSize = true;
+            this.crashLogCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.crashLogCheckBox.Location = new System.Drawing.Point(224, 21);
+            this.crashLogCheckBox.Name = "crashLogCheckBox";
+            this.crashLogCheckBox.Size = new System.Drawing.Size(107, 20);
+            this.crashLogCheckBox.TabIndex = 4;
+            this.crashLogCheckBox.Text = "Crash Handler";
+            this.toolTip.SetToolTip(this.crashLogCheckBox, "Displays the crash address and generates a crash dump when the game crashes.");
+            this.crashLogCheckBox.UseVisualStyleBackColor = true;
             // 
             // screenCheckBox
             // 
@@ -187,35 +209,8 @@
             this.consoleCheckBox.Size = new System.Drawing.Size(69, 19);
             this.consoleCheckBox.TabIndex = 0;
             this.consoleCheckBox.Text = "Console";
-			this.toolTip.SetToolTip(this.consoleCheckBox, "Shows a console and displays debug messages.");
-			this.consoleCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(6, 59);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(66, 15);
-            label5.TabIndex = 17;
-            label5.Text = "Resolution:";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(144, 59);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(13, 15);
-            label1.TabIndex = 7;
-            label1.Text = "x";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(6, 26);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(45, 15);
-            label3.TabIndex = 19;
-            label3.Text = "Screen:";
+            this.toolTip.SetToolTip(this.consoleCheckBox, "Shows a console and displays debug messages.");
+            this.consoleCheckBox.UseVisualStyleBackColor = true;
             // 
             // modDescription
             // 
@@ -479,144 +474,6 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Graphics";
             this.tabPage5.UseVisualStyleBackColor = true;
-            // 
-            // groupBox_Display
-            // 
-            this.groupBox_Display.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox_Display.Controls.Add(label3);
-            this.groupBox_Display.Controls.Add(this.screenNumComboBox);
-            this.groupBox_Display.Controls.Add(this.comboResolutionPreset);
-            this.groupBox_Display.Controls.Add(this.radioWindowMode);
-            this.groupBox_Display.Controls.Add(label5);
-            this.groupBox_Display.Controls.Add(this.radioFullscreen);
-            this.groupBox_Display.Controls.Add(this.borderlessWindowCheckBox);
-            this.groupBox_Display.Controls.Add(this.horizontalResolution);
-            this.groupBox_Display.Controls.Add(label1);
-            this.groupBox_Display.Controls.Add(this.verticalResolution);
-            this.groupBox_Display.Location = new System.Drawing.Point(6, 6);
-            this.groupBox_Display.Name = "groupBox_Display";
-            this.groupBox_Display.Size = new System.Drawing.Size(456, 190);
-            this.groupBox_Display.TabIndex = 1;
-            this.groupBox_Display.TabStop = false;
-            this.groupBox_Display.Text = "Display";
-            // 
-            // screenNumComboBox
-            // 
-            this.screenNumComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.screenNumComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.screenNumComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.screenNumComboBox.FormattingEnabled = true;
-            this.screenNumComboBox.Items.AddRange(new object[] {
-            "All Screens"});
-            this.screenNumComboBox.Location = new System.Drawing.Point(56, 22);
-            this.screenNumComboBox.Name = "screenNumComboBox";
-            this.screenNumComboBox.Size = new System.Drawing.Size(366, 23);
-            this.screenNumComboBox.TabIndex = 20;
-            this.screenNumComboBox.SelectedIndexChanged += new System.EventHandler(this.screenNumComboBox_SelectedIndexChanged);
-            // 
-            // comboResolutionPreset
-            // 
-            this.comboResolutionPreset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboResolutionPreset.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.comboResolutionPreset.FormattingEnabled = true;
-            this.comboResolutionPreset.Items.AddRange(new object[] {
-            "640x480",
-            "800x600",
-            "1024x768",
-            "1152x864",
-            "1280x960",
-            "1280x1024",
-            "Native",
-            "1/2x Native",
-            "2x Native",
-            "720p",
-            "1080p",
-            "4K"});
-            this.comboResolutionPreset.Location = new System.Drawing.Point(246, 56);
-            this.comboResolutionPreset.Name = "comboResolutionPreset";
-            this.comboResolutionPreset.Size = new System.Drawing.Size(176, 23);
-            this.comboResolutionPreset.TabIndex = 18;
-            this.comboResolutionPreset.SelectedIndexChanged += new System.EventHandler(this.comboResolutionPreset_SelectedIndexChanged);
-            // 
-            // radioWindowMode
-            // 
-            this.radioWindowMode.AutoSize = true;
-            this.radioWindowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.radioWindowMode.Location = new System.Drawing.Point(104, 93);
-            this.radioWindowMode.Name = "radioWindowMode";
-            this.radioWindowMode.Size = new System.Drawing.Size(109, 20);
-            this.radioWindowMode.TabIndex = 1;
-            this.radioWindowMode.Text = "Window mode";
-            this.radioWindowMode.UseVisualStyleBackColor = true;
-            // 
-            // radioFullscreen
-            // 
-            this.radioFullscreen.AutoSize = true;
-            this.radioFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.radioFullscreen.Location = new System.Drawing.Point(9, 93);
-            this.radioFullscreen.Name = "radioFullscreen";
-            this.radioFullscreen.Size = new System.Drawing.Size(84, 20);
-            this.radioFullscreen.TabIndex = 0;
-            this.radioFullscreen.Text = "Fullscreen";
-            this.radioFullscreen.UseVisualStyleBackColor = true;
-            // 
-            // borderlessWindowCheckBox
-            // 
-            this.borderlessWindowCheckBox.AutoSize = true;
-            this.borderlessWindowCheckBox.Location = new System.Drawing.Point(9, 124);
-            this.borderlessWindowCheckBox.Name = "borderlessWindowCheckBox";
-            this.borderlessWindowCheckBox.Size = new System.Drawing.Size(127, 19);
-            this.borderlessWindowCheckBox.TabIndex = 1;
-            this.borderlessWindowCheckBox.Text = "Borderless Window";
-            this.borderlessWindowCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // horizontalResolution
-            // 
-            this.horizontalResolution.Location = new System.Drawing.Point(75, 57);
-            this.horizontalResolution.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.horizontalResolution.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.horizontalResolution.Name = "horizontalResolution";
-            this.horizontalResolution.Size = new System.Drawing.Size(62, 23);
-            this.horizontalResolution.TabIndex = 6;
-            this.horizontalResolution.Value = new decimal(new int[] {
-            640,
-            0,
-            0,
-            0});
-            this.horizontalResolution.ValueChanged += new System.EventHandler(this.horizontalResolution_ValueChanged);
-            // 
-            // verticalResolution
-            // 
-            this.verticalResolution.Location = new System.Drawing.Point(164, 57);
-            this.verticalResolution.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.verticalResolution.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.verticalResolution.Name = "verticalResolution";
-            this.verticalResolution.Size = new System.Drawing.Size(62, 23);
-            this.verticalResolution.TabIndex = 8;
-            this.verticalResolution.Value = new decimal(new int[] {
-            480,
-            0,
-            0,
-            0});
-            this.verticalResolution.ValueChanged += new System.EventHandler(this.verticalResolution_ValueChanged);
             // 
             // tabPage3
             // 
@@ -926,8 +783,7 @@
             this.checkBoxTestSpawnPlayer2.Size = new System.Drawing.Size(70, 19);
             this.checkBoxTestSpawnPlayer2.TabIndex = 36;
             this.checkBoxTestSpawnPlayer2.Text = "Player 2:";
-			this.toolTip.SetToolTip(this.checkBoxTestSpawnPosition, "Select Player 2 character.");
-			this.checkBoxTestSpawnPlayer2.UseVisualStyleBackColor = true;
+            this.checkBoxTestSpawnPlayer2.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnPlayer2.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnPlayer2_CheckedChanged);
             // 
             // comboBoxTestSpawnPlayer2
@@ -988,6 +844,7 @@
             this.checkBoxTestSpawnPosition.Size = new System.Drawing.Size(72, 19);
             this.checkBoxTestSpawnPosition.TabIndex = 23;
             this.checkBoxTestSpawnPosition.Text = "Position:";
+            this.toolTip.SetToolTip(this.checkBoxTestSpawnPosition, "Select Player 2 character.");
             this.checkBoxTestSpawnPosition.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnPosition.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnPosition_CheckedChanged);
             // 
@@ -999,8 +856,8 @@
             this.buttonTestSpawnPlay.Size = new System.Drawing.Size(93, 28);
             this.buttonTestSpawnPlay.TabIndex = 31;
             this.buttonTestSpawnPlay.Text = "Play";
-			this.toolTip.SetToolTip(this.buttonTestSpawnPlay, "Run the game with the above Test Spawn settings.");
-			this.buttonTestSpawnPlay.UseVisualStyleBackColor = true;
+            this.toolTip.SetToolTip(this.buttonTestSpawnPlay, "Run the game with the above Test Spawn settings.");
+            this.buttonTestSpawnPlay.UseVisualStyleBackColor = true;
             this.buttonTestSpawnPlay.Click += new System.EventHandler(this.buttonTestSpawnPlay_Click);
             // 
             // comboBoxTestSpawnEvent
@@ -1013,11 +870,11 @@
             this.comboBoxTestSpawnEvent.Name = "comboBoxTestSpawnEvent";
             this.comboBoxTestSpawnEvent.Size = new System.Drawing.Size(319, 23);
             this.comboBoxTestSpawnEvent.TabIndex = 14;
-			this.toolTip.SetToolTip(this.comboBoxTestSpawnEvent, "Start the game on a specific cutscene.");
-			// 
-			// checkBoxTestSpawnEvent
-			// 
-			this.checkBoxTestSpawnEvent.AutoSize = true;
+            this.toolTip.SetToolTip(this.comboBoxTestSpawnEvent, "Start the game on a specific cutscene.");
+            // 
+            // checkBoxTestSpawnEvent
+            // 
+            this.checkBoxTestSpawnEvent.AutoSize = true;
             this.checkBoxTestSpawnEvent.Location = new System.Drawing.Point(6, 186);
             this.checkBoxTestSpawnEvent.Margin = new System.Windows.Forms.Padding(2);
             this.checkBoxTestSpawnEvent.Name = "checkBoxTestSpawnEvent";
@@ -1036,8 +893,8 @@
             this.checkBoxTestSpawnCharacter.Size = new System.Drawing.Size(80, 19);
             this.checkBoxTestSpawnCharacter.TabIndex = 32;
             this.checkBoxTestSpawnCharacter.Text = "Character:";
-			this.toolTip.SetToolTip(this.checkBoxTestSpawnCharacter, "Start the game with a specific character.");
-			this.checkBoxTestSpawnCharacter.UseVisualStyleBackColor = true;
+            this.toolTip.SetToolTip(this.checkBoxTestSpawnCharacter, "Start the game with a specific character.");
+            this.checkBoxTestSpawnCharacter.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnCharacter.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnCharacter_CheckedChanged);
             // 
             // checkBoxTestSpawnLevel
@@ -1049,8 +906,8 @@
             this.checkBoxTestSpawnLevel.Size = new System.Drawing.Size(56, 19);
             this.checkBoxTestSpawnLevel.TabIndex = 20;
             this.checkBoxTestSpawnLevel.Text = "Level:";
-			this.toolTip.SetToolTip(this.checkBoxTestSpawnLevel, "Start the game on a specific level.");
-			this.checkBoxTestSpawnLevel.UseVisualStyleBackColor = true;
+            this.toolTip.SetToolTip(this.checkBoxTestSpawnLevel, "Start the game on a specific level.");
+            this.checkBoxTestSpawnLevel.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnLevel.CheckedChanged += new System.EventHandler(this.checkBoxTestSpawnLevel_CheckedChanged);
             // 
             // comboBoxTestSpawnCharacter
@@ -1072,11 +929,11 @@
             this.comboBoxTestSpawnCharacter.Name = "comboBoxTestSpawnCharacter";
             this.comboBoxTestSpawnCharacter.Size = new System.Drawing.Size(165, 23);
             this.comboBoxTestSpawnCharacter.TabIndex = 22;
-			this.toolTip.SetToolTip(this.comboBoxTestSpawnCharacter, "Start the game with a specific character.");
-			// 
-			// labelTestSpawnY
-			// 
-			this.labelTestSpawnY.AutoSize = true;
+            this.toolTip.SetToolTip(this.comboBoxTestSpawnCharacter, "Start the game with a specific character.");
+            // 
+            // labelTestSpawnY
+            // 
+            this.labelTestSpawnY.AutoSize = true;
             this.labelTestSpawnY.Enabled = false;
             this.labelTestSpawnY.Location = new System.Drawing.Point(114, 119);
             this.labelTestSpawnY.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -1118,8 +975,8 @@
             this.checkBoxTestSpawnSave.Size = new System.Drawing.Size(116, 19);
             this.checkBoxTestSpawnSave.TabIndex = 16;
             this.checkBoxTestSpawnSave.Text = "Save Redirection:";
-			this.toolTip.SetToolTip(this.checkBoxTestSpawnSave, "Force the game to load a specific save file.");
-			this.checkBoxTestSpawnSave.UseVisualStyleBackColor = true;
+            this.toolTip.SetToolTip(this.checkBoxTestSpawnSave, "Force the game to load a specific save file.");
+            this.checkBoxTestSpawnSave.UseVisualStyleBackColor = true;
             this.checkBoxTestSpawnSave.CheckStateChanged += new System.EventHandler(this.checkBoxTestSpawnSave_CheckStateChanged);
             // 
             // labelTestSpawnX
@@ -1287,21 +1144,269 @@
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
-            // crashLogCheckBox
+            // verticalResolution
             // 
-            this.crashLogCheckBox.AutoSize = true;
-            this.crashLogCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.crashLogCheckBox.Location = new System.Drawing.Point(224, 21);
-            this.crashLogCheckBox.Name = "crashLogCheckBox";
-            this.crashLogCheckBox.Size = new System.Drawing.Size(107, 20);
-            this.crashLogCheckBox.TabIndex = 4;
-            this.crashLogCheckBox.Text = "Crash Handler";
-			this.toolTip.SetToolTip(this.crashLogCheckBox, "Displays the crash address and generates a crash dump when the game crashes.");
-			this.crashLogCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// MainForm
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.verticalResolution.Location = new System.Drawing.Point(164, 57);
+            this.verticalResolution.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.verticalResolution.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.verticalResolution.Name = "verticalResolution";
+            this.verticalResolution.Size = new System.Drawing.Size(62, 23);
+            this.verticalResolution.TabIndex = 8;
+            this.verticalResolution.Value = new decimal(new int[] {
+            480,
+            0,
+            0,
+            0});
+            this.verticalResolution.ValueChanged += new System.EventHandler(this.verticalResolution_ValueChanged);
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(144, 59);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(13, 15);
+            label1.TabIndex = 7;
+            label1.Text = "x";
+            // 
+            // horizontalResolution
+            // 
+            this.horizontalResolution.Location = new System.Drawing.Point(75, 57);
+            this.horizontalResolution.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.horizontalResolution.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.horizontalResolution.Name = "horizontalResolution";
+            this.horizontalResolution.Size = new System.Drawing.Size(62, 23);
+            this.horizontalResolution.TabIndex = 6;
+            this.horizontalResolution.Value = new decimal(new int[] {
+            640,
+            0,
+            0,
+            0});
+            this.horizontalResolution.ValueChanged += new System.EventHandler(this.horizontalResolution_ValueChanged);
+            // 
+            // borderlessWindowCheckBox
+            // 
+            this.borderlessWindowCheckBox.AutoSize = true;
+            this.borderlessWindowCheckBox.Location = new System.Drawing.Point(9, 124);
+            this.borderlessWindowCheckBox.Name = "borderlessWindowCheckBox";
+            this.borderlessWindowCheckBox.Size = new System.Drawing.Size(127, 19);
+            this.borderlessWindowCheckBox.TabIndex = 1;
+            this.borderlessWindowCheckBox.Text = "Borderless Window";
+            this.borderlessWindowCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // radioFullscreen
+            // 
+            this.radioFullscreen.AutoSize = true;
+            this.radioFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.radioFullscreen.Location = new System.Drawing.Point(9, 93);
+            this.radioFullscreen.Name = "radioFullscreen";
+            this.radioFullscreen.Size = new System.Drawing.Size(84, 20);
+            this.radioFullscreen.TabIndex = 0;
+            this.radioFullscreen.Text = "Fullscreen";
+            this.radioFullscreen.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(6, 59);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(66, 15);
+            label5.TabIndex = 17;
+            label5.Text = "Resolution:";
+            // 
+            // radioWindowMode
+            // 
+            this.radioWindowMode.AutoSize = true;
+            this.radioWindowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.radioWindowMode.Location = new System.Drawing.Point(104, 93);
+            this.radioWindowMode.Name = "radioWindowMode";
+            this.radioWindowMode.Size = new System.Drawing.Size(109, 20);
+            this.radioWindowMode.TabIndex = 1;
+            this.radioWindowMode.Text = "Window mode";
+            this.radioWindowMode.UseVisualStyleBackColor = true;
+            // 
+            // comboResolutionPreset
+            // 
+            this.comboResolutionPreset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboResolutionPreset.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.comboResolutionPreset.FormattingEnabled = true;
+            this.comboResolutionPreset.Items.AddRange(new object[] {
+            "640x480",
+            "800x600",
+            "1024x768",
+            "1152x864",
+            "1280x960",
+            "1280x1024",
+            "Native",
+            "1/2x Native",
+            "2x Native",
+            "720p",
+            "1080p",
+            "4K"});
+            this.comboResolutionPreset.Location = new System.Drawing.Point(246, 56);
+            this.comboResolutionPreset.Name = "comboResolutionPreset";
+            this.comboResolutionPreset.Size = new System.Drawing.Size(176, 23);
+            this.comboResolutionPreset.TabIndex = 18;
+            this.comboResolutionPreset.SelectedIndexChanged += new System.EventHandler(this.comboResolutionPreset_SelectedIndexChanged);
+            // 
+            // screenNumComboBox
+            // 
+            this.screenNumComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.screenNumComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.screenNumComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.screenNumComboBox.FormattingEnabled = true;
+            this.screenNumComboBox.Items.AddRange(new object[] {
+            "All Screens"});
+            this.screenNumComboBox.Location = new System.Drawing.Point(56, 22);
+            this.screenNumComboBox.Name = "screenNumComboBox";
+            this.screenNumComboBox.Size = new System.Drawing.Size(366, 23);
+            this.screenNumComboBox.TabIndex = 20;
+            this.screenNumComboBox.SelectedIndexChanged += new System.EventHandler(this.screenNumComboBox_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(6, 26);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(45, 15);
+            label3.TabIndex = 19;
+            label3.Text = "Screen:";
+            // 
+            // groupBox_WindowMode
+            // 
+            this.groupBox_WindowMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox_WindowMode.Controls.Add(this.checkWindowResize);
+            this.groupBox_WindowMode.Controls.Add(this.customWindowSizeCheckBox);
+            this.groupBox_WindowMode.Controls.Add(this.windowHeight);
+            this.groupBox_WindowMode.Controls.Add(this.windowWidth);
+            this.groupBox_WindowMode.Controls.Add(label2);
+            this.groupBox_WindowMode.Location = new System.Drawing.Point(9, 152);
+            this.groupBox_WindowMode.Name = "groupBox_WindowMode";
+            this.groupBox_WindowMode.Size = new System.Drawing.Size(441, 75);
+            this.groupBox_WindowMode.TabIndex = 21;
+            this.groupBox_WindowMode.TabStop = false;
+            this.groupBox_WindowMode.Text = "Window mode";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(222, 22);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(13, 15);
+            label2.TabIndex = 13;
+            label2.Text = "x";
+            // 
+            // windowWidth
+            // 
+            this.windowWidth.Location = new System.Drawing.Point(154, 19);
+            this.windowWidth.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.windowWidth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.windowWidth.Name = "windowWidth";
+            this.windowWidth.Size = new System.Drawing.Size(62, 23);
+            this.windowWidth.TabIndex = 12;
+            this.windowWidth.Value = new decimal(new int[] {
+            640,
+            0,
+            0,
+            0});
+            // 
+            // windowHeight
+            // 
+            this.windowHeight.Location = new System.Drawing.Point(240, 19);
+            this.windowHeight.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.windowHeight.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.windowHeight.Name = "windowHeight";
+            this.windowHeight.Size = new System.Drawing.Size(62, 23);
+            this.windowHeight.TabIndex = 14;
+            this.windowHeight.Value = new decimal(new int[] {
+            480,
+            0,
+            0,
+            0});
+            // 
+            // customWindowSizeCheckBox
+            // 
+            this.customWindowSizeCheckBox.AutoSize = true;
+            this.customWindowSizeCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.customWindowSizeCheckBox.Location = new System.Drawing.Point(6, 20);
+            this.customWindowSizeCheckBox.Name = "customWindowSizeCheckBox";
+            this.customWindowSizeCheckBox.Size = new System.Drawing.Size(147, 20);
+            this.customWindowSizeCheckBox.TabIndex = 11;
+            this.customWindowSizeCheckBox.Text = "Custom Window Size:";
+            this.toolTip.SetToolTip(this.customWindowSizeCheckBox, "Allows you to specify a fixed size for the window in windowed mode.");
+            this.customWindowSizeCheckBox.UseVisualStyleBackColor = true;
+            this.customWindowSizeCheckBox.CheckedChanged += new System.EventHandler(this.customWindowSizeCheckBox_CheckedChanged);
+            // 
+            // checkWindowResize
+            // 
+            this.checkWindowResize.AutoSize = true;
+            this.checkWindowResize.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.checkWindowResize.Location = new System.Drawing.Point(6, 48);
+            this.checkWindowResize.Name = "checkWindowResize";
+            this.checkWindowResize.Size = new System.Drawing.Size(127, 20);
+            this.checkWindowResize.TabIndex = 16;
+            this.checkWindowResize.Text = "Resizable Window";
+            this.toolTip.SetToolTip(this.checkWindowResize, "Allows the window to be resized and dynamically adjusts resolution to match.");
+            this.checkWindowResize.UseVisualStyleBackColor = true;
+            // 
+            // groupBox_Display
+            // 
+            this.groupBox_Display.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox_Display.Controls.Add(this.groupBox_WindowMode);
+            this.groupBox_Display.Controls.Add(label3);
+            this.groupBox_Display.Controls.Add(this.screenNumComboBox);
+            this.groupBox_Display.Controls.Add(this.comboResolutionPreset);
+            this.groupBox_Display.Controls.Add(this.radioWindowMode);
+            this.groupBox_Display.Controls.Add(label5);
+            this.groupBox_Display.Controls.Add(this.radioFullscreen);
+            this.groupBox_Display.Controls.Add(this.borderlessWindowCheckBox);
+            this.groupBox_Display.Controls.Add(this.horizontalResolution);
+            this.groupBox_Display.Controls.Add(label1);
+            this.groupBox_Display.Controls.Add(this.verticalResolution);
+            this.groupBox_Display.Location = new System.Drawing.Point(6, 6);
+            this.groupBox_Display.Name = "groupBox_Display";
+            this.groupBox_Display.Size = new System.Drawing.Size(456, 233);
+            this.groupBox_Display.TabIndex = 1;
+            this.groupBox_Display.TabStop = false;
+            this.groupBox_Display.Text = "Display";
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(474, 533);
             this.Controls.Add(this.tabControl1);
@@ -1324,10 +1429,6 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
-            this.groupBox_Display.ResumeLayout(false);
-            this.groupBox_Display.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.horizontalResolution)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.verticalResolution)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -1344,6 +1445,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTestSpawnX)).EndInit();
             this.modContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.verticalResolution)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.horizontalResolution)).EndInit();
+            this.groupBox_WindowMode.ResumeLayout(false);
+            this.groupBox_WindowMode.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.windowWidth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.windowHeight)).EndInit();
+            this.groupBox_Display.ResumeLayout(false);
+            this.groupBox_Display.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1372,7 +1481,6 @@
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox pauseWhenInactiveCheckBox;
-		private System.Windows.Forms.CheckBox borderlessWindowCheckBox;
 		private System.Windows.Forms.ContextMenuStrip modContextMenu;
 		private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
@@ -1424,18 +1532,24 @@
 		private System.Windows.Forms.CheckBox checkBoxTestSpawnPlayer2;
 		private System.Windows.Forms.ComboBox comboBoxTestSpawnPlayer2;
 		private System.Windows.Forms.TabPage tabPage5;
-		private System.Windows.Forms.GroupBox groupBox_Display;
-		private System.Windows.Forms.ComboBox comboResolutionPreset;
-		private System.Windows.Forms.RadioButton radioWindowMode;
-		private System.Windows.Forms.RadioButton radioFullscreen;
-		private System.Windows.Forms.NumericUpDown horizontalResolution;
-		private System.Windows.Forms.NumericUpDown verticalResolution;
-		private System.Windows.Forms.ComboBox screenNumComboBox;
 		private System.Windows.Forms.ComboBox comboTextLanguage;
 		private System.Windows.Forms.ComboBox comboVoiceLanguage;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.CheckBox crashLogCheckBox;
+		private System.Windows.Forms.GroupBox groupBox_Display;
+		private System.Windows.Forms.GroupBox groupBox_WindowMode;
+		private System.Windows.Forms.CheckBox checkWindowResize;
+		private System.Windows.Forms.CheckBox customWindowSizeCheckBox;
+		private System.Windows.Forms.NumericUpDown windowHeight;
+		private System.Windows.Forms.NumericUpDown windowWidth;
+		private System.Windows.Forms.ComboBox screenNumComboBox;
+		private System.Windows.Forms.ComboBox comboResolutionPreset;
+		private System.Windows.Forms.RadioButton radioWindowMode;
+		private System.Windows.Forms.RadioButton radioFullscreen;
+		private System.Windows.Forms.CheckBox borderlessWindowCheckBox;
+		private System.Windows.Forms.NumericUpDown horizontalResolution;
+		private System.Windows.Forms.NumericUpDown verticalResolution;
 	}
 }
 

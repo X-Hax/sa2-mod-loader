@@ -29,6 +29,12 @@ namespace SA2ModManager
 		public int VoiceLanguage { get; set; } = 1;
 		[DefaultValue(0)]
 		public int TextLanguage { get; set; } = 0;
+		public bool CustomWindowSize { get; set; }
+		[DefaultValue(640)]
+		public int WindowWidth { get; set; } = 640;
+		[DefaultValue(480)]
+		public int WindowHeight { get; set; } = 480;
+		public bool ResizableWindow { get; set; }
 		[DefaultValue(-1)]
 		public int TestSpawnLevel { get; set; } = -1;
 		[DefaultValue(-1)]

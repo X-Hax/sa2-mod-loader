@@ -214,7 +214,8 @@ namespace SA2ModManager
 			int screenNum = Math.Min(Screen.AllScreens.Length, loaderini.ScreenNum);
 
 			screenNumComboBox.SelectedIndex = screenNum;
-
+			customWindowSizeCheckBox.Checked = windowHeight.Enabled = loaderini.CustomWindowSize;
+			windowWidth.Enabled = loaderini.CustomWindowSize;
 			Rectangle rect = Screen.PrimaryScreen.Bounds;
 
 			foreach (Screen screen in Screen.AllScreens)
@@ -935,6 +936,10 @@ namespace SA2ModManager
 			loaderini.FullScreen = radioFullscreen.Checked;
 			radioWindowMode.Checked = loaderini.FullScreen == false;
 			loaderini.ScreenNum = screenNumComboBox.SelectedIndex;
+			loaderini.CustomWindowSize = customWindowSizeCheckBox.Checked;
+			loaderini.WindowWidth = (int)windowWidth.Value;
+			loaderini.WindowHeight = (int)windowHeight.Value;
+			loaderini.ResizableWindow = checkWindowResize.Checked;
 			loaderini.SkipIntro = skipIntrocheckBox.Checked;
 			loaderini.UpdateCheck = checkUpdateStartup.Checked;
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
@@ -1709,6 +1714,13 @@ namespace SA2ModManager
 			if (comboResolutionPreset.SelectedIndex > 4 && comboResolutionPreset.SelectedIndex < 8 && rect.Size != oldsize)
 				comboResolutionPreset.SelectedIndex = -1;
 
+		}
+
+		private void customWindowSizeCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			windowHeight.Enabled = customWindowSizeCheckBox.Checked;
+			checkWindowResize.Enabled = !customWindowSizeCheckBox.Checked;
+			windowWidth.Enabled = customWindowSizeCheckBox.Checked;
 		}
 	}
 }
