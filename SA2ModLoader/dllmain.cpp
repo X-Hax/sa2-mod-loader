@@ -1694,38 +1694,53 @@ void __cdecl InitMods(void)
 	WriteJump((void*)0x00441D41, OnControl);
 	WriteJump((void*)0x00441EEB, OnControl);
 
-
 	if (MainUserConfig->data.Fullscreen == 0)
 	{
-		if (settings->getBool("BorderlessWindow", false))
+		RECT windRect = { 0, 0, 0, 0 };
+
+		UINT flags = 0;
+		LONG dwStyle = 0;
+
+		if (settings->getBool("customWindowSize", false))
 		{
-			window_thread = new thread([] {
-				SetWindowLong(MainWindowHandle, GWL_STYLE, WS_VISIBLE | WS_POPUP);
-
-				auto width = MainUserConfig->data.Width;
-				auto height = MainUserConfig->data.Height;
-
-				auto x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-				auto y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-
-				SetWindowPos(MainWindowHandle, nullptr, x, y, width, height, SWP_FRAMECHANGED);
-			});
+			windRect.right = settings->getInt("WindowWidth", 640);
+			windRect.bottom = settings->getInt("WindowHeight", 480);
 		}
 		else
 		{
-			RECT rect = {};
-
-			rect.right = MainUserConfig->data.Width;
-			rect.bottom = MainUserConfig->data.Height;
-
-			auto dwStyle = GetWindowLong(MainWindowHandle, GWL_STYLE);
-			auto dwExStyle = GetWindowLong(MainWindowHandle, GWL_EXSTYLE);
-
-			AdjustWindowRectEx(&rect, dwStyle, false, dwExStyle);
-
-			SetWindowPos(MainWindowHandle, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top,
-				SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE | SWP_ASYNCWINDOWPOS);
+			windRect.right = MainUserConfig->data.Width;
+			windRect.bottom = MainUserConfig->data.Height;
 		}
+
+		if (settings->getBool("ResizableWindow", false))
+		{
+			dwStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
+
+			windRect.right += 1; // fixes the window being slightly smaller than it should be
+			windRect.bottom += 1;
+		}
+
+		if (settings->getBool("BorderlessWindow", false))
+		{
+			dwStyle |= WS_VISIBLE | WS_POPUP;
+			flags = SWP_FRAMECHANGED;
+		}
+		else
+		{
+			dwStyle |= GetWindowLong(MainWindowHandle, GWL_STYLE);
+			flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS;
+
+			AdjustWindowRectEx(&windRect, dwStyle, false, GetWindowLong(MainWindowHandle, GWL_EXSTYLE));
+		}
+
+		SetWindowLong(MainWindowHandle, GWL_STYLE, dwStyle);
+
+		SetForegroundWindow(MainWindowHandle); // Fixes issue where console window is left in focus
+
+		auto x = (GetSystemMetrics(SM_CXSCREEN) - windRect.right) / 2;
+		auto y = (GetSystemMetrics(SM_CYSCREEN) - windRect.bottom) / 2;
+
+		SetWindowPos(MainWindowHandle, nullptr, x, y, windRect.right - windRect.left, windRect.bottom - windRect.top, flags);
 	}
 }
 
