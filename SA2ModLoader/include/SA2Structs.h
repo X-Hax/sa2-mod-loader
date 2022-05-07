@@ -569,16 +569,16 @@ struct PhysicsData
 
 struct CharAnimInfo
 {
-	__int16 AnimationFrame;
+	__int16 mtnmode;
 	__int16 Next;
 	__int16 Current;
 	__int16 Animation3;
 	__int16 field_8;
-	__int16 field_A;
+	__int16 acttimer;
 	__int16 field_C;
 	char field_E;
 	char field_F;
-	float field_10;
+	float nframe;
 	float field_14;
 	float field_18;
 	char field_1C;
@@ -906,7 +906,7 @@ struct AnimationInfo
 {
 	__int16 AnimNum;
 	__int16 ModelNum;
-	__int16 anonymous_2;
+	__int16 mtnmode;
 	__int16 NextAnimation;
 	float TransitionSpeed;
 	float AnimationSpeed;
@@ -1508,11 +1508,31 @@ struct MechEggmanCharObj2
 struct TailsCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[496];
-	NJS_TEXLIST *TextureList;
-	ModelIndex *ModelList;
-	AnimationIndex *MotionList;
-	char field_3BC[36];
+	char field_1BC[40];
+	NJS_POINT3 righthand_pos;
+	NJS_POINT3 lefthand_pos;
+	NJS_POINT3 rightfoot_pos;
+	NJS_POINT3 leftfoot_pos;
+	NJS_POINT3 head0_pos;
+	NJS_POINT3 head1_pos;
+	NJS_POINT3 head2_pos;
+	NJS_POINT3 tailnode_pos;
+	char field_2BC[36];
+	NJS_POINT3 righthand_vec0;
+	NJS_POINT3 lefthand_vec0;
+	NJS_POINT3 righthand_vec1;
+	NJS_POINT3 lefthand_vec1;
+	NJS_POINT3 rightfoot_vec;
+	NJS_POINT3 leftfoot_vec;
+	NJS_POINT3 head0_vec;
+	NJS_POINT3 head1_vec;
+	NJS_POINT3 head2_vec;
+	NJS_POINT3 tailnode_vec;
+	char field_3BC[204];
+	NJS_TEXLIST* TextureList;
+	ModelIndex* ModelList;
+	AnimationIndex* MotionList;
+	char field_4BC[36];
 };
 
 struct SuperSonicCharObj2
