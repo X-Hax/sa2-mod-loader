@@ -2578,4 +2578,22 @@ struct __declspec(align(2)) HomingAttackTarget
 	float distance;
 };
 
+struct __declspec(align(4)) Light
+{
+	NJS_VECTOR direction;
+	float intensity;
+	float ambient;
+	NJS_VECTOR color;
+};
+
+struct __declspec(align(4)) LightGC
+{
+	NJS_VECTOR direction;
+	NJS_VECTOR lightColor;
+	NJS_VECTOR ambientReg;
+	int flags;
+	int unused;
+	int unk;
+};
+
 #pragma pack(pop)

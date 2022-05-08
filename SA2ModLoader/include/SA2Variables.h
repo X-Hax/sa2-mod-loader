@@ -600,7 +600,6 @@ DataPointer(__int16, SETObjectCount, 0x1DDE270);
 DataPointer(void *, SETFile, 0x1DDE274);
 DataPointer(SETEntry*, SETEntries, 0x1DDE278);
 DataArray(SETObjectData, SETObjects, 0x1DDE280, 1535);
-DataArray(float, ProbablyFogTable, 0x1DE4280, 96);
 DataPointer(void*, GetCurrentChaoStage_ptr, 0x1DE4698);
 DataPointer(unsigned __int16, TargetCollisions_LastCount, 0x1DE4EC8);
 DataArray(ObjectMaster*, CollisionList_2_List, 0x1DE4EE0, 128);
@@ -709,3 +708,15 @@ DataPointer(SonicCharObj2*, SonicCO2PtrExtern, 0x1A51A9C);
 DataPointer(TailsCharObj2*, MilesCO2Extern, 0x1A521EC);
 DataArray(NJS_VECTOR, TreePos, 0x1366B30, 30);
 DataPointer(float, landColRadius, 0x171CAA4); //default to 400, increased during Chao Race and kart levels.
+//shaders
+DataPointer(char, LightIndex, 0x01DE4664);
+DataPointer(char, LightIndexBackupMaybe, 0x01DE4400);
+DataArray(Light, Lights, 0x01DE4280, 12);
+DataArray(LightGC, LightsGC, 0x01DE4420, 12);
+//fog
+DataPointer(int, FogColor, 0x19341C0);
+DataPointer(float, FogNear, 0x19341C4);
+DataPointer(float, FogFar, 0x19341C8);
+DataPointer(int, FogMode, 0x193411C);
+DataPointer(bool, fogEnabled, 0x25EFFCC);
+DataPointer(int, DisableFogMaybe, 0x1A55808);
