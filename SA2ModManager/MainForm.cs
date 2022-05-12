@@ -1725,8 +1725,15 @@ namespace SA2ModManager
 
 		private void customWindowSizeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			windowHeight.Enabled = customWindowSizeCheckBox.Checked;
-			windowWidth.Enabled = customWindowSizeCheckBox.Checked;
+			var check = ((CheckBox)sender).Checked;
+			windowHeight.Enabled = check;
+			windowWidth.Enabled = check;
+			checkWindowResize.Enabled = !check;
+		}
+
+		private void radioFullscreen_CheckedChanged(object sender, EventArgs e)
+		{
+			groupBox_WindowMode.Enabled = !((RadioButton)sender).Checked;
 		}
 	}
 }

@@ -64,6 +64,7 @@
             this.windowHeight = new System.Windows.Forms.NumericUpDown();
             this.windowWidth = new System.Windows.Forms.NumericUpDown();
             this.groupBox_Display = new System.Windows.Forms.GroupBox();
+            this.radioBorderlessWindowMode = new System.Windows.Forms.RadioButton();
             this.screenNumComboBox = new System.Windows.Forms.ComboBox();
             this.comboResolutionPreset = new System.Windows.Forms.ComboBox();
             this.radioWindowMode = new System.Windows.Forms.RadioButton();
@@ -123,7 +124,6 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.radioBorderlessWindowMode = new System.Windows.Forms.RadioButton();
             groupBox2 = new System.Windows.Forms.GroupBox();
             label1 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
@@ -652,6 +652,19 @@
             this.groupBox_Display.TabStop = false;
             this.groupBox_Display.Text = "Display";
             // 
+            // radioBorderlessWindowMode
+            // 
+            this.radioBorderlessWindowMode.AutoSize = true;
+            this.radioBorderlessWindowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.radioBorderlessWindowMode.Location = new System.Drawing.Point(140, 112);
+            this.radioBorderlessWindowMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.radioBorderlessWindowMode.Name = "radioBorderlessWindowMode";
+            this.radioBorderlessWindowMode.Size = new System.Drawing.Size(191, 25);
+            this.radioBorderlessWindowMode.TabIndex = 8;
+            this.radioBorderlessWindowMode.Text = "Windowed fullscreen";
+            this.toolTip.SetToolTip(this.radioBorderlessWindowMode, "Creates a borderless window adjusted to the size of the screen.");
+            this.radioBorderlessWindowMode.UseVisualStyleBackColor = true;
+            // 
             // screenNumComboBox
             // 
             this.screenNumComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -718,6 +731,7 @@
             this.radioFullscreen.Text = "Fullscreen";
             this.toolTip.SetToolTip(this.radioFullscreen, "Native fullscreen mode.");
             this.radioFullscreen.UseVisualStyleBackColor = true;
+            this.radioFullscreen.CheckedChanged += new System.EventHandler(this.radioFullscreen_CheckedChanged);
             // 
             // horizontalResolution
             // 
@@ -1459,19 +1473,6 @@
             this.generateManifestToolStripMenuItem.Size = new System.Drawing.Size(257, 34);
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
-            // 
-            // radioBorderlessWindowMode
-            // 
-            this.radioBorderlessWindowMode.AutoSize = true;
-            this.radioBorderlessWindowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.radioBorderlessWindowMode.Location = new System.Drawing.Point(140, 112);
-            this.radioBorderlessWindowMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.radioBorderlessWindowMode.Name = "radioBorderlessWindowMode";
-            this.radioBorderlessWindowMode.Size = new System.Drawing.Size(191, 25);
-            this.radioBorderlessWindowMode.TabIndex = 8;
-            this.radioBorderlessWindowMode.Text = "Windowed fullscreen";
-            this.toolTip.SetToolTip(this.radioBorderlessWindowMode, "Creates a borderless window adjusted to the size of the screen.");
-            this.radioBorderlessWindowMode.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
