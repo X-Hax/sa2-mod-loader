@@ -322,12 +322,12 @@ void PatchWindow(const IniGroup* settings)
 		wsH = GetSystemMetrics(SM_CYSCREEN);
 	}
 	
-	if (borderlessWindow)
+	if (borderlessWindow && !customWindowSize)
 	{
 		IS_FULLSCREEN = TRUE;
 	}
 
-	DWORD dwStyle = WS_CAPTION | WS_SYSMENU | WS_VISIBLE;
+	DWORD dwStyle = !(borderlessWindow && customWindowSize) ? WS_CAPTION | WS_SYSMENU | WS_VISIBLE : WS_POPUP | WS_VISIBLE;
 	
 	if (windowResize)
 	{
@@ -341,7 +341,7 @@ void PatchWindow(const IniGroup* settings)
 	int x = wsX + ((wsW - w) / 2);
 	int y = wsY + ((wsH - h) / 2);
 
-	SetWindowLong(MainWindowHandle, GWL_STYLE, dwStyle);
+	SetWindowLongW(MainWindowHandle, GWL_STYLE, dwStyle);
 	SetWindowPos(MainWindowHandle, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS);
 
 	if (IS_FULLSCREEN)
