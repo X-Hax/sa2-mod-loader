@@ -263,7 +263,6 @@
             // 
             this.modDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.modDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.modDescription.Location = new System.Drawing.Point(9, 486);
             this.modDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.modDescription.Name = "modDescription";
@@ -277,7 +276,6 @@
             this.modDownButton.AutoSize = true;
             this.modDownButton.Enabled = false;
             this.modDownButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.modDownButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.modDownButton.Location = new System.Drawing.Point(554, 120);
             this.modDownButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.modDownButton.Name = "modDownButton";
@@ -293,7 +291,6 @@
             this.modUpButton.AutoSize = true;
             this.modUpButton.Enabled = false;
             this.modUpButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.modUpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.modUpButton.Location = new System.Drawing.Point(554, 65);
             this.modUpButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.modUpButton.Name = "modUpButton";
@@ -314,7 +311,6 @@
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3});
-            this.modListView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.modListView.FullRowSelect = true;
             this.modListView.HideSelection = false;
             this.modListView.Location = new System.Drawing.Point(9, 9);
@@ -350,8 +346,8 @@
             // saveButton
             // 
             this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.saveButton.AutoSize = true;
             this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.saveButton.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.saveButton.Location = new System.Drawing.Point(132, 632);
             this.saveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.saveButton.Name = "saveButton";
@@ -366,7 +362,6 @@
             this.saveAndPlayButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.saveAndPlayButton.AutoSize = true;
             this.saveAndPlayButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.saveAndPlayButton.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.saveAndPlayButton.Location = new System.Drawing.Point(6, 632);
             this.saveAndPlayButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.saveAndPlayButton.Name = "saveAndPlayButton";
@@ -381,7 +376,6 @@
             this.installButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.installButton.AutoSize = true;
             this.installButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.installButton.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.installButton.Location = new System.Drawing.Point(252, 632);
             this.installButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.installButton.Name = "installButton";
@@ -401,7 +395,6 @@
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 5);
             this.tabControl1.Name = "tabControl1";
@@ -434,7 +427,6 @@
             this.configureModButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.configureModButton.Enabled = false;
             this.configureModButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.configureModButton.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.configureModButton.Location = new System.Drawing.Point(130, 442);
             this.configureModButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.configureModButton.Name = "configureModButton";
@@ -450,7 +442,6 @@
             this.modBottomButton.AutoSize = true;
             this.modBottomButton.Enabled = false;
             this.modBottomButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.modBottomButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.modBottomButton.Location = new System.Drawing.Point(554, 175);
             this.modBottomButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.modBottomButton.Name = "modBottomButton";
@@ -466,7 +457,6 @@
             this.modTopButton.AutoSize = true;
             this.modTopButton.Enabled = false;
             this.modTopButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.modTopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.modTopButton.Location = new System.Drawing.Point(554, 9);
             this.modTopButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.modTopButton.Name = "modTopButton";
@@ -480,7 +470,6 @@
             // 
             this.buttonNewMod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonNewMod.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonNewMod.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.buttonNewMod.Location = new System.Drawing.Point(438, 442);
             this.buttonNewMod.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonNewMod.Name = "buttonNewMod";
@@ -494,7 +483,6 @@
             // 
             this.buttonRefreshModList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonRefreshModList.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonRefreshModList.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.buttonRefreshModList.Location = new System.Drawing.Point(9, 442);
             this.buttonRefreshModList.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonRefreshModList.Name = "buttonRefreshModList";
@@ -684,6 +672,8 @@
             // 
             // comboResolutionPreset
             // 
+            this.comboResolutionPreset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboResolutionPreset.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboResolutionPreset.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.comboResolutionPreset.FormattingEnabled = true;
@@ -1152,6 +1142,8 @@
             // 
             // comboBoxMission
             // 
+            this.comboBoxMission.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxMission.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxMission.Enabled = false;
             this.comboBoxMission.FormattingEnabled = true;
@@ -1194,6 +1186,8 @@
             // 
             // comboBoxTestSpawnEvent
             // 
+            this.comboBoxTestSpawnEvent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxTestSpawnEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxTestSpawnEvent.Enabled = false;
             this.comboBoxTestSpawnEvent.FormattingEnabled = true;
@@ -1335,6 +1329,8 @@
             // 
             // numericUpDownTestSpawnZ
             // 
+            this.numericUpDownTestSpawnZ.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.numericUpDownTestSpawnZ.Enabled = false;
             this.numericUpDownTestSpawnZ.Location = new System.Drawing.Point(455, 145);
             this.numericUpDownTestSpawnZ.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
