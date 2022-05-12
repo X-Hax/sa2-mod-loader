@@ -1240,12 +1240,6 @@ void __cdecl InitMods(void)
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
 	}
 
-	if (!settings->getBool("PauseWhenInactive", true))
-	{
-		// JNE -> JMP
-		WriteData((Uint8*)0x00401897, (Uint8)0xEB);
-	}
-
 	bool SkipIntro = settings->getBool("SkipIntro");
 	if (SkipIntro)
 	{

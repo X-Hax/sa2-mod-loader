@@ -24,6 +24,7 @@ static bool windowResize = false;
 static bool borderlessWindow = false;
 static bool vsync = false;
 static bool disableCloseMessage = false;
+static bool pauseWhenInactive = true;
 
 auto PrintCloseMessage = GenerateUsercallWrapper<int(__cdecl*)(HWND hwnd)>(rEAX, 0x4015F0, rEDI);
 
@@ -165,7 +166,7 @@ static void Activate(bool activating)
 			RestoreSounds();
 		}
 	}
-	else if (WindowActive)
+	else if (WindowActive && pauseWhenInactive)
 	{
 		WindowActive = 0;
 
@@ -269,6 +270,7 @@ void PatchWindow(const IniGroup* settings)
 	screenNum = settings->getInt("ScreenNum");
 	vsync = settings->getBool("EnableVsync", true);
 	disableCloseMessage = settings->getBool("DisableCloseMessage");
+	pauseWhenInactive = settings->getBool("PauseWhenInactive", true);
 
 	// Hook default return of SA2's window procedure to force it to return DefWindowProc
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
