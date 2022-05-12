@@ -502,7 +502,7 @@ namespace Magic
 	}
 }
 
-DataPointer(Magic::RenderCore::DX9_VideoDevice_PC, g_pVideoDevice, 0x1A556EC);
+DataPointer(Magic::RenderCore::DX9_VideoDevice_PC*, g_pVideoDevice, 0x1A556EC);
 DataPointer(Magic::RenderCore::RenderDevice_DX9*, g_pRenderDevice, 0x1A55764);
 DataPointer(struc_36*, g_pSOCRender, 0x1A557BC); // SOCRender struct
 

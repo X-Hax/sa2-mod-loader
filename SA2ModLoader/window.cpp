@@ -39,18 +39,10 @@ static void enable_fullscreen_mode(HWND handle)
 	last_style = GetWindowLongA(handle, GWL_STYLE);
 	last_exStyle = GetWindowLongA(handle, GWL_EXSTYLE);
 
-	if (borderlessWindow)
-	{
-		auto rect = screenBounds[max(0, screenNum - 1)];
-		SetWindowPos(handle, nullptr, rect.left, rect.top, rect.right, rect.bottom, SWP_FRAMECHANGED);
-		SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-		SetWindowLongA(handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
-	}
-	else
-	{
-		SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_VISIBLE);
-		ShowWindow(handle, SW_SHOWMAXIMIZED);
-	}
+	auto rect = screenBounds[max(0, screenNum - 1)];
+	SetWindowPos(handle, nullptr, rect.left, rect.top, rect.right, rect.bottom, SWP_FRAMECHANGED);
+	SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+	SetWindowLongA(handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 
 	while (ShowCursor(FALSE) > 0);
 }
@@ -59,7 +51,7 @@ static void enable_windowed_mode(HWND handle)
 {
 	IS_FULLSCREEN = false;
 
-	SetWindowLongA(handle, GWL_STYLE, last_style | WS_SYSMENU);
+	SetWindowLongA(handle, GWL_STYLE, last_style);
 	SetWindowLongA(handle, GWL_EXSTYLE, last_exStyle);
 
 	auto width = last_rect.right - last_rect.left;
@@ -80,54 +72,23 @@ static void enable_windowed_mode(HWND handle)
 
 	SetWindowPos(handle, HWND_NOTOPMOST, last_rect.left, last_rect.top, width, height, 0);
 
-	if (!borderlessWindow)
-		ShowWindow(handle, SW_SHOWNORMAL);
-
 	while (ShowCursor(TRUE) < 0);
-}
-
-static void setup_vsync()
-{
-	auto& p = g_pRenderDevice->m_pDeviceCreator->m_D3DPP;
-
-	if (vsync)
-	{
-		p.SwapEffect = D3DSWAPEFFECT_COPY;
-		p.PresentationInterval = IS_FULLSCREEN ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_DEFAULT;
-	}
-	else
-	{
-		p.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		p.PresentationInterval = IS_FULLSCREEN ? D3DPRESENT_INTERVAL_IMMEDIATE : D3DPRESENT_INTERVAL_DEFAULT;
-	}
 }
 
 static void reset_device()
 {
-	setup_vsync();
 	*(BYTE*)&g_pSOCRender->field_644 = 1; // Reload shaders
 	g_pRenderDevice->__vftable->ResetRenderDeviceInitInfo(g_pRenderDevice, &g_pRenderDevice->m_InitInfo, &DeviceLostFunc, &DeviceResetFunc);
 }
 
 static void change_resolution(int w, int h, bool windowed)
 {
-	Magic::RenderCore::RenderDeviceInitInfo_t info;
-	g_pRenderDevice->__vftable->GetRenderDeviceInitInfo(g_pRenderDevice, &info);
-
-	info.m_BackBufferWidth = HorizontalResolution;
-	info.m_BackBufferHeight = VerticalResolution;
-	info.m_IsWindow = windowed;
-
 	HorizontalResolution = w;
 	VerticalResolution = h;
-
+	g_pRenderDevice->m_InitInfo.m_BackBufferWidth = w;
+	g_pRenderDevice->m_InitInfo.m_BackBufferHeight = h;
 	g_pRenderDevice->m_pDeviceCreator->m_D3DPP.BackBufferWidth = w;
 	g_pRenderDevice->m_pDeviceCreator->m_D3DPP.BackBufferHeight = h;
-	g_pRenderDevice->m_pDeviceCreator->m_D3DPP.Windowed = windowed;
-
-	g_pVideoDevice.m_VideoMode.Width = w;
-	g_pVideoDevice.m_VideoMode.Height = h;
-
 	reset_device();
 }
 
@@ -327,12 +288,7 @@ void PatchWindow(const IniGroup* settings)
 		wsH = GetSystemMetrics(SM_CYSCREEN);
 	}
 	
-	if (borderlessWindow && !customWindowSize)
-	{
-		IS_FULLSCREEN = TRUE;
-	}
-
-	DWORD dwStyle = !(borderlessWindow && customWindowSize) ? WS_CAPTION | WS_SYSMENU | WS_VISIBLE : WS_POPUP | WS_VISIBLE;
+	DWORD dwStyle = WS_CAPTION | WS_SYSMENU | WS_VISIBLE;
 	
 	if (windowResize)
 	{
@@ -346,11 +302,20 @@ void PatchWindow(const IniGroup* settings)
 	int x = wsX + ((wsW - w) / 2);
 	int y = wsY + ((wsH - h) / 2);
 
-	SetWindowLongW(MainWindowHandle, GWL_STYLE, dwStyle);
-	SetWindowPos(MainWindowHandle, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS);
-
-	if (IS_FULLSCREEN)
+	if (borderlessWindow)
 	{
-		enable_fullscreen_mode(MainWindowHandle);
+		IS_FULLSCREEN = TRUE;
+		last_width = HorizontalResolution;
+		last_height = VerticalResolution;
+		last_style = dwStyle;
+		last_rect = { x, y, x + w, y + h };
+		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW, screenH, SWP_FRAMECHANGED);
+		SetWindowLongW(MainWindowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+		SetWindowLongW(MainWindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	}
+	else
+	{
+		SetWindowPos(MainWindowHandle, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+		SetWindowLongW(MainWindowHandle, GWL_STYLE, dwStyle);
 	}
 }
