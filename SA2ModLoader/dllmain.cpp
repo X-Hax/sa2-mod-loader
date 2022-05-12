@@ -9,7 +9,6 @@
 #include <unordered_map>
 #include <list>
 #include <algorithm>
-#include <thread>
 #include <DbgHelp.h>
 #include <Shlwapi.h>
 #include "IniFile.hpp"
@@ -27,8 +26,6 @@
 #include "DebugText.h"
 #include "CrashDump.h"
 #include "window.h"
-
-static std::thread* window_thread = nullptr;
 
 using namespace std;
 
@@ -1715,16 +1712,9 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		WriteJump((void *)0x0077DD5C, InitMods);
 		WriteJump((void *)0x0077DD43, InitMods);
 		break;
+	case DLL_PROCESS_DETACH:
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
-		break;
-
-	case DLL_PROCESS_DETACH:
-		if (window_thread)
-		{
-			window_thread->join();
-			delete window_thread;
-		}
 		break;
 	}
 	return TRUE;
