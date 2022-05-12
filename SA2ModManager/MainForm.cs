@@ -175,7 +175,7 @@ namespace SA2ModManager
 				{
 					Configs.Attributes["Width"].Value = loaderini.HorizontalResolution.ToString();
 					Configs.Attributes["Height"].Value = loaderini.VerticalResolution.ToString();
-					Configs.Attributes["FullScreen"].Value = loaderini.FullScreen ? "1" : "0";
+					Configs.Attributes["FullScreen"].Value = loaderini.FullScreen && !loaderini.BorderlessWindow ? "1" : "0";
 					int screenID = screenNumComboBox.SelectedIndex;
 					if (screenID > 0)
 						screenID -= 1;
@@ -200,7 +200,6 @@ namespace SA2ModManager
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
 			horizontalResolution.Value = Math.Max(horizontalResolution.Minimum, Math.Min(horizontalResolution.Maximum, loaderini.HorizontalResolution));
 			verticalResolution.Value = Math.Max(verticalResolution.Minimum, Math.Min(verticalResolution.Maximum, loaderini.VerticalResolution));
-			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
 			skipIntrocheckBox.Checked = loaderini.SkipIntro;
 			checkUpdateStartup.Checked = loaderini.UpdateCheck;
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
@@ -210,7 +209,8 @@ namespace SA2ModManager
 			comboTextLanguage.SelectedIndex = loaderini.TextLanguage;
 			radioFullscreen.Checked = loaderini.FullScreen;
 			radioWindowMode.Checked = loaderini.FullScreen == false;
-
+			radioBorderlessWindowMode.Checked = loaderini.BorderlessWindow;
+			
 			int screenNum = Math.Min(Screen.AllScreens.Length, loaderini.ScreenNum);
 
 			screenNumComboBox.SelectedIndex = screenNum;
@@ -938,11 +938,10 @@ namespace SA2ModManager
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.DebugCrashLog = crashLogCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
-			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
+			loaderini.BorderlessWindow = radioBorderlessWindowMode.Checked;
 			loaderini.HorizontalResolution = (int)horizontalResolution.Value;
 			loaderini.VerticalResolution = (int)verticalResolution.Value;
 			loaderini.FullScreen = radioFullscreen.Checked;
-			radioWindowMode.Checked = loaderini.FullScreen == false;
 			loaderini.ScreenNum = screenNumComboBox.SelectedIndex;
 			loaderini.CustomWindowSize = customWindowSizeCheckBox.Checked;
 			loaderini.WindowWidth = (int)windowWidth.Value;

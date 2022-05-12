@@ -68,7 +68,6 @@
             this.comboResolutionPreset = new System.Windows.Forms.ComboBox();
             this.radioWindowMode = new System.Windows.Forms.RadioButton();
             this.radioFullscreen = new System.Windows.Forms.RadioButton();
-            this.borderlessWindowCheckBox = new System.Windows.Forms.CheckBox();
             this.horizontalResolution = new System.Windows.Forms.NumericUpDown();
             this.verticalResolution = new System.Windows.Forms.NumericUpDown();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -124,6 +123,7 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.radioBorderlessWindowMode = new System.Windows.Forms.RadioButton();
             groupBox2 = new System.Windows.Forms.GroupBox();
             label1 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
@@ -163,7 +163,7 @@
             groupBox2.Controls.Add(this.fileCheckBox);
             groupBox2.Controls.Add(this.consoleCheckBox);
             groupBox2.Location = new System.Drawing.Point(9, 9);
-            groupBox2.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             groupBox2.Name = "groupBox2";
             groupBox2.Padding = new System.Windows.Forms.Padding(6, 8, 6, 8);
             groupBox2.Size = new System.Drawing.Size(585, 65);
@@ -547,8 +547,8 @@
             this.groupBox_WindowMode.Controls.Add(this.windowHeight);
             this.groupBox_WindowMode.Controls.Add(this.windowWidth);
             this.groupBox_WindowMode.Controls.Add(label2);
-            this.groupBox_WindowMode.Location = new System.Drawing.Point(9, 205);
-            this.groupBox_WindowMode.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.groupBox_WindowMode.Location = new System.Drawing.Point(9, 173);
+            this.groupBox_WindowMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox_WindowMode.Name = "groupBox_WindowMode";
             this.groupBox_WindowMode.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox_WindowMode.Size = new System.Drawing.Size(585, 115);
@@ -633,21 +633,21 @@
             // 
             this.groupBox_Display.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox_Display.Controls.Add(this.radioBorderlessWindowMode);
             this.groupBox_Display.Controls.Add(label3);
             this.groupBox_Display.Controls.Add(this.screenNumComboBox);
             this.groupBox_Display.Controls.Add(this.comboResolutionPreset);
             this.groupBox_Display.Controls.Add(this.radioWindowMode);
             this.groupBox_Display.Controls.Add(label5);
             this.groupBox_Display.Controls.Add(this.radioFullscreen);
-            this.groupBox_Display.Controls.Add(this.borderlessWindowCheckBox);
             this.groupBox_Display.Controls.Add(this.horizontalResolution);
             this.groupBox_Display.Controls.Add(label1);
             this.groupBox_Display.Controls.Add(this.verticalResolution);
             this.groupBox_Display.Location = new System.Drawing.Point(9, 9);
-            this.groupBox_Display.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.groupBox_Display.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox_Display.Name = "groupBox_Display";
             this.groupBox_Display.Padding = new System.Windows.Forms.Padding(6, 8, 6, 8);
-            this.groupBox_Display.Size = new System.Drawing.Size(585, 186);
+            this.groupBox_Display.Size = new System.Drawing.Size(585, 154);
             this.groupBox_Display.TabIndex = 0;
             this.groupBox_Display.TabStop = false;
             this.groupBox_Display.Text = "Display";
@@ -686,7 +686,7 @@
             "720p",
             "1080p",
             "4K"});
-            this.comboResolutionPreset.Location = new System.Drawing.Point(338, 69);
+            this.comboResolutionPreset.Location = new System.Drawing.Point(339, 71);
             this.comboResolutionPreset.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.comboResolutionPreset.Name = "comboResolutionPreset";
             this.comboResolutionPreset.Size = new System.Drawing.Size(216, 28);
@@ -697,12 +697,13 @@
             // 
             this.radioWindowMode.AutoSize = true;
             this.radioWindowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.radioWindowMode.Location = new System.Drawing.Point(156, 112);
+            this.radioWindowMode.Location = new System.Drawing.Point(339, 112);
             this.radioWindowMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.radioWindowMode.Name = "radioWindowMode";
-            this.radioWindowMode.Size = new System.Drawing.Size(145, 25);
-            this.radioWindowMode.TabIndex = 8;
-            this.radioWindowMode.Text = "Window mode";
+            this.radioWindowMode.Size = new System.Drawing.Size(119, 25);
+            this.radioWindowMode.TabIndex = 9;
+            this.radioWindowMode.Text = "Windowed";
+            this.toolTip.SetToolTip(this.radioWindowMode, "Classic windowed mode.");
             this.radioWindowMode.UseVisualStyleBackColor = true;
             // 
             // radioFullscreen
@@ -715,18 +716,8 @@
             this.radioFullscreen.Size = new System.Drawing.Size(118, 25);
             this.radioFullscreen.TabIndex = 7;
             this.radioFullscreen.Text = "Fullscreen";
+            this.toolTip.SetToolTip(this.radioFullscreen, "Native fullscreen mode.");
             this.radioFullscreen.UseVisualStyleBackColor = true;
-            // 
-            // borderlessWindowCheckBox
-            // 
-            this.borderlessWindowCheckBox.AutoSize = true;
-            this.borderlessWindowCheckBox.Location = new System.Drawing.Point(14, 149);
-            this.borderlessWindowCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.borderlessWindowCheckBox.Name = "borderlessWindowCheckBox";
-            this.borderlessWindowCheckBox.Size = new System.Drawing.Size(171, 24);
-            this.borderlessWindowCheckBox.TabIndex = 9;
-            this.borderlessWindowCheckBox.Text = "Borderless Window";
-            this.borderlessWindowCheckBox.UseVisualStyleBackColor = true;
             // 
             // horizontalResolution
             // 
@@ -799,7 +790,7 @@
             this.groupBox3.Controls.Add(this.buttonLoadProfile);
             this.groupBox3.Controls.Add(this.profileNameBox);
             this.groupBox3.Location = new System.Drawing.Point(9, 302);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.groupBox3.Size = new System.Drawing.Size(585, 89);
@@ -866,7 +857,7 @@
             this.groupBox4.Controls.Add(this.comboUpdateFrequency);
             this.groupBox4.Controls.Add(this.checkUpdateStartup);
             this.groupBox4.Location = new System.Drawing.Point(9, 154);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.groupBox4.Size = new System.Drawing.Size(585, 138);
@@ -971,7 +962,7 @@
             this.groupBox1.Controls.Add(this.skipIntrocheckBox);
             this.groupBox1.Controls.Add(this.pauseWhenInactiveCheckBox);
             this.groupBox1.Location = new System.Drawing.Point(9, 9);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.groupBox1.Size = new System.Drawing.Size(585, 135);
@@ -1469,6 +1460,19 @@
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
+            // radioBorderlessWindowMode
+            // 
+            this.radioBorderlessWindowMode.AutoSize = true;
+            this.radioBorderlessWindowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.radioBorderlessWindowMode.Location = new System.Drawing.Point(140, 112);
+            this.radioBorderlessWindowMode.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.radioBorderlessWindowMode.Name = "radioBorderlessWindowMode";
+            this.radioBorderlessWindowMode.Size = new System.Drawing.Size(191, 25);
+            this.radioBorderlessWindowMode.TabIndex = 8;
+            this.radioBorderlessWindowMode.Text = "Windowed fullscreen";
+            this.toolTip.SetToolTip(this.radioBorderlessWindowMode, "Creates a borderless window adjusted to the size of the screen.");
+            this.radioBorderlessWindowMode.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1612,9 +1616,9 @@
 		private System.Windows.Forms.ComboBox comboResolutionPreset;
 		private System.Windows.Forms.RadioButton radioWindowMode;
 		private System.Windows.Forms.RadioButton radioFullscreen;
-		private System.Windows.Forms.CheckBox borderlessWindowCheckBox;
 		private System.Windows.Forms.NumericUpDown horizontalResolution;
 		private System.Windows.Forms.NumericUpDown verticalResolution;
+		private System.Windows.Forms.RadioButton radioBorderlessWindowMode;
 	}
 }
 
