@@ -124,6 +124,7 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disableExitPromptCheckBox = new System.Windows.Forms.CheckBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
             label1 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
@@ -969,6 +970,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.disableExitPromptCheckBox);
             this.groupBox1.Controls.Add(this.comboTextLanguage);
             this.groupBox1.Controls.Add(this.comboVoiceLanguage);
             this.groupBox1.Controls.Add(this.label9);
@@ -1050,7 +1052,7 @@
             // pauseWhenInactiveCheckBox
             // 
             this.pauseWhenInactiveCheckBox.AutoSize = true;
-            this.pauseWhenInactiveCheckBox.Location = new System.Drawing.Point(188, 29);
+            this.pauseWhenInactiveCheckBox.Location = new System.Drawing.Point(128, 29);
             this.pauseWhenInactiveCheckBox.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.pauseWhenInactiveCheckBox.Name = "pauseWhenInactiveCheckBox";
             this.pauseWhenInactiveCheckBox.Size = new System.Drawing.Size(185, 24);
@@ -1474,6 +1476,18 @@
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
+            // disableExitPromptCheckBox
+            // 
+            this.disableExitPromptCheckBox.AutoSize = true;
+            this.disableExitPromptCheckBox.Location = new System.Drawing.Point(325, 29);
+            this.disableExitPromptCheckBox.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.disableExitPromptCheckBox.Name = "disableExitPromptCheckBox";
+            this.disableExitPromptCheckBox.Size = new System.Drawing.Size(170, 24);
+            this.disableExitPromptCheckBox.TabIndex = 7;
+            this.disableExitPromptCheckBox.Text = "Disable exit prompt";
+            this.toolTip.SetToolTip(this.disableExitPromptCheckBox, "Disables the prompt message when closing the window.");
+            this.disableExitPromptCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1620,6 +1634,7 @@
 		private System.Windows.Forms.NumericUpDown horizontalResolution;
 		private System.Windows.Forms.NumericUpDown verticalResolution;
 		private System.Windows.Forms.RadioButton radioBorderlessWindowMode;
+		private System.Windows.Forms.CheckBox disableExitPromptCheckBox;
 	}
 }
 

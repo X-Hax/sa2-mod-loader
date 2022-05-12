@@ -198,6 +198,7 @@ namespace SA2ModManager
 			fileCheckBox.Checked = loaderini.DebugFile;
 			crashLogCheckBox.Checked = loaderini.DebugCrashLog;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
+			disableExitPromptCheckBox.Checked = loaderini.DisableExitPrompt;
 			horizontalResolution.Value = Math.Max(horizontalResolution.Minimum, Math.Min(horizontalResolution.Maximum, loaderini.HorizontalResolution));
 			verticalResolution.Value = Math.Max(verticalResolution.Minimum, Math.Min(verticalResolution.Maximum, loaderini.VerticalResolution));
 			skipIntrocheckBox.Checked = loaderini.SkipIntro;
@@ -938,6 +939,7 @@ namespace SA2ModManager
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.DebugCrashLog = crashLogCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
+			loaderini.DisableExitPrompt = disableExitPromptCheckBox.Checked;
 			loaderini.BorderlessWindow = radioBorderlessWindowMode.Checked;
 			loaderini.HorizontalResolution = (int)horizontalResolution.Value;
 			loaderini.VerticalResolution = (int)verticalResolution.Value;

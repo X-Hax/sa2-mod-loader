@@ -23,10 +23,10 @@ static bool customWindowSize = false;
 static bool windowResize = false;
 static bool borderlessWindow = false;
 static bool vsync = false;
-static bool disableCloseMessage = false;
+static bool disableExitPrompt = false;
 static bool pauseWhenInactive = true;
 
-auto PrintCloseMessage = GenerateUsercallWrapper<int(__cdecl*)(HWND hwnd)>(rEAX, 0x4015F0, rEDI);
+auto PrintExitPrompt = GenerateUsercallWrapper<int(__cdecl*)(HWND hwnd)>(rEAX, 0x4015F0, rEDI);
 
 static void enable_fullscreen_mode(HWND handle)
 {
@@ -153,7 +153,10 @@ static void swap_window_mode(HWND handle)
 
 static bool Close(HWND handle)
 {
-	return !(!disableCloseMessage && !IS_FULLSCREEN && PrintCloseMessage(handle) == 7);
+	if (disableExitPrompt)
+		return true;
+
+	return !(!IS_FULLSCREEN && PrintExitPrompt(handle) == 7);
 }
 
 static void Activate(bool activating)
@@ -269,7 +272,7 @@ void PatchWindow(const IniGroup* settings)
 	borderlessWindow = settings->getBool("BorderlessWindow");
 	screenNum = settings->getInt("ScreenNum");
 	vsync = settings->getBool("EnableVsync", true);
-	disableCloseMessage = settings->getBool("DisableCloseMessage");
+	disableExitPrompt = settings->getBool("DisableExitPrompt");
 	pauseWhenInactive = settings->getBool("PauseWhenInactive", true);
 
 	// Hook default return of SA2's window procedure to force it to return DefWindowProc

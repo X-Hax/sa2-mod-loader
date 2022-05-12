@@ -14,6 +14,8 @@ namespace SA2ModManager
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
 		[DefaultValue(true)]
 		public bool PauseWhenInactive { get; set; }
+		[DefaultValue(false)]
+		public bool DisableExitPrompt { get; set; }
 		[DefaultValue(1)]
 		public int ScreenNum { get; set; } = 1;
 		[DefaultValue(false)]
