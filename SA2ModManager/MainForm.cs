@@ -1733,6 +1733,7 @@ namespace SA2ModManager
 			windowHeight.Enabled = check;
 			windowWidth.Enabled = check;
 			checkWindowResize.Enabled = !check;
+			aspectRatioCheckBox.Enabled = !check;
 		}
 
 		private void radioFullscreen_CheckedChanged(object sender, EventArgs e)
