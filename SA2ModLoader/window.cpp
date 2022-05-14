@@ -1,6 +1,8 @@
 #include "stdafx.h"
+#include <GdiPlus.h>
 #include <vector>
 #include "IniFile.hpp"
+#include "FileSystem.h"
 #include "magic.h"
 #include "UsercallFunctionHandler.h"
 
@@ -21,10 +23,19 @@ static DWORD  last_exStyle = 0;
 
 static bool customWindowSize = false;
 static bool windowResize = false;
-static bool borderlessWindow = false;
+static bool windowedFullscreen = false;
 static bool vsync = false;
 static bool disableExitPrompt = false;
 static bool pauseWhenInactive = true;
+static bool maintainAspectRatio = true;
+static double targetAspectRatio = 4 / 3;
+static int customWindowWidth = 640;
+static int customWindowHeight = 480;
+
+static Gdiplus::Bitmap* backgroundImage = nullptr;
+static HWND innerWindow = NULL;
+static int innerWidth = 640;
+static int innerHeight = 480;
 
 auto PrintExitPrompt = GenerateUsercallWrapper<int(__cdecl*)(HWND hwnd)>(rEAX, 0x4015F0, rEDI);
 
@@ -81,8 +92,39 @@ static void reset_device()
 	g_pRenderDevice->__vftable->ResetRenderDeviceInitInfo(g_pRenderDevice, &g_pRenderDevice->m_InitInfo, &DeviceLostFunc, &DeviceResetFunc);
 }
 
+static void update_innerwindow(int w, int h)
+{
+	if (customWindowSize)
+	{
+		innerWidth = customWindowWidth;
+		innerHeight = customWindowHeight;
+	}
+	else
+	{
+		if (w > h * targetAspectRatio)
+		{
+			innerWidth = h * targetAspectRatio;
+			innerHeight = h;
+		}
+		else
+		{
+			innerWidth = w;
+			innerHeight = w / targetAspectRatio;
+		}
+	}
+
+	SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
+}
+
 static void change_resolution(int w, int h, bool windowed)
 {
+	if (maintainAspectRatio && innerWindow)
+	{
+		update_innerwindow(w, h);
+		w = innerWidth;
+		h = innerHeight;
+	}
+	
 	HorizontalResolution = w;
 	VerticalResolution = h;
 	g_pRenderDevice->m_InitInfo.m_BackBufferWidth = w;
@@ -140,6 +182,31 @@ static void Activate(bool activating)
 	}
 }
 
+static bool DrawBackground(HWND handle, WPARAM wParam)
+{
+	if (backgroundImage == nullptr)
+	{
+		return false;
+	}
+
+	Gdiplus::Graphics gfx((HDC)wParam);
+	gfx.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
+	
+	RECT rect;
+	GetClientRect(handle, &rect);
+
+	auto w = rect.right - rect.left;
+	auto h = rect.bottom - rect.top;
+
+	if (w == innerWidth && h == innerHeight)
+	{
+		return false;
+	}
+
+	gfx.DrawImage(backgroundImage, 0, 0, w, h);
+	return true;
+}
+
 static LRESULT CALLBACK WndProc_Resizable(HWND handle, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (Msg)
@@ -178,6 +245,10 @@ static LRESULT CALLBACK WndProc_Resizable(HWND handle, UINT Msg, WPARAM wParam, 
 		if (!Close(handle))
 			return 0;
 		break;
+	case WM_ERASEBKGND:
+		if (DrawBackground(handle, wParam))
+			return 0;
+		break;
 	case WM_SYSKEYDOWN:
 		if (wParam == VK_RETURN)
 		{
@@ -208,6 +279,10 @@ static LRESULT CALLBACK WndProc_Hook(HWND handle, UINT Msg, WPARAM wParam, LPARA
 		if (!Close(handle))
 			return 0;
 		break;
+	case WM_ERASEBKGND:
+		if (DrawBackground(handle, wParam))
+			return 0;
+		break;
 	case WM_ACTIVATE:
 		Activate(wParam != FALSE);
 		break;
@@ -226,15 +301,23 @@ static BOOL CALLBACK GetMonitorSize(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lp
 	return TRUE;
 }
 
-void PatchWindow(const IniGroup* settings)
+static void __fastcall PresentToInnerWindow(Magic::RenderCore::RenderDevice_DX9* dev)
+{
+	dev->m_pD3DDevice->Present(nullptr, nullptr, innerWindow, nullptr);
+}
+
+void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 {
 	customWindowSize = settings->getBool("CustomWindowSize");
 	windowResize = settings->getBool("ResizableWindow") && !customWindowSize;
-	borderlessWindow = settings->getBool("BorderlessWindow");
+	windowedFullscreen = settings->getBool("BorderlessWindow");
+	maintainAspectRatio = settings->getBool("MaintainAspectRatio") && !(!windowedFullscreen && customWindowSize);
 	screenNum = settings->getInt("ScreenNum");
 	vsync = settings->getBool("EnableVsync", true);
 	disableExitPrompt = settings->getBool("DisableExitPrompt");
 	pauseWhenInactive = settings->getBool("PauseWhenInactive", true);
+	customWindowWidth = settings->getInt("WindowWidth", 640);
+	customWindowHeight = settings->getInt("WindowHeight", 480);
 
 	// Hook default return of SA2's window procedure to force it to return DefWindowProc
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
@@ -302,14 +385,49 @@ void PatchWindow(const IniGroup* settings)
 	int x = wsX + ((wsW - w) / 2);
 	int y = wsY + ((wsH - h) / 2);
 
-	if (borderlessWindow)
+	// Create an inner window to wrap the game
+	if (maintainAspectRatio || (windowedFullscreen && customWindowSize))
+	{
+		const LPCWSTR const lpszClassName = L"SONIC ADVENTURE 2";
+
+		innerWindow = CreateWindowExW(0,
+			lpszClassName,
+			lpszClassName,
+			WS_CHILD | WS_VISIBLE,
+			CW_USEDEFAULT, CW_USEDEFAULT, HorizontalResolution, VerticalResolution,
+			MainWindowHandle, nullptr, GetModuleHandle(NULL), nullptr);
+
+		if (innerWindow)
+		{
+			targetAspectRatio = HorizontalResolution / VerticalResolution;
+
+			WriteJump((void*)0x867AE0, PresentToInnerWindow);
+
+			update_innerwindow(wsW, wsH);
+
+			if (!FileExists(borderimg))
+			{
+				borderimg = L"mods\\Border_Default.png";
+			}
+
+			if (FileExists(borderimg))
+			{
+				Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+				ULONG_PTR gdiplusToken;
+				Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+				backgroundImage = Gdiplus::Bitmap::FromFile(borderimg.c_str());
+			}
+		}
+	}
+
+	if (windowedFullscreen)
 	{
 		IS_FULLSCREEN = TRUE;
 		last_width = HorizontalResolution;
 		last_height = VerticalResolution;
 		last_style = dwStyle;
 		last_rect = { x, y, x + w, y + h };
-		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW, screenH, SWP_FRAMECHANGED);
+		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW + 1, screenH + 1, SWP_FRAMECHANGED);
 		SetWindowLongW(MainWindowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 		SetWindowLongW(MainWindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 	}

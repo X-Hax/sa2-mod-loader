@@ -85,6 +85,7 @@
             this.comboUpdateFrequency = new System.Windows.Forms.ComboBox();
             this.checkUpdateStartup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.disableExitPromptCheckBox = new System.Windows.Forms.CheckBox();
             this.comboTextLanguage = new System.Windows.Forms.ComboBox();
             this.comboVoiceLanguage = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -124,7 +125,7 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disableExitPromptCheckBox = new System.Windows.Forms.CheckBox();
+            this.aspectRatioCheckBox = new System.Windows.Forms.CheckBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
             label1 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
@@ -531,6 +532,7 @@
             // 
             this.groupBox_WindowMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox_WindowMode.Controls.Add(this.aspectRatioCheckBox);
             this.groupBox_WindowMode.Controls.Add(this.checkWindowResize);
             this.groupBox_WindowMode.Controls.Add(this.customWindowSizeCheckBox);
             this.groupBox_WindowMode.Controls.Add(this.windowHeight);
@@ -975,6 +977,18 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Misc.";
+            // 
+            // disableExitPromptCheckBox
+            // 
+            this.disableExitPromptCheckBox.AutoSize = true;
+            this.disableExitPromptCheckBox.Location = new System.Drawing.Point(325, 29);
+            this.disableExitPromptCheckBox.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.disableExitPromptCheckBox.Name = "disableExitPromptCheckBox";
+            this.disableExitPromptCheckBox.Size = new System.Drawing.Size(170, 24);
+            this.disableExitPromptCheckBox.TabIndex = 7;
+            this.disableExitPromptCheckBox.Text = "Disable exit prompt";
+            this.toolTip.SetToolTip(this.disableExitPromptCheckBox, "Disables the prompt message when closing the window.");
+            this.disableExitPromptCheckBox.UseVisualStyleBackColor = true;
             // 
             // comboTextLanguage
             // 
@@ -1472,17 +1486,19 @@
             this.generateManifestToolStripMenuItem.Text = "Generate manifest";
             this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
             // 
-            // disableExitPromptCheckBox
+            // aspectRatioCheckBox
             // 
-            this.disableExitPromptCheckBox.AutoSize = true;
-            this.disableExitPromptCheckBox.Location = new System.Drawing.Point(325, 29);
-            this.disableExitPromptCheckBox.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
-            this.disableExitPromptCheckBox.Name = "disableExitPromptCheckBox";
-            this.disableExitPromptCheckBox.Size = new System.Drawing.Size(170, 24);
-            this.disableExitPromptCheckBox.TabIndex = 7;
-            this.disableExitPromptCheckBox.Text = "Disable exit prompt";
-            this.toolTip.SetToolTip(this.disableExitPromptCheckBox, "Disables the prompt message when closing the window.");
-            this.disableExitPromptCheckBox.UseVisualStyleBackColor = true;
+            this.aspectRatioCheckBox.AutoSize = true;
+            this.aspectRatioCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.aspectRatioCheckBox.Location = new System.Drawing.Point(194, 74);
+            this.aspectRatioCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.aspectRatioCheckBox.Name = "aspectRatioCheckBox";
+            this.aspectRatioCheckBox.Size = new System.Drawing.Size(203, 25);
+            this.aspectRatioCheckBox.TabIndex = 5;
+            this.aspectRatioCheckBox.Text = "Maintain Aspect Ratio";
+            this.toolTip.SetToolTip(this.aspectRatioCheckBox, "Maintain the aspect ratio of the select resolution, will draw a stylized border a" +
+        "round the screen.");
+            this.aspectRatioCheckBox.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -1631,6 +1647,7 @@
 		private System.Windows.Forms.NumericUpDown verticalResolution;
 		private System.Windows.Forms.RadioButton radioBorderlessWindowMode;
 		private System.Windows.Forms.CheckBox disableExitPromptCheckBox;
+		private System.Windows.Forms.CheckBox aspectRatioCheckBox;
 	}
 }
 

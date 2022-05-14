@@ -30,6 +30,7 @@
 using namespace std;
 
 const string resourcedir = "resource\\gd_pc\\";
+static wstring borderimg = L"mods\\Border.png";
 
 unordered_map<string, unordered_set<string>*> csbfilemap;
 struct itercont { unordered_set<string>::const_iterator cur; unordered_set<string>::const_iterator end; };
@@ -1215,8 +1216,6 @@ void __cdecl InitMods(void)
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
 	const IniGroup *settings = ini->getGroup("");
 
-	PatchWindow(settings);
-
 	if (settings->getBool("DebugConsole"))
 	{
 		AllocConsole();
@@ -1503,7 +1502,12 @@ void __cdecl InitMods(void)
 
 		if (modinfo->getBool("RedirectChaoSave"))
 			_chaosavepath = mod_dirA + "\\SAVEDATA";
+
+		if (modinfo->hasKeyNonEmpty("BorderImage"))
+			borderimg = mod_dir + L'\\' + modinfo->getWString("BorderImage");
 	}
+
+	PatchWindow(settings, borderimg);
 
 	if (!errors.empty())
 	{

@@ -60,7 +60,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;gdiplus.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\extlib\bass</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -81,7 +81,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;gdiplus.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\extlib\bass</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
