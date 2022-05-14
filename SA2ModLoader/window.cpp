@@ -6,6 +6,8 @@
 #include "magic.h"
 #include "UsercallFunctionHandler.h"
 
+// Improves the main window as soon as the loader takes control
+
 VoidFunc(RestoreSounds, 0x435FD0);
 VoidFunc(StopSounds, 0x436020);
 VoidFunc(StopInputs, 0x439060);
@@ -42,6 +44,8 @@ auto PrintExitPrompt = GenerateUsercallWrapper<int(__cdecl*)(HWND hwnd)>(rEAX, 0
 static void enable_fullscreen_mode(HWND handle)
 {
 	IS_FULLSCREEN = true;
+
+	// Backup windowed mode information
 	last_width = HorizontalResolution;
 	last_height = VerticalResolution;
 
@@ -50,6 +54,7 @@ static void enable_fullscreen_mode(HWND handle)
 	last_style = GetWindowLongA(handle, GWL_STYLE);
 	last_exStyle = GetWindowLongA(handle, GWL_EXSTYLE);
 
+	// Set to borderless fullscreen
 	auto rect = screenBounds[max(0, screenNum - 1)];
 	SetWindowPos(handle, nullptr, rect.left, rect.top, rect.right, rect.bottom, SWP_FRAMECHANGED);
 	SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
@@ -62,6 +67,7 @@ static void enable_windowed_mode(HWND handle)
 {
 	IS_FULLSCREEN = false;
 
+	// Restore windowed mode information
 	SetWindowLongA(handle, GWL_STYLE, last_style);
 	SetWindowLongA(handle, GWL_EXSTYLE, last_exStyle);
 
@@ -81,36 +87,53 @@ static void enable_windowed_mode(HWND handle)
 		height = last_rect.bottom - last_rect.top;
 	}
 
-	SetWindowPos(handle, HWND_NOTOPMOST, last_rect.left, last_rect.top, width, height, 0);
+	// Restore windowed mode
+	SetWindowPos(handle, HWND_NOTOPMOST, last_rect.left, last_rect.top, width, height, SWP_FRAMECHANGED);
 
 	while (ShowCursor(TRUE) < 0);
 }
 
 static void reset_device()
 {
-	*(BYTE*)&g_pSOCRender->field_644 = 1; // Reload shaders
+	// Set the "reload shaders" variable from the SOCRender system
+	*(BYTE*)&g_pSOCRender->field_644 = 1; 
+
+	// The game already has everything to restore the device on the fly
 	g_pRenderDevice->__vftable->ResetRenderDeviceInitInfo(g_pRenderDevice, &g_pRenderDevice->m_InitInfo, &DeviceLostFunc, &DeviceResetFunc);
 }
 
 static void update_innerwindow(int w, int h)
 {
-	if (customWindowSize)
+	if (maintainAspectRatio)
+	{
+		if (customWindowSize)
+		{
+			innerWidth = customWindowWidth;
+			innerHeight = customWindowHeight;
+		}
+		else
+		{
+			if (w > h * targetAspectRatio)
+			{
+				innerWidth = h * targetAspectRatio;
+				innerHeight = h;
+			}
+			else
+			{
+				innerWidth = w;
+				innerHeight = w / targetAspectRatio;
+			}
+		}
+	}
+	else if (customWindowSize)
 	{
 		innerWidth = customWindowWidth;
 		innerHeight = customWindowHeight;
 	}
 	else
 	{
-		if (w > h * targetAspectRatio)
-		{
-			innerWidth = h * targetAspectRatio;
-			innerHeight = h;
-		}
-		else
-		{
-			innerWidth = w;
-			innerHeight = w / targetAspectRatio;
-		}
+		innerWidth = w;
+		innerHeight = h;
 	}
 
 	SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
@@ -118,20 +141,28 @@ static void update_innerwindow(int w, int h)
 
 static void change_resolution(int w, int h, bool windowed)
 {
-	if (maintainAspectRatio && innerWindow)
+	// Update the inner window if it exists
+	if (innerWindow)
 	{
 		update_innerwindow(w, h);
+
+		// Use the calculated inner window size as the backbuffer size
 		w = innerWidth;
 		h = innerHeight;
 	}
 	
-	HorizontalResolution = w;
-	VerticalResolution = h;
-	g_pRenderDevice->m_InitInfo.m_BackBufferWidth = w;
-	g_pRenderDevice->m_InitInfo.m_BackBufferHeight = h;
-	g_pRenderDevice->m_pDeviceCreator->m_D3DPP.BackBufferWidth = w;
-	g_pRenderDevice->m_pDeviceCreator->m_D3DPP.BackBufferHeight = h;
-	reset_device();
+	// Make sure at least one parameter is different before resetting the device
+	auto& pp = g_pRenderDevice->m_pDeviceCreator->m_D3DPP;
+	if (pp.BackBufferWidth != w || pp.BackBufferHeight != h || pp.Windowed != windowed)
+	{
+		HorizontalResolution = w;
+		VerticalResolution = h;
+		g_pRenderDevice->m_InitInfo.m_BackBufferWidth = w;
+		g_pRenderDevice->m_InitInfo.m_BackBufferHeight = h;
+		pp.BackBufferWidth = w;
+		pp.BackBufferHeight = h;
+		reset_device();
+	}
 }
 
 static void swap_window_mode(HWND handle)
@@ -176,7 +207,8 @@ static void Activate(bool activating)
 	{
 		WindowActive = 0;
 
-		if (*(intptr_t*)0x1A55998)
+		// Fix a potential vanilla crash by checking if the sound system pointer is not empty before using it
+		if (*(intptr_t*)0x1A55998) 
 			StopSounds();
 		StopInputs();
 	}
@@ -203,6 +235,7 @@ static bool DrawBackground(HWND handle, WPARAM wParam)
 		return false;
 	}
 
+	// Draw border image
 	gfx.DrawImage(backgroundImage, 0, 0, w, h);
 	return true;
 }
@@ -319,11 +352,13 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 	customWindowWidth = settings->getInt("WindowWidth", 640);
 	customWindowHeight = settings->getInt("WindowHeight", 480);
 
-	// Hook default return of SA2's window procedure to force it to return DefWindowProc
+	// Replace the default window procedure
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
 
+	// Override the current window procedure
 	SetWindowLongW(MainWindowHandle, GWL_WNDPROC, (LONG)(windowResize ? WndProc_Resizable : WndProc_Hook));
 
+	// Force the window to the foreground to prevent the console from setting the window inactive
 	SetForegroundWindow(MainWindowHandle);
 
 	RECT windowRect;
@@ -341,6 +376,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 		windowRect.bottom = MainUserConfig->data.Height;
 	}
 
+	// Get all of the display monitors virtual positions
 	EnumDisplayMonitors(nullptr, nullptr, GetMonitorSize, 0);
 
 	int screenX, screenY, screenW, screenH, wsX, wsY, wsW, wsH;
@@ -378,12 +414,38 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 		dwStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
 	}
 
+	// Let Windows calculate any extra space required by the style
 	AdjustWindowRectEx(&windowRect, dwStyle, false, 0);
 
 	int w = windowRect.right - windowRect.left;
 	int h = windowRect.bottom - windowRect.top;
 	int x = wsX + ((wsW - w) / 2);
 	int y = wsY + ((wsH - h) / 2);
+
+	// Update the main window
+	if (windowedFullscreen)
+	{
+		IS_FULLSCREEN = TRUE;
+
+		// If the user can swap to windowed mode, set return window information
+		if (windowResize)
+		{
+			last_width = HorizontalResolution;
+			last_height = VerticalResolution;
+			last_style = dwStyle;
+			last_rect = { x, y, x + w, y + h };
+		}
+
+		// Apply fake fullscreen
+		SetWindowLongW(MainWindowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+		SetWindowLongW(MainWindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW + 1, screenH + 1, SWP_FRAMECHANGED);
+	}
+	else
+	{
+		SetWindowLongW(MainWindowHandle, GWL_STYLE, dwStyle);
+		SetWindowPos(MainWindowHandle, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+	}
 
 	// Create an inner window to wrap the game
 	if (maintainAspectRatio || (windowedFullscreen && customWindowSize))
@@ -394,46 +456,44 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 			lpszClassName,
 			lpszClassName,
 			WS_CHILD | WS_VISIBLE,
-			CW_USEDEFAULT, CW_USEDEFAULT, HorizontalResolution, VerticalResolution,
+			0, 0, HorizontalResolution, VerticalResolution,
 			MainWindowHandle, nullptr, GetModuleHandle(NULL), nullptr);
 
-		if (innerWindow)
+		if (innerWindow == NULL)
 		{
-			targetAspectRatio = HorizontalResolution / VerticalResolution;
-
-			WriteJump((void*)0x867AE0, PresentToInnerWindow);
-
-			update_innerwindow(wsW, wsH);
-
-			if (!FileExists(borderimg))
-			{
-				borderimg = L"mods\\Border_Default.png";
-			}
-
-			if (FileExists(borderimg))
-			{
-				Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-				ULONG_PTR gdiplusToken;
-				Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
-				backgroundImage = Gdiplus::Bitmap::FromFile(borderimg.c_str());
-			}
+			return;
 		}
-	}
+		
+		// Calculate aspect ratio for the MaintainAspectRatio option
+		targetAspectRatio = HorizontalResolution / VerticalResolution;
 
-	if (windowedFullscreen)
-	{
-		IS_FULLSCREEN = TRUE;
-		last_width = HorizontalResolution;
-		last_height = VerticalResolution;
-		last_style = dwStyle;
-		last_rect = { x, y, x + w, y + h };
-		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW + 1, screenH + 1, SWP_FRAMECHANGED);
-		SetWindowLongW(MainWindowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-		SetWindowLongW(MainWindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
-	}
-	else
-	{
-		SetWindowPos(MainWindowHandle, nullptr, x, y, w, h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-		SetWindowLongW(MainWindowHandle, GWL_STYLE, dwStyle);
+		// Redirect the D3D9 presentation to the inner window
+		WriteJump((void*)0x867AE0, PresentToInnerWindow);
+
+		// Position the inner window properly
+		if (windowedFullscreen)
+		{
+			update_innerwindow(wsW, wsH);
+		}
+		else
+		{
+			GetClientRect(MainWindowHandle, &windowRect);
+			update_innerwindow(windowRect.right, windowRect.bottom);
+		}
+
+		// If a mod changed the border image path to something invalid, restore normal path
+		if (!FileExists(borderimg))
+		{
+			borderimg = L"mods\\Border_Default.png";
+		}
+
+		// Try to load the border image
+		if (FileExists(borderimg))
+		{
+			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+			ULONG_PTR gdiplusToken;
+			Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+			backgroundImage = Gdiplus::Bitmap::FromFile(borderimg.c_str());
+		}
 	}
 }
