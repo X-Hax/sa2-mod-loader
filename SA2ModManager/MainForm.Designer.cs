@@ -1071,7 +1071,7 @@
             // 
             this.labelTestSpawnX.AutoSize = true;
             this.labelTestSpawnX.Enabled = false;
-            this.labelTestSpawnX.Location = new System.Drawing.Point(90, 99);
+            this.labelTestSpawnX.Location = new System.Drawing.Point(72, 98);
             this.labelTestSpawnX.Name = "labelTestSpawnX";
             this.labelTestSpawnX.Size = new System.Drawing.Size(17, 13);
             this.labelTestSpawnX.TabIndex = 7;
@@ -1237,7 +1237,7 @@
             // 
             this.labelTestSpawnY.AutoSize = true;
             this.labelTestSpawnY.Enabled = false;
-            this.labelTestSpawnY.Location = new System.Drawing.Point(191, 99);
+            this.labelTestSpawnY.Location = new System.Drawing.Point(172, 98);
             this.labelTestSpawnY.Name = "labelTestSpawnY";
             this.labelTestSpawnY.Size = new System.Drawing.Size(17, 13);
             this.labelTestSpawnY.TabIndex = 9;
@@ -1283,7 +1283,7 @@
             // 
             this.labelTestSpawnZ.AutoSize = true;
             this.labelTestSpawnZ.Enabled = false;
-            this.labelTestSpawnZ.Location = new System.Drawing.Point(290, 99);
+            this.labelTestSpawnZ.Location = new System.Drawing.Point(271, 98);
             this.labelTestSpawnZ.Name = "labelTestSpawnZ";
             this.labelTestSpawnZ.Size = new System.Drawing.Size(17, 13);
             this.labelTestSpawnZ.TabIndex = 11;
@@ -1292,7 +1292,7 @@
             // numericUpDownTestSpawnZ
             // 
             this.numericUpDownTestSpawnZ.Enabled = false;
-            this.numericUpDownTestSpawnZ.Location = new System.Drawing.Point(314, 95);
+            this.numericUpDownTestSpawnZ.Location = new System.Drawing.Point(292, 95);
             this.numericUpDownTestSpawnZ.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -1310,7 +1310,7 @@
             // numericUpDownTestSpawnY
             // 
             this.numericUpDownTestSpawnY.Enabled = false;
-            this.numericUpDownTestSpawnY.Location = new System.Drawing.Point(214, 95);
+            this.numericUpDownTestSpawnY.Location = new System.Drawing.Point(192, 95);
             this.numericUpDownTestSpawnY.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -1338,7 +1338,7 @@
             // numericUpDownTestSpawnX
             // 
             this.numericUpDownTestSpawnX.Enabled = false;
-            this.numericUpDownTestSpawnX.Location = new System.Drawing.Point(115, 95);
+            this.numericUpDownTestSpawnX.Location = new System.Drawing.Point(93, 95);
             this.numericUpDownTestSpawnX.Maximum = new decimal(new int[] {
             999999,
             0,
