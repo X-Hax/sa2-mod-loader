@@ -30,6 +30,7 @@ static bool vsync = false;
 static bool disableExitPrompt = false;
 static bool pauseWhenInactive = true;
 static bool maintainAspectRatio = true;
+static bool windowWrapper = false;
 static double targetAspectRatio = 4 / 3;
 static int customWindowWidth = 640;
 static int customWindowHeight = 480;
@@ -106,23 +107,18 @@ static void update_innerwindow(int w, int h)
 {
 	if (maintainAspectRatio)
 	{
-		if (customWindowSize)
+		auto w_ = customWindowSize ? customWindowWidth : w;
+		auto h_ = customWindowSize ? customWindowHeight : h;
+
+		if (w > h * targetAspectRatio)
 		{
-			innerWidth = customWindowWidth;
-			innerHeight = customWindowHeight;
+			innerWidth = h_ * targetAspectRatio;
+			innerHeight = h_;
 		}
 		else
 		{
-			if (w > h * targetAspectRatio)
-			{
-				innerWidth = h * targetAspectRatio;
-				innerHeight = h;
-			}
-			else
-			{
-				innerWidth = w;
-				innerHeight = w / targetAspectRatio;
-			}
+			innerWidth = w_;
+			innerHeight = w_ / targetAspectRatio;
 		}
 	}
 	else if (customWindowSize)
@@ -142,7 +138,7 @@ static void update_innerwindow(int w, int h)
 static void change_resolution(int w, int h, bool windowed)
 {
 	// Update the inner window if it exists
-	if (innerWindow)
+	if (windowWrapper)
 	{
 		update_innerwindow(w, h);
 
@@ -341,10 +337,16 @@ static void __fastcall PresentToInnerWindow(Magic::RenderCore::RenderDevice_DX9*
 
 void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 {
+	if (IS_FULLSCREEN)
+	{
+		return;
+	}
+
 	customWindowSize = settings->getBool("CustomWindowSize");
 	windowResize = settings->getBool("ResizableWindow") && !customWindowSize;
 	windowedFullscreen = settings->getBool("BorderlessWindow");
-	maintainAspectRatio = settings->getBool("MaintainAspectRatio") && !(!windowedFullscreen && customWindowSize);
+	maintainAspectRatio = settings->getBool("MaintainAspectRatio");
+	windowWrapper = maintainAspectRatio || (windowedFullscreen && customWindowSize);
 	screenNum = settings->getInt("ScreenNum");
 	vsync = settings->getBool("EnableVsync", true);
 	disableExitPrompt = settings->getBool("DisableExitPrompt");
@@ -417,6 +419,27 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 		dwStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
 	}
 
+	if (windowWrapper)
+	{
+		// Calculate aspect ratio for the MaintainAspectRatio option
+		targetAspectRatio = HorizontalResolution / VerticalResolution;
+
+		// If a mod changed the border image path to something invalid, restore normal path
+		if (!FileExists(borderimg))
+		{
+			borderimg = L"mods\\Border_Default.png";
+		}
+
+		// Try to load the border image
+		if (FileExists(borderimg))
+		{
+			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+			ULONG_PTR gdiplusToken;
+			Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
+			backgroundImage = Gdiplus::Bitmap::FromFile(borderimg.c_str());
+		}
+	}
+
 	// Let Windows calculate any extra space required by the style
 	AdjustWindowRectEx(&windowRect, dwStyle, false, 0);
 
@@ -451,7 +474,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 	}
 
 	// Create an inner window to wrap the game
-	if (maintainAspectRatio || (windowedFullscreen && customWindowSize))
+	if (windowWrapper)
 	{
 		const LPCWSTR const lpszClassName = L"SONIC ADVENTURE 2";
 
@@ -464,12 +487,10 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 
 		if (innerWindow == NULL)
 		{
+			windowWrapper = false;
 			return;
 		}
 		
-		// Calculate aspect ratio for the MaintainAspectRatio option
-		targetAspectRatio = HorizontalResolution / VerticalResolution;
-
 		// Redirect the D3D9 presentation to the inner window
 		WriteJump((void*)0x867AE0, PresentToInnerWindow);
 
@@ -482,21 +503,6 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 		{
 			GetClientRect(MainWindowHandle, &windowRect);
 			update_innerwindow(windowRect.right, windowRect.bottom);
-		}
-
-		// If a mod changed the border image path to something invalid, restore normal path
-		if (!FileExists(borderimg))
-		{
-			borderimg = L"mods\\Border_Default.png";
-		}
-
-		// Try to load the border image
-		if (FileExists(borderimg))
-		{
-			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-			ULONG_PTR gdiplusToken;
-			Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
-			backgroundImage = Gdiplus::Bitmap::FromFile(borderimg.c_str());
 		}
 	}
 }
