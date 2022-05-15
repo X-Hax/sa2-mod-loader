@@ -361,6 +361,9 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 	// Force the window to the foreground to prevent the console from setting the window inactive
 	SetForegroundWindow(MainWindowHandle);
 
+	// Set missing background brush to prevent ghost screen while resizing.
+	SetClassLongW(MainWindowHandle, GCL_HBRBACKGROUND, (LONG)GetStockObject(BLACK_BRUSH));
+
 	RECT windowRect;
 	windowRect.top = 0;
 	windowRect.left = 0;
