@@ -18,8 +18,8 @@ static std::vector<RECT> screenBounds;
 static int screenNum = 1;
 
 static RECT   last_rect = {};
-static Uint32 last_width = 0;
-static Uint32 last_height = 0;
+static float  last_width = 0.0f;
+static float  last_height = 0.0f;
 static DWORD  last_style = 0;
 static DWORD  last_exStyle = 0;
 
@@ -112,13 +112,13 @@ static void update_innerwindow(int w, int h)
 
 		if (w > h * targetAspectRatio)
 		{
-			innerWidth = h_ * targetAspectRatio;
+			innerWidth = static_cast<int>(h_ * targetAspectRatio);
 			innerHeight = h_;
 		}
 		else
 		{
 			innerWidth = w_;
-			innerHeight = w_ / targetAspectRatio;
+			innerHeight = static_cast<int>(w_ / targetAspectRatio);
 		}
 	}
 	else if (customWindowSize)
@@ -135,7 +135,7 @@ static void update_innerwindow(int w, int h)
 	SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
 }
 
-static void change_resolution(int w, int h, bool windowed)
+static void change_resolution(int w, int h, BOOL windowed)
 {
 	// Update the inner window if it exists
 	if (windowWrapper)
@@ -151,12 +151,12 @@ static void change_resolution(int w, int h, bool windowed)
 	auto& pp = g_pRenderDevice->m_pDeviceCreator->m_D3DPP;
 	if (pp.BackBufferWidth != w || pp.BackBufferHeight != h || pp.Windowed != windowed)
 	{
-		HorizontalResolution = w;
-		VerticalResolution = h;
+		HorizontalResolution = static_cast<float>(w);
+		VerticalResolution = static_cast<float>(h);
 		g_pRenderDevice->m_InitInfo.m_BackBufferWidth = w;
 		g_pRenderDevice->m_InitInfo.m_BackBufferHeight = h;
-		pp.BackBufferWidth = w;
-		pp.BackBufferHeight = h;
+		pp.BackBufferWidth = static_cast<UINT>(w);
+		pp.BackBufferHeight = static_cast<UINT>(h);
 		reset_device();
 	}
 }
@@ -176,7 +176,7 @@ static void swap_window_mode(HWND handle)
 	}
 	else
 	{
-		change_resolution(last_width, last_height, false);
+		change_resolution(static_cast<int>(last_width), static_cast<int>(last_height), false);
 		enable_windowed_mode(handle);
 	}
 }
@@ -387,7 +387,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 	int screenX, screenY, screenW, screenH, wsX, wsY, wsW, wsH;
 	if (screenNum > 0)
 	{
-		if (screenBounds.size() < screenNum)
+		if (screenBounds.size() < static_cast<size_t>(screenNum))
 		{
 			screenNum = 1;
 		}
@@ -476,13 +476,13 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 	// Create an inner window to wrap the game
 	if (windowWrapper)
 	{
-		const LPCWSTR const lpszClassName = L"SONIC ADVENTURE 2";
+		LPCWSTR const lpszClassName = L"SONIC ADVENTURE 2";
 
 		innerWindow = CreateWindowExW(0,
 			lpszClassName,
 			lpszClassName,
 			WS_CHILD | WS_VISIBLE,
-			0, 0, HorizontalResolution, VerticalResolution,
+			0, 0, static_cast<int>(HorizontalResolution), static_cast<int>(VerticalResolution),
 			MainWindowHandle, nullptr, GetModuleHandle(NULL), nullptr);
 
 		if (innerWindow == NULL)
