@@ -56,7 +56,7 @@ static void enable_fullscreen_mode(HWND handle)
 	last_exStyle = GetWindowLongA(handle, GWL_EXSTYLE);
 
 	// Set to borderless fullscreen
-	auto rect = screenBounds[max(0, screenNum - 1)];
+	auto rect = screenBounds[screenNum == 0 ? 0 : screenNum - 1];
 	SetWindowPos(handle, nullptr, rect.left, rect.top, rect.right, rect.bottom, SWP_FRAMECHANGED);
 	SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 	SetWindowLongA(handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
@@ -347,7 +347,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 	windowedFullscreen = settings->getBool("BorderlessWindow");
 	maintainAspectRatio = settings->getBool("MaintainAspectRatio");
 	windowWrapper = maintainAspectRatio || (windowedFullscreen && customWindowSize);
-	screenNum = settings->getInt("ScreenNum");
+	screenNum = settings->getInt("ScreenNum", 1);
 	vsync = settings->getBool("EnableVsync", true);
 	disableExitPrompt = settings->getBool("DisableExitPrompt");
 	pauseWhenInactive = settings->getBool("PauseWhenInactive", true);
@@ -497,15 +497,12 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 		// Position the inner window properly
 		if (windowedFullscreen)
 		{
-			update_innerwindow(wsW, wsH);
+			update_innerwindow(screenW, screenH);
 		}
 		else
 		{
 			GetClientRect(MainWindowHandle, &windowRect);
 			update_innerwindow(windowRect.right, windowRect.bottom);
 		}
-
-		if (windowResize)
-			reset_device();
 	}
 }
