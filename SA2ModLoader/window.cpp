@@ -505,4 +505,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 			update_innerwindow(windowRect.right, windowRect.bottom);
 		}
 	}
+
+	// Since we've modified the window after directx initialization, we need to reset the device
+	reset_device();
 }
