@@ -294,7 +294,7 @@ static LRESULT CALLBACK WndProc_Resizable(HWND handle, UINT Msg, WPARAM wParam, 
 		return MNC_CLOSE << 16;
 	}
 
-	return DefWindowProcA(handle, Msg, wParam, lParam);
+	return DefWindowProcW(handle, Msg, wParam, lParam);
 }
 
 static LRESULT CALLBACK WndProc_Hook(HWND handle, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -321,7 +321,7 @@ static LRESULT CALLBACK WndProc_Hook(HWND handle, UINT Msg, WPARAM wParam, LPARA
 		break;
 	}
 
-	return DefWindowProcA(handle, Msg, wParam, lParam);
+	return DefWindowProcW(handle, Msg, wParam, lParam);
 }
 
 static BOOL CALLBACK GetMonitorSize(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
