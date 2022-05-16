@@ -96,10 +96,7 @@ static void enable_windowed_mode(HWND handle)
 
 static void reset_device()
 {
-	// Set the "reload shaders" variable from the SOCRender system
-	*(BYTE*)&g_pSOCRender->field_644 = 1; 
-
-	// The game already has everything to restore the device on the fly
+	// The game already has everything to reset the device on the fly
 	g_pRenderDevice->__vftable->ResetRenderDeviceInitInfo(g_pRenderDevice, &g_pRenderDevice->m_InitInfo, &DeviceLostFunc, &DeviceResetFunc);
 }
 
