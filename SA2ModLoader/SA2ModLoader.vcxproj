@@ -94,6 +94,7 @@
     <ClInclude Include="FadeFix.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="FileReplacement.h" />
+    <ClInclude Include="include\magic.h" />
     <ClInclude Include="include\MemAccess.h" />
     <ClInclude Include="include\ninja.h" />
     <ClInclude Include="include\SA2ModInfo.h" />
@@ -104,7 +105,6 @@
     <ClInclude Include="include\SA2Variables.h" />
     <ClInclude Include="include\UsercallFunctionHandler.h" />
     <ClInclude Include="MediaFns.hpp" />
-    <ClInclude Include="magic.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="testspawn.h" />

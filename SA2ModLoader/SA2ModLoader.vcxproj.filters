@@ -84,7 +84,7 @@
     <ClInclude Include="window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="magic.h">
+    <ClInclude Include="include\magic.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
