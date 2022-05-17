@@ -1355,6 +1355,7 @@ FunctionPointer(BOOL, PResetAccelerationAir, (EntityData2* a1, EntityData1* a2, 
 FunctionPointer(void, PGetAcceleration, (EntityData1* data1, EntityData2* data2, CharObj2Base* co2), 0x45B610);
 FunctionPointer(void, PlayerAfterImage, (NJS_OBJECT* a1, int a2, NJS_TEXLIST* a3, float a4, char a5), 0x476C20);
 VoidFunc(InitCharacterSound, 0x438B00);
+FunctionPointer(void, SetFogParamAndColor_, (int a2, float a3, float a4, int argC), 0x420510);
 
 // HWND __usercall@<eax>(int nWidth@<eax>, HINSTANCE hInstance, int nHeight, unsigned __int8 isWindowed)
 static const void* const CreateMainWindowPtr = (void*)0x4019D0;

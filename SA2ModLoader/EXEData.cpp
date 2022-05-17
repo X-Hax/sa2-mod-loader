@@ -634,7 +634,7 @@ static void ProcessAnimationListINI(const IniGroup* group, const wstring& mod_di
 		AnimationInfo entry;
 		entry.AnimNum = (short)animdata->getInt("Animation");
 		entry.ModelNum = (short)animdata->getInt("Model");
-		entry.anonymous_2 = (short)animdata->getInt("Property");
+		entry.mtnmode = (short)animdata->getInt("Property");
 		entry.NextAnimation = (short)animdata->getInt("NextAnimation");
 		entry.TransitionSpeed = animdata->getFloat("TransitionSpeed");
 		entry.AnimationSpeed = animdata->getFloat("AnimationSpeed");
