@@ -1753,53 +1753,6 @@ struct struc_33
 	int field_24D4;
 };
 
-struct struc_36
-{
-	char gap_0[20];
-	int field_14;
-	int field_18;
-	int field_1C;
-	float field_20;
-	float field_24;
-	char gap_28[832];
-	int field_368;
-	char gap_36C[636];
-	int field_5E8;
-	int field_5EC;
-	int field_5F0;
-	int field_5F4;
-	int field_5F8;
-	int field_5FC;
-	int field_600;
-	int field_604;
-	char gap_608[24];
-	int field_620;
-	int field_624;
-	int field_628;
-	int field_62C;
-	int field_630;
-	int field_634;
-	int field_638;
-	int field_63C;
-	char gap_640[4];
-	int field_644;
-	int field_648;
-	int field_64C;
-	int field_650;
-	int field_654;
-	int field_658;
-	int field_65C;
-	int field_660;
-	int field_664;
-	int field_668;
-	int field_66C;
-	int field_670;
-	int field_674;
-	int field_678;
-	char gap_67C[27];
-	char field_697;
-};
-
 struct SOCController__vtbl
 {
 	int sub_425440;

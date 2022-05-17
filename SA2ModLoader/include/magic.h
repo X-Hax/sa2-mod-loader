@@ -499,15 +499,58 @@ namespace Magic
 			Texture* m_pBackBufferScreenShotTex;
 			RenderTargetManager* m_pRenderTargetManager;
 		};
+
+		DataPointer(RenderDevice_DX9*, _g_pRenderDevice, 0x1A55764); // Pointer to the RenderDevice for internal usage
 	}
 }
 
-DataPointer(Magic::RenderCore::DX9_VideoDevice_PC*, g_pVideoDevice, 0x1A556EC);
-DataPointer(Magic::RenderCore::RenderDevice_DX9*, g_pRenderDevice, 0x1A55764);
-DataPointer(struc_36*, g_pSOCRender, 0x1A557BC); // SOCRender struct
+struct SOCRender
+{
+	char gap_0[20];
+	int field_14;
+	int field_18;
+	int FogMode;
+	float FogStart;
+	float FogEnd;
+	NJS_ARGB FogColor;
+	char gap_28[752];
+	NJS_MATRIX Matrix1;
+	NJS_MATRIX Matrix2;
+	NJS_MATRIX Matrix3;
+	NJS_MATRIX TextureMatrices[4];
+	char gap_36C[256];
+	int field_5E8;
+	int field_5EC;
+	int field_5F0;
+	int field_5F4;
+	int field_5F8;
+	int field_5FC;
+	int field_600;
+	int field_604;
+	D3DVIEWPORT9 m_ViewPort;
+	Magic::RenderCore::SamplerState_t m_SamplerState;
+	int field_63C;
+	char gap_640[4];
+	BYTE ReloadShaders;
+	LPVOID pShaderData;
+	int field_64C;
+	int field_650;
+	int field_654;
+	int field_658;
+	int field_65C;
+	int field_660;
+	int field_664;
+	int field_668;
+	int field_66C;
+	int field_670;
+	int field_674;
+	int field_678;
+	Magic::RenderCore::RenderDeviceInitInfo_t m_InitInfo;
+};
 
-FunctionPointer(Magic::RenderCore::RenderDevice_DX9*, CreateRenderDevice, (Magic::RenderCore::DeviceConfig_t* config), 0x8699D0);
-FunctionPointer(Magic::RenderCore::RenderDevice_DX9*, GetRenderDevice, (), 0x869B30);
+DataPointer(Magic::RenderCore::DX9_VideoDevice_PC*, g_pVideoDevice, 0x1A556EC);
+DataPointer(Magic::RenderCore::RenderDevice_DX9*, g_pRenderDevice, 0x1A557C0); // Pointer to the RenderDevice for external usage
+DataPointer(SOCRender*, g_pSOCRender, 0x1A557BC);
 
 DataPointer(Magic::RenderCore::OnDeviceResetFunc*, DeviceResetFunc, 0x174F81C);
 DataPointer(Magic::RenderCore::OnDeviceLostFunc*, DeviceLostFunc, 0x174F820);
