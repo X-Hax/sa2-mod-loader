@@ -462,7 +462,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 		// Apply fake fullscreen
 		SetWindowLongW(MainWindowHandle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 		SetWindowLongW(MainWindowHandle, GWL_EXSTYLE, WS_EX_APPWINDOW);
-		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW + 1, screenH + 1, SWP_FRAMECHANGED);
+		SetWindowPos(MainWindowHandle, nullptr, screenX, screenY, screenW, screenH, SWP_FRAMECHANGED);
 	}
 	else
 	{
