@@ -14,6 +14,8 @@ namespace SA2ModManager
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
 		[DefaultValue(true)]
 		public bool PauseWhenInactive { get; set; }
+		[DefaultValue(false)]
+		public bool DisableExitPrompt { get; set; }
 		[DefaultValue(1)]
 		public int ScreenNum { get; set; } = 1;
 		[DefaultValue(false)]
@@ -35,6 +37,7 @@ namespace SA2ModManager
 		[DefaultValue(480)]
 		public int WindowHeight { get; set; } = 480;
 		public bool ResizableWindow { get; set; }
+		public bool MaintainAspectRatio { get; set; }
 		[DefaultValue(-1)]
 		public int TestSpawnLevel { get; set; } = -1;
 		[DefaultValue(-1)]

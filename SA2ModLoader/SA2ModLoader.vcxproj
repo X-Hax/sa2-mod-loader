@@ -60,7 +60,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;gdiplus.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\extlib\bass</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -81,7 +81,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;gdiplus.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\extlib\bass</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -94,6 +94,7 @@
     <ClInclude Include="FadeFix.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="FileReplacement.h" />
+    <ClInclude Include="include\magic.h" />
     <ClInclude Include="include\MemAccess.h" />
     <ClInclude Include="include\ninja.h" />
     <ClInclude Include="include\SA2ModInfo.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="testspawn.h" />
+    <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CrashDump.cpp" />
@@ -131,6 +133,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="testspawn.cpp" />
+    <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

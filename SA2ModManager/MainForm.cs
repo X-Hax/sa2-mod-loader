@@ -22,7 +22,33 @@ namespace SA2ModManager
 	{
 		public MainForm()
 		{
+			this.Font = SystemFonts.MessageBoxFont;
 			InitializeComponent();
+
+			// WORKAROUND: Windows 7's system fonts don't have
+			// U+2912 or U+2913. Use Cambria instead.
+			// TODO: Check the actual font to see if it has the glyphs.
+			Font boldFont = null;
+			OperatingSystem os = Environment.OSVersion;
+			if ((os.Platform == PlatformID.Win32NT || os.Platform == PlatformID.Win32Windows) &&
+				(os.Version.Major < 6 || (os.Version.Major == 6 && os.Version.Minor < 2)))
+			{
+				// Windows 7 or earlier.
+				// TODO: Make sure this font exists.
+				// NOTE: U+2912 and U+2913 are missing in Bold, so use Regular.
+				boldFont = new Font("Cambria", this.Font.Size * 1.25f, FontStyle.Regular);
+			}
+			else
+			{
+				// Newer than Windows 7, or not Windows.
+				// Use the default font.
+				boldFont = new Font(this.Font.FontFamily, this.Font.Size * 1.25f, FontStyle.Bold);
+			}
+
+			modTopButton.Font = boldFont;
+			modUpButton.Font = boldFont;
+			modDownButton.Font = boldFont;
+			modBottomButton.Font = boldFont;
 		}
 
 		private bool checkedForUpdates;
@@ -175,7 +201,7 @@ namespace SA2ModManager
 				{
 					Configs.Attributes["Width"].Value = loaderini.HorizontalResolution.ToString();
 					Configs.Attributes["Height"].Value = loaderini.VerticalResolution.ToString();
-					Configs.Attributes["FullScreen"].Value = loaderini.FullScreen ? "1" : "0";
+					Configs.Attributes["FullScreen"].Value = loaderini.FullScreen && !loaderini.BorderlessWindow ? "1" : "0";
 					int screenID = screenNumComboBox.SelectedIndex;
 					if (screenID > 0)
 						screenID -= 1;
@@ -198,9 +224,9 @@ namespace SA2ModManager
 			fileCheckBox.Checked = loaderini.DebugFile;
 			crashLogCheckBox.Checked = loaderini.DebugCrashLog;
 			pauseWhenInactiveCheckBox.Checked = loaderini.PauseWhenInactive;
+			disableExitPromptCheckBox.Checked = loaderini.DisableExitPrompt;
 			horizontalResolution.Value = Math.Max(horizontalResolution.Minimum, Math.Min(horizontalResolution.Maximum, loaderini.HorizontalResolution));
 			verticalResolution.Value = Math.Max(verticalResolution.Minimum, Math.Min(verticalResolution.Maximum, loaderini.VerticalResolution));
-			borderlessWindowCheckBox.Checked = loaderini.BorderlessWindow;
 			skipIntrocheckBox.Checked = loaderini.SkipIntro;
 			checkUpdateStartup.Checked = loaderini.UpdateCheck;
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
@@ -210,7 +236,8 @@ namespace SA2ModManager
 			comboTextLanguage.SelectedIndex = loaderini.TextLanguage;
 			radioFullscreen.Checked = loaderini.FullScreen;
 			radioWindowMode.Checked = loaderini.FullScreen == false;
-
+			radioBorderlessWindowMode.Checked = loaderini.BorderlessWindow;
+			
 			int screenNum = Math.Min(Screen.AllScreens.Length, loaderini.ScreenNum);
 
 			screenNumComboBox.SelectedIndex = screenNum;
@@ -228,6 +255,7 @@ namespace SA2ModManager
 			windowHeight.Value = Math.Max(windowHeight.Minimum, Math.Min(rect.Height, loaderini.WindowHeight));
 
 			checkWindowResize.Checked = loaderini.ResizableWindow;
+			aspectRatioCheckBox.Checked = loaderini.MaintainAspectRatio;
 
 			checkBoxTestSpawnLevel.Checked = loaderini.TestSpawnLevel != -1;
 			comboBoxTestSpawnLevel.SelectedIndex = loaderini.TestSpawnLevel;
@@ -938,16 +966,17 @@ namespace SA2ModManager
 			loaderini.DebugFile = fileCheckBox.Checked;
 			loaderini.DebugCrashLog = crashLogCheckBox.Checked;
 			loaderini.PauseWhenInactive = pauseWhenInactiveCheckBox.Checked;
-			loaderini.BorderlessWindow = borderlessWindowCheckBox.Checked;
+			loaderini.DisableExitPrompt = disableExitPromptCheckBox.Checked;
+			loaderini.BorderlessWindow = radioBorderlessWindowMode.Checked;
 			loaderini.HorizontalResolution = (int)horizontalResolution.Value;
 			loaderini.VerticalResolution = (int)verticalResolution.Value;
 			loaderini.FullScreen = radioFullscreen.Checked;
-			radioWindowMode.Checked = loaderini.FullScreen == false;
 			loaderini.ScreenNum = screenNumComboBox.SelectedIndex;
 			loaderini.CustomWindowSize = customWindowSizeCheckBox.Checked;
 			loaderini.WindowWidth = (int)windowWidth.Value;
 			loaderini.WindowHeight = (int)windowHeight.Value;
 			loaderini.ResizableWindow = checkWindowResize.Checked;
+			loaderini.MaintainAspectRatio = aspectRatioCheckBox.Checked;
 			loaderini.SkipIntro = skipIntrocheckBox.Checked;
 			loaderini.UpdateCheck = checkUpdateStartup.Checked;
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
@@ -1726,8 +1755,15 @@ namespace SA2ModManager
 
 		private void customWindowSizeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			windowHeight.Enabled = customWindowSizeCheckBox.Checked;
-			windowWidth.Enabled = customWindowSizeCheckBox.Checked;
+			var check = ((CheckBox)sender).Checked;
+			windowHeight.Enabled = check;
+			windowWidth.Enabled = check;
+			checkWindowResize.Enabled = !check;
+		}
+
+		private void radioFullscreen_CheckedChanged(object sender, EventArgs e)
+		{
+			groupBox_WindowMode.Enabled = !((RadioButton)sender).Checked;
 		}
 	}
 }

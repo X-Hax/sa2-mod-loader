@@ -9,7 +9,6 @@
 #include <unordered_map>
 #include <list>
 #include <algorithm>
-#include <thread>
 #include <DbgHelp.h>
 #include <Shlwapi.h>
 #include "IniFile.hpp"
@@ -26,12 +25,12 @@
 #include "FileReplacement.h"
 #include "DebugText.h"
 #include "CrashDump.h"
-
-static std::thread* window_thread = nullptr;
+#include "window.h"
 
 using namespace std;
 
 const string resourcedir = "resource\\gd_pc\\";
+static wstring borderimg = L"mods\\Border.png";
 
 unordered_map<string, unordered_set<string>*> csbfilemap;
 struct itercont { unordered_set<string>::const_iterator cur; unordered_set<string>::const_iterator end; };
@@ -1216,6 +1215,7 @@ void __cdecl InitMods(void)
 	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
 	const IniGroup *settings = ini->getGroup("");
+
 	if (settings->getBool("DebugConsole"))
 	{
 		AllocConsole();
@@ -1234,12 +1234,6 @@ void __cdecl InitMods(void)
 	{
 		WriteJump(PrintDebug, SA2DebugOutput);
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
-	}
-
-	if (!settings->getBool("PauseWhenInactive", true))
-	{
-		// JNE -> JMP
-		WriteData((Uint8*)0x00401897, (Uint8)0xEB);
 	}
 
 	bool SkipIntro = settings->getBool("SkipIntro");
@@ -1508,7 +1502,12 @@ void __cdecl InitMods(void)
 
 		if (modinfo->getBool("RedirectChaoSave"))
 			_chaosavepath = mod_dirA + "\\SAVEDATA";
+
+		if (modinfo->hasKeyNonEmpty("BorderImage"))
+			borderimg = mod_dir + L'\\' + modinfo->getWString("BorderImage");
 	}
+
+	PatchWindow(settings, borderimg);
 
 	if (!errors.empty())
 	{
@@ -1693,55 +1692,6 @@ void __cdecl InitMods(void)
 	WriteJump((void*)0x0077E897, OnInput);
 	WriteJump((void*)0x00441D41, OnControl);
 	WriteJump((void*)0x00441EEB, OnControl);
-
-	if (MainUserConfig->data.Fullscreen == 0)
-	{
-		RECT windRect = { 0, 0, 0, 0 };
-
-		UINT flags = 0;
-		LONG dwStyle = 0;
-
-		if (settings->getBool("CustomWindowSize", false))
-		{
-			windRect.right = settings->getInt("WindowWidth", 640);
-			windRect.bottom = settings->getInt("WindowHeight", 480);
-		}
-		else
-		{
-			windRect.right = MainUserConfig->data.Width;
-			windRect.bottom = MainUserConfig->data.Height;
-		}
-
-		if (settings->getBool("ResizableWindow", false))
-		{
-			dwStyle |= WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX;
-
-			windRect.right += 1; // fixes the window being slightly smaller than it should be
-			windRect.bottom += 1;
-		}
-
-		if (settings->getBool("BorderlessWindow", false))
-		{
-			dwStyle |= WS_VISIBLE | WS_POPUP;
-			flags = SWP_FRAMECHANGED;
-		}
-		else
-		{
-			dwStyle |= GetWindowLong(MainWindowHandle, GWL_STYLE);
-			flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS;
-
-			AdjustWindowRectEx(&windRect, dwStyle, false, GetWindowLong(MainWindowHandle, GWL_EXSTYLE));
-		}
-
-		SetWindowLong(MainWindowHandle, GWL_STYLE, dwStyle);
-
-		SetForegroundWindow(MainWindowHandle); // Fixes issue where console window is left in focus
-
-		auto x = (GetSystemMetrics(SM_CXSCREEN) - windRect.right) / 2;
-		auto y = (GetSystemMetrics(SM_CYSCREEN) - windRect.bottom) / 2;
-
-		SetWindowPos(MainWindowHandle, nullptr, x, y, windRect.right - windRect.left, windRect.bottom - windRect.top, flags);
-	}
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
@@ -1766,16 +1716,9 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		WriteJump((void *)0x0077DD5C, InitMods);
 		WriteJump((void *)0x0077DD43, InitMods);
 		break;
+	case DLL_PROCESS_DETACH:
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
-		break;
-
-	case DLL_PROCESS_DETACH:
-		if (window_thread)
-		{
-			window_thread->join();
-			delete window_thread;
-		}
 		break;
 	}
 	return TRUE;
