@@ -18,7 +18,7 @@
 #include "ModelInfo.h"
 #include "CodeParser.hpp"
 #include "Events.h"
-#include "FadeFix.h"
+#include "patches.h"
 #include "testspawn.h"
 #include "EXEData.h"
 #include "DLLData.h"
@@ -1265,13 +1265,7 @@ void __cdecl InitMods(void)
 	WriteData((char*)0x435EF5, (char)0x90u);
 	WriteCall((void*)0x435EF6, FindCSBClose);
 	
-	// Expand chunk model vertex buffer from 8192 to 32768 verts
-	*(void**)0x25EFE48 = calloc(1, 0x100004);
-
-	// Fix env map condition bug in chDrawCnk
-	WriteData<6>((char*)0x0056DE7D, (char)0x90);
-
-	InitScreenFadeFix();
+	ApplyPatches();
 
 	// Map of files to replace.
 	// This is done with a second map instead of sadx_fileMap directly

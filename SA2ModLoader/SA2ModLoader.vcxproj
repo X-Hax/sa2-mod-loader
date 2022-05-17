@@ -91,7 +91,7 @@
     <ClInclude Include="DLLData.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="EXEData.h" />
-    <ClInclude Include="FadeFix.h" />
+    <ClInclude Include="patches.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="FileReplacement.h" />
     <ClInclude Include="include\magic.h" />
@@ -124,7 +124,7 @@
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="EXEData.cpp" />
-    <ClCompile Include="FadeFix.cpp" />
+    <ClCompile Include="patches.cpp" />
     <ClCompile Include="FileMap.cpp" />
     <ClCompile Include="FileReplacement.cpp" />
     <ClCompile Include="MediaFns.cpp" />

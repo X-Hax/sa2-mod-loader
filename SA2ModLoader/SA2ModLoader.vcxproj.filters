@@ -54,7 +54,7 @@
     <ClInclude Include="EXEData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FadeFix.h">
+    <ClInclude Include="patches.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="testspawn.h">
@@ -104,7 +104,7 @@
     <ClCompile Include="EXEData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FadeFix.cpp">
+    <ClCompile Include="patches.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="testspawn.cpp">
