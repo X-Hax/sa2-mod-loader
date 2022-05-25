@@ -26,6 +26,7 @@
 #include "DebugText.h"
 #include "CrashDump.h"
 #include "window.h"
+#include "direct3d.h"
 
 using namespace std;
 
@@ -1215,6 +1216,11 @@ void __cdecl InitMods(void)
 	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
 	const IniGroup *settings = ini->getGroup("");
+
+	if (settings->getBool("FramerateLimiter"))
+	{
+		direct3d::enable_frame_limiter();
+	}
 
 	if (settings->getBool("DebugConsole"))
 	{

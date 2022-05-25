@@ -3,23 +3,17 @@
 #include <d3dx9.h>
 #include <deque>
 #include "SA2ModLoader.h"
+#include "magic.h"
 #include "DebugText.h"
-
-struct Renderer
-{
-	void* vtable;
-	char field_4[52];
-	IDirect3DDevice9* pointerToDevice;
-	char field_3C[70];
-};
 
 VoidFunc(sub_429070, 0x429070);
 VoidFunc(sub_4293B0, 0x4293B0);
 VoidFunc(sub_44C260, 0x44C260);
-DataPointer(Renderer*, dword_1A557C0, 0x1A557C0);
 
 namespace debug_text
 {
+	bool enabled = false;
+
 	struct DebugStringInfo
 	{
 		__int16 column;
@@ -149,10 +143,10 @@ namespace debug_text
 			v7[i].base.y *= zValue;
 		}
 
-		dword_1A557C0->pointerToDevice->SetVertexDeclaration(declaration);
-		dword_1A557C0->pointerToDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, &GiantVertexBuffer_ptr[0], 24);
+		g_pRenderDevice->m_pD3DDevice->SetVertexDeclaration(declaration);
+		g_pRenderDevice->m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, &GiantVertexBuffer_ptr[0], 24);
 
-		dword_1A557C0->pointerToDevice->SetStreamSource(0, nullptr, 0, 0);
+		g_pRenderDevice->m_pD3DDevice->SetStreamSource(0, nullptr, 0, 0);
 	}
 
 	void __cdecl DrawRectPoints(NJS_POINT2* points, float scale)
@@ -200,8 +194,8 @@ namespace debug_text
 
 		rect[0].x = x;
 		rect[0].y = y;
-		rect[1].x =(float)(size + x);
-		rect[1].y =(float)(size + y);
+		rect[1].x = (float)(size + x);
+		rect[1].y = (float)(size + y);
 		rect[2].x = u;
 		rect[2].y = v;
 		rect[3].x = u + char_size;
@@ -313,16 +307,16 @@ namespace debug_text
 		IDirect3DPixelShader9* backupPixelShader;
 		IDirect3DVertexDeclaration9* backupDeclaration;
 		float backupTev[4] = { 0,0,0,0 };
-		dword_1A557C0->pointerToDevice->GetTexture(0, &backupTexture);
-		dword_1A557C0->pointerToDevice->GetVertexShader(&backupVertShader);
-		dword_1A557C0->pointerToDevice->GetPixelShader(&backupPixelShader);
-		dword_1A557C0->pointerToDevice->GetPixelShaderConstantF(0, backupTev, 1);
-		dword_1A557C0->pointerToDevice->GetVertexDeclaration(&backupDeclaration);
+		g_pRenderDevice->m_pD3DDevice->GetTexture(0, &backupTexture);
+		g_pRenderDevice->m_pD3DDevice->GetVertexShader(&backupVertShader);
+		g_pRenderDevice->m_pD3DDevice->GetPixelShader(&backupPixelShader);
+		g_pRenderDevice->m_pD3DDevice->GetPixelShaderConstantF(0, backupTev, 1);
+		g_pRenderDevice->m_pD3DDevice->GetVertexDeclaration(&backupDeclaration);
 
 		// Enable point filtering
-		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MINFILTER, D3DTEXF_POINT);
-		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+		g_pRenderDevice->m_pD3DDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MINFILTER, D3DTEXF_POINT);
+		g_pRenderDevice->m_pD3DDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+		g_pRenderDevice->m_pD3DDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 
 		// Backup last shader ID
 		int prebackup = CurrentShaderID;
@@ -330,17 +324,17 @@ namespace debug_text
 		// Init 2D stuff, sets UI shader
 		sub_429070();
 		// We overwrite the UI vertex shader with ours, to scale the text correctly
-		dword_1A557C0->pointerToDevice->SetVertexShader(uiShader); 
+		g_pRenderDevice->m_pD3DDevice->SetVertexShader(uiShader);
 
 		// Transparent blending
 		sub_4293B0();
 
 		// Set texture
-		dword_1A557C0->pointerToDevice->SetTexture(0, texture);
+		g_pRenderDevice->m_pD3DDevice->SetTexture(0, texture);
 
 		// Set TevMode for UI pixel shader, if its not 0 the text doesn't display correctly
 		float tevmode = 0;
-		dword_1A557C0->pointerToDevice->SetPixelShaderConstantF(0,&tevmode,1);
+		g_pRenderDevice->m_pD3DDevice->SetPixelShaderConstantF(0, &tevmode, 1);
 
 		const char* str = info->text;
 		int strLength = strlen(info->text);
@@ -353,19 +347,19 @@ namespace debug_text
 		}
 
 		// Restore texture
-		dword_1A557C0->pointerToDevice->SetTexture(0, backupTexture);
+		g_pRenderDevice->m_pD3DDevice->SetTexture(0, backupTexture);
 
 		// Restore linear filtering
-		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-		dword_1A557C0->pointerToDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+		g_pRenderDevice->m_pD3DDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		g_pRenderDevice->m_pD3DDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+		g_pRenderDevice->m_pD3DDevice->SetSamplerState(0, D3DSAMPLERSTATETYPE::D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
 		// Restore shader, tevmode, and vertex declaration
 		SetShaders(prebackup); // We still run this, so that the CurrentShaderID gets reset back to the last thing, even if the actual shader gets overwritten
-		dword_1A557C0->pointerToDevice->SetVertexShader(backupVertShader);
-		dword_1A557C0->pointerToDevice->SetPixelShader(backupPixelShader);
-		dword_1A557C0->pointerToDevice->SetPixelShaderConstantF(0, backupTev, 1);
-		dword_1A557C0->pointerToDevice->SetVertexDeclaration(backupDeclaration);
+		g_pRenderDevice->m_pD3DDevice->SetVertexShader(backupVertShader);
+		g_pRenderDevice->m_pD3DDevice->SetPixelShader(backupPixelShader);
+		g_pRenderDevice->m_pD3DDevice->SetPixelShaderConstantF(0, backupTev, 1);
+		g_pRenderDevice->m_pD3DDevice->SetVertexDeclaration(backupDeclaration);
 	}
 
 	void DrawDebugText()
@@ -449,7 +443,7 @@ namespace debug_text
 		int prebackup = *(int*)0x01A5579C;
 
 		SetShaders(0);
-		dword_1A557C0->pointerToDevice->SetVertexShader(uiShader);
+		g_pRenderDevice->m_pD3DDevice->SetVertexShader(uiShader);
 
 		//init 2d stuff
 		sub_429070();
@@ -484,11 +478,11 @@ namespace debug_text
 				primitives = count;
 			}
 
-			dword_1A557C0->pointerToDevice->SetTexture(0, nullptr);
-			dword_1A557C0->pointerToDevice->SetVertexDeclaration(njDrawPolygonDeclaration);
-			dword_1A557C0->pointerToDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, primitives - 2, &GiantVertexBuffer_ptr[0], 16);
+			g_pRenderDevice->m_pD3DDevice->SetTexture(0, nullptr);
+			g_pRenderDevice->m_pD3DDevice->SetVertexDeclaration(njDrawPolygonDeclaration);
+			g_pRenderDevice->m_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, primitives - 2, &GiantVertexBuffer_ptr[0], 16);
 
-			dword_1A557C0->pointerToDevice->SetStreamSource(0, nullptr, 0, 0);
+			g_pRenderDevice->m_pD3DDevice->SetStreamSource(0, nullptr, 0, 0);
 		}
 
 		//Direct3D_TextureFilterLinear();
@@ -541,8 +535,8 @@ namespace debug_text
 	void PreEndSceneHook()
 	{
 		sub_44C260();         //endscene sub
-		PrintDebugMessages(); //this queues up the PrintDebug shit
-		DrawDebugText();      //this draws it
+		PrintDebugMessages();
+		DrawDebugText();
 	}
 
 	void Initialize()
@@ -563,16 +557,26 @@ namespace debug_text
 		viewport.MinZ = -100.0f;
 		viewport.MaxZ = 100.0f;
 
-		dword_1A557C0->pointerToDevice->CreateVertexDeclaration(testDeclaration, &declaration);
-		dword_1A557C0->pointerToDevice->CreateVertexDeclaration(drawPolygonDeclaration, &njDrawPolygonDeclaration);
+		g_pRenderDevice->m_pD3DDevice->CreateVertexDeclaration(testDeclaration, &declaration);
+		g_pRenderDevice->m_pD3DDevice->CreateVertexDeclaration(drawPolygonDeclaration, &njDrawPolygonDeclaration);
 
 		LPD3DXBUFFER pUIShaderBuffer;
 
-		if (SUCCEEDED(D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", nullptr, nullptr, "main", "vs_3_0", 0, &pUIShaderBuffer, nullptr, nullptr)))
+		if (FAILED(D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", nullptr, nullptr, "main", "vs_3_0", 0, &pUIShaderBuffer, nullptr, nullptr)))
 		{
-			dword_1A557C0->pointerToDevice->CreateVertexShader((DWORD*)pUIShaderBuffer->GetBufferPointer(), &uiShader);
-			D3DXCreateTextureFromFileA(dword_1A557C0->pointerToDevice, "mods\\DebugFontTexture.dds", &texture);
-			WriteCall((void*)0x00433FF7, PreEndSceneHook);
+			return;
 		}
+
+		if (FAILED(g_pRenderDevice->m_pD3DDevice->CreateVertexShader((DWORD*)pUIShaderBuffer->GetBufferPointer(), &uiShader)))
+		{
+			return;
+		}
+
+		if (FAILED(D3DXCreateTextureFromFileA(g_pRenderDevice->m_pD3DDevice, "mods\\DebugFontTexture.dds", &texture)))
+		{
+			return;
+		}
+
+		WriteCall((void*)0x00433FF7, PreEndSceneHook);
 	}
 }

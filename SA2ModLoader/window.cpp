@@ -4,6 +4,7 @@
 #include "IniFile.hpp"
 #include "FileSystem.h"
 #include "magic.h"
+#include "direct3d.h"
 #include "UsercallFunctionHandler.h"
 
 // Improves the main window as soon as the loader takes control
@@ -94,12 +95,6 @@ static void enable_windowed_mode(HWND handle)
 	while (ShowCursor(TRUE) < 0);
 }
 
-static void reset_device()
-{
-	// The game already has everything to reset the device on the fly
-	g_pRenderDevice->__vftable->ResetRenderDeviceInitInfo(g_pRenderDevice, &g_pRenderDevice->m_InitInfo, &DeviceLostFunc, &DeviceResetFunc);
-}
-
 static void update_innerwindow(int w, int h)
 {
 	if (maintainAspectRatio)
@@ -143,19 +138,8 @@ static void change_resolution(int w, int h, BOOL windowed)
 		w = innerWidth;
 		h = innerHeight;
 	}
-	
-	// Make sure at least one parameter is different before resetting the device
-	auto& pp = g_pRenderDevice->m_pDeviceCreator->m_D3DPP;
-	if (pp.BackBufferWidth != w || pp.BackBufferHeight != h || pp.Windowed != windowed)
-	{
-		HorizontalResolution = static_cast<float>(w);
-		VerticalResolution = static_cast<float>(h);
-		g_pRenderDevice->m_InitInfo.m_BackBufferWidth = w;
-		g_pRenderDevice->m_InitInfo.m_BackBufferHeight = h;
-		pp.BackBufferWidth = static_cast<UINT>(w);
-		pp.BackBufferHeight = static_cast<UINT>(h);
-		reset_device();
-	}
+
+	direct3d::change_resolution(w, h, windowed);
 }
 
 static void swap_window_mode(HWND handle)
@@ -327,11 +311,6 @@ static BOOL CALLBACK GetMonitorSize(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lp
 	return TRUE;
 }
 
-static void __fastcall PresentToInnerWindow(Magic::RenderCore::RenderDevice_DX9* dev)
-{
-	dev->m_pD3DDevice->Present(nullptr, nullptr, innerWindow, nullptr);
-}
-
 void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 {
 	if (IS_FULLSCREEN)
@@ -488,8 +467,7 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 			return;
 		}
 		
-		// Redirect the D3D9 presentation to the inner window
-		WriteJump((void*)0x867AE0, PresentToInnerWindow);
+		direct3d::change_dest_window(innerWindow);
 
 		// Position the inner window properly
 		if (windowedFullscreen)
