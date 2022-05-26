@@ -1535,7 +1535,7 @@
             this.checkFrameLimiter.Size = new System.Drawing.Size(154, 25);
             this.checkFrameLimiter.TabIndex = 6;
             this.checkFrameLimiter.Text = "Lock framerate";
-            this.toolTip.SetToolTip(this.checkFrameLimiter, "Prevents the game from going over 60 FPS, useful for hgih refresh rate monitors.");
+            this.toolTip.SetToolTip(this.checkFrameLimiter, "Prevents the game from going over 60 FPS, useful for high refresh rate monitors.");
             this.checkFrameLimiter.UseVisualStyleBackColor = true;
             // 
             // MainForm
