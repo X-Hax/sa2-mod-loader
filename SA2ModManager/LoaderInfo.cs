@@ -36,8 +36,12 @@ namespace SA2ModManager
 		public int WindowWidth { get; set; } = 640;
 		[DefaultValue(480)]
 		public int WindowHeight { get; set; } = 480;
+		[DefaultValue(false)]
 		public bool ResizableWindow { get; set; }
+		[DefaultValue(false)]
 		public bool MaintainAspectRatio { get; set; }
+		[DefaultValue(false)]
+		public bool FramerateLimiter { get; set; }
 		[DefaultValue(-1)]
 		public int TestSpawnLevel { get; set; } = -1;
 		[DefaultValue(-1)]

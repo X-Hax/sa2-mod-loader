@@ -256,6 +256,7 @@ namespace SA2ModManager
 
 			checkWindowResize.Checked = loaderini.ResizableWindow;
 			aspectRatioCheckBox.Checked = loaderini.MaintainAspectRatio;
+			checkFrameLimiter.Checked = loaderini.FramerateLimiter;
 
 			checkBoxTestSpawnLevel.Checked = loaderini.TestSpawnLevel != -1;
 			comboBoxTestSpawnLevel.SelectedIndex = loaderini.TestSpawnLevel;
@@ -977,6 +978,7 @@ namespace SA2ModManager
 			loaderini.WindowHeight = (int)windowHeight.Value;
 			loaderini.ResizableWindow = checkWindowResize.Checked;
 			loaderini.MaintainAspectRatio = aspectRatioCheckBox.Checked;
+			loaderini.FramerateLimiter = checkFrameLimiter.Checked;
 			loaderini.SkipIntro = skipIntrocheckBox.Checked;
 			loaderini.UpdateCheck = checkUpdateStartup.Checked;
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
