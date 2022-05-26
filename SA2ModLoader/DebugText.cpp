@@ -12,8 +12,6 @@ VoidFunc(sub_44C260, 0x44C260);
 
 namespace debug_text
 {
-	bool enabled = false;
-
 	struct DebugStringInfo
 	{
 		__int16 column;
