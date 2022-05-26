@@ -500,6 +500,11 @@ namespace Magic
 			RenderTargetManager* m_pRenderTargetManager;
 		};
 
+		ThiscallFunctionPointer(void, Present, (RenderDevice_DX9* _this), 0x867AE0);
+		ThiscallFunctionPointer(void, EndScene, (RenderDevice_DX9* _this), 0x867B00);
+		ThiscallFunctionPointer(void, BeginScene, (RenderDevice_DX9* _this), 0x867B10);
+		ThiscallFunctionPointer(void, ClearFrameBuffer, (RenderDevice_DX9* _this, unsigned int, D3DCOLOR* Color, float Z, unsigned int Stencil), 0x867B20);
+
 		DataPointer(RenderDevice_DX9*, _g_pRenderDevice, 0x1A55764); // Pointer to the RenderDevice for internal usage
 	}
 }
