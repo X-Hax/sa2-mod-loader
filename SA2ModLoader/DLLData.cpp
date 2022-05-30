@@ -53,6 +53,39 @@ static inline void clrmem(T* mem)
 	ZeroMemory(mem, sizeof(T));
 }
 
+static string trim(const string& s)
+{
+	auto st = s.find_first_not_of(' ');
+	if (st == string::npos)
+		st = 0;
+	auto ed = s.find_last_not_of(' ');
+	if (ed == string::npos)
+		ed = s.size() - 1;
+	return s.substr(st, (ed + 1) - st);
+}
+
+static const unordered_map<string, uint8_t> charnamemap = {
+	{ "sonic", Characters_Sonic },
+	{ "shadow", Characters_Shadow },
+	{ "tails", Characters_Tails },
+	{ "eggman", Characters_Eggman },
+	{ "knuckles", Characters_Knuckles },
+	{ "rouge", Characters_Rouge },
+	{ "mechtails", Characters_MechTails },
+	{ "mecheggman", Characters_MechEggman }
+};
+
+static uint8_t ParseCharacter(const string& str)
+{
+	string str2 = trim(str);
+	transform(str2.begin(), str2.end(), str2.begin(), ::tolower);
+	auto ch = charnamemap.find(str2);
+	if (ch != charnamemap.end())
+		return ch->second;
+	else
+		return (uint8_t)strtol(str.c_str(), nullptr, 10);
+}
+
 static inline void HookExport(LPCSTR exportName, const void* newdata)
 {
 	intptr_t hModule = (intptr_t)**datadllhandle;
@@ -351,7 +384,111 @@ static void ProcessKartSpecialInfoListDLL(const IniGroup* group, const wstring& 
 	HookExport(group->getString("export").c_str(), list);
 }
 
-static void ProcessChaoMotionTableDLL(const IniGroup* group, const wstring& mod_dir)
+static void ProcessKartMenuListDLL(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename")) return;
+	unordered_map<string, void*> labels;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\*.sa2mdl",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	WIN32_FIND_DATA fdata;
+
+	HANDLE hFind = FindFirstFile(filename, &fdata);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
+			mod_dir.c_str(), group->getWString("filename").c_str(), fdata.cFileName);
+		auto mdllbl = (new ModelInfo(filename))->getlabels();
+		for (auto iter = mdllbl->cbegin(); iter != mdllbl->cend(); ++iter)
+			labels[iter->first] = iter->second;
+	} while (FindNextFile(hFind, &fdata));
+
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\info.ini",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<KartMenu> chars;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* chrdata = data->getGroup(key);
+		KartMenu entry{};
+		entry.CharacterID = (int)ParseCharacter(chrdata->getString("CharacterID"));
+		entry.PortraitID = chrdata->getInt("PortraitID");
+		entry.KartModel = (NJS_OBJECT*)labels[chrdata->getString("KartModel")];
+		entry.SPD = chrdata->getIntRadix("SPD", 8);
+		entry.ACL = chrdata->getIntRadix("ACL", 8);
+		entry.BRK = chrdata->getIntRadix("BRK", 8);
+		entry.GRP = chrdata->getIntRadix("GRP", 8);
+		chars.push_back(entry);
+	}
+	delete data;
+	auto numents = chars.size();
+	auto list = new KartMenu[numents];
+	arrcpy(list, chars.data(), numents);
+	HookExport(group->getString("export").c_str(), list);
+}
+
+static void ProcessKartSoundParametersListDLL(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename")) return;
+	unordered_map<string, void*> labels;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\*.sa2mdl",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	WIN32_FIND_DATA fdata;
+
+	HANDLE hFind = FindFirstFile(filename, &fdata);
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s\\%s",
+			mod_dir.c_str(), group->getWString("filename").c_str(), fdata.cFileName);
+		auto mdllbl = (new ModelInfo(filename))->getlabels();
+		for (auto iter = mdllbl->cbegin(); iter != mdllbl->cend(); ++iter)
+			labels[iter->first] = iter->second;
+	} while (FindNextFile(hFind, &fdata));
+
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\info.ini",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<KartSFXAndShadows> chars;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* chrdata = data->getGroup(key);
+		KartSFXAndShadows entry{};
+		entry.EngineSFX = chrdata->getInt("EngineSFXID");
+		entry.BrakeSFX = chrdata->getInt("BrakeSFXID");
+		if (chrdata->hasKeyNonEmpty("FinishVoice"))
+		{
+			entry.FinishVoice = chrdata->getInt("FinishVoice");
+			entry.FirstVoice = chrdata->getInt("FirstVoice");
+			entry.LastVoice = chrdata->getInt("LastVoice");
+		}
+		entry.ShadowModel = (NJS_OBJECT*)labels[chrdata->getString("ShadowModel")];
+		chars.push_back(entry);
+	}
+	delete data;
+	auto numents = chars.size();
+	auto list = new KartSFXAndShadows[numents];
+	arrcpy(list, chars.data(), numents);
+	HookExport(group->getString("export").c_str(), list);
+}
+
+static void ProcessMotionTableDLL(const IniGroup* group, const wstring& mod_dir)
 {
 	if (!group->hasKeyNonEmpty("filename")) return;
 	unordered_map<string, void*> labels;
@@ -376,14 +513,14 @@ static void ProcessChaoMotionTableDLL(const IniGroup* group, const wstring& mod_
 	swprintf(filename, LengthOfArray(filename), L"%s\\%s\\info.ini",
 		mod_dir.c_str(), group->getWString("filename").c_str());
 	const IniFile* const data = new IniFile(filename);
-	vector<ChaoMotionTableEntry> chars;
+	vector<MotionTableEntry> chars;
 	for (unsigned int i = 0; i < 999; i++)
 	{
 		char key[8];
 		snprintf(key, sizeof(key), "%u", i);
 		if (!data->hasGroup(key)) break;
 		const IniGroup* chrdata = data->getGroup(key);
-		ChaoMotionTableEntry entry{};
+		MotionTableEntry entry{};
 		entry.Motion = (NJS_MOTION*)labels[chrdata->getString("Motion")];
 		entry.Flag1 = chrdata->getIntRadix("Flag1", 16);
 		entry.TransitionID = chrdata->getInt("TransitionID");
@@ -395,7 +532,7 @@ static void ProcessChaoMotionTableDLL(const IniGroup* group, const wstring& mod_
 	}
 	delete data;
 	auto numents = chars.size();
-	auto list = new ChaoMotionTableEntry[numents];
+	auto list = new MotionTableEntry[numents];
 	arrcpy(list, chars.data(), numents);
 	HookExport(group->getString("export").c_str(), list);
 }
@@ -405,7 +542,9 @@ static const unordered_map<string, dlldatafunc_t> dlldatafuncmap = {
 	{ "animindexlist", ProcessAnimIndexListDLL },
 	{ "charaobjectdatalist", ProcessCharaObjectDataListDLL },
 	{ "kartspecialinfolist", ProcessKartSpecialInfoListDLL },
-	{ "chaomotiontable", ProcessChaoMotionTableDLL },
+	{ "kartmenu", ProcessKartMenuListDLL },
+	{ "kartsoundparameters", ProcessKartSoundParametersListDLL },
+	{ "motiontable", ProcessMotionTableDLL },
 };
 
 struct dllexportinfo { void* address = nullptr; string type; };
