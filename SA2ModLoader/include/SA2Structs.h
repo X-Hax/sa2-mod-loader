@@ -2150,7 +2150,7 @@ struct KartSFXAndShadows
 	NJS_OBJECT* ShadowModel;
 };
 
-struct MotionTableEntry
+struct ChaoMotionTableEntry
 {
 	NJS_MOTION* Motion;
 	unsigned int Flag1;
