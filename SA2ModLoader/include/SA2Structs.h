@@ -1693,6 +1693,22 @@ struct PDS_PERIPHERAL
 	PDS_PERIPHERALINFO *info;
 };
 
+struct PDS_KEYBOARDINFO
+{
+	unsigned __int8 lang;
+	unsigned __int8 type;
+	unsigned __int8 led;
+	unsigned __int8 led_ctrl;
+};
+
+struct PDS_KEYBOARD
+{
+	unsigned __int8 ctrl;
+	unsigned __int8 led;
+	unsigned __int8 key[6];
+	PDS_KEYBOARDINFO* info;
+};
+
 struct ButtonMapping
 {
 	int XInput;
@@ -1771,33 +1787,6 @@ struct struc_33
 	int field_160;
 	char gap_164[9072];
 	int field_24D4;
-};
-
-struct SOCController__vtbl
-{
-	int sub_425440;
-	int sub_4262A0;
-	int sub_425F40;
-	int sub_426010;
-	int sub_4260F0;
-	int sub_426150;
-	int sub_4261D0;
-	int sub_426230;
-	int sub_426320;
-};
-
-struct SOCController
-{
-	SOCController__vtbl *vtable;
-	char gap_4[4];
-	int field_8;
-	int field_12;
-	char field_16;
-	char gap_11[7];
-	__int64 field_24;
-	char gap_20[8];
-	int field_40;
-	int field_2C;
 };
 
 struct SOCControllerAll__vtbl

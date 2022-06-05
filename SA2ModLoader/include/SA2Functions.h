@@ -2282,6 +2282,21 @@ static inline void SetPlayerSpeedIGuess(NJS_VECTOR* result, Rotation* a2, int a3
 	}
 }
 
+static const void* const IsPlayerInsideSpherePtr = (void*)0x46C730;
+static inline int IsPlayerInsideSphere(NJS_POINT3* p, float r)
+{
+	int result;
+	__asm
+	{
+		push[r]
+		mov eax, [p]
+		call IsPlayerInsideSpherePtr
+		mov result, eax
+		add esp, 4
+	}
+	return result;
+}
+
 // signed int __usercall@<eax>(int playerNum@<eax>)
 static const void* const GetCharacterIDPtr = (void*)0x46DBD0;
 static inline signed int GetCharacterID(int playerNum)

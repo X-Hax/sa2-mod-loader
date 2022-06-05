@@ -372,6 +372,7 @@ DataArray(char, SpecialActivateTimer, 0x174AFF3, 2);
 DataArray(char, RoundsWon, 0x174AFF5, 2);
 DataPointer(char, TimeStopped, 0x174AFF7);
 DataPointer(char, LandChunksEnabled, 0x174AFFB); // Specify if a chunk map is loaded and should be used.
+DataPointer(char, ControllersEnabled, 0x174affe);
 DataArray(char, ControllerEnabled, 0x174AFFF, 2); // Toggle controller movement for a player.
 DataPointer(char, HaveChaoKey, 0x174B004);
 DataPointer(char, isEnglishIGuess, 0x174B008);
