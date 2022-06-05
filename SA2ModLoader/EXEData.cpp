@@ -222,7 +222,8 @@ static const unordered_map<string, uint8_t> languagesnamemap = {
 	{ "english", 1 },
 	{ "french", 2 },
 	{ "spanish", 3 },
-	{ "german", 4 }
+	{ "german", 4 },
+	{ "italian", 5 }
 };
 
 static uint8_t ParseLanguage(const string &str)
@@ -339,16 +340,33 @@ static void GetModelLabels(ModelInfo *mdlinf, NJS_OBJECT *obj)
 	}
 }
 
-static void ProcessModelINI(const IniGroup *group, const wstring &mod_dir)
+static void ProcessModelINI(const IniGroup* group, const wstring& mod_dir)
 {
-	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
-	wchar_t filename[MAX_PATH];
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("address"))
+	{
+		return;
+	}
+
+	wchar_t filename[MAX_PATH]{};
+
 	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
 		mod_dir.c_str(), group->getWString("filename").c_str());
-	ModelInfo *const mdlinf = new ModelInfo(filename);
-	NJS_OBJECT *model = mdlinf->getmodel();
-	GetModelLabels(mdlinf, model);
-	ProcessPointerList(group->getString("pointer"), model);
+
+	auto* const mdlinf = new ModelInfo(filename);
+	NJS_OBJECT* newobject = mdlinf->getmodel();
+
+	GetModelLabels(mdlinf, newobject);
+	if (group->hasKeyNonEmpty("pointer"))
+		ProcessPointerList(group->getString("pointer"), newobject);
+	else
+	{
+		NJS_OBJECT* object = (NJS_OBJECT*)(strtol((group->getString("address")).c_str(), nullptr, 16) + 0x400000);
+		if (object->chunkmodel != nullptr)
+		{
+			*object->chunkmodel = *newobject->chunkmodel;
+		}
+		*object = *newobject;
+	}
 }
 
 static void ProcessActionINI(const IniGroup *group, const wstring &mod_dir)
@@ -364,15 +382,24 @@ static void ProcessActionINI(const IniGroup *group, const wstring &mod_dir)
 	ProcessPointerList(group->getString("pointer"), action);
 }
 
-static void ProcessAnimationINI(const IniGroup *group, const wstring &mod_dir)
+static void ProcessAnimationINI(const IniGroup* group, const wstring& mod_dir)
 {
-	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
-	wchar_t filename[MAX_PATH];
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("address"))
+	{
+		return;
+	}
+
+	wchar_t filename[MAX_PATH]{};
+
 	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
 		mod_dir.c_str(), group->getWString("filename").c_str());
-	AnimationFile *const animationFile = new AnimationFile(filename);
-	NJS_MOTION *animation = animationFile->getmotion();
-	ProcessPointerList(group->getString("pointer"), animation);
+
+	auto* const animationFile = new AnimationFile(filename);
+	NJS_MOTION* animation = animationFile->getmotion();
+	if (group->hasKeyNonEmpty("pointer"))
+		ProcessPointerList(group->getString("pointer"), animation);
+	else
+		*(NJS_MOTION*)(strtol((group->getString("address")).c_str(), nullptr, 16) + 0x400000) = *animation;
 }
 
 static void ProcessObjListINI(const IniGroup *group, const wstring &mod_dir)
@@ -711,6 +738,48 @@ static void ProcessPathListINI(const IniGroup* group, const wstring& mod_dir)
 	ProcessPointerList(group->getString("pointer"), list);
 }
 
+static void ProcessSoundListINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("address"))
+	{
+		return;
+	}
+
+	wchar_t filename[MAX_PATH]{};
+
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+
+	auto inidata = new IniFile(filename);
+	vector<MLTSoundEntry> sounds;
+
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8]{};
+		snprintf(key, sizeof(key), "%u", i);
+		if (!inidata->hasGroup(key))
+			break;
+		const IniGroup* snddata = inidata->getGroup(key);
+		MLTSoundEntry entry{};
+		entry.Bank = snddata->getIntRadix("Bank", 8);
+		entry.ID = snddata->getIntRadix("ID", 8);
+		if (snddata->hasKeyNonEmpty("SecondaryBank"))
+		entry.SecondaryBank = snddata->getIntRadix("SecondaryBank", 8);
+		entry.DefaultFlags = snddata->getIntRadix("DefaultFlags", 8);
+		if (snddata->hasKeyNonEmpty("Unknown"))
+		entry.Unknown = snddata->getIntRadix("Unknown", 8);
+		if (snddata->hasKeyNonEmpty("DefaultDistance"))
+		entry.DefaultDistance = snddata->getIntRadix("DefaultDistance", 8);
+		sounds.push_back(entry);
+	}
+	delete inidata;
+	size_t numents = sounds.size();
+	MLTSoundList* list = (MLTSoundList*)(group->getIntRadix("address", 16) + 0x400000);;
+	list->List = new MLTSoundEntry[numents];
+	arrcpy(list->List, sounds.data(), numents);
+	list->Size = (int)numents;
+}
+
 static void ProcessAnimIndexListINI(const IniGroup* group, const wstring& mod_dir)
 {
 	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
@@ -876,6 +945,7 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "levelrankscores", ProcessLevelRankScoresINI },
 	{ "levelranktimes", ProcessLevelRankTimesINI },
 	{ "endpos", ProcessEndPosINI },
+	{ "soundlist", ProcessSoundListINI },
 	{ "animationlist", ProcessAnimationListINI },
 	{ "pathlist", ProcessPathListINI },
 	//{ "bmitemattrlist", ProcessBMItemAttrListINI },

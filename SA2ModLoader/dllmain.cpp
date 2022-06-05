@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <DbgHelp.h>
 #include <Shlwapi.h>
+#include <direct.h>
 #include "IniFile.hpp"
 #include "MediaFns.hpp"
 #include "FileSystem.h"
@@ -1126,6 +1127,8 @@ void SetWindowTitle(const wchar_t* title)
 		SetWindowTextW(MainWindowHandle, title);
 }
 
+bool IsPathExist(const string& s);
+
 const HelperFunctions helperFunctions = {
 	ModLoaderVer,
 	RegisterStartPosition,
@@ -1497,11 +1500,23 @@ void __cdecl InitMods(void)
 			ProcessDLLData(filename, mod_dir);
 		}
 
-		if (modinfo->getBool("RedirectMainSave"))
+		if (modinfo->getBool("RedirectMainSave")) {
 			_mainsavepath = mod_dirA + "\\SAVEDATA";
 
-		if (modinfo->getBool("RedirectChaoSave"))
+			if (!IsPathExist(_mainsavepath))
+			{
+				_mkdir(_mainsavepath.c_str());
+			}
+		}
+
+		if (modinfo->getBool("RedirectChaoSave")) {
 			_chaosavepath = mod_dirA + "\\SAVEDATA";
+
+			if (!IsPathExist(_chaosavepath))
+			{
+				_mkdir(_chaosavepath.c_str());
+			}
+		}
 
 		if (modinfo->hasKeyNonEmpty("BorderImage"))
 			borderimg = mod_dir + L'\\' + modinfo->getWString("BorderImage");

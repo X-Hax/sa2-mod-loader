@@ -2118,6 +2118,27 @@ struct KartSpecialInfo
 	int Unknown3;
 };
 
+struct KartMenu
+{
+	int CharacterID;
+	int PortraitID;
+	NJS_OBJECT* KartModel;
+	char SPD;
+	char ACL;
+	char BRK;
+	char GRP;
+};
+
+struct KartSFXAndShadows
+{
+	int EngineSFX;
+	int BrakeSFX;
+	int FinishVoice;
+	int FirstVoice;
+	int LastVoice;
+	NJS_OBJECT* ShadowModel;
+};
+
 struct ChaoMotionTableEntry
 {
 	NJS_MOTION* Motion;
