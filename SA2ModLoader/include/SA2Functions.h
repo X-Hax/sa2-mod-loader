@@ -906,7 +906,7 @@ ObjectFunc(BgExec_30, 0x6AA970);
 ObjectFunc(BgClip_13, 0x6AB7D0);
 ObjectFunc(ObjectSandglassExec, 0x6ABDE0);
 VoidFunc(LoadDeathChamberCharAnims, 0x6AD4E0);
-FunctionPointer(ObjectMaster* , EfMsgWnd0Exec_New, (int a1, const char* str, int displayTime, int language), 0x6B6E20);
+FunctionPointer(ObjectMaster*, EfMsgWnd0Exec_New, (int a1, const char* str, int displayTime, int language), 0x6B6E20);
 ObjectFunc(EfMsgWnd0Exec_LevelUpDai, 0x6B7170);
 ObjectFunc(EfMsgWnd0Exec, 0x6B79D0);
 FunctionPointer(ef_message*, ef_message_New, (const char* str, int language, short a3, short a4), 0x6B7F40);
@@ -1401,7 +1401,7 @@ static inline void SetShaders(int id)
 	}
 }
 
-static const void* const njColorBlendingModePtr = (void*)0x426420; 
+static const void* const njColorBlendingModePtr = (void*)0x426420;
 static inline void njColorBlendingMode(NJD_COLOR_TARGET target, NJD_COLOR_BLENDING mode) // Needs NJD_CONTROL_3D_CNK_BLEND_MODE
 {
 	__asm
@@ -3359,18 +3359,39 @@ static inline void GiveDiggableItem(EntityData1* a1, CharObj2Base* a2, KnucklesC
 
 // bool __usercall@<eax>(EntityData1 *a1@<eax>, SonicCharObj2 *a2@<ecx>)
 static const void* const Knuckles_LevelBoundsPtr = (void*)0x737B50;
-static inline bool Knuckles_LevelBounds(EntityData1* a1, SonicCharObj2* a2)
+static inline int Knuckles_LevelBounds(EntityData1* a1, SonicCharObj2* a2)
 {
-	bool result;
+	int result;
 	__asm
 	{
 		mov ecx, [a2]
 		mov eax, [a1]
 		call Knuckles_LevelBoundsPtr
-		mov result, al
+		mov result, eax
 	}
 	return result;
 }
+
+//int __usercall Knux_CheckNextActions@<eax>(KnucklesCharObj2* a1@<edx>, EntityData2* a2@<ecx>, EntityData1* a3@<ebx>, CharObj2Base* a4)
+static const void* const KnuxNactPtr = (void*)0x732E00;
+static inline int Knux_CheckNAct(KnucklesCharObj2* a1, EntityData2* a2, EntityData1* a3, CharObj2Base* a4) {
+
+	int result;
+
+	__asm
+	{
+		push[a4]
+		mov ebx, a3
+		mov ecx, a2
+		mov edx, a1
+		call KnuxNactPtr
+		add esp, 4
+		mov result, eax
+	}
+
+	return result;
+}
+
 
 // void __usercall(EmeManObj2 *a1@<esi>)
 static const void* const EmeraldLocations_2PGroup2Ptr = (void*)0x7387D0;
@@ -3639,7 +3660,7 @@ static inline void njSetMatrix(NJS_MATRIX_PTR md, NJS_MATRIX_PTR ms)
 //signed int __usercall njPushMatrix@<eax>(NJS_MATRIX_PTR m@<ecx>)
 static const void* const njPushMatrixPtr = (void*)0x77FE10;
 static inline signed int njPushMatrix(NJS_MATRIX_PTR m)
-{ 
+{
 	signed int result;
 	__asm
 	{
@@ -4019,12 +4040,12 @@ static inline void VibeThing(int a1, signed int a2, int a3, signed int a4)
 {
 	__asm
 	{
-		push[a4]  
-		mov ecx, a3 
-		mov edx, a2 
-		mov eax, a1 
+		push[a4]
+		mov ecx, a3
+		mov edx, a2
+		mov eax, a1
 		call VibeThingPtr
-		add esp, 4 
+		add esp, 4
 	}
 }
 
