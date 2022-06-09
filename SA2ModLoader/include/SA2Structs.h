@@ -2559,4 +2559,497 @@ struct __declspec(align(4)) LightGC
 	int unk;
 };
 
+struct CHAO_ID
+{
+	int gid[2];
+	int id[2];
+	int num;
+};
+
+struct AL_BODY_INFO
+{
+	float HPos; // Run : Power Align
+	float VPos; // Swim : Fly Align
+	float APos; // Dark : Hero Align
+	float AimHPos; // Last Run : Power
+	float AimVPos; // Last Swim : Fly
+	float AimAPos; // Last Alignment
+	float growth; // Magitude
+	float EyePos;
+	float EyeScl;
+	float EyeRatio;
+	byte EyeColor;
+	byte DefaultEyeNum;
+	eAL_MOUTH_NUM DefaultMouthNum;
+	eCHAO_ICON HonbuNum; // Icon type
+	byte HonbuColorNum; // Inert
+	eCHAO_MASK ObakeHead; // Hat / Mask
+	eBODY_PARTS ObakeBody; // Hide Feet
+	eMEDAL_PARTS MedalNum;
+	eAL_COLOR ColorNum;
+	bool NonTex; // isMonotone
+	eCHAO_JEWEL JewelNum;
+	byte MultiNum; // Shiny
+	eCHAO_EGGS EggColor;
+	eCHAO_BODYTYPE FormNum;
+	byte FormSubNum; // Animal
+	byte UNDEF0;
+};
+
+struct AL_TIME
+{
+	byte minute;
+	byte second;
+	byte frame;
+};
+
+struct AL_RACE_PERSONAL_INFO
+{
+	AL_TIME PersonalRecord[10];
+	byte nbWin[10];
+	short MedalFlag;
+};
+
+struct AL_KARATE_PERSONAL_INFO
+{
+	byte rank;
+	byte level;
+	byte tournament;
+	byte UNDEF0;
+	short nbBattle;
+	short nbWin;
+	short nbLose;
+	short nbDraw;
+};
+
+struct AL_PARTS
+{
+	int MinimalFlag;
+	eCHAO_MINIMALS MinimalParts[8];
+};
+
+struct AL_EMOTION
+{
+	short Flag;
+	short MoodTimer;
+	short IllTimer;
+	short Timer;
+	byte Mood[8];
+	short State[11];
+	byte Personality[13];
+	byte Taste;
+	byte Tv;
+	byte Music;
+	byte IllState[6];
+};
+
+struct AL_KNOWLEDGE_PLAYER
+{
+	sbyte like;
+	byte fear;
+	short distance;
+	short meet;
+};
+
+struct AL_KNOWLEDGE_CHAO
+{
+	CHAO_ID id;
+	sbyte like;
+	byte fear;
+	short distance;
+	short meet;
+	byte UNDEF0;
+	byte UNDEF1;
+};
+
+struct AL_KNOWLEDGE_OTHER
+{
+	sbyte like;
+};
+
+struct AL_KNOWLEDGE_BTL
+{
+	byte ArtFlag;
+	byte DanceFlag;
+	byte SongFlag;
+	byte MusicFlag;
+	short SToyFlag;
+	short LToyFlag;
+	int KwTimer;
+	AL_KNOWLEDGE_PLAYER player[6];
+	AL_KNOWLEDGE_CHAO chao[20];
+	AL_KNOWLEDGE_OTHER bhv[120];
+};
+
+struct AL_GENE
+{
+	bool IsAnalyzed;
+	eCHAO_EGGS EggColor;
+	byte UNDEF0;
+	byte UNDEF1;
+	CHAO_ID MotherID;
+	CHAO_ID FatherID;
+	char MotherName[8];
+	char FatherName[8];
+	char MGroundMotherName[8];
+	char MGroundFatherName[8];
+	char FGroundMotherName[8];
+	char FGroundFatherName[8];
+	byte Abl[16];
+	byte LifeTime[2];
+	byte HPos[2];
+	byte VPos[2];
+	byte APos[2];
+	byte Personality[2][13];
+	byte Taste[2];
+	byte Tv[2];
+	byte Music[2];
+	eAL_COLOR Color[2];
+	bool NonTex[2]; // Monotone
+	eCHAO_JEWEL Jewel[2];
+	byte Multi[2]; // Shiny
+	byte EyePos[2];
+	byte EyeScl[2];
+	byte EyeRatio[2];
+	byte EyeColor[2];
+};
+
+struct AL_RACE_PERSONAL_INFO_DX
+{
+	AL_TIME PersonalRecord[5];
+};
+
+struct AL_KNOWLEDGE_DX
+{
+	AL_KNOWLEDGE_PLAYER player[6];
+};
+
+struct CHAO_PARAM_GC
+{
+	byte GBAChao;
+	byte GBAEgg;
+	byte GBABerry[8];
+	byte padding0;
+	byte padding1;
+	int GBARing; // Rings moving from GBA -> GCN
+	byte BootMethed;
+	byte Birthplace;
+	char name[7];
+	byte GBAType;
+	byte GBASkin;
+	byte GBAMood;
+	byte GBABelly;
+	byte GBASleepy;
+	byte GBALonelyness;
+	byte padding2;
+	byte Exp[8]; // Progress 0 - 100
+	byte Abl[8]; // Grade E - S
+	byte Lev[8]; // Level 0 - 99
+	short Skill[8]; // Total Points
+	short GBAPallete[16];
+	byte rmsg[16];
+	int runaway;
+	byte dummy[4];
+	eCHAO_TYPE type;  // Chao Type
+	eCHAO_GARDENS place; // Chao Area
+	signed short like; // Happiness
+	byte ClassNum;
+	byte UNDEF0;
+	short age; // total clock rollovers
+	short old; // adult clock rollovers
+	short life; // Liftime1
+	short LifeMax; // Liftime2
+	short nbSucceed; // reincarnations
+	CHAO_ID ChaoID;
+	int LifeTimer;
+	AL_BODY_INFO body;
+	AL_RACE_PERSONAL_INFO race;
+	AL_KARATE_PERSONAL_INFO karate;
+	byte UNDEF1;
+	byte UNDEF2;
+	AL_PARTS PartsBTL;
+	AL_EMOTION emotion;
+	AL_KNOWLEDGE_BTL knowledge;
+	AL_GENE gene;
+};
+
+struct CHAO_SAVE_INFO
+{
+	CHAO_PARAM_GC param;
+	int IsInitializedDX;
+	AL_PARTS partsDX;
+	AL_RACE_PERSONAL_INFO_DX raceDX;
+	byte UNDEF0;
+	AL_KNOWLEDGE_DX knowledgeDX;
+	byte UNDEF1[736];
+};
+
+struct TMP_PARAM
+{
+	byte Exp[8];
+	byte Abl[8];
+	byte Lev[8];
+	short Skills[8];
+};
+
+struct MOTION_INFO
+{
+	short mode;
+	byte UNDEF0;
+	byte UNDEF1;
+	float frame;
+	float start;
+	float end;
+	float spd;
+	void* pMotion;
+};
+
+struct MOTION_CTRL
+{
+	short flag;
+	short posture;
+	int curr_num;
+	int next_num;
+	float multi_spd;
+	float link_spd;
+	float ratio;
+	MOTION_INFO minfo[2];
+	int table;
+};
+
+struct MOTION_TABLE
+{
+	void* pMotion;
+	short mode;
+	short posture;
+	int next;
+	int link_step;
+	float start;
+	float end;
+	float spd;
+};
+
+struct KW_BHV_ENTRY
+{
+	int bhv;
+};
+
+struct AL_BEHAVIOR
+{
+	short Flag;
+	short Mode;
+	short SubMode;
+	short MoveMode;
+	int InterruptFlag;
+	int Timer;
+	int SubTimer;
+	int LimitTimer;
+	int BehaviorTimer;
+	short Intention;
+	short IntentionMode;
+	short IntentionSubMode;
+	byte UNDEF0;
+	byte UNDEF1;
+	int IntentionTimer[18];
+	int IntervalTimer[128];
+	int FreeWork;
+	float MoveRadius;
+	NJS_POINT3 BasePos;
+	void* PrevFunc;
+	int nbBhvFuncEntry;
+	int CurrBhvFuncNum;
+	void* BhvFuncList[16];
+	int ReserveTimerList[16];
+	int CurrKwBhvNum;
+	KW_BHV_ENTRY KwBhvList[4];
+	int dummy[15]; // 16 in SADX
+};
+
+struct AL_SHAPE
+{
+	void* pObject;
+	void* CurrObjectList[40];
+	ChaoEvos* pObjectList;
+	ChaoEvos* pObjectListH;
+	ChaoEvos* pObjectListD;
+	NJS_POINT3 BodyPos;
+	NJS_POINT3 HeadPos;
+	NJS_POINT3 LeftHandPos;
+	NJS_POINT3 RightHandPos;
+	NJS_POINT3 LeftFootPos;
+	NJS_POINT3 RightFootPos;
+	NJS_POINT3 MouthPos;
+	NJS_POINT3 MouthVec;
+	NJS_POINT3 LeftEyePos;
+	NJS_POINT3 LeftEyeVec;
+	NJS_POINT3 RightEyePos;
+	NJS_POINT3 RightEyeVec;
+	NJS_OBJECT* pLeftHandItemObject;
+	NJS_TEXLIST* pLeftHandItemTexlist;
+	float LeftHandItemScale;
+	float LeftHandItemActiveFlag;
+	NJS_OBJECT* pRightHandItemObject;
+	NJS_TEXLIST* pRightHandItemTexlist;
+	float RightHandItemScale;
+	float RightHandItemActiveFlag;
+	int palette;
+	short Flag;
+	short ColorNum;
+	short EnvNum;
+	byte UNDEF0;
+	byte UNDEF1;
+	int IconColor;
+	float SclH;
+	float SclV;
+	float CamDist;
+};
+
+struct AL_FACE_CTRL
+{
+	int EyeTimer;
+	short EyeColorNum;
+	short EyeCurrNum;
+	short EyeDefaultNum;
+	byte UNDEF0;
+	byte UNDEF1;
+	int MouthTimer;
+	short MouthCurrNum;
+	short MouthDefaultNum;
+	float EyePosX;
+	float EyePosY;
+	float EyeSclX;
+	float EyeSclY;
+	int Flag;
+	NJS_CNK_MODEL* pEyeObject[2];
+	NJS_CNK_MODEL* pMouthObject;
+	int EyeLidBlinkMode;
+	int EyeLidBlinkTimer;
+	int EyeLidBlinkAng;
+	int EyeLidExpressionMode;
+	int EyeLidExpressionTimer;
+	int EyeLidExpressionDefaultCloseAng;
+	int EyeLidExpressionCurrCloseAng;
+	int EyeLidExpressionAimCloseAng;
+	int EyeLidExpressionDefaultSlopeAng;
+	int EyeLidExpressionCurrSlopeAng;
+	int EyeLidExpressionAimSlopeAng;
+};
+
+struct AL_ICON_INFO
+{
+	short Mode;
+	short TexNum;
+	short Timer;
+	byte UNDEF0;
+	byte UNDEF1;
+	NJS_POINT3 Offset;
+	NJS_POINT3 Pos;
+	NJS_POINT3 Velo;
+	NJS_POINT3 Scl;
+	NJS_POINT3 SclSpd;
+};
+
+struct AL_ICON
+{
+	short CurrType;
+	short NextType;
+	int Timer;
+	int NextTimer;
+	int PuniPhase;
+	int PosPhase;
+	int Color;
+	short TexAnimNum;
+	short TexAnimTimer;
+	int ang;
+	NJS_POINT3 Up; // HeadPosUnitTransPortion
+	NJS_POINT3 Pos; // parentPosition
+	AL_ICON_INFO Upper;
+	AL_ICON_INFO Lower;
+};
+
+struct AL_ZONE
+{
+	short Flag;
+	short CurrNum;
+	float Ratio;
+	NJS_LINE Plane;
+};
+
+struct al_perception_link
+{
+	short info[4];
+	float dist;
+	int InSightFlag;
+	int HearFlag;
+	int SmellFlag;
+	void* pEntry;
+};
+
+struct AL_PERCEPTION_INFO
+{
+	short nbPerception;
+	byte UNDEF0;
+	byte UNDEF1;
+	int InSightFlag;
+	int HeardFlag;
+	int SmellFlag;
+	float NearestDist;
+	short NearestNum;
+	byte UNDEF2;
+	byte UNDEF3;
+	al_perception_link list[32];
+};
+
+struct AL_PERCEPTION
+{
+	float SightRange;
+	int SightAngle;
+	int SightAngleHalf;
+	float HearRange;
+	float SmellRange;
+	AL_PERCEPTION_INFO Player;
+	AL_PERCEPTION_INFO Chao;
+	AL_PERCEPTION_INFO Fruit;
+	AL_PERCEPTION_INFO Tree;
+	AL_PERCEPTION_INFO Toy;
+	AL_PERCEPTION_INFO Sound;
+};
+
+struct CHAOWK // ChaoData1
+{
+	EntityData1 entity;
+	int Timer;
+	ObjectMaster* pMayu;
+	ObjectMaster* pBookTask;
+	int NestFlag;
+	ObjectMaster* pAnyTask;
+	ObjectMaster* pAimTask;
+	int AimNum;
+	int RememberNum;
+	int pitch;
+	float ClimbFirstPos;
+	int IsParamCopy;
+	CHAO_PARAM_GC* pParamGC;
+	TMP_PARAM tmpParam;
+	int Stamina;
+	int AimStamina;
+	int tp;
+	int pre_ang[3];
+	int ChaoFlag;
+	short ColliFormat;
+	byte UNDEF0;
+	byte UNDEF1;
+	float CurrZone;
+	MOTION_CTRL MotionCtrl;
+	MOTION_CTRL MiniMotionCtrl;
+	MOTION_TABLE MiniMotionTable[4];
+	AL_BEHAVIOR Behavior;
+	AL_SHAPE Shape;
+	AL_FACE_CTRL Face;
+	AL_ICON Icon;
+	AL_ZONE Zone;
+	AL_PERCEPTION Perception;
+	void* pWork;
+};
+
 #pragma pack(pop)
