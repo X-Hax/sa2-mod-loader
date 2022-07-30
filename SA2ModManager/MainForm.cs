@@ -1502,6 +1502,18 @@ namespace SA2ModManager
 			TestSpawnCutsceneList.Add(211, "Epilogue");
 
 
+			TestSpawnCutsceneList.Add(360, "SA2B Intro");
+			TestSpawnCutsceneList.Add(401, "SA2 Intro (FMV)");
+			TestSpawnCutsceneList.Add(409, "Prison Island Explodes");
+			TestSpawnCutsceneList.Add(411, "Eggman's Threat to Earth");
+			TestSpawnCutsceneList.Add(420, "Sonic and Friends go to Space (Hero)");
+			TestSpawnCutsceneList.Add(428, "The Eclipse Cannon Malfunctions");
+			TestSpawnCutsceneList.Add(429, "Dark Story Trailer");
+			TestSpawnCutsceneList.Add(430, "Last Story Trailer");
+			TestSpawnCutsceneList.Add(524, "Sonic and Friends go to Space (Dark)");
+			TestSpawnCutsceneList.Add(532, "Hero Story Trailer");
+			TestSpawnCutsceneList.Add(602, "Gerald's Revenge");
+			TestSpawnCutsceneList.Add(609, "The ARK is Neutralized");
 
 			comboBoxTestSpawnEvent.Items.Clear();
 			foreach (var item in TestSpawnCutsceneList)
