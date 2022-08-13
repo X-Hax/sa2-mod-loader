@@ -2413,8 +2413,8 @@ struct player_parameter {
 struct RenderInfo
 {
 	char gap0[8];
-	int texparplus4;
-	int unknown1;
+	void* TextureData;
+	Uint32 attrflags;             /* Ninja attributes from NJS_MATERIAL */
 	int unknown2;
 	int texparbuf;
 	int unknown3;
@@ -2535,13 +2535,13 @@ struct SoundSystem
 	MLTSoundList MLTSoundLists[8];
 };
 
-struct __declspec(align(2)) HomingAttackTarget
+struct HomingAttackTarget
 {
 	EntityData1* entity;
 	float distance;
 };
 
-struct __declspec(align(4)) Light
+struct Light
 {
 	NJS_VECTOR direction;
 	float intensity;
@@ -2549,7 +2549,7 @@ struct __declspec(align(4)) Light
 	NJS_VECTOR color;
 };
 
-struct __declspec(align(4)) LightGC
+struct LightGC
 {
 	NJS_VECTOR direction;
 	NJS_VECTOR lightColor;
@@ -2557,6 +2557,42 @@ struct __declspec(align(4)) LightGC
 	int flags;
 	int unused;
 	int unk;
+};
+
+/* Particle task (allocated) */
+struct sp_task
+{
+	Angle ang;       /* Roll angle */
+	Float scl;       /* Sprite scale */
+	NJS_POINT3 pos;  /* Sprite position */
+	NJS_COLOR color; /* Sprite color */
+	Float frame;     /* The integral part is the texture id, the fractional part is basically a timer */
+	Angle unk;       /* Angle sometimes set by particules, but seemingly unused in drawing function */
+	NJS_POINT3 spd;  /* Velocity */
+	Angle angspd;    /* Roll angle speed */
+	sp_task* next;   /* Next task for current particle info (linked list) */
+	Sint32 flag;     /* Task-specific flag bitfield, see SP_TASK_FLAG enum */
+	Float offset;    /* Offset applied after roll */
+	sp_task* link;   /* Reserved for linked list */
+};
+
+/* Particle information (static) */
+struct sp_info
+{
+	Sint32 flag;                             /* Rendering flags, see SP_FLAG enum */
+	NJS_TEXLIST* texlist;                    /* Texlist to use  */
+	Sint32 texno;                            /* Start texture num */
+	Sint32 animnum;                          /* Number of textures */
+	Float animspd;                           /* Texture animation speed: task->no + animspd */
+	Float hoffset;                           /* X, Y and Z offset */
+	Float voffset;                           /* Y offset */
+	Float sclspd;                            /* Scaling speed: task->spd + sclspd */
+	Bool(__cdecl* exec)(sp_info*, sp_task*); /* Subtask function */
+	Float unk24;
+	const sp_task* cst_task;                 /* Default task parameters (optional) */
+	Sint32 unk2C;
+	sp_task* tasks;                          /* Tasks linked list */
+	sp_info* link;                           /* Reserved for linked list */
 };
 
 #pragma pack(pop)

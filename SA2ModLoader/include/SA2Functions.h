@@ -27,6 +27,8 @@ FunctionPointer(int, PrintDebug, (const char* a1, ...), 0x426740);
 FunctionPointer(void, njScale_, (float x, float y, float z), 0x427750);
 FunctionPointer(int, njPopMatrixEx, (), 0x429000);
 FunctionPointer(int, njPushMatrixEx, (), 0x429710);
+VoidFunc(njFogEnable, 0x42A830);
+VoidFunc(njFogDisable, 0x42A870);
 FastcallFunctionPointer(float, njSin, (Angle angle), 0x42AAB0);
 FastcallFunctionPointer(float, njCos, (Angle angle), 0x42AC30);
 VoidFunc(ResetRenderSpace, 0x42D340);
@@ -1401,6 +1403,20 @@ static inline void SetShaders(int id)
 	}
 }
 
+//void __usercall stSetBlendingMode(int dst@<edi>, int src@<esi>, Bool enable)
+static const void* const stSetBlendingMode_ptr = (void*)0x420480;
+static inline void stSetBlendingMode(NJD_COLOR_BLENDING src, NJD_COLOR_BLENDING dst, Bool enable)
+{
+	__asm
+	{
+		push[enable]
+		mov edi, [dst]
+		mov esi, [src]
+		call stSetBlendingMode_ptr
+		add esp, 4
+	}
+}
+
 static const void* const njColorBlendingModePtr = (void*)0x426420; 
 static inline void njColorBlendingMode(NJD_COLOR_TARGET target, NJD_COLOR_BLENDING mode) // Needs NJD_CONTROL_3D_CNK_BLEND_MODE
 {
@@ -2648,6 +2664,20 @@ static inline void ChaosDrive_Load(NJS_VECTOR* a1)
 		mov ebx, [a1]
 		call ChaosDrive_LoadPtr
 	}
+}
+
+//sp_task* __usercall SpCreateTask@<eax>(sp_info *info@<ebx>)
+static const void* const SpCreateTaskPtr = (void*)0x492660;
+static inline sp_task* SpCreateTask(sp_info* info) // Loads a task from a sprite info, returns task pointer
+{
+	sp_task* result;
+	__asm
+	{
+		mov ebx, [info]
+		call SpCreateTaskPtr
+		mov result, eax
+	}
+	return result;
 }
 
 //void __usercall DrawSA2BModel(SA2B_Model *model@<eax>)

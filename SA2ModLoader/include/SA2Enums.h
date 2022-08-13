@@ -1585,3 +1585,21 @@ enum Languages
 	Language_German,
 	Language_Italian
 };
+
+enum SP_FLAG
+{
+	SP_FLAG_BLEND_ONE    = 0x1,
+	SP_FLAG_BLEND_SRC    = 0x2,
+	SP_FLAG_USE_ALPHA    = 0x8,   /* Set alpha pipeline */
+	SP_FLAG_10           = 0x10,
+	SP_FLAG_20           = 0x20,
+	SP_FLAG_40           = 0x40,
+	SP_FLAG_COLOR_FILTER = 0x80,  /* Multiply sprite color with white color (useless) */
+	SP_FLAG_USE_OFFSET   = 0x100, /* Wheter or not to use the offset value of a particule */
+	SP_FLAG_400          = 0x400
+};
+
+enum SP_TASK_FLAG
+{
+	SP_TASK_EXIT = 0x1 /* Destroy task next frame */
+};

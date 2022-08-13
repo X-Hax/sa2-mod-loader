@@ -520,6 +520,7 @@ DataPointer(DynColInfo*, MobileColList, 0x1A5A2E0); // Contains dynamic collisio
 DataPointer(COL**, LandDisplayEntries, 0x1A5A2E4); // Landtable entries to draw, filled by ListGroundForDrawing.
 DataPointer(ObjectMaster *, SetObject_ptr, 0x1A5A340);
 DataPointer(FogData **, FogDataPtrPtr, 0x1A5A34C);
+DataPointer(sp_info*, sp_table, 0x1A5A3B4); // Currently loaded particles, linked list
 DataPointer(ObjectMaster *, ParticleCoreTask, 0x1A5A3B8);
 DataPointer(ef_message *, MissionMessage, 0x1A5A3F4);
 DataPointer(CL_ObjInfo*, DynColQueue, 0x1A5A400); // Linked list of dynamic collision tasks.
@@ -699,7 +700,7 @@ DataPointer(NJS_ARGB, nj_constant_material_, 0x25EFFD0); // Constant material co
 DataPointer(float, HorizontalResolution_Float, 0x2670328);
 DataPointer(float, VerticalResolution_Float, 0x267032C); 
 DataPointer(LPVOID, MatrixStack_MinPtr, 0x267053C);
-DataPointer(RenderInfo*, RenferInfo_, 0x2670544);
+DataPointer(RenderInfo*, pRenderInfo, 0x2670544);
 DataPointer(float, MaxDrawDistance, 0x2670560);
 DataPointer(float, MinDrawDistance, 0x2670564);
 DataPointer(LPVOID, MatrixStack_MaxPtr, 0x2670588);
