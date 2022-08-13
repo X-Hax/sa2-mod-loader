@@ -283,20 +283,85 @@ namespace SA2ModManager
 
 			Activate();
 
-			var fields = uri.Substring("sa2mm:".Length).Split(',');
+			Uri url;
+			string name;
+			string author;
+			string[] split = uri.Substring("sa2mm:".Length).Split(',');
+			url = new Uri(split[0]);
+			Dictionary<string, string> fields = new Dictionary<string, string>(split.Length - 1);
+			for (int i = 1; i < split.Length; i++)
+			{
+				int ind = split[i].IndexOf(':');
+				fields.Add(split[i].Substring(0, ind).ToLowerInvariant(), split[i].Substring(ind + 1));
+			}
+			if (fields.ContainsKey("gb_itemtype") && fields.ContainsKey("gb_itemid"))
+			{
+				string itemType;
+				long itemId;
 
-			// TODO: lib-ify
-			string itemType = fields.FirstOrDefault(x => x.StartsWith("gb_itemtype", StringComparison.InvariantCultureIgnoreCase));
-			itemType = itemType.Substring(itemType.IndexOf(":") + 1);
+				try
+				{
+					itemType = fields["gb_itemtype"];
+					itemId = long.Parse(fields["gb_itemid"]);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(this,
+									$"Malformed One-Click Install URI \"{uri}\" caused parse failure:\n{ex.Message}",
+									"URI Parse Failure",
+									MessageBoxButtons.OK,
+									MessageBoxIcon.Error);
 
-			string itemId = fields.FirstOrDefault(x => x.StartsWith("gb_itemid", StringComparison.InvariantCultureIgnoreCase));
-			itemId = itemId.Substring(itemId.IndexOf(":") + 1);
+					return;
+				}
 
-			GameBananaItem gbi = GameBananaItem.Load(itemType, long.Parse(itemId));
+				GameBananaItem gbi;
 
-			var dummyInfo = new ModInfo() { Name = gbi.Name, Author = gbi.OwnerName };
+				try
+				{
+					gbi = GameBananaItem.Load(itemType, itemId);
 
-			DialogResult result = MessageBox.Show(this, $"Do you want to install mod \"{dummyInfo.Name}\" by {dummyInfo.Author} from {new Uri(fields[0]).DnsSafeHost}?", "Mod Download", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					if (gbi is null)
+					{
+						throw new Exception("GameBananaItem was unexpectedly null");
+					}
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(this,
+									$"GameBanana API query failed:\n{ex.Message}",
+									"GameBanana API Failure",
+									MessageBoxButtons.OK,
+									MessageBoxIcon.Error);
+
+					return;
+				}
+				name = gbi.Name;
+				author = gbi.OwnerName;
+			}
+			else if (fields.ContainsKey("name") && fields.ContainsKey("author"))
+			{
+				name = Uri.UnescapeDataString(fields["name"]);
+				author = Uri.UnescapeDataString(fields["author"]);
+			}
+			else
+			{
+				MessageBox.Show(this,
+								$"One-Click Install URI \"{uri}\" did not contain required fields.",
+								"URI Parse Failure",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error);
+
+				return;
+			}
+
+			var dummyInfo = new ModInfo
+			{
+				Name = name,
+				Author = author
+			};
+
+			DialogResult result = MessageBox.Show(this, $"Do you want to install mod \"{dummyInfo.Name}\" by {dummyInfo.Author} from {url.DnsSafeHost}?", "Mod Download", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
 			if (result != DialogResult.Yes)
 			{
@@ -333,7 +398,7 @@ namespace SA2ModManager
 
 			var updates = new List<ModDownload>
 			{
-				new ModDownload(dummyInfo, dummyPath, fields[0], null, 0)
+				new ModDownload(dummyInfo, dummyPath, url.AbsoluteUri, null, 0)
 			};
 
 			using (var progress = new ModDownloadDialog(updates, updatePath))
@@ -1502,6 +1567,18 @@ namespace SA2ModManager
 			TestSpawnCutsceneList.Add(211, "Epilogue");
 
 
+			TestSpawnCutsceneList.Add(360, "SA2B Intro");
+			TestSpawnCutsceneList.Add(401, "SA2 Intro (FMV)");
+			TestSpawnCutsceneList.Add(409, "Prison Island Explodes");
+			TestSpawnCutsceneList.Add(411, "Eggman's Threat to Earth");
+			TestSpawnCutsceneList.Add(420, "Sonic and Friends go to Space (Hero)");
+			TestSpawnCutsceneList.Add(428, "The Eclipse Cannon Malfunctions");
+			TestSpawnCutsceneList.Add(429, "Dark Story Trailer");
+			TestSpawnCutsceneList.Add(430, "Last Story Trailer");
+			TestSpawnCutsceneList.Add(524, "Sonic and Friends go to Space (Dark)");
+			TestSpawnCutsceneList.Add(532, "Hero Story Trailer");
+			TestSpawnCutsceneList.Add(602, "Gerald's Revenge");
+			TestSpawnCutsceneList.Add(609, "The ARK is Neutralized");
 
 			comboBoxTestSpawnEvent.Items.Clear();
 			foreach (var item in TestSpawnCutsceneList)

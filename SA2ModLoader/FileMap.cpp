@@ -17,6 +17,7 @@ using std::unordered_map;
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <Shlwapi.h>
+#include "FileSystem.h"
 
 /**
  * Replace slash characters with backslashes.
@@ -182,6 +183,13 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 
 		// Original filename.
 		string origFile = "resource\\gd_pc\\" + modFile.substr(srcLen);
+
+		if (!origFile.compare(0, 25, "resource\\gd_pc\\event_adx\\") ||
+			!origFile.compare(0, 27, "resource\\gd_pc\\event_adx_e\\"))
+		{
+			// Original filename should have a ".ahx" extension.
+			ReplaceFileExtension(origFile, ".ahx");
+		}
 
 		setReplaceFile(origFile, modFile, modIdx);
 	} while (FindNextFileA(hFind, &data) != 0);

@@ -329,12 +329,12 @@
             // columnHeaderName
             // 
             this.columnHeaderName.Text = "Name";
-            this.columnHeaderName.Width = 104;
+            this.columnHeaderName.Width = 152;
             // 
             // columnHeaderAuthor
             // 
             this.columnHeaderAuthor.Text = "Author";
-            this.columnHeaderAuthor.Width = 88;
+            this.columnHeaderAuthor.Width = 130;
             // 
             // columnHeaderVersion
             // 
