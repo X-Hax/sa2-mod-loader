@@ -136,6 +136,7 @@ ifeq8 01DEB317 1
 endif
 
 Code "Rouge Has Air Necklace"
+writenop 00459FA5 2
 ifeq8 01DEB30D 1
 	ifeq8 p01DEA6E0|40|1 5
 		or32 p01DEA6E0|40|24 0x2000
