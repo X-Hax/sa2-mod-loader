@@ -100,6 +100,67 @@ static void __declspec(naked) ScreenFade_r()
 }
 #pragma endregion
 
+#pragma region Particles
+struct PosUVColorVert {
+	NJS_VECTOR Pos;
+	Uint32 color;
+	Float u, v;
+};
+
+struct PosUVNormalColorVert {
+	NJS_VECTOR Pos, Normal;
+	Uint32 color;
+	Float u, v;
+};
+
+VoidFunc(GXEnd, 0x0041C070);
+
+DataPointer(int, GX_vtxcount, 0x01933F04);
+DataPointer(void*, VertexDeclarationInfoInstance, 0x0174F7E8);
+DataPointer(void*, PosUVColor, 0x0174F7FC);
+DataPointer(void*, PosNormalUVColor, 0x174F814);
+DataPointer(char*, VertexBuffer, 0x01933EF8);
+DataPointer(int, VertexBufferStart, 0x01933F08);
+DataPointer(int, VertexBufferOffset, 0x01933F0C);
+
+void ParticleGXEnd()
+{
+	// If the vertex buffer does not contain normals
+	if (VertexDeclarationInfoInstance == PosUVColor)
+	{
+		// Use vertex declaration with normals
+		VertexDeclarationInfoInstance = PosNormalUVColor;
+
+		// Remake the vertex buffer
+		PosUVColorVert origvert[4];
+		PosUVNormalColorVert* newvert = (PosUVNormalColorVert*)(VertexBuffer + VertexBufferStart);
+
+		memcpy(origvert, VertexBuffer + VertexBufferStart, sizeof(PosUVColorVert) * GX_vtxcount);
+
+		for (int i = 0; i < GX_vtxcount; i++) {
+			newvert[i].Pos = origvert[i].Pos;
+			newvert[i].Normal = { 0.0f, 1.0f, 0.0f };
+			newvert[i].u = origvert[i].u;
+			newvert[i].v = origvert[i].v;
+			newvert[i].color = origvert[i].color;
+		}
+
+		// Set new vertex buffer offset
+		VertexBufferOffset = VertexBufferStart + sizeof(PosNormalUVColor) * GX_vtxcount;
+
+		// Send the new buffer
+		GXEnd();
+
+		// Revert vertex declaration changes
+		VertexDeclarationInfoInstance = PosUVColor;
+	}
+	else
+	{
+		GXEnd();
+	}
+}
+#pragma endregion
+
 void ApplyPatches()
 {
 	// Expand chunk model vertex buffer from 8192 to 32768 verts
@@ -113,4 +174,9 @@ void ApplyPatches()
 
 	// Fix City Escape car bug on intel iGPUs caused by NaN float position
 	GenerateUsercallHook(CalcCarPath_r, rEAX, 0x5DE0B0, rECX, rEDX, rEAX, stack4, stack4, stack4, stack4);
+	
+	// Fix particle draw calls missing normals
+	WriteJump((void*)0x4915E9, ParticleGXEnd);
+	WriteCall((void*)0x491B90, ParticleGXEnd);
+	WriteCall((void*)0x4917EE, ParticleGXEnd);
 }
