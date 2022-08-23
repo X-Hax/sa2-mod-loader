@@ -1,4 +1,6 @@
-﻿namespace SA2ModManager
+﻿using System;
+
+namespace SA2ModManager
 {
 	partial class NewModDialog
 	{
@@ -132,10 +134,11 @@
             this.textModAuthor.Name = "textModAuthor";
             this.textModAuthor.Size = new System.Drawing.Size(256, 20);
             this.textModAuthor.TabIndex = 3;
-            // 
-            // checkOpenFolder
-            // 
-            this.checkOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.textModAuthor.Text = Environment.UserName;
+			// 
+			// checkOpenFolder
+			// 
+			this.checkOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkOpenFolder.AutoSize = true;
             this.checkOpenFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.checkOpenFolder.Location = new System.Drawing.Point(12, 298);
@@ -145,10 +148,11 @@
             this.checkOpenFolder.Text = "Open folder";
             this.toolTip1.SetToolTip(this.checkOpenFolder, "Open the newly created mod\'s folder upon completion.");
             this.checkOpenFolder.UseVisualStyleBackColor = true;
-            // 
-            // toolTip1
-            // 
-            this.toolTip1.ShowAlways = true;
+			this.checkOpenFolder.Checked = true;
+			// 
+			// toolTip1
+			// 
+			this.toolTip1.ShowAlways = true;
             // 
             // comboModCategory
             // 
@@ -196,6 +200,7 @@
             this.textVersion.Name = "textVersion";
             this.textVersion.Size = new System.Drawing.Size(256, 20);
             this.textVersion.TabIndex = 5;
+			this.textVersion.Text = "0.1";
             // 
             // label4
             // 

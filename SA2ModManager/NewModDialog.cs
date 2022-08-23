@@ -39,6 +39,11 @@ namespace SA2ModManager
 					Directory.CreateDirectory(Path.Combine(moddir, "SAVEDATA"));
 				}
 
+				if (comboModCategory.SelectedIndex < 0)
+				{
+					comboModCategory.Text = "";
+				}
+
 				SA2ModInfo newMod = new SA2ModInfo
 				{
 					Name             = textModName.Text,
