@@ -2646,44 +2646,44 @@ struct AL_BODY_INFO
 	float EyePos;
 	float EyeScl;
 	float EyeRatio;
-	byte EyeColor;
-	byte DefaultEyeNum;
+	Sint8 EyeColor;
+	Sint8 DefaultEyeNum;
 	eAL_MOUTH_NUM DefaultMouthNum;
 	eCHAO_ICON HonbuNum; // Icon type
-	byte HonbuColorNum; // Inert
+	Sint8 HonbuColorNum; // Inert
 	eCHAO_MASK ObakeHead; // Hat / Mask
 	eBODY_PARTS ObakeBody; // Hide Feet
 	eMEDAL_PARTS MedalNum;
 	eAL_COLOR ColorNum;
 	bool NonTex; // isMonotone
 	eCHAO_JEWEL JewelNum;
-	byte MultiNum; // Shiny
+	Sint8 MultiNum; // Shiny
 	eCHAO_EGGS EggColor;
 	eCHAO_BODYTYPE FormNum;
-	byte FormSubNum; // Animal
-	byte UNDEF0;
+	Sint8 FormSubNum; // Animal
+	Sint8 UNDEF0;
 };
 
 struct AL_TIME
 {
-	byte minute;
-	byte second;
-	byte frame;
+	Sint8 minute;
+	Sint8 second;
+	Sint8 frame;
 };
 
 struct AL_RACE_PERSONAL_INFO
 {
 	AL_TIME PersonalRecord[10];
-	byte nbWin[10];
+	Sint8 nbWin[10];
 	short MedalFlag;
 };
 
 struct AL_KARATE_PERSONAL_INFO
 {
-	byte rank;
-	byte level;
-	byte tournament;
-	byte UNDEF0;
+	Sint8 rank;
+	Sint8 level;
+	Sint8 tournament;
+	Sint8 UNDEF0;
 	short nbBattle;
 	short nbWin;
 	short nbLose;
@@ -2702,19 +2702,19 @@ struct AL_EMOTION
 	short MoodTimer;
 	short IllTimer;
 	short Timer;
-	byte Mood[8];
+	Sint8 Mood[8];
 	short State[11];
-	byte Personality[13];
-	byte Taste;
-	byte Tv;
-	byte Music;
-	byte IllState[6];
+	Sint8 Personality[13];
+	Sint8 Taste;
+	Sint8 Tv;
+	Sint8 Music;
+	Sint8 IllState[6];
 };
 
 struct AL_KNOWLEDGE_PLAYER
 {
-	sbyte like;
-	byte fear;
+	Uint8 like;
+	Sint8 fear;
 	short distance;
 	short meet;
 };
@@ -2722,25 +2722,25 @@ struct AL_KNOWLEDGE_PLAYER
 struct AL_KNOWLEDGE_CHAO
 {
 	CHAO_ID id;
-	sbyte like;
-	byte fear;
+	Uint8 like;
+	Sint8 fear;
 	short distance;
 	short meet;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 };
 
 struct AL_KNOWLEDGE_OTHER
 {
-	sbyte like;
+	Uint8 like;
 };
 
 struct AL_KNOWLEDGE_BTL
 {
-	byte ArtFlag;
-	byte DanceFlag;
-	byte SongFlag;
-	byte MusicFlag;
+	Sint8 ArtFlag;
+	Sint8 DanceFlag;
+	Sint8 SongFlag;
+	Sint8 MusicFlag;
 	short SToyFlag;
 	short LToyFlag;
 	int KwTimer;
@@ -2753,8 +2753,8 @@ struct AL_GENE
 {
 	bool IsAnalyzed;
 	eCHAO_EGGS EggColor;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	CHAO_ID MotherID;
 	CHAO_ID FatherID;
 	char MotherName[8];
@@ -2763,23 +2763,23 @@ struct AL_GENE
 	char MGroundFatherName[8];
 	char FGroundMotherName[8];
 	char FGroundFatherName[8];
-	byte Abl[16];
-	byte LifeTime[2];
-	byte HPos[2];
-	byte VPos[2];
-	byte APos[2];
-	byte Personality[2][13];
-	byte Taste[2];
-	byte Tv[2];
-	byte Music[2];
+	Sint8 Abl[16];
+	Sint8 LifeTime[2];
+	Sint8 HPos[2];
+	Sint8 VPos[2];
+	Sint8 APos[2];
+	Sint8 Personality[2][13];
+	Sint8 Taste[2];
+	Sint8 Tv[2];
+	Sint8 Music[2];
 	eAL_COLOR Color[2];
 	bool NonTex[2]; // Monotone
 	eCHAO_JEWEL Jewel[2];
-	byte Multi[2]; // Shiny
-	byte EyePos[2];
-	byte EyeScl[2];
-	byte EyeRatio[2];
-	byte EyeColor[2];
+	Sint8 Multi[2]; // Shiny
+	Sint8 EyePos[2];
+	Sint8 EyeScl[2];
+	Sint8 EyeRatio[2];
+	Sint8 EyeColor[2];
 };
 
 struct AL_RACE_PERSONAL_INFO_DX
@@ -2794,35 +2794,35 @@ struct AL_KNOWLEDGE_DX
 
 struct CHAO_PARAM_GC
 {
-	byte GBAChao;
-	byte GBAEgg;
-	byte GBABerry[8];
-	byte padding0;
-	byte padding1;
+	Sint8 GBAChao;
+	Sint8 GBAEgg;
+	Sint8 GBABerry[8];
+	Sint8 padding0;
+	Sint8 padding1;
 	int GBARing; // Rings moving from GBA -> GCN
-	byte BootMethed;
-	byte Birthplace;
+	Sint8 BootMethed;
+	Sint8 Birthplace;
 	char name[7];
-	byte GBAType;
-	byte GBASkin;
-	byte GBAMood;
-	byte GBABelly;
-	byte GBASleepy;
-	byte GBALonelyness;
-	byte padding2;
-	byte Exp[8]; // Progress 0 - 100
-	byte Abl[8]; // Grade E - S
-	byte Lev[8]; // Level 0 - 99
+	Sint8 GBAType;
+	Sint8 GBASkin;
+	Sint8 GBAMood;
+	Sint8 GBABelly;
+	Sint8 GBASleepy;
+	Sint8 GBALonelyness;
+	Sint8 padding2;
+	Sint8 Exp[8]; // Progress 0 - 100
+	Sint8 Abl[8]; // Grade E - S
+	Sint8 Lev[8]; // Level 0 - 99
 	short Skill[8]; // Total Points
 	short GBAPallete[16];
-	byte rmsg[16];
+	Sint8 rmsg[16];
 	int runaway;
-	byte dummy[4];
+	Sint8 dummy[4];
 	eCHAO_TYPE type;  // Chao Type
 	eCHAO_GARDENS place; // Chao Area
 	signed short like; // Happiness
-	byte ClassNum;
-	byte UNDEF0;
+	Sint8 ClassNum;
+	Sint8 UNDEF0;
 	short age; // total clock rollovers
 	short old; // adult clock rollovers
 	short life; // Liftime1
@@ -2833,8 +2833,8 @@ struct CHAO_PARAM_GC
 	AL_BODY_INFO body;
 	AL_RACE_PERSONAL_INFO race;
 	AL_KARATE_PERSONAL_INFO karate;
-	byte UNDEF1;
-	byte UNDEF2;
+	Sint8 UNDEF1;
+	Sint8 UNDEF2;
 	AL_PARTS PartsBTL;
 	AL_EMOTION emotion;
 	AL_KNOWLEDGE_BTL knowledge;
@@ -2847,24 +2847,24 @@ struct CHAO_SAVE_INFO
 	int IsInitializedDX;
 	AL_PARTS partsDX;
 	AL_RACE_PERSONAL_INFO_DX raceDX;
-	byte UNDEF0;
+	Sint8 UNDEF0;
 	AL_KNOWLEDGE_DX knowledgeDX;
-	byte UNDEF1[736];
+	Sint8 UNDEF1[736];
 };
 
 struct TMP_PARAM
 {
-	byte Exp[8];
-	byte Abl[8];
-	byte Lev[8];
+	Sint8 Exp[8];
+	Sint8 Abl[8];
+	Sint8 Lev[8];
 	short Skills[8];
 };
 
 struct MOTION_INFO
 {
 	short mode;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	float frame;
 	float start;
 	float end;
@@ -2916,8 +2916,8 @@ struct AL_BEHAVIOR
 	short Intention;
 	short IntentionMode;
 	short IntentionSubMode;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	int IntentionTimer[18];
 	int IntervalTimer[128];
 	int FreeWork;
@@ -2964,8 +2964,8 @@ struct AL_SHAPE
 	short Flag;
 	short ColorNum;
 	short EnvNum;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	int IconColor;
 	float SclH;
 	float SclV;
@@ -2978,8 +2978,8 @@ struct AL_FACE_CTRL
 	short EyeColorNum;
 	short EyeCurrNum;
 	short EyeDefaultNum;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	int MouthTimer;
 	short MouthCurrNum;
 	short MouthDefaultNum;
@@ -3008,8 +3008,8 @@ struct AL_ICON_INFO
 	short Mode;
 	short TexNum;
 	short Timer;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	NJS_POINT3 Offset;
 	NJS_POINT3 Pos;
 	NJS_POINT3 Velo;
@@ -3056,15 +3056,15 @@ struct al_perception_link
 struct AL_PERCEPTION_INFO
 {
 	short nbPerception;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	int InSightFlag;
 	int HeardFlag;
 	int SmellFlag;
 	float NearestDist;
 	short NearestNum;
-	byte UNDEF2;
-	byte UNDEF3;
+	Sint8 UNDEF2;
+	Sint8 UNDEF3;
 	al_perception_link list[32];
 };
 
@@ -3105,8 +3105,8 @@ struct CHAOWK // ChaoData1
 	int pre_ang[3];
 	int ChaoFlag;
 	short ColliFormat;
-	byte UNDEF0;
-	byte UNDEF1;
+	Sint8 UNDEF0;
+	Sint8 UNDEF1;
 	float CurrZone;
 	MOTION_CTRL MotionCtrl;
 	MOTION_CTRL MiniMotionCtrl;

@@ -4,8 +4,6 @@
 #define makemask(enumname,membername) enumname##_##membername = (1 << enumname##Bits_##membername)
 #define makemasks(enumname,membername) enumname##s_##membername = (1 << enumname##Bits_##membername)
 
-typedef signed char sbyte;
-
 enum Characters
 {
 	Characters_Sonic,
@@ -1588,7 +1586,7 @@ enum Languages
 	Language_Italian
 };
 
-enum class eCHAO_STATS : byte
+enum class eCHAO_STATS : Uint8
 {
 	Swm = 0,
 	Fly = 1,
@@ -1600,7 +1598,7 @@ enum class eCHAO_STATS : byte
 	Unk = 7
 };
 
-enum class eCHAO_TYPE : byte
+enum class eCHAO_TYPE : Uint8
 {
 	Empty = 0x0,
 	Egg = 0x1,
@@ -1630,7 +1628,7 @@ enum class eCHAO_TYPE : byte
 	Amy = 0x19
 };
 
-enum class eCHAO_GARDENS : sbyte
+enum class eCHAO_GARDENS : Sint8
 {
 	None = -1,
 	Neut = 1,
@@ -1641,14 +1639,14 @@ enum class eCHAO_GARDENS : sbyte
 	MRDX = 6
 };
 
-enum class eCHAO_ICON : byte
+enum class eCHAO_ICON : Uint8
 {
 	Normal = 0x00,
 	Flame = 0x01,
 	None = 0x02,
 };
 
-enum class eCHAO_MASK : byte
+enum class eCHAO_MASK : Uint8
 {
 	None = 0x00,
 	Pumpkin = 0x01,
@@ -1737,7 +1735,7 @@ enum class eCHAO_MASK : byte
 	Egg_Glass = 0x54,
 };
 
-enum class eHEAD_PARTS : byte
+enum class eHEAD_PARTS : Uint8
 {
 	NONE = 0,
 	PUMPKIN = 1,
@@ -1833,7 +1831,7 @@ enum class eHEAD_PARTS : byte
 	END = 0x55
 };
 
-enum class eMEDAL_PARTS : byte
+enum class eMEDAL_PARTS : Uint8
 {
 	NONE = 0x00,
 	AQU = 0x01,
@@ -1853,7 +1851,7 @@ enum class eMEDAL_PARTS : byte
 	SAP = 0x0F
 };
 
-enum class eAL_COLOR : char
+enum class eAL_COLOR : Sint8
 {
 	NORMAL = 0x00,
 	YELLOW = 0x01,
@@ -1878,7 +1876,7 @@ enum class eAL_COLOR : char
 	DEEPBLUE = 0x52,
 };
 
-enum class eCHAO_EGGS : byte
+enum class eCHAO_EGGS : Uint8
 {
 	Normal = 0x0,
 	Yellow_MT = 0x1,
@@ -1951,7 +1949,7 @@ enum class eCHAO_EGGS : byte
 	Glass = 0x44,
 };
 
-enum class eCHAO_BODYTYPE : byte
+enum class eCHAO_BODYTYPE : Uint8
 {
 	Normal = 0x0,
 	EggChao = 0x1,
@@ -1959,7 +1957,7 @@ enum class eCHAO_BODYTYPE : byte
 	None = 0x3,
 };
 
-enum class eCHAO_JEWEL : byte
+enum class eCHAO_JEWEL : Uint8
 {
 	None = 0x0,
 	Gold = 0x1,
@@ -2004,14 +2002,14 @@ enum class eAL_PLAYER_DX
 	NB_PLAYER = 6
 };
 
-enum class eBODY_PARTS : byte
+enum class eBODY_PARTS : Uint8
 {
 	NONE = 0,
 	SPECTOR = 1,
 	END = 2
 };
 
-enum class eCHAO_PARTS : byte
+enum class eCHAO_PARTS : Uint8
 {
 	Arm = 0,
 	Ear = 1,
@@ -2023,7 +2021,7 @@ enum class eCHAO_PARTS : byte
 	Tongue = 7
 };
 
-enum class eCHAO_MINIMALS : sbyte
+enum class eCHAO_MINIMALS : Sint8
 {
 	None = -1,
 
@@ -2139,7 +2137,7 @@ enum class eKW_BHV
 	WATCH = 0x3E
 };
 
-enum class eAL_MOUTH_NUM : byte
+enum class eAL_MOUTH_NUM : Uint8
 {
 	NONE = 0,
 	SHARK = 1, // "TOOTHY GRIN"
