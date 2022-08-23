@@ -1220,6 +1220,8 @@ void __cdecl InitMods(void)
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
 	const IniGroup *settings = ini->getGroup("");
 
+	direct3d::init();
+
 	if (settings->getBool("FramerateLimiter"))
 	{
 		direct3d::enable_frame_limiter();
@@ -1473,6 +1475,10 @@ void __cdecl InitMods(void)
 					RegisterEvent(modInputEvents, module, "OnInput");
 					RegisterEvent(modControlEvents, module, "OnControl");
 					RegisterEvent(modExitEvents, module, "OnExit");
+					RegisterEvent(modRenderDeviceLost, module, "OnRenderDeviceLost");
+					RegisterEvent(modRenderDeviceReset, module, "OnRenderDeviceReset");
+					RegisterEvent(onRenderSceneEnd, module, "OnRenderSceneEnd");
+					RegisterEvent(onRenderSceneStart, module, "OnRenderSceneStart");
 				}
 				else
 				{

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "magic.h"
+#include "Events.h"
 
 #include "DebugText.h"
 
@@ -67,12 +68,20 @@ static void __fastcall BeginScene_r(Magic::RenderCore::RenderDevice_DX9* dev)
 {
 	dev->m_pD3DDevice->BeginScene();
 	RunFrameLimiter();
+	RaiseEvents(onRenderSceneStart);
+}
+
+static void __fastcall EndScene_r(Magic::RenderCore::RenderDevice_DX9* dev)
+{
+	RaiseEvents(onRenderSceneEnd);
+	dev->m_pD3DDevice->EndScene();
 }
 
 void direct3d::reset_device()
 {
-	// The game already has everything to reset the device on the fly
+	RaiseEvents(modRenderDeviceLost);
 	g_pRenderDevice->__vftable->ResetRenderDeviceInitInfo(g_pRenderDevice, &g_pRenderDevice->m_InitInfo, &DeviceLostFunc, &DeviceResetFunc);
+	RaiseEvents(modRenderDeviceReset);
 }
 
 void direct3d::change_resolution(int w, int h)
@@ -99,13 +108,16 @@ void direct3d::change_resolution(int w, int h, bool windowed)
 void direct3d::change_dest_window(HWND hwnd)
 {
 	DrawWindow = hwnd;
-	if (!enable_frame_limit)
-		WriteJump(Magic::RenderCore::Present, Present_r);
 }
 
 void direct3d::enable_frame_limiter()
 {
 	enable_frame_limit = true;
+}
+
+void direct3d::init()
+{
 	WriteJump(Magic::RenderCore::Present, Present_r);
 	WriteJump(Magic::RenderCore::BeginScene, BeginScene_r);
+	WriteJump(Magic::RenderCore::EndScene, EndScene_r);
 }

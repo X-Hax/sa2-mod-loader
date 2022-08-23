@@ -7,6 +7,10 @@ std::vector<ModEvent> modFrameEvents;
 std::vector<ModEvent> modInputEvents;
 std::vector<ModEvent> modControlEvents;
 std::vector<ModEvent> modExitEvents;
+std::vector<ModEvent> modRenderDeviceLost;
+std::vector<ModEvent> modRenderDeviceReset;
+std::vector<ModEvent> onRenderSceneEnd;
+std::vector<ModEvent> onRenderSceneStart;
 CodeParser codeParser;
 
 Trampoline exitDetour(0x7ACA2E, 0x7ACA35, OnExit);

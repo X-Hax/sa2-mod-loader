@@ -8,6 +8,10 @@ extern std::vector<ModEvent> modFrameEvents;
 extern std::vector<ModEvent> modInputEvents;
 extern std::vector<ModEvent> modControlEvents;
 extern std::vector<ModEvent> modExitEvents;
+extern std::vector<ModEvent> modRenderDeviceLost;
+extern std::vector<ModEvent> modRenderDeviceReset;
+extern std::vector<ModEvent> onRenderSceneEnd;
+extern std::vector<ModEvent> onRenderSceneStart;
 extern CodeParser codeParser;
 
 void RegisterEvent(std::vector<ModEvent>& eventList, HMODULE module, const char* name);

@@ -7,4 +7,5 @@ namespace direct3d
 	void change_resolution(int w, int h, bool windowed);
 	void change_dest_window(HWND hwnd);
 	void enable_frame_limiter();
+	void init();
 }
