@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -15,6 +16,9 @@ namespace SA2ModManager
 	{
 		private const string pipeName = "sa2-mod-manager";
 		private const string protocol = "sa2mm:";
+		const string datadllpath = @"resource\gd_PC\DLL\Win32\Data_DLL.dll";
+		const string datadllorigpath = @"resource\gd_PC\DLL\Win32\Data_DLL_orig.dll";
+		const string loaderdllpath = @"mods\SA2ModLoader.dll";
 		private static readonly Mutex mutex = new Mutex(true, pipeName);
 		public static UriQueue UriQueue;
 
@@ -67,6 +71,19 @@ namespace SA2ModManager
 				{
 					File.Delete(args[1] + ".7z");
 					Directory.Delete(args[1], true);
+					if (File.Exists(datadllorigpath))
+					{
+						using (MD5 md5 = MD5.Create())
+						{
+							byte[] hash1 = md5.ComputeHash(File.ReadAllBytes(loaderdllpath));
+							byte[] hash2 = md5.ComputeHash(File.ReadAllBytes(datadllpath));
+
+							if (!hash1.SequenceEqual(hash2))
+							{
+								File.Copy(loaderdllpath, datadllpath, true);
+							}
+						}
+					}
 				}
 				catch { }
 			}
