@@ -45,7 +45,7 @@ namespace SA2ModManager
 					Author           = textModAuthor.Text,
 					Description      = textModDescription.Text,
 					Version          = textVersion.Text,
-					Category		 = textModCategory.Text,
+					Category		 = comboModCategory.Text,
 					RedirectMainSave = checkRedirectMainSave.Checked,
 					RedirectChaoSave = checkRedirectChaoSave.Checked,
 					GitHubRepo       = textGitHubRepo.Text,
