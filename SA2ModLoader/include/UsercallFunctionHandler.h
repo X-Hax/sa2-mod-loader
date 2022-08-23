@@ -33,20 +33,20 @@ enum registers
 	noret
 };
 
-inline void writebytes(char* dst, int& dstoff, char a1, char a2)
+inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2)
 {
 	dst[dstoff++] = a1;
 	dst[dstoff++] = a2;
 }
 
-inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3)
+inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2, uint8_t a3)
 {
 	dst[dstoff++] = a1;
 	dst[dstoff++] = a2;
 	dst[dstoff++] = a3;
 }
 
-inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a4)
+inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2, uint8_t a3, uint8_t a4)
 {
 	dst[dstoff++] = a1;
 	dst[dstoff++] = a2;
@@ -54,7 +54,7 @@ inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a
 	dst[dstoff++] = a4;
 }
 
-inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a4, char a5)
+inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2, uint8_t a3, uint8_t a4, uint8_t a5)
 {
 	dst[dstoff++] = a1;
 	dst[dstoff++] = a2;
@@ -63,7 +63,7 @@ inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a
 	dst[dstoff++] = a5;
 }
 
-inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a4, char a5, char a6)
+inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2, uint8_t a3, uint8_t a4, uint8_t a5, uint8_t a6)
 {
 	dst[dstoff++] = a1;
 	dst[dstoff++] = a2;
@@ -73,7 +73,7 @@ inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a
 	dst[dstoff++] = a6;
 }
 
-inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a4, char a5, char a6, char a7, char a8)
+inline void writebytes(uint8_t* dst, int& dstoff, uint8_t a1, uint8_t a2, uint8_t a3, uint8_t a4, uint8_t a5, uint8_t a6, uint8_t a7, uint8_t a8)
 {
 	dst[dstoff++] = a1;
 	dst[dstoff++] = a2;
@@ -85,10 +85,10 @@ inline void writebytes(char* dst, int& dstoff, char a1, char a2, char a3, char a
 	dst[dstoff++] = a8;
 }
 
-static char* curpg = nullptr;
+static uint8_t* curpg = nullptr;
 static int pgoff = 0;
 static int pgsz = -1;
-static char* AllocateCode(int sz)
+static uint8_t* AllocateCode(int sz)
 {
 	if (pgsz == -1)
 	{
@@ -98,10 +98,10 @@ static char* AllocateCode(int sz)
 	}
 	if (curpg == nullptr || (pgoff + sz) > pgsz)
 	{
-		curpg = (char*)VirtualAlloc(nullptr, pgsz, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		curpg = (uint8_t*)VirtualAlloc(nullptr, pgsz, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 		pgoff = 0;
 	}
-	char* result = &curpg[pgoff];
+	uint8_t* result = &curpg[pgoff];
 	pgoff += sz;
 	if (pgoff % 0x10 != 0)
 		pgoff += 0x10 - (pgoff % 0x10);
@@ -673,7 +673,7 @@ constexpr void const GenerateUsercallHook(T func, int ret, intptr_t address, TAr
 		writebytes(codeData, cdoff, 0x83, 0xC4, (char)(stackcnt * 4));
 	codeData[cdoff++] = 0xC3;
 	assert(cdoff == memsz);
-	if (*(char*)address == 0xE8)
+	if (*(uint8_t*)address == 0xE8)
 		WriteCall((void*)address, codeData);
 	else
 		WriteJump((void*)address, codeData);
