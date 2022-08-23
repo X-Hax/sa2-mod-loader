@@ -2836,6 +2836,7 @@ enum class eAL_MOTION : int
 	NUM_AL_MOTION
 };
 
+// Flags for sp_info
 enum SP_FLAG
 {
 	SP_FLAG_BLEND_ONE    = 0x1,
@@ -2849,7 +2850,20 @@ enum SP_FLAG
 	SP_FLAG_400          = 0x400
 };
 
+// Flags for sp_task
 enum SP_TASK_FLAG
 {
 	SP_TASK_EXIT = 0x1 /* Destroy task next frame */
+};
+
+// Flags for EnemyData
+enum E_FLAG : Sint16
+{
+	E_FLAG_MINIMAL = 0x8,       /* If the enemy should load a minimal when dying */
+	E_FLAG_DRIVE = 0x10,        /* If the enemy should load a chaos drive when dying */
+	E_FLAG_SWITCH = 0x20,       /* If the enemy is bound to an emerald or a switch */
+	E_FLAG_FLOOR = 0x40,        /* If the enemy is on the floor */
+	E_FLAG_HITWALL = 0x100,     /* If the enemy hit a wall */
+	E_FLAG_NOWATER = 0x2000,    /* If the collision system should ignore water */
+	E_FLAG_UNDERWATER = 0x4000  /* If the enemy is underwater */
 };

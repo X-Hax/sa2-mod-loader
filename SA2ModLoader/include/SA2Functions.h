@@ -156,6 +156,7 @@ ObjectFunc(psExecuteFlute_Display, 0x478170);
 ObjectFunc(psExecuteFlute, 0x478370);
 FunctionPointer(signed int, ScreenFadeIn, (), 0x478690);
 FunctionPointer(signed int, ScreenFadeOut, (), 0x4786E0);
+FunctionPointer(void, CreateExpParts, (EntityData1* data, NJS_MODEL** model, NJS_TEXLIST* tex), 0x47A5B0); // Explosion effect using a list of models, used by enemies
 ObjectFunc(dmyEnemy_Main, 0x47AB30);
 FunctionPointer(signed int, LoadLandManager, (LandTable* land), 0x47BD30); // Loads the LandTable Manager with a given LandTable.
 FunctionPointer(bool, LoadChunkMap, (const char* bmp_path, ChunkMapColor* color_list, NJS_VECTOR* bound1, NJS_VECTOR* bound2), 0x47BE40); // Loads a flat map of the level as a bmp image to get chunk positions. Each colour represent a bitfield of chunks, bounds are used to translate 3D coordinates to an image pixel.
@@ -2435,6 +2436,320 @@ static inline int ScreenFade(int targetAlpha)
 		mov result, eax
 	}
 	return result;
+}
+
+static const void* const EnemyInitializePtr = (void*)0x4788A0;
+// Allocate enemy data with default values in obj->EntityData2
+static inline EnemyData* EnemyInitialize(ObjectMaster* obj)
+{
+	EnemyData* result;
+	__asm
+	{
+		mov edi, [obj]
+		call EnemyInitializePtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const EnemyInitializeWithEmeraldPtr = (void*)0x4789D0;
+// Allocate enemy data with default values in obj->EntityData2 + set up emerald system for it (emerald id in LOBYTE(Data1->Rotation.y))
+static inline EnemyData* EnemyInitializeWithEmerald(ObjectMaster* obj)
+{
+	EnemyData* result;
+	__asm
+	{
+		mov eax, [obj]
+		call EnemyInitializeWithEmeraldPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const EnemySearchPlayerPtr = (void*)0x478AB0;
+// Check if player is in range / field of view, returns detected player id + 1
+static inline Sint32 EnemySearchPlayer(EntityData1* data, EnemyData* edata)
+{
+	Sint32 result;
+	__asm
+	{
+		mov esi, [data]
+		mov ebx, [edata]
+		call EnemySearchPlayerPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const EnemyGetShadowPtr = (void*)0x478D80;
+// Perform raycast from edata->shadow->pos, set hit information in edata->shadow->hit (ignore water with E_FLAG_NOWATER)
+static inline void EnemyGetShadow(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		push[data]
+		mov esi, [edata]
+		call EnemyGetShadowPtr
+		add esp, 4
+	}
+}
+
+static const void* const EnemyCheckFloorGripPtr = (void*)0x478E90;
+// Perform floor grip (threshold in edata->colli_top), set E_FLAG_FLOOR if on the floor
+static inline void EnemyCheckFloorGrip(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov edx, [data]
+		mov ecx, [edata]
+		call EnemyCheckFloorGripPtr
+	}
+}
+
+static const void* const EnemyCheckFloorPtr = (void*)0x478EF0;
+// Apply floor physics (friction, adapts velocity...), set some flags
+static inline void EnemyCheckFloor(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov edi, [data]
+		mov esi, [edata]
+		call EnemyCheckFloorPtr
+	}
+}
+
+static const void* const EnemyCheckWallPtr = (void*)0x479070;
+// Apply wall physics (stops the enemy, turns it, adapts its velocity...), set E_FLAG_HITWALL if enemy hit a wall
+static inline void EnemyCheckWall(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov ebx, [data]
+		mov edi, [edata]
+		call EnemyCheckWallPtr
+	}
+}
+
+// Regular enemy collision function, always inlined in SA2
+static inline void EnemyCheckGroundCollision(EntityData1* data, EnemyData* edata)
+{
+	EnemyGetShadow(data, edata);
+	EnemyCheckFloorGrip(data, edata);
+	EnemyCheckFloor(data, edata);
+	EnemyCheckWall(data, edata);
+}
+
+// Copy enemy position in edata->home, always inlined in SA2
+static inline void  EnemyPreserveHomePosition(EntityData1* data, EnemyData* edata)
+{
+	edata->home = data->Position;
+}
+
+// Copy enemy position in edata->pre, always inlined in SA2
+static inline void  EnemyPreservePreviousPosition(EntityData1* data, EnemyData* edata)
+{
+	edata->pre = data->Position;
+}
+
+// Set enemy position to edata->pre, always inlined in SA2
+static inline void EnemyBackToPreviousPosition(EntityData1* data, EnemyData* edata)
+{
+	data->Position = edata->pre;
+}
+
+static const void* const EnemyDrawShadowPtr = (void*)0x4799E0;
+// Dreamcast shadow call for enemies, restored by Exant's "DC Shadows" mod
+static inline void EnemyDrawShadow(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov edx, [data]
+		mov eax, [edata]
+		call EnemyDrawShadowPtr
+	}
+}
+
+static const void* const EnemyCheckEmeraldPtr = (void*)0x479AE0;
+// Update emerald radar if the enemy contains an emerald
+static inline void EnemyCheckEmerald(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov ecx, [data]
+		mov eax, [edata]
+		call EnemyCheckEmeraldPtr
+	}
+}
+
+static const void* const EnemyTurnToAimPtr = (void*)0x479B70;
+// Horizontal turn toward edata->aim at edata->angy_spd speed
+static inline void EnemyTurnToAim(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov ebx, [data]
+		mov eax, [edata]
+		call EnemyTurnToAimPtr
+	}
+}
+
+static const void* const EnemyTurnToHomePtr = (void*)0x479C50;
+// Horizontal turn toward edata->home at edata->angy_spd speed
+static inline void EnemyTurnToHome(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov ebx, [data]
+		mov eax, [edata]
+		call EnemyTurnToHomePtr
+	}
+}
+
+static const void* const EnemySetSphereLimitPtr = (void*)0x479CE0;
+// Keep enemy into a sphere (around edata->home.xyz with radius "dist")
+static inline void EnemySetSphereLimit(EntityData1* data, EnemyData* edata, Float dist)
+{
+	__asm
+	{
+		push [dist]
+		push [data]
+		mov eax, [edata]
+		call EnemySetSphereLimitPtr
+		add esp, 8
+	}
+}
+
+static const void* const EnemySetCircleLimitPtr = (void*)0x479DB0;
+// Keep enemy into a circle (around edata->home.xz with radius "dist")
+static inline void EnemySetCircleLimit(EntityData1* data, EnemyData* edata, Float dist)
+{
+	__asm
+	{
+		push[dist]
+		mov ebx, [data]
+		mov edi, [edata]
+		call EnemySetCircleLimitPtr
+		add esp, 4
+	}
+}
+
+static const void* const EnemyDist2FromPlayerPtr = (void*)0x479E70;
+// Get square distance between enemy and player positions 
+static inline float EnemyDist2FromPlayert(EntityData1* data, Sint32 num)
+{
+	float result;
+	__asm
+	{
+		mov eax, [num]
+		mov ecx, [data]
+		call EnemyDist2FromPlayerPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const EnemyTurnToPlayerPtr = (void*)0x479F10;
+// Horizontal turn toward player pnum at edata->angy_spd speed
+static inline void EnemyTurnToPlayer(EntityData1* data, EnemyData* edata, Sint32 pnum)
+{
+	__asm
+	{
+		mov ecx, [pnum]
+		mov ebx, [data]
+		mov eax, [edata]
+		call EnemyTurnToPlayerPtr
+	}
+}
+
+static const void* const EnemyCheckFrameInPtr = (void*)0x479FA0;
+// Check if the enemy is visible on screen
+static inline Bool EnemyCheckFrameIn(NJS_POINT3* pos)
+{
+	Bool result;
+	__asm
+	{
+		mov esi, [pos]
+		call EnemyCheckFrameInPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const CreateExpSpringPtr = (void*)0x47A770;
+// Creates a spring effect when enemies explode, number of springs in "num"
+static inline void CreateExpSpring(NJS_POINT3* pos, Angle3* ang, Sint32 num)
+{
+	__asm
+	{
+		push[ang]
+		push[num]
+		mov edi, [pos]
+		call CreateExpSpringPtr
+		add esp, 8
+	}
+}
+
+static const void* const EnemyBuyoScalePtr = (void*)0x47A930;
+// Run enemy scale distortion effect when hit
+static inline void EnemyBuyoScale(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		mov ecx, [data]
+		mov eax, [edata]
+		call EnemyBuyoScalePtr
+	}
+}
+
+static const void* const EnemyBumpPlayerPtr = (void*)0x47A9C0;
+// Make player bounce and controller rumble when enemy is hit
+static inline void EnemyBumpPlayer(Sint32 pnum)
+{
+	__asm
+	{
+		mov esi, [pnum]
+		call EnemyBumpPlayerPtr
+	}
+}
+
+static const void* const EnemyCheckDamagePtr = (void*)0x47AA70;
+// Check if the enemy has been hit by a player/missile, also calls EnemyBumpPlayer on players
+static inline Bool EnemyCheckDamage(EntityData1* data, EnemyData* edata)
+{
+	Bool result;
+	__asm
+	{
+		push[edata]
+		mov eax, [data]
+		call EnemyCheckDamagePtr
+		mov result, eax
+		add esp, 4
+	}
+	return result;
+}
+
+static const void* const EnemySetDeadPtr = (void*)0x47ABB0;
+// Runs different things (minimal/drive spawning, switch state, effect) when enemy is destroyed
+static inline void EnemySetDead(EntityData1* data, EnemyData* edata)
+{
+	__asm
+	{
+		push[edata]
+		mov eax, [data]
+		call EnemySetDeadPtr
+		add esp, 4
+	}
+}
+
+static const void* const EnemySetMotionPtr = (void*)0x47AE10;
+// Run animation system for enemies
+static inline void EnemySetMotion(EnemyMotionData* mdata)
+{
+	__asm
+	{
+		mov ecx, [mdata]
+		call EnemySetMotionPtr
+	}
 }
 
 //void __usercall DynCol_Add(SurfaceFlags flags@<eax>, ObjectMaster *obj@<edx>, NJS_OBJECT *object@<esi>)

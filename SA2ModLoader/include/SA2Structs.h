@@ -1544,54 +1544,122 @@ struct SuperSonicCharObj2
 	AnimationIndex *MotionList;
 };
 
-struct EnemyField38
+// Raycast hit information
+struct xssunit
 {
-	float f0;
-	char field_4[24];
-	int field_1C;
-	char field_20[36];
-	uint8_t byte44;
-	uint8_t byte45;
-	char field_46;
-	char field_47;
-	__int16 field_48;
-	__int16 field_4A;
-	uint16_t word4C;
-	uint8_t f4E[6];
-	float float54;
-	float dword58;
-	float dword5C;
-	float dword60;
-	char f64[52];
-	float field_98;
-	char field_9C[36];
-	float floatC0;
-	uint8_t fC4[4];
-	float floatC8;
-	float floatCC;
-	float floatD0;
-	float floatD4;
-	float floatD8;
-	float floatDC;
-	float floatE0;
-	float floatE4;
-	uint32_t dwordE8;
-	float fEC;
-	float field_F0;
-	char field_F4[208];
-	int field_1C4;
-	uint32_t dword1C8;
-	uint8_t f1CC[8];
-	uint32_t dword1D4;
-	float float1D8;
-	float float1DC;
-	int field_1E0;
-	char field_1E4[15];
-	char field_1F3;
-	char field_1F4[4];
-	int field_1F8;
-	int field_1FC;
-	char field_200[16];
+	Sint32 findflag;
+	Sint32 objatt;
+	Angle angx;
+	Angle angz;
+	Float onpos;
+	NJS_POINT3 normal;
+};
+
+// Raycast header for vertical search
+struct zxsdwstr
+{
+	NJS_POINT3 pos;
+	xssunit lower;
+	xssunit upper;
+};
+
+// Raycast header for 6 directions (GetShadowPosXYZ, GetShadowPosXYZonWater)
+struct xyyzzxsdwstr
+{
+	NJS_POINT3 pos;
+	xssunit hit[6];
+};
+
+// Animation set information for enemies
+struct EnemyActionTable
+{
+	NJS_ACTION* actptr;
+	Sint16 mtnmode;
+	Sint16 next;
+	Float frame;
+	Float racio;
+};
+
+// Struct for the enemy animation system, used in EnemySetMotion
+struct EnemyMotionData
+{
+	Float nframe;
+	int unk02;
+	Float start_frame;
+	int unk04;
+	Sint8 mtnmode;
+	Sint8 flag;
+	Sint8 action;                // Current animation
+	Sint8 reqaction;
+	Sint8 lastaction;
+	Sint8 nextaction;
+	Sint16 unk16;
+	EnemyActionTable* plactptr;  // Animation table
+	NJS_OBJECT* objp;            // Model to use for drawing
+	NJS_ACTION* actwkptr;        // Use this when mtnmode is 2, otherwise use plactptr[action].actptr to retrieve the action
+	NJS_ACTION* prev_actptr;
+	Float prev_nframe;
+	Float prev_start_frame;
+	int unk30;
+};
+
+// Main enemy data, allocated with EnemyInitialize
+struct EnemyData
+{
+	NJS_POINT3 velo; // Movement vector, can be altered by enemy collision subs like EnemyCheckWall
+	NJS_POINT3 acc;
+	int unk18;
+	int unk1C;
+	int unk20;
+	int unk24;
+	int unk28;
+	int unk2C;
+	int unk30;
+	int unk34;
+	int unk38;
+	int unk3C;
+	int unk40;
+	Sint8 pnum; // To store player ID when needed
+	Sint8 itemid; // Switch or emerald ID
+	Sint8 unk46[2];
+	__int16 unk48[2];
+	Sint16 flag; // see E_FLAG enum
+	Sint16 unk4E;
+	int unk50;
+	Float unk54;
+	NJS_POINT3 home; // Start position, automatically set by EnemyInitialize
+	NJS_POINT3 aim; // Custom target position
+	NJS_POINT3 unk70;
+	NJS_POINT3 pre; // Previsious position
+	NJS_POINT3 force;
+	NJS_POINT3 unk94;
+	NJS_POINT3 norm; // Floor normal
+	int unkAC;
+	int unkBO;
+	int unkB4;
+	int unkB8;
+	NJS_POINT3 colli_center; // Center offset
+	Float colli_top; // Height
+	Float colli_radius; // Radius
+	Float colli_bottom; // Y offset
+	Float cliff_height;
+	Float bound_side; // Wall "bounce"
+	Float bound_floor; // Floor "bounce"
+	Float bound_friction; // Ground friction
+	Float bound_ceiling; // Ceiling "bounce"
+	Angle bound_add_angle; // Speed to turn at when enemy hits a wall
+	Float shadow_scl; // For DC shadows
+	Float shadow_scl_ratio; // For DC shadows
+	xyyzzxsdwstr shadow; // Contains raycasting information
+	Float buyoscale; // Distortion effect scalor
+	Angle angx_spd; // X angle speed
+	Angle angy_spd; // Y angle speed (used by EnemyTurnTo functions)
+	Angle angz_spd; // Z angle speed
+	Angle aim_angle; // Destination angle (used by EnemyTurnTo functions)
+	Angle view_angle; // Field of view of enemy (used by EnemySearchPlayer)
+	Float view_range; // View distance (used by EnemySearchPlayer)
+	Float hear_range; // View distance unaffected by field of view (used by EnemySearchPlayer)
+	EnemyMotionData motiondata; // For EnemySetMotion, pobj and plactptr necessary
 };
 
 struct EventFileHeader
