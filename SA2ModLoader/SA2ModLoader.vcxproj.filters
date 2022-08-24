@@ -90,6 +90,9 @@
     <ClInclude Include="direct3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\FunctionHook.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
