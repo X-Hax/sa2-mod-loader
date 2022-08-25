@@ -39,6 +39,21 @@ namespace SA2ModManager
 					Directory.CreateDirectory(Path.Combine(moddir, "SAVEDATA"));
 				}
 
+				if (comboModCategory.Text == "Music")
+				{
+					Directory.CreateDirectory(@Path.Combine(moddir, "gd_PC/ADX"));
+				}
+
+				if (comboModCategory.Text == "Sound")
+				{
+					Directory.CreateDirectory(@Path.Combine(moddir, "gd_PC/MLT"));
+				}
+
+				if (comboModCategory.Text == "Textures")
+				{
+					Directory.CreateDirectory(Path.Combine(moddir, "gd_PC/PRS"));
+				}
+
 				if (comboModCategory.SelectedIndex < 0)
 				{
 					comboModCategory.Text = "";
