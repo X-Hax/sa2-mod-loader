@@ -1480,7 +1480,8 @@
             this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "SA2 Mod Manager";
-            this.Load += new System.EventHandler(this.MainForm_Load);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+			this.Load += new System.EventHandler(this.MainForm_Load);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();

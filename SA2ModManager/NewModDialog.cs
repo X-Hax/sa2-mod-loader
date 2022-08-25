@@ -44,6 +44,11 @@ namespace SA2ModManager
 					comboModCategory.Text = "";
 				}
 
+				if (isStringNotEmpty(textModAuthor.Text)) //save mod author
+				{
+					Properties.Settings.Default.ModAuthor = textModAuthor.Text;
+				}
+
 				//Assign variables to null if the string are empty so they won't show up at all in mod.ini.
 				SA2ModInfo newMod = new SA2ModInfo
 				{

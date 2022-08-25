@@ -31,3 +31,6 @@
 #include "ninja.h"
 #include "SA2ModLoader.h"
 #include "Events.h"
+#include "FileReplacement.h"
+#include "Trampoline.h"
+#include "FunctionHook.h"

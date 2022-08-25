@@ -1,6 +1,4 @@
 #include "stdafx.h"
-#include "Events.h"
-#include "Trampoline.h"
 #include "CodeParser.hpp"
 
 std::vector<ModEvent> modFrameEvents;

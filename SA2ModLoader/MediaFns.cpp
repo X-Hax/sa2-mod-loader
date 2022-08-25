@@ -5,7 +5,6 @@
 
 #include "stdafx.h"
 #include "MediaFns.hpp"
-#include "FileReplacement.h"
 #include "FileSystem.h"
 
 #include "bass_vgmstream.h"

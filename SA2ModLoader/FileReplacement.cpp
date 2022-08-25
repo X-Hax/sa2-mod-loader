@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "FileReplacement.h"
 
 // File replacement map.
 // NOTE: Do NOT mark this as static.
