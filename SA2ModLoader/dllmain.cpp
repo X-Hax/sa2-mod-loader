@@ -27,6 +27,7 @@
 #include "CrashDump.h"
 #include "window.h"
 #include "direct3d.h"
+#include "Interpolation.h"
 
 using namespace std;
 
@@ -1293,6 +1294,7 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
 	Init_AudioBassHook();
+	init_interpolationAnimFixes();
 
 	if (settings->getBool("DebugCrashLog", true))
 		initCrashDump();

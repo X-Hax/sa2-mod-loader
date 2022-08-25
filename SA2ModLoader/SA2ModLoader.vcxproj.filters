@@ -93,6 +93,9 @@
     <ClInclude Include="include\FunctionHook.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
+    <ClInclude Include="Interpolation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -135,6 +138,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="direct3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InterpolationFixes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
