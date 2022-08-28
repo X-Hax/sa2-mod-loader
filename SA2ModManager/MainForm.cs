@@ -284,6 +284,7 @@ namespace SA2ModManager
 			horizontalResolution.Value = Math.Max(horizontalResolution.Minimum, Math.Min(horizontalResolution.Maximum, loaderini.HorizontalResolution));
 			verticalResolution.Value = Math.Max(verticalResolution.Minimum, Math.Min(verticalResolution.Maximum, loaderini.VerticalResolution));
 			skipIntrocheckBox.Checked = loaderini.SkipIntro;
+			disableLoadAnimCheckBox.Checked = loaderini.SyncLoad;
 			checkUpdateStartup.Checked = loaderini.UpdateCheck;
 			checkUpdateModsStartup.Checked = loaderini.ModUpdateCheck;
 			comboUpdateFrequency.SelectedIndex = (int)loaderini.UpdateUnit;
@@ -1101,6 +1102,7 @@ namespace SA2ModManager
 			loaderini.MaintainAspectRatio = aspectRatioCheckBox.Checked;
 			loaderini.FramerateLimiter = checkFrameLimiter.Checked;
 			loaderini.SkipIntro = skipIntrocheckBox.Checked;
+			loaderini.SyncLoad = disableLoadAnimCheckBox.Checked;
 			loaderini.UpdateCheck = checkUpdateStartup.Checked;
 			loaderini.ModUpdateCheck = checkUpdateModsStartup.Checked;
 			loaderini.UpdateUnit = (UpdateUnit)comboUpdateFrequency.SelectedIndex;

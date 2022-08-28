@@ -23,6 +23,8 @@ namespace SA2ModManager
 		[DefaultValue(false)]
 		public bool FullScreen { get; set; }
 		public bool SkipIntro { get; set; }
+		[DefaultValue(true)]
+		public bool SyncLoad { get; set; }
 		[DefaultValue(640)]
 		public int HorizontalResolution { get; set; } = 640;
 		[DefaultValue(480)]

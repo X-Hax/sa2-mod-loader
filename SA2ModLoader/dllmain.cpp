@@ -1196,6 +1196,11 @@ extern "C"
 	}
 }
 
+void SyncLoad(void (*a1)(void*), void* a2)
+{
+	a1(a2);
+}
+
 void __cdecl InitMods(void)
 {
 	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -1225,6 +1230,12 @@ void __cdecl InitMods(void)
 	if (settings->getBool("FramerateLimiter"))
 	{
 		direct3d::enable_frame_limiter();
+	}
+
+	if (settings->getBool("SyncLoad", true))
+	{
+		WriteJump((void*)0x428470, SyncLoad);
+		WriteJump((void*)0x428740, SyncLoad);
 	}
 
 	if (settings->getBool("DebugConsole"))
