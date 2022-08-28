@@ -90,6 +90,7 @@
 			this.comboUpdateFrequency = new System.Windows.Forms.ComboBox();
 			this.checkUpdateStartup = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.disableLoadAnimCheckBox = new System.Windows.Forms.CheckBox();
 			this.disableExitPromptCheckBox = new System.Windows.Forms.CheckBox();
 			this.comboTextLanguage = new System.Windows.Forms.ComboBox();
 			this.comboVoiceLanguage = new System.Windows.Forms.ComboBox();
@@ -130,7 +131,6 @@
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
 			this.developerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateManifestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.disableLoadAnimCheckBox = new System.Windows.Forms.CheckBox();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			label1 = new System.Windows.Forms.Label();
 			label5 = new System.Windows.Forms.Label();
@@ -810,7 +810,7 @@
 			this.groupBox3.Controls.Add(this.buttonSaveProfile);
 			this.groupBox3.Controls.Add(this.buttonLoadProfile);
 			this.groupBox3.Controls.Add(this.profileNameBox);
-			this.groupBox3.Location = new System.Drawing.Point(5, 255);
+			this.groupBox3.Location = new System.Drawing.Point(7, 229);
 			this.groupBox3.Name = "groupBox3";
 			this.groupBox3.Size = new System.Drawing.Size(390, 58);
 			this.groupBox3.TabIndex = 2;
@@ -854,7 +854,7 @@
 			// 
 			this.installURLHandlerButton.AutoSize = true;
 			this.installURLHandlerButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.installURLHandlerButton.Location = new System.Drawing.Point(5, 319);
+			this.installURLHandlerButton.Location = new System.Drawing.Point(7, 293);
 			this.installURLHandlerButton.Name = "installURLHandlerButton";
 			this.installURLHandlerButton.Size = new System.Drawing.Size(115, 23);
 			this.installURLHandlerButton.TabIndex = 3;
@@ -872,7 +872,7 @@
 			this.groupBox4.Controls.Add(this.numericUpdateFrequency);
 			this.groupBox4.Controls.Add(this.comboUpdateFrequency);
 			this.groupBox4.Controls.Add(this.checkUpdateStartup);
-			this.groupBox4.Location = new System.Drawing.Point(5, 159);
+			this.groupBox4.Location = new System.Drawing.Point(7, 133);
 			this.groupBox4.Name = "groupBox4";
 			this.groupBox4.Size = new System.Drawing.Size(390, 90);
 			this.groupBox4.TabIndex = 1;
@@ -978,6 +978,16 @@
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Misc.";
+			// 
+			// disableLoadAnimCheckBox
+			// 
+			this.disableLoadAnimCheckBox.AutoSize = true;
+			this.disableLoadAnimCheckBox.Location = new System.Drawing.Point(6, 43);
+			this.disableLoadAnimCheckBox.Name = "disableLoadAnimCheckBox";
+			this.disableLoadAnimCheckBox.Size = new System.Drawing.Size(146, 17);
+			this.disableLoadAnimCheckBox.TabIndex = 8;
+			this.disableLoadAnimCheckBox.Text = "Disable loading animation";
+			this.disableLoadAnimCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// disableExitPromptCheckBox
 			// 
@@ -1465,16 +1475,6 @@
 			this.generateManifestToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
 			this.generateManifestToolStripMenuItem.Text = "Generate manifest";
 			this.generateManifestToolStripMenuItem.Click += new System.EventHandler(this.generateManifestToolStripMenuItem_Click);
-			// 
-			// disableLoadAnimCheckBox
-			// 
-			this.disableLoadAnimCheckBox.AutoSize = true;
-			this.disableLoadAnimCheckBox.Location = new System.Drawing.Point(6, 43);
-			this.disableLoadAnimCheckBox.Name = "disableLoadAnimCheckBox";
-			this.disableLoadAnimCheckBox.Size = new System.Drawing.Size(146, 17);
-			this.disableLoadAnimCheckBox.TabIndex = 8;
-			this.disableLoadAnimCheckBox.Text = "Disable loading animation";
-			this.disableLoadAnimCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
