@@ -1305,7 +1305,7 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
 	Init_AudioBassHook();
-	init_interpolationAnimFixes();
+	//init_interpolationAnimFixes(); //disabled for now since it is not fully functional 
 
 	if (settings->getBool("DebugCrashLog", true))
 		initCrashDump();
