@@ -10,7 +10,7 @@ namespace SA2ModManager
 		public bool DebugScreen { get; set; }
 		public bool DebugFile { get; set; }
 		[DefaultValue(true)]
-		public bool DebugCrashLog { get; set; }
+		public bool DebugCrashLog { get; set; } = true;
 		public bool? ShowConsole { get { return null; } set { if (value.HasValue) DebugConsole = value.Value; } }
 		[DefaultValue(true)]
 		public bool PauseWhenInactive { get; set; }
@@ -24,7 +24,7 @@ namespace SA2ModManager
 		public bool FullScreen { get; set; }
 		public bool SkipIntro { get; set; }
 		[DefaultValue(true)]
-		public bool SyncLoad { get; set; }
+		public bool SyncLoad { get; set; } = true;
 		[DefaultValue(640)]
 		public int HorizontalResolution { get; set; } = 640;
 		[DefaultValue(480)]
