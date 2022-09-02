@@ -49,19 +49,21 @@ static void RunFrameLimiter()
 	frame_start = system_clock::now();
 }
 
-static void __fastcall Present_r(Magic::RenderCore::RenderDevice_DX9* dev)
+static HRESULT __fastcall Present_r(Magic::RenderCore::RenderDevice_DX9* dev)
 {
+	HRESULT result;
 	if (enable_frame_limit)
 	{
 		// This is done to avoid vsync issues.
 		const auto start = std::chrono::system_clock::now();
-		dev->m_pD3DDevice->Present(nullptr, nullptr, DrawWindow, nullptr);
+		result = dev->m_pD3DDevice->Present(nullptr, nullptr, DrawWindow, nullptr);
 		present_time = std::chrono::system_clock::now() - start;
 	}
 	else
 	{
-		dev->m_pD3DDevice->Present(nullptr, nullptr, DrawWindow, nullptr);
+		result = dev->m_pD3DDevice->Present(nullptr, nullptr, DrawWindow, nullptr);
 	}
+	return result;
 }
 
 static void __fastcall BeginScene_r(Magic::RenderCore::RenderDevice_DX9* dev)
