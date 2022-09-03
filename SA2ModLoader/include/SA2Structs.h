@@ -3378,4 +3378,6 @@ struct sp_info
 	sp_info* link;                           /* Reserved for linked list */
 };
 
+typedef motionwk motionwk2;
+
 #pragma pack(pop)

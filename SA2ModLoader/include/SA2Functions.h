@@ -139,6 +139,7 @@ FunctionPointer(EntityData2*, AllocateEntityData2, (), 0x470B70);
 FunctionPointer(ObjUnknownA*, AllocateObjUnknownA, (), 0x470BA0);
 FunctionPointer(ObjUnknownB*, AllocateObjUnknownB, (), 0x470BD0);
 FunctionPointer(ObjectMaster*, LoadChildObject, (LoadObj a3, void(__cdecl* a4)(ObjectMaster*), ObjectMaster* parent), 0x470C00);
+FunctionPointer(task*, CreateChildTask, (LoadObj a3, void(__cdecl* a4)(task*), task* parent), 0x470C00);
 ObjectFunc(DeleteChildObjects, 0x470C80);
 ObjectFunc(StageNameDisplayExecutor_Main, 0x4724C0);
 FunctionPointer(int, DamagePlayer, (EntityData1* data1, CharObj2Base* data2), 0x473800);
@@ -2407,6 +2408,22 @@ static inline ObjectMaster* LoadObject(int list, const char* name, void(__cdecl*
 	return result;
 }
 
+static inline task* CreateElementalTask(int list, const char* name, void(__cdecl*exec)(task*), char flags)
+{
+	task* result;
+	__asm
+	{
+		movzx eax, [flags]
+		push eax
+		mov edi, [exec]
+		mov eax, [name]
+		mov ecx, [list]
+		call LoadObjectPtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
 // ObjectMaster *__usercall@<eax>(void (__cdecl *mainSub)(ObjectMaster *)@<edi>, int list@<esi>, const char *name)
 static const void* const AllocateObjectMasterPtr = (void*)0x46F680;
 static inline ObjectMaster* AllocateObjectMaster(void(__cdecl* mainSub)(ObjectMaster*), int list, const char* name)
