@@ -17,18 +17,25 @@ typedef Uint32 NJD_TEXATTR;
 // SA2 Structs
 
 struct EntityData1;
+struct taskwk;
 struct ObjectListEntry;
 struct COL;
 struct ModelIndex;
 struct SETEntry;
+struct _OBJ_EDITENTRY;
 struct SETObjectData;
+struct OBJ_CONDITION;
 struct CollisionInfo;
+struct colliwk;
 struct struct_0;
 struct AnimationIndex;
 struct AnimationInfo;
 struct CollisionData;
+struct CCL_INFO;
 struct CharObj2Base;
+struct playerwk;
 struct EntityData2;
+struct motionwk;
 struct LaunchConfig_vtable;
 struct ChaoDataBase;
 struct ChaoUnknownE;
@@ -38,11 +45,13 @@ struct ChaoData1;
 struct ObjUnknownA;
 struct ObjUnknownB;
 struct ObjectMaster;
+struct task;
 struct LoopHead;
 struct CameraInfo;
 struct CameraParam;
 
 using ObjectFuncPtr = void(__cdecl*)(ObjectMaster*);
+using TaskFuncPtr = void(__cdecl*)(task*);
 using CameraFuncPtr = void(__cdecl*)(CameraInfo*, CameraParam*);
 
 // All structs should be packed.
@@ -62,6 +71,14 @@ union __declspec(align(2)) Data1Ptr
 	ChaoDebugData1 *ChaoDebug;
 };
 
+union __declspec(align(2)) taskwkPtr
+{
+	void* Undefined;
+	taskwk* twp;
+	ChaoData1* Chao;
+	ChaoDebugData1* ChaoDebug;
+};
+
 union Data2Ptr
 {
 	void *Undefined;
@@ -69,6 +86,15 @@ union Data2Ptr
 	EntityData2 *Entity;
 	CharObj2Base *Character;
 	UnknownData2 *Unknown_Chao;
+};
+
+union motionwkPtr
+{
+	void* Undefined;
+	ObjUnknownB* UnknownB;
+	motionwk* Entity;
+	playerwk* Character;
+	UnknownData2* Unknown_Chao;
 };
 
 struct ObjectMaster
@@ -95,6 +121,30 @@ struct ObjectMaster
 	void *field_4C;
 };
 
+struct task
+{
+	task* last;
+	task* next;
+	task* ptp;
+	task* ctp;
+	TaskFuncPtr exec;
+	TaskFuncPtr disp;
+	TaskFuncPtr dest;
+	TaskFuncPtr dispDelayed1;
+	TaskFuncPtr dispDelayed2;
+	TaskFuncPtr dispDelayed3;
+	TaskFuncPtr dispDelayed4;
+	void* field_2C;
+	OBJ_CONDITION* ocp;
+	taskwkPtr Data1;
+	UnknownData2* EntityData2;
+	ObjUnknownA* UnknownA_ptr;
+	motionwkPtr anywk;
+	char* Name;
+	char* NameAgain;
+	void* thp;
+};
+
 struct SETObjectData
 {
 	uint8_t LoadCount;
@@ -103,6 +153,16 @@ struct SETObjectData
 	ObjectMaster *Object;
 	SETEntry *SETEntry;
 	float Distance;
+};
+
+struct OBJ_CONDITION
+{
+	char scCount;
+	char scUserFlag;
+	__int16 ssCondition;
+	task* pTask;
+	_OBJ_EDITENTRY* pObjEditEntry;
+	float fRangeOut;
 };
 
 struct Rotation
@@ -124,6 +184,20 @@ struct EntityData1
 	NJS_VECTOR Position;
 	NJS_VECTOR Scale;
 	CollisionInfo *Collision;
+};
+
+struct taskwk
+{
+	char mode;
+	char smode;
+	char id;
+	char btimer;
+	__int16 flag;
+	unsigned __int16 wtimer;
+	Angle3 ang;
+	NJS_POINT3 pos;
+	NJS_POINT3 scl;
+	colliwk* cwp;
 };
 
 struct MotionTableData
@@ -530,6 +604,17 @@ struct EntityData2
 	float Weight;
 };
 
+struct motionwk
+{
+	NJS_POINT3 spd;
+	NJS_POINT3 acc;
+	Angle3 ang_aim;
+	Angle3 ang_spd;
+	float rad;
+	float height;
+	float weight;
+};
+
 struct PhysicsData
 {
 	int HangTime;
@@ -567,6 +652,44 @@ struct PhysicsData
 	float CenterHeight;
 };
 
+// Physics struct from SADX symbols
+struct player_parameter
+{
+	int jump2_timer;
+	float pos_error;
+	float lim_h_spd;
+	float lim_v_spd;
+	float max_x_spd;
+	float max_psh_spd;
+	float jmp_y_spd;
+	float nocon_speed;
+	float slide_speed;
+	float jog_speed;
+	float run_speed;
+	float rush_speed;
+	float crash_speed;
+	float dash_speed;
+	float jmp_addit;
+	float run_accel;
+	float air_accel;
+	float slow_down;
+	float run_break;
+	float air_break;
+	float air_resist_air;
+	float air_resist;
+	float air_resist_y;
+	float air_resist_z;
+	float grd_frict;
+	float grd_frict_z;
+	float lim_frict;
+	float rat_bound;
+	float rad;
+	float height;
+	float weight;
+	float eyes_height;
+	float center_height;
+};
+
 struct CharAnimInfo
 {
 	__int16 mtnmode;
@@ -591,6 +714,40 @@ struct CharAnimInfo
 	char field_23;
 	AnimationInfo *Animations;
 	NJS_MOTION *Motion;
+};
+
+struct mtnjvwk
+{
+	__int16 mtnmode;
+	unsigned __int16 reqaction;
+	unsigned __int16 field_19;
+	unsigned __int16 action;
+	unsigned __int16 lastaction;
+	unsigned __int16 nextaction;
+	unsigned __int16 acttimer;
+	__int16 flag;
+	float nframe;
+	float start_frame;
+	float* spdp;
+	float* workp;
+	char field_20;
+	char field_21;
+	char field_22;
+	char field_23;
+	AnimationInfo* plactptr;
+	NJS_MOTION* actwkptr;
+};
+
+struct shadowwk
+{
+	int angx;
+	int angz;
+	unsigned int Attr_top;
+	unsigned int Attr_bottom;
+	float y_top;
+	float y_bottom;
+	unsigned int _Attr_top;
+	unsigned int _Attr_bottom;
 };
 
 // Vertical surface information for shadows and ripples
@@ -675,6 +832,53 @@ struct CharObj2Base
 	CharSurfaceInfo SurfaceInfo;
 };
 
+struct playerwk
+{
+	char PlayerNum;
+	char CharID;
+	char Costume;
+	char CharID2;
+	char ActionWindowItems[8];
+	char ActionWindowItemCount;
+	char field_D[3];
+	__int16 Powerups;
+	__int16 field_12;
+	__int16 DisableControlTimer;
+	__int16 UnderwaterTime;
+	__int16 IdleTime;
+	__int16 ConfuseTime;
+	char gap1C[8];
+	int Upgrades;
+	float field_28;
+	Angle TiltAngle;
+	float PathDist;
+	float Up;
+	char field_38[8];
+	float SomeMultiplier;
+	int field_44;
+	float MechHP;
+	NJS_POINT3 eff;
+	NJS_POINT3 acc;
+	NJS_VECTOR spd;
+	NJS_POINT3 wall_normal;
+	NJS_POINT3 floor_normal;
+	SurfaceFlags CurrentSurfaceFlags;
+	SurfaceFlags PreviousSurfaceFlags;
+	csts* cstsp; //dyncol info
+	task* htp;
+	char gap98[4];
+	task* HoldTarget;
+	task* CurrentDyncolTask;
+	int field_A4;
+	char gapA8[16];
+	LoopHead* PathData;
+	NJS_MOTION** Animation;
+	player_parameter p;
+	NJS_VECTOR SomeVectors[4];
+	mtnjvwk mj;
+	shadowwk shadow;
+};
+
 struct SETEntry
 {
 	__int16 ID;
@@ -685,12 +889,34 @@ struct SETEntry
 	NJS_VECTOR Scale;
 };
 
+struct _OBJ_EDITENTRY
+{
+	unsigned __int16 usID;
+	__int16 rotx;
+	__int16 roty;
+	__int16 rotz;
+	float xpos;
+	float ypos;
+	float zpos;
+	float xscl;
+	float yscl;
+	float zscl;
+};
+
 struct CollisionHitInfo
 {
 	__int8 my_num;
 	__int8 hit_num;
 	unsigned __int16 flag;
 	EntityData1* hit_entity;
+};
+
+struct c_colli_hit_info
+{
+	char my_num;
+	char hit_num;
+	unsigned __int16 flag;
+	taskwk* hit_twp;
 };
 
 struct CollisionInfo
@@ -707,6 +933,22 @@ struct CollisionInfo
 	__int16 my_num;
 	__int16 hit_num;
 	CollisionInfo* CollidingObject; // the first colliding object
+};
+
+struct colliwk
+{
+	unsigned __int16 id;
+	__int16 nbHit;
+	unsigned __int16 flag;
+	unsigned __int16 nbInfo;
+	float colli_range;
+	CCL_INFO* info;
+	c_colli_hit_info hit_info[16];
+	NJS_POINT3 normal;
+	task* mytask;
+	__int16 my_num;
+	__int16 hit_num;
+	colliwk* hit_cwp;
 };
 
 struct ChaoCharacterBond
@@ -925,6 +1167,23 @@ struct CollisionData
 	Float param3;
 	Float param4;
 	Rotation rotation;
+};
+
+struct CCL_INFO
+{
+	char kind;
+	char form;
+	char push;
+	char damage;
+	unsigned int attr;
+	NJS_POINT3 center;
+	float a;
+	float b;
+	float c;
+	float d;
+	int angx;
+	int angy;
+	int angz;
 };
 
 struct JiggleInfo
@@ -2439,43 +2698,6 @@ struct Number {
 struct PolygonPoint {
 	NJS_POINT3 pos;
 	NJS_COLOR color;
-};
-
-// Physics struct from SADX symbols
-struct player_parameter {
-	int jump2_timer;
-	float pos_error;
-	float lim_h_spd;
-	float lim_v_spd;
-	float max_x_spd;
-	float max_psh_spd;
-	float jmp_y_spd;
-	float nocon_speed;
-	float slide_speed;
-	float jog_speed;
-	float run_speed;
-	float rush_speed;
-	float crash_speed;
-	float dash_speed;
-	float jmp_addit;
-	float run_accel;
-	float air_accel;
-	float slow_down;
-	float run_break;
-	float air_break;
-	float air_resist_air;
-	float air_resist;
-	float air_resist_y;
-	float air_resist_z;
-	float grd_frict;
-	float grd_frict_z;
-	float lim_frict;
-	float rat_bound;
-	float rad;
-	float height;
-	float weight;
-	float eyes_height;
-	float center_height;
 };
 
 struct RenderInfo
