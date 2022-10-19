@@ -1173,6 +1173,11 @@ namespace SA2ModManager
 						modExists = true;
 					else if (cMods.ContainsValue(dependency.Folder))
 						modExists = true;
+					else if (cMods.ContainsValue(dependency.Name))
+					{
+						dependency.Folder = dependency.Name;
+						modExists = true;
+					}
 
 					if (modExists)
 					{
