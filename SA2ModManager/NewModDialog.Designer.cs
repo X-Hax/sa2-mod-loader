@@ -59,6 +59,9 @@ namespace SA2ModManager
             this.label6 = new System.Windows.Forms.Label();
             this.textGitHubAttachment = new System.Windows.Forms.TextBox();
             this.textGitHubRepo = new System.Windows.Forms.TextBox();
+            this.textID = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.buttonGenerate = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -78,7 +81,7 @@ namespace SA2ModManager
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(21, 114);
+            this.label2.Location = new System.Drawing.Point(21, 140);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 13);
             this.label2.TabIndex = 8;
@@ -97,7 +100,7 @@ namespace SA2ModManager
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonOK.Location = new System.Drawing.Point(216, 293);
+            this.buttonOK.Location = new System.Drawing.Point(216, 307);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 14;
@@ -110,7 +113,7 @@ namespace SA2ModManager
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonCancel.Location = new System.Drawing.Point(297, 293);
+            this.buttonCancel.Location = new System.Drawing.Point(297, 307);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 15;
@@ -134,25 +137,26 @@ namespace SA2ModManager
             this.textModAuthor.Name = "textModAuthor";
             this.textModAuthor.Size = new System.Drawing.Size(256, 20);
             this.textModAuthor.TabIndex = 3;
-			this.textModAuthor.Text = Properties.Settings.Default.ModAuthor;
-			// 
-			// checkOpenFolder
-			// 
-			this.checkOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textModAuthor.Text = global::SA2ModManager.Properties.Settings.Default.ModAuthor;
+            // 
+            // checkOpenFolder
+            // 
+            this.checkOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkOpenFolder.AutoSize = true;
+            this.checkOpenFolder.Checked = true;
+            this.checkOpenFolder.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkOpenFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.checkOpenFolder.Location = new System.Drawing.Point(12, 298);
+            this.checkOpenFolder.Location = new System.Drawing.Point(12, 312);
             this.checkOpenFolder.Name = "checkOpenFolder";
             this.checkOpenFolder.Size = new System.Drawing.Size(87, 18);
             this.checkOpenFolder.TabIndex = 13;
             this.checkOpenFolder.Text = "Open folder";
             this.toolTip1.SetToolTip(this.checkOpenFolder, "Open the newly created mod\'s folder upon completion.");
             this.checkOpenFolder.UseVisualStyleBackColor = true;
-			this.checkOpenFolder.Checked = true;
-			// 
-			// toolTip1
-			// 
-			this.toolTip1.ShowAlways = true;
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.ShowAlways = true;
             // 
             // comboModCategory
             // 
@@ -185,7 +189,7 @@ namespace SA2ModManager
             this.textModDescription.AcceptsReturn = true;
             this.textModDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textModDescription.Location = new System.Drawing.Point(90, 111);
+            this.textModDescription.Location = new System.Drawing.Point(90, 137);
             this.textModDescription.Multiline = true;
             this.textModDescription.Name = "textModDescription";
             this.textModDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -200,7 +204,7 @@ namespace SA2ModManager
             this.textVersion.Name = "textVersion";
             this.textVersion.Size = new System.Drawing.Size(256, 20);
             this.textVersion.TabIndex = 5;
-			this.textVersion.Text = "0.1";
+            this.textVersion.Text = "0.1";
             // 
             // label4
             // 
@@ -215,7 +219,7 @@ namespace SA2ModManager
             // 
             this.checkRedirectMainSave.AutoSize = true;
             this.checkRedirectMainSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.checkRedirectMainSave.Location = new System.Drawing.Point(90, 184);
+            this.checkRedirectMainSave.Location = new System.Drawing.Point(90, 207);
             this.checkRedirectMainSave.Name = "checkRedirectMainSave";
             this.checkRedirectMainSave.Size = new System.Drawing.Size(83, 18);
             this.checkRedirectMainSave.TabIndex = 11;
@@ -226,7 +230,7 @@ namespace SA2ModManager
             // 
             this.checkRedirectChaoSave.AutoSize = true;
             this.checkRedirectChaoSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.checkRedirectChaoSave.Location = new System.Drawing.Point(90, 208);
+            this.checkRedirectChaoSave.Location = new System.Drawing.Point(90, 231);
             this.checkRedirectChaoSave.Name = "checkRedirectChaoSave";
             this.checkRedirectChaoSave.Size = new System.Drawing.Size(85, 18);
             this.checkRedirectChaoSave.TabIndex = 12;
@@ -236,7 +240,7 @@ namespace SA2ModManager
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 186);
+            this.label5.Location = new System.Drawing.Point(6, 209);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(78, 13);
             this.label5.TabIndex = 10;
@@ -252,11 +256,14 @@ namespace SA2ModManager
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(360, 275);
+            this.tabControl1.Size = new System.Drawing.Size(360, 289);
             this.tabControl1.TabIndex = 14;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.buttonGenerate);
+            this.tabPage1.Controls.Add(this.label10);
+            this.tabPage1.Controls.Add(this.textID);
             this.tabPage1.Controls.Add(this.comboModCategory);
             this.tabPage1.Controls.Add(this.label9);
             this.tabPage1.Controls.Add(this.label1);
@@ -273,7 +280,7 @@ namespace SA2ModManager
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(352, 249);
+            this.tabPage1.Size = new System.Drawing.Size(352, 263);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Properties";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -381,13 +388,44 @@ namespace SA2ModManager
             this.textGitHubRepo.Size = new System.Drawing.Size(231, 20);
             this.textGitHubRepo.TabIndex = 0;
             // 
+            // textID
+            // 
+            this.textID.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textID.Location = new System.Drawing.Point(90, 111);
+            this.textID.Name = "textID";
+            this.textID.Size = new System.Drawing.Size(175, 20);
+            this.textID.TabIndex = 13;
+            this.textID.Text = global::SA2ModManager.Properties.Settings.Default.ModAuthor;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(39, 114);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(45, 13);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "Mod ID:";
+            // 
+            // buttonGenerate
+            // 
+            this.buttonGenerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonGenerate.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonGenerate.Location = new System.Drawing.Point(271, 109);
+            this.buttonGenerate.Name = "buttonGenerate";
+            this.buttonGenerate.Size = new System.Drawing.Size(75, 23);
+            this.buttonGenerate.TabIndex = 16;
+            this.buttonGenerate.Text = "Generate";
+            this.buttonGenerate.UseVisualStyleBackColor = true;
+            this.buttonGenerate.Click += new System.EventHandler(this.buttonGenerate_Click);
+            // 
             // NewModDialog
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(384, 328);
+            this.ClientSize = new System.Drawing.Size(384, 342);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.checkOpenFolder);
             this.Controls.Add(this.buttonCancel);
@@ -443,5 +481,8 @@ namespace SA2ModManager
 		private System.Windows.Forms.TextBox textGitHubRepo;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.ComboBox comboModCategory;
+		private System.Windows.Forms.Label label10;
+		private System.Windows.Forms.TextBox textID;
+		private System.Windows.Forms.Button buttonGenerate;
 	}
 }
