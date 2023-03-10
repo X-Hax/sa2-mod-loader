@@ -6,6 +6,8 @@
 
 using std::wstring;
 using std::unordered_map;
+bool testSpawnCutscene = false;
+bool testSpawnLvl = false;
 
 static wstring trim(const wstring& s)
 {
@@ -207,8 +209,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 {
 	int argc = 0;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-	
-	bool level_set = false;
+
 
 	uint8_t alt = 0;
 	
@@ -233,7 +234,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			// Swap GameMode
 			WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_StartLevel));
 
-			level_set = true;
+			testSpawnLvl = true;
 		}
 		else if (!wcscmp(argv[i], L"--character") || !wcscmp(argv[i], L"-c"))
 		{
@@ -257,10 +258,11 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		else if (!wcscmp(argv[i], L"--event") || !wcscmp(argv[i], L"-e"))
 		{
 			((StoryEntry*)0x173A5E0)->Events[0] = static_cast<int16_t>(_wtoi(argv[++i]));
+			testSpawnCutscene = true;
 		}
 		else if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))
 		{
-			if (level_set == false)
+			if (testSpawnLvl == false)
 			{
 				MessageBoxA(nullptr, "Insufficient arguments for parameter: --position.\n"
 					"--level must be specified before --position.",

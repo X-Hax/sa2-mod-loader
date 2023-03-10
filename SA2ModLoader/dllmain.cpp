@@ -1259,11 +1259,6 @@ void __cdecl InitMods(void)
 	}
 
 	bool SkipIntro = settings->getBool("SkipIntro");
-	if (SkipIntro)
-	{
-		WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_LoadAdvertise)); //change gamemode	
-		WriteCall((void*)0x434778, sub_434CD0_r);
-	}
 
 	VoiceLanguage = settings->getInt("VoiceLanguage", 1);
 
@@ -1715,9 +1710,18 @@ void __cdecl InitMods(void)
 		codes_str.close();
 	}
 
-	if (SkipIntro && *(int*)0x428010 != 0xC3) //if the code to disable loading hint is disabled
+	if (SkipIntro || testSpawnCutscene)
 	{
-		LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
+		if (!testSpawnLvl)
+			WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_LoadAdvertise)); //change gamemode	
+
+		if (!testSpawnCutscene)
+			WriteCall((void*)0x434778, sub_434CD0_r);
+
+		if (*(int*)0x428010 != 0xC3) //if the code to disable loading hint is disabled
+		{
+			LoadTipsTexs(TextLanguage); // Skipped. Loaded during copyright screen.
+		}
 	}
 
 	// Sets up code/event handling
