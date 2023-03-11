@@ -1146,7 +1146,18 @@ namespace SA2ModManager
 				string id = mod;
 				if (modinfo.ModID != null)
 					id = modinfo.ModID;
-				activeMods.Add(id, mod);
+				if (!activeMods.ContainsKey(id))
+					activeMods.Add(id, mod);
+				else
+				{
+					MessageBox.Show(this,
+						"Mods with duplicate ID '" + id + "' have been detected.\n" +
+						"Mod name: '" + modinfo.Name + "'.\n" +
+						"Remove duplicate mods or edit the value 'ModID' in mod.ini to fix this error.\n",
+						"SA2 Mod Manager Error",
+						MessageBoxButtons.OK,
+						MessageBoxIcon.Error);
+				}
 			}
 
 			return activeMods;
