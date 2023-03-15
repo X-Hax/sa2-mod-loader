@@ -927,6 +927,40 @@ static void ProcessPhysicsDataINI(const IniGroup* group, const wstring& mod_dir)
 	delete inidata;
 }
 
+static void ProcessKartCourseINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename"))
+	{
+		return;
+	}
+
+	auto addr = (KartCourse*)group->getIntRadix("address", 16);
+
+	if (addr == nullptr)
+	{
+		return;
+	}
+
+	addr = (KartCourse*)((intptr_t)addr + 0x400000);
+	wchar_t filename[MAX_PATH]{};
+
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+
+	ifstream fstr(filename);
+	vector<char> course;
+	while (fstr.good())
+	{
+		string str;
+		getline(fstr, str);
+		course.push_back(std::stoi(str));
+	}
+	fstr.close();
+	addr->Length = course.size();
+	addr->Course = new char[addr->Length];
+	memcpy(addr->Course, course.data(), addr->Length);
+}
+
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
 static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "landtable", ProcessLandTableINI },
@@ -953,6 +987,7 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "storysequence", ProcessStorySequenceINI },
 	{ "string", ProcessStringINI },
 	{ "physicsdata", ProcessPhysicsDataINI },
+	{ "kartcourse", ProcessKartCourseINI },
 };
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)

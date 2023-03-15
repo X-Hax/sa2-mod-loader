@@ -2466,6 +2466,29 @@ struct KartSFXAndShadows
 	NJS_OBJECT* ShadowModel;
 };
 
+struct CartStreetLightPos
+{
+	NJS_VECTOR Position;
+	int YRotation;
+};
+
+struct CartCourseModelInfo
+{
+	NJS_OBJECT* Model;
+	NJS_OBJECT* Collision;
+	NJS_VECTOR EndPoint;
+	int YRotation;
+	char field_18[76];
+	CartStreetLightPos* StreetLights;
+	int StreetLightCount;
+};
+
+struct KartCourse
+{
+	char* Course;
+	int Length;
+};
+
 struct ChaoMotionTableEntry
 {
 	NJS_MOTION* Motion;
