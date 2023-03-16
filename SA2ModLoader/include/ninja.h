@@ -1134,7 +1134,7 @@ typedef struct {
 	Uint16          nbMeshset;  /* meshset count                */
 	Uint16          nbMat;      /* material count               */
 	NJS_POINT3      center;     /* model center                 */
-	Float			r;			/* ??????????? */
+	Float			r;			/* bounds radius */
 } NJS_MODEL;
 
 typedef struct {
@@ -1146,38 +1146,65 @@ typedef struct {
 	Uint16          nbMeshset;  /* meshset count                */
 	Uint16          nbMat;      /* material count               */
 	NJS_POINT3      center;     /* model center                 */
-	Float			r;			/* ??????????? */
+	Float			r;			/* bounds radius */
 	void            *null;
 } NJS_MODEL_SADX;
 
+
+struct SA2B_ParameterData
+{
+	Uint32 ParameterType;	/* Mesh parameter ID										   */
+	Uint32 Data;			/* Specific usage depends on parameter type, always four bytes */ 
+};
+
+struct SA2B_PositionData
+{
+	NJS_POINT3	position;
+};
+
+struct SA2B_NormalData
+{
+	NJS_VECTOR	normal;
+};
+
+struct SA2B_Color0Data
+{
+	NJS_COLOR	color;
+};
+
+struct SA2B_Tex0Data
+{
+	NJS_TEX		uv;
+};
+
 struct SA2B_VertexData
 {
-	char DataType; // 1 = Vertex, 3 = VColor?, 5 = UV?, 0xFF = end list
-	char ElementSize;
-	__int16 ElementCount;
-	int field_4;
-	void* Data;
-	int DataSize;
+	char	DataType;		/* 1 = Vertex, 2 = Normal, 3 = VColor, 5 = UV, 0xFF = end list		*/
+	char	ElementSize;	/* The number of bytes that an element occupies						*/
+	__int16 ElementCount;	/* Total number of elements											*/
+	int		StructType;		/* Contains two flags: the specific data type and byte arrangement  */
+	void	*Data;			/* Vertex data list													*/
+	int		DataSize;		/* Total size of the vertex data array in bytes						*/
 };
 
 struct SA2B_GeometryData
 {
-	int* ParameterOffset;
-	int   ParameterCount;
-	char* PrimitiveOffset;
-	int   PrimitiveCount;
+	SA2B_ParameterData	*ParameterOffset;	/* Mesh parameter array, if it exists							 */
+	int					ParameterCount;		/* Number of parameter entries									 */
+	Uint8				*PrimitiveOffset;	/* Polygon data													 */
+	int					PrimitiveSize;		/* Total primitive size in bytes, takes end padding into account */
 };
 
 struct SA2B_Model
 {
-	SA2B_VertexData* Vertices;
-	int field_4; //unknown1?
-	SA2B_GeometryData* OpaqueGeoData;
-	SA2B_GeometryData* TranslucentGeoData;
-	__int16 OpaqueGeometryCount;
-	__int16 TranslucentGeometryCount;
-	NJS_VECTOR Center;
-	float Radius;
+	SA2B_VertexData		*Vertices;					/* Main vertex data array, always exists */		
+	int					field_4;					/* A null value, usually				 */
+	SA2B_GeometryData	*OpaqueGeoData;				/* Opaque mesh data array				 */
+	SA2B_GeometryData	*TranslucentGeoData;		/* Translucent mesh data array			 */
+	__int16				OpaqueGeometryCount;		/* Opaque mesh data count				 */	
+	__int16				TranslucentGeometryCount;	/* Translucent mesh data count			 */
+	NJS_VECTOR			Center;						/* Model bounds center					 */			
+	float				Radius;						/* Model bounds radius					 */
 };
 
 struct NJS_CNK_MODEL;
