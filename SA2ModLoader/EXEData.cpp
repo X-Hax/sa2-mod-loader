@@ -780,6 +780,32 @@ static void ProcessSoundListINI(const IniGroup* group, const wstring& mod_dir)
 	list->Size = (int)numents;
 }
 
+//static void ProcessCutsceneVoiceListINI(const IniGroup* group, const wstring& mod_dir)
+//{
+//	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+//	wchar_t filename[MAX_PATH];
+//	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+//		mod_dir.c_str(), group->getWString("filename").c_str());
+//	const IniFile* const data = new IniFile(filename);
+//	vector<CutsceneVoices> voices;
+//	for (unsigned int i = 0; i < 999; i++)
+//	{
+//		char key[8];
+//		snprintf(key, sizeof(key), "%u", i);
+//		if (!data->hasGroup(key)) break;
+//		const IniGroup* voicedata = data->getGroup(key);
+//		CutsceneVoices entry;
+//		entry.InternalID = voicedata->getInt("RealValue");
+//		entry.VoiceFileID = voicedata->getInt("VoiceFileID");
+//		voices.push_back(entry);
+//	}
+//	delete data;
+//	auto numents = voices.size();
+//	CutsceneVoices* list = new CutsceneVoices[numents];
+//	arrcpy(list, voices.data(), numents);
+//	ProcessPointerList(group->getString("pointer"), list);
+//}
+
 static void ProcessAnimIndexListINI(const IniGroup* group, const wstring& mod_dir)
 {
 	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
@@ -961,6 +987,41 @@ static void ProcessKartCourseINI(const IniGroup* group, const wstring& mod_dir)
 	memcpy(addr->Course, course.data(), addr->Length);
 }
 
+static void ProcessKartPhysicsDataINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename"))
+	{
+		return;
+	}
+
+	auto addr = (KartPhysics*)group->getIntRadix("address", 16);
+
+	if (addr == nullptr)
+	{
+		return;
+	}
+
+	addr = (KartPhysics*)((intptr_t)addr + 0x400000);
+	wchar_t filename[MAX_PATH]{};
+
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+
+	auto inidata = new IniFile(filename);
+	auto inigrp = inidata->getGroup("");
+	addr->Acceleration= inigrp->getInt("Acceleration");
+	addr->BrakePower = inigrp->getFloat("BrakePower");
+	addr->Deceleration = inigrp->getFloat("Deceleration");
+	addr->SpeedCap = inigrp->getFloat("SpeedCap");
+	addr->Weight = inigrp->getFloat("Weight");
+	addr->Unk1 = inigrp->getFloat("Unk1");
+	addr->DriftHandling = inigrp->getFloat("DriftHandling");
+	addr->DriftSpeedThreshold = inigrp->getFloat("DriftSpeedThreshold");
+	addr->Unk2 = inigrp->getFloat("Unk2");
+	addr->TopSpeed = inigrp->getFloat("TopSpeed");
+	delete inidata;
+}
+
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
 static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "landtable", ProcessLandTableINI },
@@ -988,6 +1049,8 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "string", ProcessStringINI },
 	{ "physicsdata", ProcessPhysicsDataINI },
 	{ "kartcourse", ProcessKartCourseINI },
+	{ "kartphysics", ProcessKartPhysicsDataINI },
+	//{ "cutscenevoicearray", ProcessCutsceneVoiceListINI }
 };
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)

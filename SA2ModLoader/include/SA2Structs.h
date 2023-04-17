@@ -1923,17 +1923,128 @@ struct EnemyData
 
 struct EventFileHeader
 {
-	void *field_0;
-	NJS_TEXLIST *field_4;
-	int field_8;
-	void *field_C;
-	void *field_10;
-	void *field_14;
-	void *field_18;
-	NJS_OBJECT **field_1C;
-	void *field_20;
-	void *field_24;
-	int field_28;
+	CutsceneAssetArray	*assets;
+	NJS_TEXLIST			*texlist;
+	int					sceneCount;
+	void				*texDimensions;
+	ReflectionData		*reflectionData;
+	BlurModels			*blurModels;
+	UpgradeOverrideList *upgradeOverrideList;
+	NJS_OBJECT			**tailsTails;
+	UpgradeList			*upgradeList;
+	CutsceneTexAnim		*texanimData;
+	int					shadowControl;
+};
+
+struct CutsceneAssetArray
+{
+	CutsceneEntityData  *entity;
+	int					entityCount;
+	NJS_MOTION			*cameraArray;
+	int					cameraArrayCount;
+	NJS_MOTION			*particleMotionArray;
+	int					particleMotionCount;
+	BigCameoData		*bigCameo;
+	Uint32				frameCount;
+};
+
+struct CutsceneEntityData
+{
+	NJS_OBJECT  *Model;
+	NJS_MOTION	*Animation;
+	NJS_MOTION	*ShapeMotion;
+	NJS_OBJECT	*GCModel;
+	NJS_OBJECT	*ShadowModel;
+	int			Unk;
+	NJS_POINT3	Position;
+	int			Flags;
+	int			DisplayLayer;
+};
+
+struct BigCameoData
+{
+	NJS_OBJECT	*Model;
+	NJS_MOTION	*AnimationArray;
+	int			AnimationCount;
+	int			Unk;
+};
+
+struct ReflectionData
+{
+	int				DataSets;
+	int				Transparency[32];
+	ReflectPlane	*ReflectionPlane;
+};
+
+struct ReflectPlane
+{
+	NJS_POINT3 points[4];
+};
+
+struct BlurModels
+{
+	NJS_OBJECT	*models[64];
+};
+
+struct UpgradeOverrideList
+{
+	NJS_OBJECT	*Upgrade1[31];
+	NJS_OBJECT	*Upgrade2[31];
+	NJS_OBJECT	*NormalModel[31];
+};
+
+struct UpgradeList
+{
+	UpgradeListData Data[18];
+};
+
+struct UpgradeListData
+{
+	NJS_OBJECT	*RootModel;
+	NJS_OBJECT	*Upgrade1Attach;
+	NJS_OBJECT  *Upgrade1Model;
+	NJS_OBJECT	*Upgrade2Attach;
+	NJS_OBJECT	*Upgrade2Model;
+};
+
+struct CutsceneTexAnim
+{
+	CutsceneTexAnimMain	*Data;
+	CutsceneTexAnimIDs	*TexID;
+	int					DataCount;
+};
+
+struct CutsceneTexAnimMain
+{
+	NJS_OBJECT		*Model;
+	int				AnimCount;
+	EventTexAnim	*Data;
+};
+
+struct EventTexAnim
+{
+	int			 TexID;
+	void		 *PolyMaterial;
+	int			 UVEditCount;
+	UVEditEntry	 *UVEdits;
+};
+
+struct UVEditEntry
+{
+	void    *UVAddress;
+	NJS_TEX	UV;
+};
+
+struct CutsceneTexAnimIDs
+{
+	int TexID;
+	int	TexLoopNumber;
+};
+
+struct CutsceneVoices
+{
+	Uint32 InternalID;
+	int	   VoiceFileID;
 };
 
 struct ControlShadowCharObj2
@@ -2487,6 +2598,20 @@ struct KartCourse
 {
 	char* Course;
 	int Length;
+};
+
+struct KartPhysics
+{
+	float Acceleration;
+	float BrakePower;
+	float Deceleration;
+	float SpeedCap;
+	float Weight;
+	float Unk1;
+	float DriftHandling;
+	float DriftSpeedThreshold;
+	float Unk2;
+	float TopSpeed;
 };
 
 struct ChaoMotionTableEntry
