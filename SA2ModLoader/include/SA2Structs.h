@@ -1921,31 +1921,84 @@ struct EnemyData
 	EnemyMotionData motiondata; // For EnemySetMotion, pobj and plactptr necessary
 };
 
-struct EventFileHeader
+struct CutsceneTexAnimIDs
 {
-	CutsceneAssetArray	*assets;
-	NJS_TEXLIST			*texlist;
-	int					sceneCount;
-	void				*texDimensions;
-	ReflectionData		*reflectionData;
-	BlurModels			*blurModels;
-	UpgradeOverrideList *upgradeOverrideList;
-	NJS_OBJECT			**tailsTails;
-	UpgradeList			*upgradeList;
-	CutsceneTexAnim		*texanimData;
-	int					shadowControl;
+	int TexID;
+	int	TexLoopNumber;
 };
 
-struct CutsceneAssetArray
+struct UVEditEntry
 {
-	CutsceneEntityData  *entity;
-	int					entityCount;
-	NJS_MOTION			*cameraArray;
-	int					cameraArrayCount;
-	NJS_MOTION			*particleMotionArray;
-	int					particleMotionCount;
-	BigCameoData		*bigCameo;
-	Uint32				frameCount;
+	void    *UVAddress;
+	NJS_TEX	UV;
+};
+
+struct EventTexAnim
+{
+	int			 TexID;
+	void		 *PolyMaterial;
+	int			 UVEditCount;
+	UVEditEntry	 *UVEdits;
+};
+
+struct CutsceneTexAnimMain
+{
+	NJS_OBJECT		*Model;
+	int				AnimCount;
+	EventTexAnim	*Data;
+};
+
+struct CutsceneTexAnim
+{
+	CutsceneTexAnimMain	*Data;
+	CutsceneTexAnimIDs	*TexID;
+	int					DataCount;
+};
+
+struct UpgradeListData
+{
+	NJS_OBJECT	*RootModel;
+	NJS_OBJECT	*Upgrade1Attach;
+	NJS_OBJECT  *Upgrade1Model;
+	NJS_OBJECT	*Upgrade2Attach;
+	NJS_OBJECT	*Upgrade2Model;
+};
+
+struct UpgradeList
+{
+	UpgradeListData Data[18];
+};
+
+struct UpgradeOverrideList
+{
+	NJS_OBJECT	*Upgrade1[31];
+	NJS_OBJECT	*Upgrade2[31];
+	NJS_OBJECT	*NormalModel[31];
+};
+
+struct BlurModels
+{
+	NJS_OBJECT	*models[64];
+};
+
+struct ReflectPlane
+{
+	NJS_POINT3 points[4];
+};
+
+struct ReflectionData
+{
+	int				DataSets;
+	int				Transparency[32];
+	ReflectPlane	*ReflectionPlane;
+};
+
+struct BigCameoData
+{
+	NJS_OBJECT	*Model;
+	NJS_MOTION	*AnimationArray;
+	int			AnimationCount;
+	int			Unk;
 };
 
 struct CutsceneEntityData
@@ -1961,84 +2014,31 @@ struct CutsceneEntityData
 	int			DisplayLayer;
 };
 
-struct BigCameoData
+struct CutsceneAssetArray
 {
-	NJS_OBJECT	*Model;
-	NJS_MOTION	*AnimationArray;
-	int			AnimationCount;
-	int			Unk;
+	CutsceneEntityData  *entity;
+	int					entityCount;
+	NJS_MOTION			*cameraArray;
+	int					cameraArrayCount;
+	NJS_MOTION			*particleMotionArray;
+	int					particleMotionCount;
+	BigCameoData		*bigCameo;
+	Uint32				frameCount;
 };
 
-struct ReflectionData
+struct EventFileHeader
 {
-	int				DataSets;
-	int				Transparency[32];
-	ReflectPlane	*ReflectionPlane;
-};
-
-struct ReflectPlane
-{
-	NJS_POINT3 points[4];
-};
-
-struct BlurModels
-{
-	NJS_OBJECT	*models[64];
-};
-
-struct UpgradeOverrideList
-{
-	NJS_OBJECT	*Upgrade1[31];
-	NJS_OBJECT	*Upgrade2[31];
-	NJS_OBJECT	*NormalModel[31];
-};
-
-struct UpgradeList
-{
-	UpgradeListData Data[18];
-};
-
-struct UpgradeListData
-{
-	NJS_OBJECT	*RootModel;
-	NJS_OBJECT	*Upgrade1Attach;
-	NJS_OBJECT  *Upgrade1Model;
-	NJS_OBJECT	*Upgrade2Attach;
-	NJS_OBJECT	*Upgrade2Model;
-};
-
-struct CutsceneTexAnim
-{
-	CutsceneTexAnimMain	*Data;
-	CutsceneTexAnimIDs	*TexID;
-	int					DataCount;
-};
-
-struct CutsceneTexAnimMain
-{
-	NJS_OBJECT		*Model;
-	int				AnimCount;
-	EventTexAnim	*Data;
-};
-
-struct EventTexAnim
-{
-	int			 TexID;
-	void		 *PolyMaterial;
-	int			 UVEditCount;
-	UVEditEntry	 *UVEdits;
-};
-
-struct UVEditEntry
-{
-	void    *UVAddress;
-	NJS_TEX	UV;
-};
-
-struct CutsceneTexAnimIDs
-{
-	int TexID;
-	int	TexLoopNumber;
+	CutsceneAssetArray	*assets;
+	NJS_TEXLIST			*texlist;
+	int					sceneCount;
+	void				*texDimensions;
+	ReflectionData		*reflectionData;
+	BlurModels			*blurModels;
+	UpgradeOverrideList *upgradeOverrideList;
+	NJS_OBJECT			**tailsTails;
+	UpgradeList			*upgradeList;
+	CutsceneTexAnim		*texanimData;
+	int					shadowControl;
 };
 
 struct CutsceneVoices
