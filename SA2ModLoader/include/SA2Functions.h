@@ -3163,18 +3163,15 @@ static inline CameraParam* RegisterEventCameraFunc(int pnum, CameraFuncPtr func)
 }
 
 static const void* const SetAdjustModePtr = (void*)0x4EBCD0;
-static inline CameraParam* SetAdjustMode(int pnum, int slot, int adjust) // Set the adjust (see CameraAdjusts enum) of a camera slot
+static inline void SetAdjustMode(int slot, int pnum, int adjust) // Set the adjust (see CameraAdjusts enum) of a camera slot
 {
-	CameraParam* result;
 	__asm
 	{
 		mov edi, [adjust]
-		mov eax, [slot]
 		mov ecx, [pnum]
+		mov eax, [slot]
 		call SetAdjustModePtr
-		mov result, eax
 	}
-	return result;
 }
 
 static const void* const ReleaseCameraPtr = (void*)0x4EBD30;
