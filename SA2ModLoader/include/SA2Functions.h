@@ -28,7 +28,7 @@ FunctionPointer(void, njScale_, (float x, float y, float z), 0x427750);
 FunctionPointer(int, njPopMatrixEx, (), 0x429000);
 FunctionPointer(int, njPushMatrixEx, (), 0x429710);
 VoidFunc(njFogEnable, 0x42A830);
-VoidFunc(njFogDisable, 0x42A870);
+VoidFunc(njFogToggle, 0x42A870); //Toggles fog on/off based on FogEnabled bool value
 FastcallFunctionPointer(float, njSin, (Angle angle), 0x42AAB0);
 FastcallFunctionPointer(float, njCos, (Angle angle), 0x42AC30);
 VoidFunc(ResetRenderSpace, 0x42D340);
