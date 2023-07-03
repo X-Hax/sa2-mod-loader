@@ -48,6 +48,8 @@ ModelFormat ModelInfo::getformat() { return format; }
 
 NJS_OBJECT *ModelInfo::getmodel() { return model; }
 
+NJS_OBJECT_SA2B* ModelInfo::getsa2bmodel() { return sa2bmodel; }
+
 const string &ModelInfo::getauthor() { return author; }
 
 const string &ModelInfo::gettool() { return tool; }
@@ -199,8 +201,6 @@ void ModelInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base)
 				fixbasicmodelpointers(object->basicmodel, base);
 			else if (format == ModelFormat_Chunk)
 				fixchunkmodelpointers(object->chunkmodel, base);
-			else if (format == ModelFormat_SA2B)
-				fixsa2bmodelpointers(object->sa2bmodel, base);
 		}
 	}
 	if (object->child != nullptr)
@@ -219,6 +219,36 @@ void ModelInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base)
 		{
 			fixedpointers.insert(object->sibling);
 			fixobjectpointers(object->sibling, base);
+		}
+	}
+}
+void ModelInfo::fixsa2bobjectpointers(NJS_OBJECT_SA2B* object, intptr_t base)
+{
+	if (object->model != nullptr)
+	{
+		fixptr(object->model, base);
+		if (fixedpointers.find(object->model) == fixedpointers.end())
+		{
+			fixedpointers.insert(object->model);
+			fixsa2bmodelpointers(object->sa2bmodel, base);
+		}
+	}
+	if (object->child != nullptr)
+	{
+		fixptr(object->child, base);
+		if (fixedpointers.find(object->child) == fixedpointers.end())
+		{
+			fixedpointers.insert(object->child);
+			fixsa2bobjectpointers(object->child, base);
+		}
+	}
+	if (object->sibling != nullptr)
+	{
+		fixptr(object->sibling, base);
+		if (fixedpointers.find(object->sibling) == fixedpointers.end())
+		{
+			fixedpointers.insert(object->sibling);
+			fixsa2bobjectpointers(object->sibling, base);
 		}
 	}
 }
@@ -261,8 +291,10 @@ void ModelInfo::init(istream &stream)
 	allocatedmem.push_back(shared_ptr<uint8_t>(modelbuf, default_delete<uint8_t[]>()));
 	stream.read((char *)modelbuf, mdlsize);
 	model = (NJS_OBJECT *)(modelbuf + modeloff);
+	sa2bmodel = (NJS_OBJECT_SA2B*)(modelbuf + modeloff);
 	intptr_t modelbase = (intptr_t)modelbuf - headersize;
 	fixobjectpointers(model, modelbase);
+	fixsa2bobjectpointers(sa2bmodel, modelbase);
 	fixedpointers.clear();
 	uint32_t chunktype;
 	readdata(stream, chunktype);

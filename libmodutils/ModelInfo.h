@@ -27,6 +27,7 @@ public:
 
 	ModelFormat getformat();
 	NJS_OBJECT *getmodel();
+	NJS_OBJECT_SA2B* getsa2bmodel();
 	const std::string &getauthor();
 	const std::string &gettool();
 	const std::string &getdescription();
@@ -47,6 +48,7 @@ private:
 
 	ModelFormat format;
 	NJS_OBJECT *model;
+	NJS_OBJECT_SA2B* sa2bmodel;
 	std::string author, tool, description;
 	std::unordered_map<uint32_t, Metadata> metadata;
 	std::unordered_map<void *, std::string> labels1;
@@ -71,5 +73,6 @@ private:
 	void fixchunkmodelpointers(NJS_CNK_MODEL *model, intptr_t base);
 	void fixsa2bmodelpointers(SA2B_Model *model, intptr_t base);
 	void fixobjectpointers(NJS_OBJECT *object, intptr_t base);
+	void fixsa2bobjectpointers(NJS_OBJECT_SA2B* object, intptr_t base);
 	void init(std::istream &stream);
 };

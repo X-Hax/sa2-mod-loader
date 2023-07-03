@@ -63,6 +63,7 @@ private:
 	void fixchunkmodelpointers(NJS_CNK_MODEL *model, intptr_t base);
 	void fixsa2bmodelpointers(SA2B_Model *model, intptr_t base);
 	void fixobjectpointers(NJS_OBJECT *object, intptr_t base, bool chunk);
+	void fixsa2bobjectpointers(NJS_OBJECT_SA2B* object, intptr_t base, bool chunk);
 	void fixlandtablepointers(LandTable *landtable, intptr_t base);
 	void init(std::istream &stream);
 };

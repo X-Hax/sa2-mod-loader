@@ -1153,7 +1153,8 @@ typedef struct {
 
 struct SA2B_ParameterData
 {
-	Uint32 ParameterType;	/* Mesh parameter ID										   */
+	char ParameterType;		/* Mesh parameter ID										   */
+	char null[3];
 	Uint32 Data;			/* Specific usage depends on parameter type, always four bytes */ 
 };
 
@@ -1198,7 +1199,7 @@ struct SA2B_GeometryData
 struct SA2B_Model
 {
 	SA2B_VertexData		*Vertices;					/* Main vertex data array, always exists */		
-	int					field_4;					/* A null value, usually				 */
+	void				*field_4;					/* A null value, usually				 */
 	SA2B_GeometryData	*OpaqueGeoData;				/* Opaque mesh data array				 */
 	SA2B_GeometryData	*TranslucentGeoData;		/* Translucent mesh data array			 */
 	__int16				OpaqueGeometryCount;		/* Opaque mesh data count				 */	
@@ -1228,8 +1229,8 @@ typedef struct obj {
 	void            putbasicdxmodel(NJS_MODEL_SADX *value) { model = value; }
 	NJS_CNK_MODEL   *getchunkmodel() const { return (NJS_CNK_MODEL*)model; }
 	void            putchunkmodel(NJS_CNK_MODEL *value) { model = value; }
-	SA2B_Model      *getsa2bmodel() const { return (SA2B_Model*)model; }
-	void            putsa2bmodel(SA2B_Model *value) { model = value; }
+	SA2B_Model		*getsa2bmodel() const { return (SA2B_Model*)model; }
+	void            putsa2bmodel(SA2B_Model* value) { model = value; }
 
 #ifdef _MSC_VER
 	/* MSVC-specific property emulation. */
@@ -1240,7 +1241,7 @@ typedef struct obj {
 	__declspec(property(get = getchunkmodel, put = putchunkmodel))
 	NJS_CNK_MODEL   *chunkmodel;
 	__declspec(property(get = getsa2bmodel, put = putsa2bmodel))
-	SA2B_Model      *sa2bmodel;
+	SA2B_Model		*sa2bmodel;
 #endif
 
 	int countanimated() const
@@ -1265,6 +1266,53 @@ typedef struct obj {
 #endif /* __cplusplus */
 
 } NJS_OBJECT;
+
+/*
+ * NJS_OBJECT_SA2B
+ * Same as NJS_OBJECT but with an added segment
+ */
+typedef struct objb {
+	Uint32          evalflags;  /* evalation flags              */
+	SA2B_Model*		model;     /* model data pointer           */
+	Float           pos[3];     /* translation                  */
+	Angle           ang[3];     /* rotation                     */
+	Float           scl[3];     /* scaling                      */
+	struct objb*	child;     /* child object                 */
+	struct objb*	sibling;   /* sibling object               */
+	void*			null;
+
+#ifdef __cplusplus
+	SA2B_Model* getsa2bmodel() const { return (SA2B_Model*)model; }
+	void            putsa2bmodel(SA2B_Model* value) { model = value; }
+
+#ifdef _MSC_VER
+	/* MSVC-specific property emulation. */
+	__declspec(property(get = getsa2bmodel, put = putsa2bmodel))
+		SA2B_Model* sa2bmodel;
+#endif
+
+	int countanimated() const
+	{
+		int result = (evalflags & NJD_EVAL_SKIP) == NJD_EVAL_SKIP ? 0 : 1;
+		if (child != nullptr)
+			result += child->countanimated();
+		if (sibling != nullptr)
+			result += sibling->countanimated();
+		return result;
+	}
+
+	int countmorph() const
+	{
+		int result = (evalflags & NJD_EVAL_SHAPE_SKIP) == NJD_EVAL_SHAPE_SKIP ? 0 : 1;
+		if (child != nullptr)
+			result += child->countmorph();
+		if (sibling != nullptr)
+			result += sibling->countmorph();
+		return result;
+	}
+#endif /* __cplusplus */
+
+} NJS_OBJECT_SA2B;
 
 /*
  * NJS_MOTION
