@@ -2006,7 +2006,7 @@ struct CutsceneEntityData
 	NJS_OBJECT		*Model;
 	NJS_MOTION		*Animation;
 	NJS_MOTION		*ShapeMotion;
-	NJS_OBJECT_SA2B	*GCModel;
+	NJS_OBJECT		*GCModel;
 	NJS_OBJECT		*ShadowModel;
 	int				Unk;
 	NJS_POINT3		Position;
@@ -2585,7 +2585,7 @@ struct CartStreetLightPos
 
 struct CartCourseModelInfo
 {
-	NJS_OBJECT_SA2B* Model;
+	NJS_OBJECT* Model;
 	NJS_OBJECT* Collision;
 	NJS_VECTOR EndPoint;
 	int YRotation;

@@ -14,49 +14,47 @@ using std::string;
 using std::wstring;
 #endif /* _MSC_VER */
 
-ModelInfo::ModelInfo(const char *filename)
+ModelInfo::ModelInfo(const char* filename)
 {
 	ifstream str(filename, ios::binary);
 	init(str);
 	str.close();
 }
 
-ModelInfo::ModelInfo(const wchar_t *filename)
+ModelInfo::ModelInfo(const wchar_t* filename)
 {
 	ifstream str(filename, ios::binary);
 	init(str);
 	str.close();
 }
 
-ModelInfo::ModelInfo(const string &filename)
+ModelInfo::ModelInfo(const string& filename)
 {
 	ifstream str(filename, ios::binary);
 	init(str);
 	str.close();
 }
 
-ModelInfo::ModelInfo(const wstring &filename)
+ModelInfo::ModelInfo(const wstring& filename)
 {
 	ifstream str(filename, ios::binary);
 	init(str);
 	str.close();
 }
 
-ModelInfo::ModelInfo(istream &stream) { init(stream); }
+ModelInfo::ModelInfo(istream& stream) { init(stream); }
 
 ModelFormat ModelInfo::getformat() { return format; }
 
-NJS_OBJECT *ModelInfo::getmodel() { return model; }
+NJS_OBJECT* ModelInfo::getmodel() { return model; }
 
-NJS_OBJECT_SA2B* ModelInfo::getsa2bmodel() { return sa2bmodel; }
+const string& ModelInfo::getauthor() { return author; }
 
-const string &ModelInfo::getauthor() { return author; }
+const string& ModelInfo::gettool() { return tool; }
 
-const string &ModelInfo::gettool() { return tool; }
+const string& ModelInfo::getdescription() { return description; }
 
-const string &ModelInfo::getdescription() { return description; }
-
-const uint8_t *ModelInfo::getmetadata(uint32_t identifier, uint32_t &size)
+const uint8_t* ModelInfo::getmetadata(uint32_t identifier, uint32_t& size)
 {
 	auto elem = metadata.find(identifier);
 	if (elem == metadata.end())
@@ -72,7 +70,7 @@ const uint8_t *ModelInfo::getmetadata(uint32_t identifier, uint32_t &size)
 }
 
 static const string empty;
-const string &ModelInfo::getlabel(void *data)
+const string& ModelInfo::getlabel(void* data)
 {
 	auto elem = labels1.find(data);
 	if (elem == labels1.end())
@@ -81,7 +79,7 @@ const string &ModelInfo::getlabel(void *data)
 		return elem->second;
 }
 
-void *ModelInfo::getdata(const string &label)
+void* ModelInfo::getdata(const string& label)
 {
 	auto elem = labels2.find(label);
 	if (elem == labels2.end())
@@ -95,17 +93,17 @@ const std::unordered_map<std::string, void*>* ModelInfo::getlabels() const
 	return &labels2;
 }
 
-const list<string> &ModelInfo::getanimations() { return animations; }
+const list<string>& ModelInfo::getanimations() { return animations; }
 
-const list<string> &ModelInfo::getmorphs() { return morphs; }
+const list<string>& ModelInfo::getmorphs() { return morphs; }
 
-static string getstring(istream &stream)
+static string getstring(istream& stream)
 {
 	auto start = stream.tellg();
 	while (stream.get() != 0)
 		;
 	auto size = stream.tellg() - start;
-	char *buf = new char[(unsigned int)size];
+	char* buf = new char[(unsigned int)size];
 	stream.seekg(start);
 	stream.read(buf, size);
 	string result(buf);
@@ -114,13 +112,13 @@ static string getstring(istream &stream)
 }
 
 template<typename T>
-static inline void fixptr(T *&ptr, intptr_t base)
+static inline void fixptr(T*& ptr, intptr_t base)
 {
 	if (ptr != nullptr)
-		ptr = (T *)((intptr_t)ptr + base);
+		ptr = (T*)((intptr_t)ptr + base);
 }
 
-void ModelInfo::fixbasicmodelpointers(NJS_MODEL *model, intptr_t base)
+void ModelInfo::fixbasicmodelpointers(NJS_MODEL* model, intptr_t base)
 {
 	fixptr(model->points, base);
 	fixptr(model->normals, base);
@@ -143,7 +141,7 @@ void ModelInfo::fixbasicmodelpointers(NJS_MODEL *model, intptr_t base)
 	fixptr(model->mats, base);
 }
 
-void ModelInfo::fixchunkmodelpointers(NJS_CNK_MODEL *model, intptr_t base)
+void ModelInfo::fixchunkmodelpointers(NJS_CNK_MODEL* model, intptr_t base)
 {
 	fixptr(model->vlist, base);
 	fixptr(model->plist, base);
@@ -189,7 +187,7 @@ void ModelInfo::fixsa2bmodelpointers(SA2B_Model* model, intptr_t base)
 	}
 }
 
-void ModelInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base)
+void ModelInfo::fixobjectpointers(NJS_OBJECT* object, intptr_t base)
 {
 	if (object->model != nullptr)
 	{
@@ -201,6 +199,8 @@ void ModelInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base)
 				fixbasicmodelpointers(object->basicmodel, base);
 			else if (format == ModelFormat_Chunk)
 				fixchunkmodelpointers(object->chunkmodel, base);
+			else if (format == ModelFormat_SA2B)
+				fixsa2bmodelpointers(object->sa2bmodel, base);
 		}
 	}
 	if (object->child != nullptr)
@@ -222,44 +222,14 @@ void ModelInfo::fixobjectpointers(NJS_OBJECT *object, intptr_t base)
 		}
 	}
 }
-void ModelInfo::fixsa2bobjectpointers(NJS_OBJECT_SA2B* object, intptr_t base)
-{
-	if (object->model != nullptr)
-	{
-		fixptr(object->model, base);
-		if (fixedpointers.find(object->model) == fixedpointers.end())
-		{
-			fixedpointers.insert(object->model);
-			fixsa2bmodelpointers(object->sa2bmodel, base);
-		}
-	}
-	if (object->child != nullptr)
-	{
-		fixptr(object->child, base);
-		if (fixedpointers.find(object->child) == fixedpointers.end())
-		{
-			fixedpointers.insert(object->child);
-			fixsa2bobjectpointers(object->child, base);
-		}
-	}
-	if (object->sibling != nullptr)
-	{
-		fixptr(object->sibling, base);
-		if (fixedpointers.find(object->sibling) == fixedpointers.end())
-		{
-			fixedpointers.insert(object->sibling);
-			fixsa2bobjectpointers(object->sibling, base);
-		}
-	}
-}
 
 template<typename T>
-static inline void readdata(istream &stream, T &data)
+static inline void readdata(istream& stream, T& data)
 {
-	stream.read((char *)&data, sizeof(T));
+	stream.read((char*)&data, sizeof(T));
 }
 
-void ModelInfo::init(istream &stream)
+void ModelInfo::init(istream& stream)
 {
 	uint64_t magic;
 	readdata(stream, magic);
@@ -287,14 +257,12 @@ void ModelInfo::init(istream &stream)
 	uint32_t tmpaddr;
 	readdata(stream, tmpaddr);
 	int mdlsize = tmpaddr - headersize;
-	uint8_t *modelbuf = new uint8_t[mdlsize];
+	uint8_t* modelbuf = new uint8_t[mdlsize];
 	allocatedmem.push_back(shared_ptr<uint8_t>(modelbuf, default_delete<uint8_t[]>()));
-	stream.read((char *)modelbuf, mdlsize);
-	model = (NJS_OBJECT *)(modelbuf + modeloff);
-	sa2bmodel = (NJS_OBJECT_SA2B*)(modelbuf + modeloff);
+	stream.read((char*)modelbuf, mdlsize);
+	model = (NJS_OBJECT*)(modelbuf + modeloff);
 	intptr_t modelbase = (intptr_t)modelbuf - headersize;
 	fixobjectpointers(model, modelbase);
-	fixsa2bobjectpointers(sa2bmodel, modelbase);
 	fixedpointers.clear();
 	uint32_t chunktype;
 	readdata(stream, chunktype);
@@ -309,13 +277,13 @@ void ModelInfo::init(istream &stream)
 		case ChunkTypes_Label:
 			while (true)
 			{
-				void *dataptr;
+				void* dataptr;
 				readdata(stream, dataptr);
 				uint32_t labelptr;
 				readdata(stream, labelptr);
-				if (dataptr == (void *)-1 && labelptr == UINT32_MAX)
+				if (dataptr == (void*)-1 && labelptr == UINT32_MAX)
 					break;
-				dataptr = (uint8_t *)dataptr + modelbase;
+				dataptr = (uint8_t*)dataptr + modelbase;
 				tmpaddr = (uint32_t)stream.tellg();
 				stream.seekg((uint32_t)chunkbase + labelptr);
 				string label = getstring(stream);
@@ -360,9 +328,9 @@ void ModelInfo::init(istream &stream)
 			description = getstring(stream);
 			break;
 		default:
-			uint8_t *buf = new uint8_t[chunksz];
+			uint8_t* buf = new uint8_t[chunksz];
 			allocatedmem.push_back(shared_ptr<uint8_t>(buf, default_delete<uint8_t[]>()));
-			stream.read((char *)buf, chunksz);
+			stream.read((char*)buf, chunksz);
 			Metadata meta = { chunksz, buf };
 			metadata[chunktype] = meta;
 			break;

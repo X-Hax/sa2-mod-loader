@@ -1268,53 +1268,6 @@ typedef struct obj {
 } NJS_OBJECT;
 
 /*
- * NJS_OBJECT_SA2B
- * Same as NJS_OBJECT but with an added segment
- */
-typedef struct objb {
-	Uint32          evalflags;  /* evalation flags              */
-	SA2B_Model*		model;     /* model data pointer           */
-	Float           pos[3];     /* translation                  */
-	Angle           ang[3];     /* rotation                     */
-	Float           scl[3];     /* scaling                      */
-	struct objb*	child;     /* child object                 */
-	struct objb*	sibling;   /* sibling object               */
-	void*			null;
-
-#ifdef __cplusplus
-	SA2B_Model* getsa2bmodel() const { return (SA2B_Model*)model; }
-	void            putsa2bmodel(SA2B_Model* value) { model = value; }
-
-#ifdef _MSC_VER
-	/* MSVC-specific property emulation. */
-	__declspec(property(get = getsa2bmodel, put = putsa2bmodel))
-		SA2B_Model* sa2bmodel;
-#endif
-
-	int countanimated() const
-	{
-		int result = (evalflags & NJD_EVAL_SKIP) == NJD_EVAL_SKIP ? 0 : 1;
-		if (child != nullptr)
-			result += child->countanimated();
-		if (sibling != nullptr)
-			result += sibling->countanimated();
-		return result;
-	}
-
-	int countmorph() const
-	{
-		int result = (evalflags & NJD_EVAL_SHAPE_SKIP) == NJD_EVAL_SHAPE_SKIP ? 0 : 1;
-		if (child != nullptr)
-			result += child->countmorph();
-		if (sibling != nullptr)
-			result += sibling->countmorph();
-		return result;
-	}
-#endif /* __cplusplus */
-
-} NJS_OBJECT_SA2B;
-
-/*
  * NJS_MOTION
  */
 /* key frame animation */
