@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 8;
+static const int ModLoaderVer = 9;
 
 struct PatchInfo
 {
@@ -37,6 +37,125 @@ struct PointerList
 
 #define patchdecl(address,data) { (void*)address, arrayptrandsize(data) }
 #define ptrdecl(address,data) { (void*)address, (void*)data }
+
+struct LoaderSettings
+{
+	bool DebugConsole;
+	bool DebugScreen;
+	bool DebugFile;
+	bool DebugCrashLog;
+	bool PauseWhenInactive;
+	bool DisableExitPrompt;
+	int ScreenNum;
+	bool BorderlessWindow;
+	bool FullScreen;
+	bool SkipIntro;
+	bool SyncLoad;
+	int HorizontalResolution;
+	int VerticalResolution;
+	int VoiceLanguage;
+	int TextLanguage;
+	bool CustomWindowSize;
+	int WindowWidth;
+	int WindowHeight;
+	bool ResizableWindow;
+	bool MaintainAspectRatio;
+	bool FramerateLimiter;
+	int TestSpawnLevel;
+	int TestSpawnCharacter;
+	int TestSpawnPlayer2;
+	bool TestSpawnPositionEnabled;
+	int TestSpawnX;
+	int TestSpawnY;
+	int TestSpawnZ;
+	int TestSpawnRotation;
+	int TestSpawnEvent;
+	int TestSpawnSaveID;
+};
+
+struct ModDependency
+{
+	const char* ID;
+	const char* Folder;
+	const char* Name;
+	const char* Link;
+};
+
+struct ModDepsList
+{
+	typedef ModDependency value_type;
+	typedef int size_type;
+	typedef const value_type& reference;
+	typedef const value_type* pointer;
+	typedef pointer iterator;
+
+	pointer data;
+	size_type size;
+
+	// Retrieves an iterator to the start of the list (enables range-based for).
+	iterator begin()
+	{
+		return data;
+	}
+
+	// Retrieves an iterator to the end of the list (enables range-based for).
+	iterator end()
+	{
+		return data + size;
+	}
+
+	reference operator [](size_type pos)
+	{
+		return data[pos];
+	}
+};
+
+struct Mod
+{
+	const char* Name;
+	const char* Author;
+	const char* Description;
+	const char* Version;
+	const char* Folder;
+	const char* ID;
+	HMODULE DLLHandle;
+	bool MainSaveRedirect;
+	bool ChaoSaveRedirect;
+	const ModDepsList Dependencies;
+};
+
+struct ModList
+{
+	typedef Mod value_type;
+	typedef int size_type;
+	typedef const value_type& reference;
+	typedef const value_type* pointer;
+	typedef pointer iterator;
+
+	// Retrieves an iterator to the start of the list (enables range-based for).
+	iterator(*begin)();
+	// Retrieves an iterator to the end of the list (enables range-based for).
+	iterator(*end)();
+	// Retrieves the item at position pos.
+	reference(*at)(size_type pos);
+	// Retrieves a pointer to the start of the list.
+	pointer(*data)();
+	// Retrieves the number of items in the list.
+	size_type(*size)();
+	// Find a mod by its ID.
+	iterator(*find)(const char* id);
+	// Find a mod by its name.
+	iterator(*find_by_name)(const char* name);
+	// Find a mod by its folder.
+	iterator(*find_by_folder)(const char* folder);
+	// Find a mod by its DLL handle.
+	iterator(*find_by_dll)(HMODULE handle);
+
+	reference operator [](size_type pos)
+	{
+		return at(pos);
+	}
+};
 
 #undef ReplaceFile // WinAPI function
 struct HelperFunctions
@@ -108,6 +227,14 @@ struct HelperFunctions
 	// Example: DisplayDebugNumber(NJM_LOCATION(x, y), 123, 5); will display 00123.
 	// Requires version >= 8
 	void(__cdecl* DisplayDebugNumber)(int loc, int value, int numdigits);
+
+	// The settings that the mod loader was initialized with.
+	// Requires version >= 9.
+	const LoaderSettings* LoaderSettings;
+
+	// API for listing information on loaded mods.
+	// Requires version >= 9.
+	const ModList* Mods;
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);

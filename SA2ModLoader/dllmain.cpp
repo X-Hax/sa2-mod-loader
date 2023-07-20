@@ -460,46 +460,6 @@ void InitializeStartPositionLists()
 	}
 }
 
-void RegisterStartPosition(unsigned char character, const StartPosition &position)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		StartPositions[character][position.Level] = position;
-		StartPositionsModified = true;
-		break;
-	}
-}
-
-void ClearStartPositionList(unsigned char character)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		StartPositions[character].clear();
-		StartPositionsModified = true;
-		break;
-	}
-}
-
 int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *rotation)
 {
 	ObjectMaster *v1 = MainCharacter[playerNum];
@@ -602,46 +562,6 @@ void Initialize2PIntroPositionLists()
 		unordered_map<short, LevelEndPosition> &newlist = _2PIntroPositions[_2pintroposaddrs[i].character];
 		while (origlist->Level != LevelIDs_Invalid)
 			newlist[origlist->Level] = *origlist++;
-	}
-}
-
-void Register2PIntroPosition(unsigned char character, const LevelEndPosition &position)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		_2PIntroPositions[character][position.Level] = position;
-		_2PIntroPositionsModified = true;
-		break;
-	}
-}
-
-void Clear2PIntroPositionList(unsigned char character)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		_2PIntroPositions[character].clear();
-		_2PIntroPositionsModified = true;
-		break;
 	}
 }
 
@@ -761,46 +681,6 @@ void InitializeEndPositionLists()
 		unordered_map<short, StartPosition> &newlist = EndPositions[endposaddrs[i].character];
 		while (origlist->Level != LevelIDs_Invalid)
 			newlist[origlist->Level] = *origlist++;
-	}
-}
-
-void RegisterEndPosition(unsigned char character, const StartPosition &position)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		EndPositions[character][position.Level] = position;
-		EndPositionsModified = true;
-		break;
-	}
-}
-
-void ClearEndPositionList(unsigned char character)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		EndPositions[character].clear();
-		EndPositionsModified = true;
-		break;
 	}
 }
 
@@ -928,46 +808,6 @@ void InitializeMission23EndPositionLists()
 	}
 }
 
-void RegisterMission23EndPosition(unsigned char character, const LevelEndPosition &position)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		Mission23EndPositions[character][position.Level] = position;
-		Mission23EndPositionsModified = true;
-		break;
-	}
-}
-
-void ClearMission23EndPositionList(unsigned char character)
-{
-	switch (character)
-	{
-	case Characters_Sonic:
-	case Characters_Shadow:
-	case Characters_Tails:
-	case Characters_Eggman:
-	case Characters_Knuckles:
-	case Characters_Rouge:
-	case Characters_MechTails:
-	case Characters_MechEggman:
-	case Characters_SuperSonic:
-	case Characters_SuperShadow:
-		Mission23EndPositions[character].clear();
-		Mission23EndPositionsModified = true;
-		break;
-	}
-}
-
 int __cdecl LoadEndPosition_Mission23_ri(int playerNum)
 {
 	int v1; // edi
@@ -1070,87 +910,11 @@ void sub_434CD0_r() {
 	return sub_434CD0();
 }
 
-static const char *mainsavepath = "resource/gd_PC/SAVEDATA";
-static const char *GetMainSavePath()
-{
-	return mainsavepath;
-}
-
-static const char *chaosavepath = "resource/gd_PC/SAVEDATA";
-static const char *GetChaoSavePath()
-{
-	return chaosavepath;
-}
-
-static void HookExport(LPCSTR exportName, const void* newdata)
-{
-	intptr_t hModule = (intptr_t)**datadllhandle;
-	ULONG ulSize = 0;
-	PIMAGE_EXPORT_DIRECTORY pExportDesc = (PIMAGE_EXPORT_DIRECTORY)ImageDirectoryEntryToData(
-		**datadllhandle, TRUE, IMAGE_DIRECTORY_ENTRY_EXPORT, &ulSize);
-
-	if (pExportDesc != nullptr)
-	{
-		intptr_t* funcaddrs = (intptr_t*)(hModule + pExportDesc->AddressOfFunctions);
-		intptr_t* nameaddrs = (intptr_t*)(hModule + pExportDesc->AddressOfNames);
-		short* ordaddrs = (short*)(hModule + pExportDesc->AddressOfNameOrdinals);
-
-		for (unsigned int i = 0; i < pExportDesc->NumberOfNames; ++i)
-		{
-			LPCSTR ename = (LPCSTR)(hModule + nameaddrs[i]);
-
-			if (!lstrcmpiA(ename, exportName))
-			{
-				auto thing = &funcaddrs[ordaddrs[i]];
-				DWORD dwOldProtect = 0;
-				VirtualProtect(thing, sizeof(intptr_t), PAGE_WRITECOPY, &dwOldProtect);
-				*thing = (intptr_t)newdata - hModule;
-				VirtualProtect(thing, sizeof(intptr_t), dwOldProtect, &dwOldProtect);
-			}
-		}
-	}
-}
-
-const char* __cdecl GetReplaceablePath(const char* path)
-{
-	return sadx_fileMap.replaceFile(path);
-}
-
-void _ReplaceFile(const char* src, const char* dst)
-{
-	sadx_fileMap.addReplaceFile(src, dst);
-}
-
-void SetWindowTitle(const wchar_t* title)
-{
-	if (MainWindowHandle)
-		SetWindowTextW(MainWindowHandle, title);
-}
+const char *mainsavepath = "resource/gd_PC/SAVEDATA";
+const char *chaosavepath = "resource/gd_PC/SAVEDATA";
+extern HelperFunctions helperFunctions;
 
 bool IsPathExist(const string& s);
-
-const HelperFunctions helperFunctions = {
-	ModLoaderVer,
-	RegisterStartPosition,
-	ClearStartPositionList,
-	Register2PIntroPosition,
-	Clear2PIntroPositionList,
-	GetMainSavePath,
-	GetChaoSavePath,
-	RegisterEndPosition,
-	ClearEndPositionList,
-	RegisterMission23EndPosition,
-	ClearMission23EndPositionList,
-	HookExport,
-	GetReplaceablePath,
-	_ReplaceFile,
-	SetWindowTitle,
-	debug_text::SetFontSize,
-	debug_text::SetFontColor,
-	debug_text::DisplayString,
-	debug_text::DisplayStringFormatted,
-	debug_text::DisplayNumber
-};
 
 // Backward compatibility exports
 // Remove when it is safe to assume that no mod are using these.
@@ -1201,6 +965,38 @@ void SyncLoad(void (*a1)(void*), void* a2)
 	a1(a2);
 }
 
+char inilangs[] {
+	Language_English,
+	Language_German,
+	Language_Spanish,
+	Language_French,
+	Language_Italian,
+	Language_Japanese
+};
+
+static vector<string>& split(const string& s, char delim, vector<string>& elems)
+{
+	std::stringstream ss(s);
+	string item;
+
+	while (std::getline(ss, item, delim))
+	{
+		elems.push_back(item);
+	}
+
+	return elems;
+}
+
+
+static vector<string> split(const string& s, char delim)
+{
+	vector<string> elems;
+	split(s, delim, elems);
+	return elems;
+}
+
+LoaderSettings loaderSettings = {};
+std::vector<Mod> modlist;
 void __cdecl InitMods(void)
 {
 	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -1223,30 +1019,61 @@ void __cdecl InitMods(void)
 	string exefilename = pathbuf;
 	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
-	const IniGroup *settings = ini->getGroup("");
+	const IniGroup *setgrp = ini->getGroup("");
+
+	loaderSettings.DebugConsole = setgrp->getBool("DebugConsole");
+	loaderSettings.DebugScreen = setgrp->getBool("DebugScreen");
+	loaderSettings.DebugFile = setgrp->getBool("DebugFile");
+	loaderSettings.DebugCrashLog = setgrp->getBool("DebugCrashLog", true);
+	loaderSettings.PauseWhenInactive = setgrp->getBool("PauseWhenInactive", true);
+	loaderSettings.DisableExitPrompt = setgrp->getBool("DisableExitPrompt");
+	loaderSettings.ScreenNum = setgrp->getInt("ScreenNum", 1);
+	loaderSettings.BorderlessWindow = setgrp->getBool("BorderlessWindow");
+	loaderSettings.FullScreen = setgrp->getBool("FullScreen");
+	loaderSettings.SkipIntro = setgrp->getBool("SkipIntro");
+	loaderSettings.SyncLoad = setgrp->getBool("SyncLoad", true);
+	loaderSettings.HorizontalResolution = setgrp->getInt("HorizontalResolution", 640);
+	loaderSettings.VerticalResolution = setgrp->getInt("VerticalResolution", 480);
+	loaderSettings.VoiceLanguage = setgrp->getInt("VoiceLanguage", 1);
+	loaderSettings.TextLanguage = inilangs[setgrp->getInt("TextLanguage", 0)];
+	loaderSettings.CustomWindowSize = setgrp->getBool("CustomWindowSize");
+	loaderSettings.WindowWidth = setgrp->getInt("WindowWidth", 640);
+	loaderSettings.WindowHeight = setgrp->getInt("WindowHeight", 480);
+	loaderSettings.ResizableWindow = setgrp->getBool("ResizableWindow");
+	loaderSettings.MaintainAspectRatio = setgrp->getBool("MaintainAspectRatio");
+	loaderSettings.FramerateLimiter = setgrp->getBool("FramerateLimiter");
+	loaderSettings.TestSpawnLevel = setgrp->getInt("TestSpawnLevel");
+	loaderSettings.TestSpawnCharacter = setgrp->getInt("TestSpawnCharacter");
+	loaderSettings.TestSpawnPositionEnabled = setgrp->getBool("TestSpawnPositionEnabled");
+	loaderSettings.TestSpawnX = setgrp->getInt("TestSpawnX");
+	loaderSettings.TestSpawnY = setgrp->getInt("TestSpawnY");
+	loaderSettings.TestSpawnZ = setgrp->getInt("TestSpawnZ");
+	loaderSettings.TestSpawnRotation = setgrp->getInt("TestSpawnRotation");
+	loaderSettings.TestSpawnEvent = setgrp->getInt("TestSpawnEvent");
+	loaderSettings.TestSpawnSaveID = setgrp->getInt("TestSpawnSaveID");
 
 	direct3d::init();
 
-	if (settings->getBool("FramerateLimiter"))
+	if (loaderSettings.FramerateLimiter)
 	{
 		direct3d::enable_frame_limiter();
 	}
 
-	if (settings->getBool("SyncLoad", true))
+	if (loaderSettings.SyncLoad)
 	{
 		WriteJump((void*)0x428470, SyncLoad);
 		WriteJump((void*)0x428740, SyncLoad);
 	}
 
-	if (settings->getBool("DebugConsole"))
+	if (loaderSettings.DebugConsole)
 	{
 		AllocConsole();
 		SetConsoleTitle(L"SA2 Mod Loader output");
 		freopen("CONOUT$", "wb", stdout);
 		dbgConsole = true;
 	}
-	dbgScreen = settings->getBool("DebugScreen");
-	if (settings->getBool("DebugFile"))
+	dbgScreen = loaderSettings.DebugScreen;
+	if (loaderSettings.DebugFile)
 	{
 		dbgstr = ofstream("mods\\SA2ModLoader.log", ios_base::ate | ios_base::app);
 		dbgFile = dbgstr.is_open();
@@ -1258,9 +1085,7 @@ void __cdecl InitMods(void)
 		PrintDebug("SA2 Mod Loader version %d, built %s", ModLoaderVer, __TIMESTAMP__);
 	}
 
-	bool SkipIntro = settings->getBool("SkipIntro");
-
-	VoiceLanguage = settings->getInt("VoiceLanguage", 1);
+	VoiceLanguage = loaderSettings.VoiceLanguage;
 
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
@@ -1302,7 +1127,7 @@ void __cdecl InitMods(void)
 	Init_AudioBassHook();
 	//init_interpolationAnimFixes(); //disabled for now since it is not fully functional 
 
-	if (settings->getBool("DebugCrashLog", true))
+	if (loaderSettings.DebugCrashLog)
 		initCrashDump();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
@@ -1316,10 +1141,10 @@ void __cdecl InitMods(void)
 	for (int i = 1; i <= 999; i++)
 	{
 		sprintf_s(key, "Mod%d", i);
-		if (!settings->hasKey(key))
+		if (!setgrp->hasKey(key))
 			break;
-		const string mod_dirA = "mods\\" + settings->getString(key);
-		const wstring mod_dir = L"mods\\" + settings->getWString(key);
+		const string mod_dirA = "mods\\" + setgrp->getString(key);
+		const wstring mod_dir = L"mods\\" + setgrp->getWString(key);
 		const string mod_inifile = mod_dirA + "\\mod.ini";
 		FILE *f_mod_ini = fopen(mod_inifile.c_str(), "r");
 		if (!f_mod_ini)
@@ -1334,6 +1159,37 @@ void __cdecl InitMods(void)
 		const IniGroup *modinfo = ini_mod->getGroup("");
 		const string mod_name = modinfo->getString("Name");
 		PrintDebug("%d. %s\n", i, mod_name.c_str());
+
+		vector<ModDependency> moddeps;
+
+		for (unsigned int j = 1; j <= 999; j++)
+		{
+			char key2[14];
+			snprintf(key2, sizeof(key2), "Dependency%u", j);
+			if (!modinfo->hasKey(key2))
+				break;
+			auto dep = split(modinfo->getString(key2), '|');
+			moddeps.push_back({ strdup(dep[0].c_str()), strdup(dep[1].c_str()), strdup(dep[2].c_str()), strdup(dep[3].c_str()) });
+		}
+
+		ModDependency* deparr = new ModDependency[moddeps.size()];
+		memcpy(deparr, moddeps.data(), moddeps.size() * sizeof(ModDependency));
+
+		Mod modinf = {
+			strdup(mod_name.c_str()),
+			strdup(modinfo->getString("Author").c_str()),
+			strdup(modinfo->getString("Description").c_str()),
+			strdup(modinfo->getString("Version").c_str()),
+			strdup(mod_dirA.c_str()),
+			strdup(modinfo->getString("ModID", mod_dirA).c_str()),
+			NULL,
+			modinfo->getBool("RedirectMainSave"),
+			modinfo->getBool("RedirectChaoSave"),
+			{
+				deparr,
+				moddeps.size()
+			}
+		};
 
 		if (ini_mod->hasGroup("IgnoreFiles"))
 		{
@@ -1421,6 +1277,7 @@ void __cdecl InitMods(void)
 				const ModInfo *info = (ModInfo *)GetProcAddress(module, "SA2ModInfo");
 				if (info)
 				{
+					modinf.DLLHandle = module;
 					if (info->Patches)
 					{
 						for (int j = 0; j < info->PatchCount; j++)
@@ -1533,9 +1390,11 @@ void __cdecl InitMods(void)
 
 		if (modinfo->hasKeyNonEmpty("BorderImage"))
 			borderimg = mod_dir + L'\\' + modinfo->getWString("BorderImage");
+
+		modlist.push_back(modinf);
 	}
 
-	PatchWindow(settings, borderimg);
+	PatchWindow(loaderSettings, borderimg);
 
 	if (!errors.empty())
 	{
@@ -1710,7 +1569,7 @@ void __cdecl InitMods(void)
 		codes_str.close();
 	}
 
-	if (SkipIntro || testSpawnCutscene)
+	if (loaderSettings.SkipIntro || testSpawnCutscene)
 	{
 		if (!testSpawnLvl)
 			WriteData(reinterpret_cast<int*>(0x43459A), static_cast<int>(GameMode_LoadAdvertise)); //change gamemode	

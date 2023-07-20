@@ -27,7 +27,6 @@ static DWORD  last_exStyle = 0;
 static bool customWindowSize = false;
 static bool windowResize = false;
 static bool windowedFullscreen = false;
-static bool vsync = false;
 static bool disableExitPrompt = false;
 static bool pauseWhenInactive = true;
 static bool maintainAspectRatio = true;
@@ -311,24 +310,23 @@ static BOOL CALLBACK GetMonitorSize(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lp
 	return TRUE;
 }
 
-void PatchWindow(const IniGroup* settings, std::wstring borderimg)
+void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 {
 	if (IS_FULLSCREEN)
 	{
 		return;
 	}
 
-	customWindowSize = settings->getBool("CustomWindowSize");
-	windowResize = settings->getBool("ResizableWindow") && !customWindowSize;
-	windowedFullscreen = settings->getBool("BorderlessWindow");
-	maintainAspectRatio = settings->getBool("MaintainAspectRatio");
+	customWindowSize = settings.CustomWindowSize;
+	windowResize = settings.ResizableWindow && !customWindowSize;
+	windowedFullscreen = settings.BorderlessWindow;
+	maintainAspectRatio = settings.MaintainAspectRatio;
 	windowWrapper = maintainAspectRatio || (windowedFullscreen && customWindowSize);
-	screenNum = settings->getInt("ScreenNum", 1);
-	vsync = settings->getBool("EnableVsync", true);
-	disableExitPrompt = settings->getBool("DisableExitPrompt");
-	pauseWhenInactive = settings->getBool("PauseWhenInactive", true);
-	customWindowWidth = settings->getInt("WindowWidth", 640);
-	customWindowHeight = settings->getInt("WindowHeight", 480);
+	screenNum = settings.ScreenNum;
+	disableExitPrompt = settings.DisableExitPrompt;
+	pauseWhenInactive = settings.PauseWhenInactive;
+	customWindowWidth = settings.WindowWidth;
+	customWindowHeight = settings.WindowHeight;
 
 	// Replace the default window procedure
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
@@ -348,8 +346,8 @@ void PatchWindow(const IniGroup* settings, std::wstring borderimg)
 
 	if (customWindowSize)
 	{
-		windowRect.right = settings->getInt("WindowWidth", 640);
-		windowRect.bottom = settings->getInt("WindowHeight", 480);
+		windowRect.right = settings.WindowWidth;
+		windowRect.bottom = settings.WindowHeight;
 	}
 	else
 	{

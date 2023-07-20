@@ -1,4 +1,4 @@
 #pragma once
 #include "IniFile.hpp"
 
-void PatchWindow(const IniGroup* settings, std::wstring borderimg);
+void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg);

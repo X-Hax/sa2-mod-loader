@@ -128,6 +128,7 @@
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="EXEData.cpp" />
+    <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="InterpolationFixes.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="FileMap.cpp" />
