@@ -2041,6 +2041,158 @@ struct EventFileHeader
 	int					shadowControl;
 };
 
+struct EventSubtitleData
+{
+	int FrameStart;
+	int VisibleTime;
+};
+
+struct EventAudioData
+{
+	int FrameStart;
+	char SFXInit;
+	char CreditsControl;
+	__int16 VoiceID;
+	char MusicName[16];
+	char JingleName[16];
+	char field_28[32];
+};
+
+struct EventScreenEffectData
+{
+	int FrameStart;
+	byte Type;
+	char field_5[3];
+	NJS_COLOR Color;
+	byte Fade;
+	byte field_D;
+	__int16 TexID;
+	int VisibleTime;
+	__int16 PosX;
+	__int16 PosY;
+	float Width;
+	float Height;
+	char field_20[32];
+};
+
+struct EventParticleData
+{
+	int FrameStart;
+	byte Type;
+	byte MotionID;
+	__int16 field_6;
+	float Setting1;
+	float Setting2;
+	float Setting3;
+	float Setting4;
+	char field_18[32];
+};
+
+struct EventLightingData
+{
+	int FrameStart;
+	int Type;
+	NJS_VECTOR Direction;
+	NJS_VECTOR Color;
+	float Intensity;
+	NJS_VECTOR AmbientColor;
+	char field_30[20];
+};
+
+struct EventBlurData
+{
+	int FrameStart;
+	int Duration;
+	char ModelIDs[6];
+	__int16 field_E;
+	int Instances;
+	char field_14[44];
+};
+
+struct EventParticleGeneratorData
+{
+	NJS_VECTOR Position;
+	NJS_VECTOR field_C;
+	__int16 field_18[4];
+	int FrameStart;
+	NJS_VECTOR Spread;
+	int Count;
+	int field_34;
+	int Type;
+	int field_3C;
+};
+
+struct EventVideoData
+{
+	int FrameStart;
+	__int16 PosX;
+	__int16 PosY;
+	float Depth;
+	byte OverlayType;
+	byte OverlayTexID;
+	__int16 field_E;
+	char VideoName[48];
+};
+
+struct EventEffectData
+{
+	EventSubtitleData subtitles[256];
+	EventAudioData audio[512];
+	EventScreenEffectData screeneffects[64];
+	EventParticleData particles[2048];
+	EventLightingData lighting[1024];
+	EventBlurData blur[64];
+	EventParticleGeneratorData particlegen[64];
+	EventVideoData video[64];
+};
+
+struct MiniEventAssets
+{
+	NJS_MOTION* BodyAnimation;
+	NJS_OBJECT* Part;
+	NJS_MOTION* PartAnimation;
+	NJS_MOTION* PartShapeMotion;
+};
+
+struct MiniEventFile
+{
+	int Flags;
+	NJS_MOTION *Camera;
+	MiniEventAssets* Assets[8];
+};
+
+struct MiniEventEffects
+{
+	int FrameStart;
+	byte FadeType;
+	char SFXEntry1;
+	char SFXEntry2;
+	byte field_7;
+	__int16 VoiceID;
+	char MusicData[16];
+	char JingleData[16];
+	__int16 field_2A;
+	int RumbleControl;
+	char field_30[28];
+};
+
+struct MiniEventEffectFile
+{
+	EventSubtitleData subtitles[32];
+	MiniEventEffects effects[64];
+	NJS_VECTOR field_1400;
+	float field_140C;
+	NJS_VECTOR field_1410;
+};
+
+struct TailsPlainFile
+{
+	NJS_TEXLIST* Texlist;
+	NJS_OBJECT* Model;
+	NJS_MOTION* Motion;
+	NJS_MOTION* Camera;
+};
+
 struct CutsceneVoices
 {
 	Uint32 InternalID;

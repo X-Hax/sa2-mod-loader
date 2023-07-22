@@ -119,6 +119,9 @@ ObjectFunc(CardIndicatorExec_Main, 0x456280);
 ObjectFunc(CardCloseOperationExec, 0x4566F0);
 ObjectFunc(WriteTaskWithWaiting, 0x456820);
 ObjectFunc(miniEventExec, 0x4579E0);
+FunctionPointer(signed int, PlayMiniEventVoice, (int VoiceDataID), 0x457D20);
+FunctionPointer(NJS_MOTION*, ReadMiniEventFileData, (MiniEventAssets* a1), 0x457EB0);
+FunctionPointer(char, ReadMiniEventEffectFile, (MiniEventEffectFile* a1), 0x4583E0);
 FastcallFunctionPointer(void, LoadStoryEntry, (int a1, StoryEntry* story), 0x4589D0);
 VoidFunc(Load_PLCOMMTN_Stuff, 0x459370);
 ObjectFunc(GamePlayerMissed, 0x46ABD0);
@@ -691,11 +694,32 @@ ObjectFunc(MCWarnNoCardExecutor, 0x5F7930);
 ObjectFunc(MCWarnMultiExecutor, 0x5F7C60);
 ObjectFunc(MCWarnProgressiveExecutor, 0x5F8160);
 ObjectFunc(MCWarnFormatExecutor, 0x5F88C0);
+FunctionPointer(void, loadEventModels, (int sceneNum, int entityLayer, int arg8), 0x5F96B0);
+FunctionPointer(char*, renderEventModels, (), 0x5FA520);
+FunctionPointer(int, eventShadowModels_Display, (), 0x5FAC80);
 ObjectFunc(debugExec, 0x5FA790);
 ObjectFunc(eventExec, 0x5FAA70);
+ObjectFunc(event_Display, 0x5FABF0);
 ObjectFunc(MovieExec, 0x5FAED0);
 FunctionPointer(int, LoadEventModule, (), 0x5FBEF0);
+FunctionPointer(void, ReadCompressedChunkModel, (NJS_OBJECT* a1, void* baseAddress), 0x5FC170);
+FunctionPointer(char, ReadCompressedGinjaModel, (NJS_OBJECT* a1), 0x5FD7D0);
+FunctionPointer(void, ReadMainEventFile, (EventFileHeader* a1), 0x5FEAD0);
+FunctionPointer(char, ReadEventSceneData, (CutsceneAssetArray* a1), 0x5FDEE0);
+FunctionPointer(char, ReadEventAttachUpgrades, (UpgradeListData* a1), 0x5FE4B0);
+FunctionPointer(int, eventReflectionCalc, (), 0x600750);
+FunctionPointer(double, eventDebugTextureInfo, (), 0x600C20);
+FunctionPointer(signed int, eventTailsPlainMaster, (), 0x6013C0);
+ThiscallFunctionPointer(UpgradeListData*, eventAttachUpgradeCheck, (NJS_OBJECT* a1), 0x601B50);
+FunctionPointer(char*, loadEventUpgradeModels, (), 0x601BB0);
+FunctionPointer(char*, eventSetUpgradeAttaches, (NJS_OBJECT* a1), 0x601E00);
+FunctionPointer(void, eventSetTailsTails, (), 0x601E90);
+FunctionPointer(NJS_OBJECT*, eventTailsTailsJiggle, (), 0x601EC0);
 ObjectFunc(blareExec, 0x602000);
+FunctionPointer(signed int, PlayEventVoice, (int VoiceDataID), 0x602FF0);
+FunctionPointer(void, ReadEventEffectFile, (EventEffectData* a1), 0x6030A0);
+FunctionPointer(NJS_OBJECT*, applyEventUpgradeOverride, (NJS_OBJECT* a1), 0x603BA8);
+FunctionPointer(UpgradeOverrideList*, eventUpgradeOverrideMaster, (), 0x603BE5);
 ObjectFunc(singleModelEffectExec, 0x604480);
 ObjectFunc(spriteExec, 0x6046D0);
 FunctionPointer(int, LoadEmblemgetModule, (), 0x6048C0);
@@ -2138,6 +2162,31 @@ static inline void* LoadPRSFile(const char* a1)
 	return result;
 }
 
+// void __usercall(signed int *a1@<eax>)
+static const void* const miniEventRumblePtr = (void*)0x457D70;
+static inline void miniEventRumble(signed int rumbleValue)
+{
+	__asm
+	{
+		mov eax, [a1]
+		call miniEventRumble
+	}
+}
+
+// void *__usercall@<eax>(MiniEventFile *a1@<ebx>)
+static const void* const ReadMiniEventFileHeaderPtr = (void*)0x4582F0;
+static inline void* ReadMiniEventFileHeader(MiniEventFile* a1)
+{
+	void* result;
+	__asm
+	{
+		mov ebx, [a1]
+		call ReadMiniEventFileHeaderPtr
+		mov result, eax
+	}
+	return result;
+}
+
 //void __usercall LoadCharacterSoundBanks(int character@<ebx>, MLTSoundList *OutputSoundList, MLTSoundList *OutputVoiceList)
 static const void* const LoadCharacterSoundBanksPtr = (void*)0x459100;
 static inline void* LoadCharacterSoundBanks(int character, MLTSoundList* OutputSoundList, MLTSoundList* OutputVoiceList)
@@ -3413,6 +3462,45 @@ static inline ObjectMaster* ALO_LobbyGateDarkExecutor_Load(NJS_VECTOR* position)
 		mov ebx, [position]
 		call ALO_LobbyGateDarkExecutor_LoadPtr
 		mov result, eax
+	}
+	return result;
+}
+
+//int __usercall@<eax>(int sceneNum@<ebx>)
+static const void* const LoadEventReflectionsPtr = (void*)0x5F9520;
+static inline int LoadEventReflections(int sceneNum)
+{
+	int result;
+	__asm
+	{
+		mov ebx, [sceneNum]
+		call LoadEventReflectionsPtr
+		mov result, eax
+	}
+	return result;
+}
+
+// void __usercall(CutsceneEntityData *a1@<edi>)
+static const void* const ReadEventEntityDataPtr = (void*)0x5FDB10;
+static inline void ReadEventEntityData(CutsceneEntityData* a1)
+{
+	__asm
+	{
+		mov edi, [a1]
+		call ReadEventEntityDataPtr
+	}
+}
+
+// char __usercall@<al>(BigCameoData *a1@<eax>)
+static const void* const ReadEventBigCameoDataPtr = (void*)0x5FDDC0;
+static inline char ReadEventBigCameoData(BigCameoData* a1)
+{
+	char result;
+	__asm
+	{
+		mov eax, [a1]
+		call ReadEventBigCameoDataPtr
+		mov result, al
 	}
 	return result;
 }

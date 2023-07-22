@@ -427,6 +427,7 @@ DataArray(char, CurrentSongName, 0x1936268, 32);
 DataPointer(char*, DemoStringSuffix, 0x194086C);
 DataPointer(NJS_TEXLIST *, LastTexList, 0x1942070);
 DataPointer(LevelHeader *, CurrentLevelHeader, 0x19420FC);
+DataPointer(int, MiniEventID, 0x1945718);
 DataPointer(int, MobileColList_Count, 0x19459D4); // The number of object dynamic collision entries.
 DataPointer(LandTable *, CurrentLandTable, 0x19459DC);
 DataPointer(Uint16, LandDisplayEntries_Count, 0x1945A00); // The number of LandDisplayEntries.
@@ -572,6 +573,8 @@ DataArray(char, BattleWinCount_Copy, 0x1D1C114, 2);
 DataPointer(int, CurrentMenu, 0x1D7BB10);
 DataPointer(int, CurrentSubMenu, 0x1D7BB14);
 DataArray(char, SomeSFDStrings, 0x1DB0C00, 568);
+DataPointer(int, EventSceneNumber, 0x1DB0FC8);
+DataPointer(int, EventID, 0x1DB0FCC);
 DataPointer(int, BlackMarketItemCount, 0x1DBED90);
 DataArray(BlackMarketItem, BlackMarketInventory, 0x1DBEDC0, 32);
 DataArray(char, MemoryCard, 0x1DBEE00, 104);
@@ -694,6 +697,7 @@ DataArray(PDS_PERIPHERAL, Controllers, 0x1DEFC00, 4);
 DataArray(byte, IsThings, 0x1DEFDA0, 4);
 DataArray(int, RumblePort_A, 0x1DEFDB0, 4);
 DataPointer(int, SomeBuffer, 0x1DEFE20);
+DataPointer(EventFileHeader, EventData, 0x204FE20);
 DataPointer(int, FileBuffer, 0x24CFE20);
 DataPointer(int, FOV_BAMS, 0x25EFEE8);
 DataPointer(NJS_MATRIX, _nj_unit_matrix_, 0x25F02A0);
