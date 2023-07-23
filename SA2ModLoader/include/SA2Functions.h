@@ -2168,7 +2168,7 @@ static inline void miniEventRumble(signed int rumbleValue)
 {
 	__asm
 	{
-		mov eax, [a1]
+		mov eax, [rumbleValue]
 		call miniEventRumble
 	}
 }
