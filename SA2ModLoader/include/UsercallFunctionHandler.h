@@ -200,8 +200,8 @@ constexpr T const GenerateUsercallWrapper(int ret, intptr_t address, TArgs... ar
 	auto codeData = AllocateCode(memsz);
 	int cdoff = 0;
 	uint8_t stackoff = argc * 4;
-		for (size_t i = 0; i < argc; ++i)
-		{
+	for (size_t i = 0; i < argc; ++i)
+	{
 		switch (argarray[i])
 		{
 		case rEBX:
@@ -694,7 +694,7 @@ constexpr void const GenerateUsercallHook(T func, int ret, intptr_t address, TAr
 	if (stackcnt > 0)
 		writebytes(codeData, cdoff, 0x83, 0xC4, (uint8_t)(stackcnt * 4));
 	codeData[cdoff++] = 0xC3;
-#if 1
+#if 0
 	char fn[MAX_PATH];
 	sprintf_s(fn, "usercallhook@%08X.bin", address);
 	auto fh = fopen(fn, "wb");
