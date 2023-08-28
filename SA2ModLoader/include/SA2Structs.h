@@ -2146,12 +2146,17 @@ struct EventEffectData
 	EventVideoData video[64];
 };
 
-struct MiniEventAssets
+struct MiniEventParts
 {
-	NJS_MOTION* BodyAnimation;
 	NJS_OBJECT* Part;
 	NJS_MOTION* PartAnimation;
 	NJS_MOTION* PartShapeMotion;
+};
+
+struct MiniEventAssets
+{
+	NJS_MOTION* BodyAnimation;
+	MiniEventParts Data[4];
 };
 
 struct MiniEventFile
@@ -2197,6 +2202,42 @@ struct CutsceneVoices
 {
 	Uint32 InternalID;
 	int	   VoiceFileID;
+};
+
+struct SummaryData
+{
+	int StringID;
+	int VoiceID;
+	int JPNFrameStart;
+	int ENGFrameStart;
+	int FRNFrameStart;
+	int SPAFrameStart;
+	int GERFrameStart;
+	int ITAFrameStart;
+};
+
+struct SummaryDataArray
+{
+	int StoryType;
+	int StorySequenceID;
+	int BackgroundID;
+	SummaryData* Data;
+	int DataCount;
+};
+
+struct MenuVoices
+{
+	int Default;
+	int Shadow;
+	int Rouge;
+	int Eggman;
+	int Maria;
+	int Secretary;
+	int Omochao;
+	int Amy;
+	int Tails;
+	int Knuckles;
+	int Sonic;
 };
 
 struct ControlShadowCharObj2
