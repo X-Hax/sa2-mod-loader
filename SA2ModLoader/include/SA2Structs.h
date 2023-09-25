@@ -2240,6 +2240,32 @@ struct MenuVoices
 	int Sonic;
 };
 
+struct TextureAnimData
+{
+	int Type;
+	int field_4;
+	int field_8;
+	int field_C;
+	short* UVData;
+	int field_14[4];
+};
+
+struct ModelTextureAnimation1
+{
+	NJS_OBJECT* Model;
+	TextureAnimData* texanim;
+	int field_8;
+};
+
+struct ModelTextureAnimation2
+{
+	int Type;
+	NJS_OBJECT* Model;
+	TextureAnimData* texanim;
+	int field_C;
+	int field_10;
+};
+
 struct ControlShadowCharObj2
 {
 	uint8_t byte0;

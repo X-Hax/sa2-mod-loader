@@ -267,7 +267,7 @@ ObjectFunc(ObjectAshibaExec_1, 0x4A7350);
 ObjectFunc(GolemWeakExec, 0x4A9D80);
 FunctionPointer(int, LoadStg30Module, (), 0x4AC7C0);
 FunctionPointer(int, FinalRush_Init, (), 0x4AC7D0);
-ObjectFunc(BgExec_01, 0x4ACDB0);
+ObjectFunc(FinalRushBgExec, 0x4ACDB0);
 ObjectFunc(ObjectBurst, 0x4AE830);
 ObjectFunc(ObjectMeteoFall_stg30, 0x4AFBB0);
 VoidFunc(LoadFinalRushCharAnims, 0x4AFE00);
@@ -295,8 +295,8 @@ ObjectFunc(GSTRAIN, 0x4B77F0);
 FunctionPointer(int, Gravestone, (ObjectMaster* a2), 0x4B9400);
 FunctionPointer(int, LoadStg41Module, (), 0x4B9840);
 FunctionPointer(int, WildCanyon2P_Init, (), 0x4B9850);
-ObjectFunc(BgExec_02, 0x4B9FB0);
-ObjectFunc(BgClip_01, 0x4BA350);
+ObjectFunc(WildCanyon2PBgExec, 0x4B9FB0);
+ObjectFunc(WildCanyonBgClip, 0x4BA350);
 ObjectFunc(CalcLightForPlayer_1, 0x4BA490);
 FunctionPointer(int, LoadStg56Module, (), 0x4BA680);
 FunctionPointer(int, EternalEngine2P_Init, (), 0x4BA690);
@@ -316,11 +316,11 @@ ObjectFunc(ObjectSS2Dodai, 0x4C9A10);
 FunctionPointer(int, DODAIGEN, (int), 0x4C9DA0);
 FunctionPointer(int, LoadStg34Module, (), 0x4CA020);
 FunctionPointer(int, CannonsCoreSonic_Init, (), 0x4CA030);
-ObjectFunc(BgClip_02, 0x4CA800);
+ObjectFunc(CannonsCoreSonicBgClip, 0x4CA800);
 FunctionPointer(int, G_LIGHT_SW, (ObjectMaster* a1), 0x4CA9B0);
 ObjectFunc(ObjectGlobalLightManager, 0x4CAB20);
 VoidFunc(LoadCannonsCoreSCharAnims, 0x4CABA0);
-ObjectFunc(BgExec_03, 0x4CAE90);
+ObjectFunc(CannonsCoreSonicBgExec, 0x4CAE90);
 ObjectFunc(DenkiColi, 0x4CD070);
 ObjectFunc(InputColi, 0x4CD220);
 FunctionPointer(int, BLOCK, (ObjectMaster* a1), 0x4CE240);
@@ -332,10 +332,10 @@ ObjectFunc(VibSlightExec, 0x4D4300);
 FunctionPointer(int, VibSlightExec_Load, (), 0x4D4350);
 FunctionPointer(int, LoadStg07Module, (), 0x4D43D0);
 FunctionPointer(int, AquaticMine_Init, (), 0x4D43E0);
-ObjectFunc(BgExec_04, 0x4D4A70);
+ObjectFunc(AquaticMineBgExec, 0x4D4A70);
 VoidFunc(LoadAquaticMineCharAnims, 0x4D4C30);
 ObjectFunc(SuimenManager, 0x4D51B0);
-ObjectFunc(MizugomiExec_1, 0x4D6530);
+ObjectFunc(AquaticMine_MizugomiExec, 0x4D6530);
 FunctionPointer(int, mitruckp, (ObjectMaster* a1), 0x4D68A0);
 FunctionPointer(int, mikusa, (ObjectMaster* a1), 0x4D6900);
 FunctionPointer(int, mirail, (ObjectMaster* a1), 0x4D69C0);
@@ -352,7 +352,7 @@ FunctionPointer(int, CMDOOR, (ObjectMaster* a1), 0x4DA360);
 FunctionPointer(int, AquaticMine_SIGN, (ObjectMaster* a1), 0x4DA440);
 FunctionPointer(int, LoadStg37Module, (), 0x4DB110);
 VoidFunc(CannonsCoreRouge_Init, 0x4DB120);
-ObjectFunc(BgClip_03, 0x4DB740);
+ObjectFunc(CannonsCoreRouge_BgClip, 0x4DB740);
 ObjectFunc(BgColiExec, 0x4DB840);
 ObjectFunc(BgExec_05, 0x4DB860);
 ObjectFunc(BubbleExec, 0x4DCBB0);
@@ -504,7 +504,7 @@ ObjectFunc(AL_GBAManagerExecutor_Delete, 0x532C70);
 ObjectFunc(AL_EntranceMenuManagerExecutor, 0x533100);
 VoidFunc(AL_LoadPalette, 0x534350);
 ObjectFunc(ALO_StageTitleExec_Delete, 0x535110);
-FunctionPointer(int, ALO_StageTitleExec_Unknown, (int), 0x535130);
+FunctionPointer(int, ALO_StageTitle_DispDelay1, (int), 0x535130);
 ObjectFunc(ALO_StageTitleExec_Main, 0x535190);
 FunctionPointer(void, ALO_StageTitleExec_Load, (int a2, int a3), 0x5352D0);
 ObjectFunc(ALR_ADV_CongraManagerExecutor, 0x5371F0);
@@ -531,7 +531,7 @@ ObjectFunc(KarateMainExec, 0x542DA0);
 ObjectFunc(FExec_4, 0x5436B0);
 ObjectFunc(ALO_ChaosDriveExecutor_Main, 0x5450C0);
 ObjectFunc(ALO_ChaosDriveExecutor_Display, 0x545150);
-FunctionPointer(int, ALO_ChaosDriveExecutor_Unknown, (int), 0x545430);
+FunctionPointer(int, ALO_ChaosDrive_DispDelay1, (int), 0x545430);
 ObjectFunc(ALO_ChaosDriveExecutor_Delete, 0x5455B0);
 FunctionPointer(ObjectMaster*, ALO_ChaosDriveExecutor_Load, (unsigned __int8 a1, NJS_VECTOR* position, NJS_VECTOR* idkvector, ChaoData* a4), 0x545600);
 ObjectFunc(ALO_FruitExecutor_Main, 0x545E40);
@@ -633,7 +633,7 @@ ObjectFunc(ALO_BoxExecutor_Delete, 0x580870);
 FunctionPointer(void, ALO_BoxExecutor_Load, (NJS_VECTOR* position), 0x580890);
 ObjectFunc(ALO_Horse_Main, 0x580E80);
 FunctionPointer(int, ALO_Horse_Load, (), 0x580F30);
-FunctionPointer(int, ALO_EntranceLampExecutor_Unknown, (int), 0x580F90);
+FunctionPointer(int, ALO_EntranceLamp_DispDelay1, (int), 0x580F90);
 ObjectFunc(ALO_EntranceLampManager_Main, 0x581020);
 FunctionPointer(int, ALO_EntranceLamp_Load, (float, float, float), 0x581070);
 ObjectFunc(ALO_EntranceGateExecutor_Main, 0x581520);
@@ -922,7 +922,7 @@ ObjectFunc(tutorialExec_Display, 0x67D7D0);
 ObjectFunc(tutorialExec_DispDelay1, 0x67D890);
 ObjectFunc(tutorialExec_Delete, 0x67D8B0);
 ObjectFunc(mainMenuExec, 0x67DE60);
-FunctionPointer(int, Menu_Unknown_5, (), 0x67E460);
+FunctionPointer(int, Menu_StorySummary, (), 0x67E460);
 ObjectFunc(battleAExec, 0x67EE00);
 ObjectFunc(battleAExec_Display, 0x680C70);
 ObjectFunc(battleAExec_Delete, 0x680DE0);
@@ -1012,7 +1012,7 @@ ObjectFunc(MODMOD_Disp, 0x6C7B20);
 ObjectFunc(ItemBox_Main, 0x6C7C10);
 ObjectFunc(ITEMBOX2_B, 0x6C7CE0);
 ObjectFunc(ItemBox_Display_B, 0x6C8280);
-ObjectFunc(ItemBox_Unknown, 0x6C83B0);
+ObjectFunc(ItemBox_DispDelay2, 0x6C83B0);
 ObjectFunc(ItemBox_Display_A, 0x6C8810);
 FunctionPointer(void, ItemBoxItem_LifeAgainAgain, (ObjectMaster*, int), 0x6C8970);
 FunctionPointer(void, ItemBoxItem_20Rings, (ObjectMaster*, int), 0x6C8A10);
@@ -1023,7 +1023,7 @@ ObjectFunc(ExpManExec_Display, 0x6C8D10);
 ObjectFunc(ExpManExec_Delete, 0x6C8DE0);
 ObjectFunc(ItemBoxAir_Main, 0x6C8EF0);
 ObjectFunc(ItemBoxAir_Display, 0x6C93C0);
-ObjectFunc(ItemBoxAir_Unknown, 0x6C9500);
+ObjectFunc(ItemBoxAir_DispDelay2, 0x6C9500);
 FunctionPointer(void, ItemBoxItem_10Rings, (ObjectMaster*, int), 0x6C97B0);
 FunctionPointer(void, ItemBoxItem_LifeAgain, (ObjectMaster* a1, char a2), 0x6C97F0);
 FunctionPointer(void, ItemBoxItem_Speedup, (ObjectMaster*, int), 0x6C9870);
@@ -1148,6 +1148,7 @@ ObjectFunc(bbl_ripple_exec, 0x6EFC90);
 ObjectFunc(EsShakeRad, 0x6F01B0);
 ObjectFunc(WpHoleExec, 0x6F1030);
 ObjectFunc(ObjectAsiotoExec, 0x6F1A00);
+FunctionPointer(int, LoadBetaMessageFile, (char* filename), 0x6F1D00);
 FunctionPointer(int, LoadStg49Module, (), 0x6F2160);
 FunctionPointer(int, PoolQuest_Init, (), 0x6F2170);
 FunctionPointer(int, LoadStg10Module, (), 0x6F2900);
@@ -1245,6 +1246,7 @@ ObjectFunc(EmeraldManager_Delete, 0x73A970);
 FunctionPointer(int, LoadEmeraldManager, (), 0x73AA70);
 ObjectFunc(ExecDisplayGottenEmeraldIcon, 0x73AE40);
 FunctionPointer(int, ExecDisplayGottenEmeraldIcon_Load, (int), 0x73AEC0);
+FunctionPointer(int, LoadEmeraldHintFile, (const char* filename), 0x73BC60);
 ObjectFunc(Eggman_Main, 0x73C380);
 ObjectFunc(Eggman_Delete, 0x73E700);
 ObjectFunc(Eggman_Display, 0x73EF20);
@@ -1280,14 +1282,14 @@ ObjectFunc(Tails_Display, 0x7507D0);
 FunctionPointer(int, NBarrier_Load, (char), 0x753210);
 FunctionPointer(int, TBarrier_Load, (char), 0x753280);
 FunctionPointer(ObjectMaster*, LoadInvincibility, (char player), 0x7532F0);
-ObjectFunc(Barrier_Unknown, 0x7533B0);
+ObjectFunc(Barrier_DispDelay1, 0x7533B0);
 ObjectFunc(TBarrier, 0x7533E0);
 ObjectFunc(TBarrier_Child, 0x7534B0);
-ObjectFunc(TBarrier_Unknown, 0x753580);
+ObjectFunc(TBarrier_DispDelay1, 0x753580);
 ObjectFunc(TProminence, 0x7538D0);
 ObjectFunc(NBarrier, 0x753D40);
-ObjectFunc(NBarrier_Unknown, 0x753E30);
-ObjectFunc(Invincibility_Unknown, 0x753FC0);
+ObjectFunc(NBarrier_DispDelay1, 0x753E30);
+ObjectFunc(Invincibility_DispDelay1, 0x753FC0);
 ObjectFunc(Invincibility_Main, 0x754150);
 FunctionPointer(double, CrashStar_Load, (), 0x7543C0);
 ObjectFunc(CrashStar_Main, 0x754610);
@@ -1301,9 +1303,14 @@ FunctionPointer(int, LoadSonEffTex, (), 0x755DA0);
 FunctionPointer(int, LoadShadEffTex, (), 0x755DE0);
 FunctionPointer(int, LoadAmyEffTex, (), 0x755E20);
 FunctionPointer(int, LoadMetEffTex, (), 0x755E60);
-ObjectFunc(exec_2, 0x7578B0);
-ObjectFunc(LightAttackParticle_Render, 0x757B30);
+ObjectFunc(JumpDashAura_DispDelay1, 0x757040);
+ObjectFunc(SonicFireSomersaultParticle_DispDelay1, 0x757810);
+ObjectFunc(SonicFireSomersaultParticle_Exec, 0x7578B0);
+ObjectFunc(LightAttackChargingParticle_DispDelay1, 0x757B30);
+ObjectFunc(LightAttackParticle_DispDelay1, 0x757CD0);
 ObjectFunc(SonicEffectChaosControlEffectExecutor, 0x758B60);
+ObjectFunc(SonicEffectChaosControlEffect_DispDelay1, 0x758BA0);
+ObjectFunc(MSJet_DispDelay1, 0x7593B0);
 ObjectFunc(MSJetExecutor, 0x759700);
 ObjectFunc(ObjectMizuiki, 0x75A150);
 ObjectFunc(EffectEctoplasmExecutor, 0x75ABE0);
@@ -1315,24 +1322,31 @@ ObjectFunc(EffectKissHeartExecutor, 0x75BA30);
 ObjectFunc(EffectChaosSpearExecutor, 0x75BD80);
 ObjectFunc(EffectBlackWaveExecutor, 0x75C0B0);
 ObjectFunc(EffectBlackWaveGenerator, 0x75C3A0);
-ObjectFunc(exec_3, 0x75C5B0);
+ObjectFunc(KnucklesPunchAura_DispDelay1, 0x75C500);
+ObjectFunc(KnucklesPunchAura_Exec, 0x75C5B0);
 ObjectFunc(EffectThunderLightExecutor, 0x75C830);
 ObjectFunc(EffectThunderExecutor, 0x75C930);
 ObjectFunc(exec_4, 0x75D2F0);
+ObjectFunc(WalkerBullet_DispDelay1, 0x75D3D0);
 ObjectFunc(WalkerBulletExecutor, 0x75D520);
+ObjectFunc(WalkerBazooka_Disp, 0x75D880);
 ObjectFunc(WalkerBazookaExecutor, 0x75D9F0);
 ObjectFunc(exec_5, 0x75E580);
 ObjectFunc(WalkerJetExecutor, 0x75EC80);
-ObjectFunc(exec_6, 0x761730);
+ObjectFunc(WalkerPowerLaser_DispDelay1, 0x760350);
+ObjectFunc(WalkerPowerLaser_Main, 0x7605B0);
+ObjectFunc(WalkerBlasterShot_DispDelay1, 0x7614F0);
+ObjectFunc(WalkerBlasterShot_Exec, 0x761730);
 ObjectFunc(BossPowerGuageExec_Main, 0x761C30);
+ObjectFunc(BossPowerGauge_DispDelay1, 0x761D80);
 ObjectFunc(BossTitleExec, 0x762E00);
 FunctionPointer(int, LoadStg27Module, (), 0x7632B0);
 VoidFunc(LostColony_Init, 0x7632C0);
-ObjectFunc(LightBombExec_4, 0x763850);
-ObjectFunc(BgInit_2, 0x763E90);
-ObjectFunc(BgInit_2_Delete, 0x763EB0);
-ObjectFunc(BgInit_2_Display, 0x763F00);
-ObjectFunc(BgInit_2_DispDelay2, 0x764400);
+ObjectFunc(LostColony_LightBombExec, 0x763850);
+ObjectFunc(LostColonyBgInit, 0x763E90);
+ObjectFunc(LostColonyBgInit_Delete, 0x763EB0);
+ObjectFunc(LostColonyBgInit_Display, 0x763F00);
+ObjectFunc(LostColonyBgInit_DispDelay2, 0x764400);
 ObjectFunc(DmgColExec, 0x768A30);
 VoidFunc(LoadLostColonyCharAnims, 0x7695F0);
 FunctionPointer(int, LoadStg12Module, (), 0x76AA10);
@@ -2534,6 +2548,22 @@ static inline ObjectMaster* AllocateObjectMaster(void(__cdecl* mainSub)(ObjectMa
 	return result;
 }
 
+//signed int __usercall CharacterHeadTracking@<eax>(int a1@<ebx>, NJS_OBJECT **a2@<edi>)
+static const void* const CharacterHeadTrackingPtr = (void*)0x476530;
+static inline signed int CharacterHeadTracking(int playerID, NJS_OBJECT** models)
+{
+	signed int result;
+	__asm
+	{
+		mov edi, [models]
+		mov ebx, [playerID]
+		call CharacterHeadTrackingPtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
 // int __usercall@<eax>(int targetAlpha@<edx>)
 static const void* const ScreenFadePtr = (void*)0x478730;
 static inline int ScreenFade(int targetAlpha)
@@ -3523,6 +3553,21 @@ static inline int LoadEventReflections(int sceneNum)
 	}
 	return result;
 }
+//int __usercall AnimateEventModelTextures@<eax>(int sceneNum@<eax>, int a2)
+static const void* const AnimateEventModelTexturesPtr = (void*)0x5F9640;
+static inline int AnimateEventModelTextures(int sceneNum, int a2)
+{
+	int result;
+	__asm
+	{
+		push[a2]
+		mov eax, [sceneNum]
+		call AnimateEventModelTexturesPtr
+		mov esi, 4
+		mov result, eax
+	}
+	return result;
+}
 
 // void __usercall(CutsceneEntityData *a1@<edi>)
 static const void* const ReadEventEntityDataPtr = (void*)0x5FDB10;
@@ -3594,6 +3639,21 @@ static inline void InitMessage(ef_message* message, const NJS_COLOR* color, floa
 		call InitMessage_ptr
 		add esp, 0x10
 	}
+}
+
+//int __usercall LoadMessageFile@<eax>(char *filename@<eax>, int a2@<ecx>)
+static const void* const LoadMessageFilesPtr = (void*)0x6BD650;
+static inline int LoadMessageFiles(char* filename, int a2)
+{
+	int result;
+	__asm
+	{
+		mov ecx, [a2]
+		mov eax, [filename]
+		call LoadMessageFilesPtr
+		mov result, eax
+	}
+	return result;
 }
 
 // void __usercall(NJS_VECTOR *a1@<ebx>, float a2)
@@ -4611,6 +4671,37 @@ static inline int TailsJump(CharObj2Base* a1, EntityData1* a2)
 		mov result, eax
 	}
 
+	return result;
+}
+
+//int __usercall AnimateModelTextures@<eax>(TextureAnimData *texanim@<esi>, NJS_CNK_MODEL *model, unsigned int frame)
+static const void* const AnimateModelTexturesPtr = (void*)0x795790;
+static inline int AnimateModelTextures(TextureAnimData* texanims, NJS_CNK_MODEL* model, unsigned int frame)
+{
+	int result;
+	__asm
+	{
+		push[frame]
+		push[model]
+		mov esi, [texanims]
+		call AnimateModelTexturesPtr
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
+//RenderInfo *__usercall DrawFireSomersaultAura@<eax>(int charID@<eax>)
+static const void* const DrawFireSomersaultAuraPtr = (void*)0x7599D0;
+static inline RenderInfo* DrawFireSomersaultAura(int charID)
+{
+	RenderInfo* result;
+	__asm
+	{
+		mov eax, [charID]
+		call DrawFireSomersaultAuraPtr
+		mov result, eax
+	}
 	return result;
 }
 
