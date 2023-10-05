@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 9;
+static const int ModLoaderVer = 10;
 
 struct PatchInfo
 {
@@ -243,6 +243,17 @@ struct HelperFunctions
 	// API for listing information on loaded mods.
 	// Requires version >= 9.
 	const ModList* Mods;
+
+	/**
+	* @brief Registers an ID for a new voice.
+	* Requires version >= 10.
+	*
+	* @param fileJP: The path to the audio file to play for Japanese.
+	* @param fileEN: The path to the audio file to play for English.
+	* @return The ID number for your voice, or 0 if the list is full.
+	*
+	*/
+	uint16_t(__cdecl* RegisterVoice)(const char* fileJP, const char* fileEN);
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);

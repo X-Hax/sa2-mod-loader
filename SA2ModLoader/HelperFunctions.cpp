@@ -306,6 +306,19 @@ ModList modList = {
 	ModListImpl::find_by_dll
 };
 
+uint16_t voicenum = 2727;
+uint16_t RegisterVoice(const char* fileJP, const char* fileEN)
+{
+	if (voicenum == UINT16_MAX)
+		return 0;
+	char buf[MAX_PATH];
+	sprintf_s(buf,  "resource\\gd_pc\\event_adx\\%04d.ahx", voicenum);
+	_ReplaceFile(buf, fileJP);
+	sprintf_s(buf,  "resource\\gd_pc\\event_adx_e\\%04d.ahx", voicenum);
+	_ReplaceFile(buf, fileEN);
+	return voicenum++;
+}
+
 extern LoaderSettings loaderSettings;
 
 HelperFunctions helperFunctions = {
@@ -330,5 +343,6 @@ HelperFunctions helperFunctions = {
 	debug_text::DisplayStringFormatted,
 	debug_text::DisplayNumber,
 	&loaderSettings,
-	&modList
+	&modList,
+	&RegisterVoice
 };
