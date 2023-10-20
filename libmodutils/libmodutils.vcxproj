@@ -84,6 +84,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="LandTableInfo.h" />
     <ClInclude Include="ModelInfo.h" />
+    <ClInclude Include="PAKFile.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Trampoline.h" />
   </ItemGroup>
@@ -92,6 +93,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LandTableInfo.cpp" />
     <ClCompile Include="ModelInfo.cpp" />
+    <ClCompile Include="PAKFile.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

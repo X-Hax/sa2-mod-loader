@@ -3747,4 +3747,17 @@ struct sp_info
 
 typedef motionwk motionwk2;
 
+struct PAKTexInf
+{
+	char filename[28];
+	Uint32 globalIndex;
+	Uint32 Type;
+	Uint32 BitDepth;
+	Uint32 PixelFormat;
+	Uint32 nWidth;
+	Uint32 nHeight;
+	Uint32 TextureSize;
+	Uint32 fSurfaceFlags;
+};
+
 #pragma pack(pop)

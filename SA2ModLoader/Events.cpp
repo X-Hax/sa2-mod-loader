@@ -5,6 +5,7 @@ std::vector<ModEvent> modFrameEvents;
 std::vector<ModEvent> modInputEvents;
 std::vector<ModEvent> modControlEvents;
 std::vector<ModEvent> modExitEvents;
+std::vector<TextureLoadEvent> modCustomTextureLoadEvents;
 std::vector<ModEvent> modRenderDeviceLost;
 std::vector<ModEvent> modRenderDeviceReset;
 std::vector<ModEvent> onRenderSceneEnd;

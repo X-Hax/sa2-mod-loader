@@ -9,6 +9,36 @@
 #include <list>
 #include "MemAccess.h"
 
+namespace cppold
+{
+	namespace std
+	{
+		struct _Container_base0 {};
+
+		template <class _Elem, class _Alloc = ::std::allocator<_Elem>>
+		struct _String_val : _Container_base0
+		{
+			union _Bxty
+			{
+				_Elem _Buf[16];
+				_Elem* _Ptr;
+				_Elem _Alias[16];
+			} _Bx;
+			unsigned int _Mysize;
+			unsigned int _Myres;
+			_Alloc _Alval;
+		};
+
+		template <class _Elem, class _Traits = ::std::char_traits<_Elem>, class _Alloc = ::std::allocator<_Elem>>
+		struct basic_string : _String_val<_Elem, _Alloc>
+		{
+		};
+
+		typedef basic_string<char> string;
+		typedef basic_string<wchar_t> wstring;
+	}
+}
+
 namespace Magic
 {
 	namespace Base
@@ -633,7 +663,7 @@ namespace Magic
 		{
 			struct vtbl
 			{
-				void(__thiscall* Destructor)(Resource* _this);
+				void(__thiscall* Destructor)(Resource* _this, int a2);
 				int(__thiscall* GetSize)(Resource* _this);
 				bool(__thiscall* IsLoaded)(Resource* _this);
 			}* __vftable;
@@ -641,8 +671,8 @@ namespace Magic
 			int m_ResPool;
 			void* m_pUserData;
 			unsigned int m_ResMask;
-			std::basic_string<char, std::char_traits<char>, std::allocator<char>> m_Name;
-			std::basic_string<char, std::char_traits<char>, std::allocator<char>> m_Path;
+			cppold::std::string m_Name;
+			cppold::std::string m_Path;
 		};
 
 		struct VertexBuffer : Resource
@@ -803,7 +833,7 @@ namespace Magic
 			{
 				void(__cdecl* Destructor)(ResourceProfiler* _this);
 			}* __vftable /*VFT*/;
-			std::list<Magic::RenderCore::Resource*, std::allocator<Magic::RenderCore::Resource*> > m_pResources[11];
+			std::list<Magic::RenderCore::Resource*> m_pResources[11];
 		};
 
 		struct RenderDevice
@@ -1237,3 +1267,5 @@ DataPointer(Magic::RenderCore::OnDeviceLostFunc*, DeviceLostFunc, 0x174F820);
 
 StdcallFunctionPointer(SOCController*, GetJoystick, (SOCInput*, int pnum), 0x4256A0);
 DataPointer(SOCInput*, g_pSOCInput, 0x1AF19E4); // Singleton
+
+ThiscallFunctionPointer(Magic::RenderCore::Texture*, InitTexture, (Magic::RenderCore::Texture* _this), 0x85F690);

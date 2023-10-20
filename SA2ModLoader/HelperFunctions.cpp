@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SA2ModLoader.h"
 #include "DebugText.h"
+#include "TextureReplacement.h"
 using namespace std;
 
 extern unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
@@ -344,5 +345,6 @@ HelperFunctions helperFunctions = {
 	debug_text::DisplayNumber,
 	&loaderSettings,
 	&modList,
-	&RegisterVoice
+	&RegisterVoice,
+	&ReplaceTexture,
 };

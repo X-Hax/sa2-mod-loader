@@ -62,6 +62,15 @@ public:
 	 */
 	void scanFolder(const std::string& srcPath, int modIdx);
 
+	void scanPRSFolder(const std::string& srcPath);
+
+	/**
+	 * Scans a texture pack folder for
+	 * @param srcPath The path to the "textures" folder to scan.
+	 * @param modIndex Index of the current mod.
+	 */
+	void scanTextureFolder(const std::string& srcPath, int modIndex);
+
 protected:
 	/**
 	 * Recursively scan a directory and add all files to the replacement map.
@@ -72,6 +81,8 @@ protected:
 	 * @param modIdx Index of the current mod.
 	 */
 	void scanFolder_int(const std::string& srcPath, int srcLen, int modIdx);
+
+	void scanPRSFolder_int(const std::string& srcPath, int srcLen, int modIdx);
 
 	/**
 	 * Set a replacement file in the map.

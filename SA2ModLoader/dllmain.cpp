@@ -28,6 +28,7 @@
 #include "window.h"
 #include "direct3d.h"
 #include "Interpolation.h"
+#include "TextureReplacement.h"
 
 using namespace std;
 
@@ -1087,6 +1088,8 @@ void __cdecl InitMods(void)
 
 	VoiceLanguage = loaderSettings.VoiceLanguage;
 
+	texpack::init();
+
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
 	DWORD oldprot;
@@ -1106,6 +1109,9 @@ void __cdecl InitMods(void)
 	WriteCall((void*)0x435EE7, FindNextCSBFileA);
 	WriteData((char*)0x435EF5, (char)0x90u);
 	WriteCall((void*)0x435EF6, FindCSBClose);
+
+	sadx_fileMap.scanPRSFolder("resource\\gd_PC");
+	sadx_fileMap.scanPRSFolder("resource\\gd_PC\\event");
 	
 	ApplyPatches();
 
@@ -1236,6 +1242,14 @@ void __cdecl InitMods(void)
 			ScanCSBFolder(sysfol + "\\mpb", sysfol.length() + 1);
 			ScanCSBFolder(sysfol + "\\event\\mlt", sysfol.length() + 1);
 		}
+
+		const string modTexDir = mod_dirA + "\\textures";
+		if (DirectoryExists(modTexDir))
+			sadx_fileMap.scanTextureFolder(modTexDir, i);
+
+		const string modRepTexDir = mod_dirA + "\\replacetex";
+		if (DirectoryExists(modRepTexDir))
+			ScanTextureReplaceFolder(modRepTexDir, i);
 
 		// Check if a custom EXE is required.
 		if (modinfo->hasKeyNonEmpty("EXEFile"))

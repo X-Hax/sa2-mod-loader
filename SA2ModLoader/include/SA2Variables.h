@@ -396,6 +396,7 @@ DataPointer(int, NextGameMode, 0x174B044);
 DataPointer(int, ScoreP1, 0x174B050);
 DataPointer(int, LastScoreP1, 0x174B054);
 DataPointer(int, TotalRings, 0x174B05C);
+DataArray(char, BaseResourceFolder, 0x174B4E0, 260);
 DataPointer(float, HorizontalResolution, 0x174BA64);
 DataPointer(float, VerticalResolution, 0x174BA68);
 DataPointer(UINT, uID, 0x174F570);

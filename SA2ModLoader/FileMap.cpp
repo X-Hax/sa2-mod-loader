@@ -18,6 +18,7 @@ using std::unordered_map;
 #include <Windows.h>
 #include <Shlwapi.h>
 #include "FileSystem.h"
+#include "TextureReplacement.h"
 
 /**
  * Replace slash characters with backslashes.
@@ -138,6 +139,11 @@ void FileMap::scanFolder(const string& srcPath, int modIdx)
 	scanFolder_int(srcPath, srcPath.length() + 1, modIdx);
 }
 
+void FileMap::scanPRSFolder(const string& srcPath)
+{
+	scanPRSFolder_int(srcPath, srcPath.length() + 1, 0);
+}
+
 /**
  * Recursively scan a directory and add all files to the replacement map.
  * Destination is always relative to system/.
@@ -171,6 +177,11 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 
 		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
+			if (!_stricmp(data.cFileName, "prs"))
+			{
+				scanPRSFolder_int(srcPath, srcLen, modIdx);
+				continue;
+			}
 			// Recursively scan this directory.
 			const string newSrcPath = srcPath + '\\' + string(data.cFileName);
 			scanFolder_int(newSrcPath, srcLen, modIdx);
@@ -192,6 +203,207 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 		}
 
 		setReplaceFile(origFile, modFile, modIdx);
+	} while (FindNextFileA(hFind, &data) != 0);
+
+	FindClose(hFind);
+}
+
+void FileMap::scanPRSFolder_int(const string& srcPath, int srcLen, int modIdx)
+{
+	WIN32_FIND_DATAA data;
+	char path[MAX_PATH];
+	snprintf(path, sizeof(path), "%s\\prs\\*", srcPath.c_str());
+	HANDLE hFind = FindFirstFileA(path, &data);
+
+	// No files found.
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		// NOTE: This will hide *all* files starting with '.'.
+		// SADX doesn't use any files starting with '.',
+		// so this won't cause any problems.
+		if (data.cFileName[0] == '.')
+		{
+			continue;
+		}
+
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			continue;
+		}
+
+		// Create the mod filename and original filename.
+		string modFile = srcPath + "\\prs\\" + string(data.cFileName);
+		transform(modFile.begin(), modFile.end(), modFile.begin(), ::tolower);
+
+		// Original filename.
+		string origFile = "resource\\gd_pc\\";
+		if (srcPath.size() > srcLen)
+			origFile += srcPath.substr(srcLen) + '\\';
+		origFile += data.cFileName;
+		transform(origFile.begin(), origFile.end(), origFile.begin(), ::tolower);
+
+		ReplaceFileExtension(origFile, ".prs");
+		setReplaceFile(origFile, modFile, modIdx);
+
+		ReplaceFileExtension(origFile, ".gvr");
+		setReplaceFile(origFile, modFile, modIdx);
+	} while (FindNextFileA(hFind, &data) != 0);
+
+	FindClose(hFind);
+}
+
+void FileMap::scanTextureFolder(const string& srcPath, int modIndex)
+{
+	WIN32_FIND_DATAA data;
+	char path[MAX_PATH];
+	snprintf(path, sizeof(path), "%s\\*", srcPath.c_str());
+	auto hFind = FindFirstFileA(path, &data);
+
+	string lower = srcPath;
+	transform(lower.begin(), lower.end(), lower.begin(), tolower);
+	std::vector<TexPackEntry> entries;
+
+	// First attempt to parse the root texture pack (for PVR files in the vanilla system folder).
+	// If the path isn't a file or doesn't exist, this function will return false.
+	if (texpack::parse_index(lower, entries))
+	{
+		for (const auto& i : entries)
+		{
+			auto name = i.name;
+			// Remove the file extension.
+			auto dot = name.find('.');
+			name.resize(dot);
+
+			auto original = "resource\\gd_pc\\" + name + ".gvr";
+			transform(original.begin(), original.end(), original.begin(), tolower);
+
+			auto index_path = srcPath + "\\index.txt";
+			transform(index_path.begin(), index_path.end(), index_path.begin(), tolower);
+
+			m_fileMap[original] = { index_path, modIndex };
+		}
+	}
+
+	// No files found.
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		// NOTE: This will hide *all* files starting with '.'.
+		// SADX doesn't use any files starting with '.',
+		// so this won't cause any problems.
+		if (data.cFileName[0] == '.')
+		{
+			continue;
+		}
+
+		const string fileName = string(data.cFileName);
+
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY && _stricmp(data.cFileName, "event"))
+		{
+			string original = "resource\\gd_pc\\" + fileName + ".prs";
+			transform(original.begin(), original.end(), original.begin(), ::tolower);
+
+			string texPack = srcPath + '\\' + fileName;
+			transform(texPack.begin(), texPack.end(), texPack.begin(), ::tolower);
+
+			// Since we don't attempt to parse this file, make sure it exists
+			// before registering an empty texture pack directory.
+			if (FileExists(texPack + "\\index.txt"))
+			{
+				m_fileMap[original] = { texPack, modIndex };
+			}
+		}
+		else
+		{
+			string ext = GetExtension(fileName);
+			transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+			if (ext != "pvmx")
+			{
+				continue;
+			}
+
+			string noExt = fileName;
+			StripExtension(noExt);
+
+			string original = "resource\\gd_pc\\" + noExt + ".prs";
+			transform(original.begin(), original.end(), original.begin(), ::tolower);
+
+			string texPack = srcPath + '\\' + fileName;
+			transform(texPack.begin(), texPack.end(), texPack.begin(), ::tolower);
+
+			m_fileMap[original] = { texPack, modIndex };
+		}
+	} while (FindNextFileA(hFind, &data) != 0);
+
+	FindClose(hFind);
+
+	snprintf(path, sizeof(path), "%s\\event\\*", srcPath.c_str());
+	hFind = FindFirstFileA(path, &data);
+
+	// No files found.
+	if (hFind == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		// NOTE: This will hide *all* files starting with '.'.
+		// SADX doesn't use any files starting with '.',
+		// so this won't cause any problems.
+		if (data.cFileName[0] == '.')
+		{
+			continue;
+		}
+
+		const string fileName = string(data.cFileName);
+
+		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			string original = "resource\\gd_pc\\event\\" + fileName + ".prs";
+			transform(original.begin(), original.end(), original.begin(), ::tolower);
+
+			string texPack = srcPath + "\\event\\" + fileName;
+			transform(texPack.begin(), texPack.end(), texPack.begin(), ::tolower);
+
+			// Since we don't attempt to parse this file, make sure it exists
+			// before registering an empty texture pack directory.
+			if (FileExists(texPack + "\\index.txt"))
+			{
+				m_fileMap[original] = { texPack, modIndex };
+			}
+		}
+		else
+		{
+			string ext = GetExtension(fileName);
+			transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+			if (ext != "pvmx")
+			{
+				continue;
+			}
+
+			string noExt = fileName;
+			StripExtension(noExt);
+
+			string original = "resource\\gd_pc\\event\\" + noExt + ".prs";
+			transform(original.begin(), original.end(), original.begin(), ::tolower);
+
+			string texPack = srcPath + "\\event\\" + fileName;
+			transform(texPack.begin(), texPack.end(), texPack.begin(), ::tolower);
+
+			m_fileMap[original] = { texPack, modIndex };
+		}
 	} while (FindNextFileA(hFind, &data) != 0);
 
 	FindClose(hFind);

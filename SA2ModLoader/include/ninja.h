@@ -1034,6 +1034,21 @@ typedef struct{
 	Uint32 *pPhysical;
 }NJS_TEXSURFACE;
 	
+typedef struct {
+	Uint32			globalIndex;
+	NJS_TEXSURFACE	texsurface;
+	Int				count;
+}NJS_TEXSYSTEM;
+
+typedef struct {
+	Uint32			tspparam;
+	Uint32			texparam;
+	Uint32			bank;
+	NJS_TEXSYSTEM* texsys;
+	Int				count;
+	Uint32			texflag;
+}NJS_TEXMANAGE;
+
 typedef struct{
 	void*			   texaddr; /* texture address   			*/
 	NJS_TEXSURFACE	texsurface;	/* texture surface 				*/
