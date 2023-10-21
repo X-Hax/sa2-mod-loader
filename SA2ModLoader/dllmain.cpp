@@ -453,11 +453,10 @@ void InitializeStartPositionLists()
 {
 	for (unsigned int i = 0; i < LengthOfArray(startposaddrs); i++)
 	{
-		const StartPosition * origlist = startposaddrs[i].positions;
 		StartPositions[startposaddrs[i].character] = unordered_map<short, StartPosition>();
 		unordered_map<short, StartPosition> &newlist = StartPositions[startposaddrs[i].character];
-		while (origlist->Level != LevelIDs_Invalid)
-			newlist[origlist->Level] = *origlist++;
+		for (const StartPosition* origlist = startposaddrs[i].positions; origlist->Level != LevelIDs_Invalid; ++origlist)
+			newlist[origlist->Level] = *origlist;
 	}
 }
 
@@ -561,8 +560,8 @@ void Initialize2PIntroPositionLists()
 		if (origlist == nullptr)
 			continue;
 		unordered_map<short, LevelEndPosition> &newlist = _2PIntroPositions[_2pintroposaddrs[i].character];
-		while (origlist->Level != LevelIDs_Invalid)
-			newlist[origlist->Level] = *origlist++;
+		for (; origlist->Level != LevelIDs_Invalid; ++origlist)
+			newlist[origlist->Level] = *origlist;
 	}
 }
 
@@ -680,8 +679,8 @@ void InitializeEndPositionLists()
 		if (origlist == nullptr)
 			continue;
 		unordered_map<short, StartPosition> &newlist = EndPositions[endposaddrs[i].character];
-		while (origlist->Level != LevelIDs_Invalid)
-			newlist[origlist->Level] = *origlist++;
+		for (; origlist->Level != LevelIDs_Invalid; ++origlist)
+			newlist[origlist->Level] = *origlist;
 	}
 }
 
@@ -804,8 +803,8 @@ void InitializeMission23EndPositionLists()
 		if (origlist == nullptr)
 			continue;
 		unordered_map<short, LevelEndPosition> &newlist = Mission23EndPositions[m23endposaddrs[i].character];
-		while (origlist->Level != LevelIDs_Invalid)
-			newlist[origlist->Level] = *origlist++;
+		for (; origlist->Level != LevelIDs_Invalid; ++origlist)
+			newlist[origlist->Level] = *origlist;
 	}
 }
 
