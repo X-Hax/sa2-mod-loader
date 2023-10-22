@@ -708,7 +708,7 @@ static bool replace_pvmx(const string& path, ifstream& file, NJS_TEXLIST* texlis
  * \param texlist The associated texlist.
  * \return \c true on success.
  */
-static bool replace_pak(const string& path, ifstream& file, NJS_TEXLIST* texlist, unordered_map<string, TexReplaceData>& replacements)
+static bool replace_pak(const string& path, const string& oldpath, ifstream& file, NJS_TEXLIST* texlist, unordered_map<string, TexReplaceData>& replacements)
 {
 	if (texlist == nullptr)
 	{
@@ -724,7 +724,16 @@ static bool replace_pak(const string& path, ifstream& file, NJS_TEXLIST* texlist
 
 	auto infent = pak.find(pvm_name + "\\" + pvm_name + ".inf");
 	if (!infent)
-		return false;
+	{
+		auto pvm_name = GetBaseName(path);
+		StripExtension(pvm_name);
+
+		transform(pvm_name.begin(), pvm_name.end(), pvm_name.begin(), ::tolower);
+
+		auto infent = pak.find(pvm_name + "\\" + pvm_name + ".inf");
+		if (!infent)
+			return false;
+	}
 	int texcnt = infent->length / sizeof(PAKTexInf);
 	auto texinf = reinterpret_cast<PAKTexInf*>(infent->data);
 
@@ -771,22 +780,10 @@ static bool replace_pak(const string& path, ifstream& file, NJS_TEXLIST* texlist
 	return true;
 }
 
-static std::string get_replaced_path(const string& filename, const char* extension)
+static std::string get_replaced_path(const string& filename)
 {
-	// Since the filename can be passed in with or without an extension, first
-	// we try getting a replacement with the filename as-is (with SYSTEM\ prepended).
 	const string system_path = "resource\\" + std::string(BaseResourceFolder) + filename;
-	std::string replaced = sadx_fileMap.replaceFile(system_path.c_str());
-
-	// But if that failed, we can assume that it was given without an extension
-	// (which is the intended use) and append one before trying again.
-	if (!Exists(replaced))
-	{
-		const string system_path_ext = system_path + extension;
-		replaced = sadx_fileMap.replaceFile(system_path_ext.c_str());
-	}
-
-	return replaced;
+	return sadx_fileMap.replaceFile(system_path.c_str());
 }
 
 static void GetReplaceTextures(const char* filename, unordered_map<string, TexReplaceData>& replacements)
@@ -805,7 +802,7 @@ static void GetReplaceTextures(const char* filename, unordered_map<string, TexRe
 				replacements[iter2.first] = iter2.second;
 		}
 
-	auto replaced = GetBaseName(get_replaced_path(filename, ".PRS"));
+	auto replaced = GetBaseName(get_replaced_path(filename));
 	StripExtension(replaced);
 
 	transform(replaced.begin(), replaced.end(), replaced.begin(), ::tolower);
@@ -825,13 +822,23 @@ static void GetReplaceTextures(const char* filename, unordered_map<string, TexRe
 
 static bool try_texture_pack(const char* filename, NJS_TEXLIST* texlist)
 {
-	string filename_str(filename);
-	StripExtension(filename_str);
-
 	check_cache();
 	//LoadingFile = true;
 
-	const string replaced = get_replaced_path(filename_str, ".PRS");
+	char pathbuf[MAX_PATH];
+	sprintf_s(pathbuf, "resource\\%s%s.PRS", &BaseResourceFolder, filename);
+	int prsidx;
+	const char* prsrep = sadx_fileMap.replaceFile(pathbuf, prsidx);
+
+	sprintf_s(pathbuf, "resource\\%sPRS\\%s.PAK", &BaseResourceFolder, filename);
+	int pakidx;
+	const char* pakrep = sadx_fileMap.replaceFile(pathbuf, pakidx);
+
+	string replaced;
+	if (pakidx > prsidx)
+		replaced = pakrep;
+	else
+		replaced = prsrep;
 
 	// If we can ensure this path exists, we can determine how to load it.
 	if (!Exists(replaced))
@@ -840,7 +847,8 @@ static bool try_texture_pack(const char* filename, NJS_TEXLIST* texlist)
 	}
 
 	unordered_map<string, TexReplaceData> replacements;
-	GetReplaceTextures(filename, replacements);
+	sprintf_s(pathbuf, "%s.PRS", filename);
+	GetReplaceTextures(pathbuf, replacements);
 
 	// If the replaced path is a file, we should check if it's a PVMX archive.
 	if (IsFile(replaced))
@@ -848,7 +856,7 @@ static bool try_texture_pack(const char* filename, NJS_TEXLIST* texlist)
 		ifstream pvmx(replaced, ios::in | ios::binary);
 		if (pvmx::is_pvmx(pvmx))
 			return replace_pvmx(replaced, pvmx, texlist, replacements);
-		return PAKFile::is_pak(pvmx) && replace_pak(replaced, pvmx, texlist, replacements);
+		return PAKFile::is_pak(pvmx) && replace_pak(replaced, filename, pvmx, texlist, replacements);
 	}
 
 	// Otherwise it's probably a directory, so try loading it as a texture pack.
@@ -954,11 +962,12 @@ static void ReplacePVMTexs(const string& filename, NJS_TEXLIST* texlist, const v
 
 int __cdecl LoadPRSTextures_r(NJS_TEXLIST* texlist, const char* filename)
 {
-	const std::string replaced = get_replaced_path(filename, ".PRS");
-	const std::string replaced_extension = GetExtension(replaced);
+	char pathbuf[MAX_PATH];
+	sprintf_s(pathbuf, "%s.PRS", filename);
+	const std::string replaced = get_replaced_path(pathbuf);
 
 	unordered_map<string, TexReplaceData> replacements;
-	GetReplaceTextures(filename, replacements);
+	GetReplaceTextures(pathbuf, replacements);
 
 	if (LoadPRSTextures.Original(texlist, filename))
 	{
@@ -970,8 +979,7 @@ int __cdecl LoadPRSTextures_r(NJS_TEXLIST* texlist, const char* filename)
 
 int __cdecl LoadEventPRSTextures_r(NJS_TEXLIST* texlist, const char* filename, void* buffer)
 {
-	const std::string replaced = get_replaced_path(filename, ".PRS");
-	const std::string replaced_extension = GetExtension(replaced);
+	const std::string replaced = get_replaced_path(filename);
 
 	unordered_map<string, TexReplaceData> replacements;
 	GetReplaceTextures(filename, replacements);
@@ -996,6 +1004,7 @@ void LoadTextureList_NoName_r(NJS_TEXLIST* texlist)
 	NJS_TEXMANAGE* v13; // esi
 	int v14; // ecx
 	signed __int32 i; // [esp+28h] [ebp-1C0h]
+	char pathbuf[MAX_PATH];
 
 	for (i = 0; i < texlist->nbTexture; ++i)
 	{
@@ -1033,7 +1042,8 @@ void LoadTextureList_NoName_r(NJS_TEXLIST* texlist)
 		}
 		else
 		{
-			const string replaced = get_replaced_path(reinterpret_cast<const char*>(v1->filename), ".GVR");
+			sprintf_s(pathbuf, "%s.GVR", reinterpret_cast<const char*>(v1->filename));
+			const string replaced = get_replaced_path(pathbuf);
 			string ext = GetExtension(replaced);
 			transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 			if (ext == "txt")

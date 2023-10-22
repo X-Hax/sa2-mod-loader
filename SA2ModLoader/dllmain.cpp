@@ -1174,19 +1174,19 @@ void __cdecl InitMods(void)
 			if (!modinfo->hasKey(key2))
 				break;
 			auto dep = split(modinfo->getString(key2), '|');
-			moddeps.push_back({ strdup(dep[0].c_str()), strdup(dep[1].c_str()), strdup(dep[2].c_str()), strdup(dep[3].c_str()) });
+			moddeps.push_back({ _strdup(dep[0].c_str()), _strdup(dep[1].c_str()), _strdup(dep[2].c_str()), _strdup(dep[3].c_str()) });
 		}
 
 		ModDependency* deparr = new ModDependency[moddeps.size()];
 		memcpy(deparr, moddeps.data(), moddeps.size() * sizeof(ModDependency));
 
 		Mod modinf = {
-			strdup(mod_name.c_str()),
-			strdup(modinfo->getString("Author").c_str()),
-			strdup(modinfo->getString("Description").c_str()),
-			strdup(modinfo->getString("Version").c_str()),
-			strdup(mod_dirA.c_str()),
-			strdup(modinfo->getString("ModID", mod_dirA).c_str()),
+			_strdup(mod_name.c_str()),
+			_strdup(modinfo->getString("Author").c_str()),
+			_strdup(modinfo->getString("Description").c_str()),
+			_strdup(modinfo->getString("Version").c_str()),
+			_strdup(mod_dirA.c_str()),
+			_strdup(modinfo->getString("ModID", mod_dirA).c_str()),
 			NULL,
 			modinfo->getBool("RedirectMainSave"),
 			modinfo->getBool("RedirectChaoSave"),
