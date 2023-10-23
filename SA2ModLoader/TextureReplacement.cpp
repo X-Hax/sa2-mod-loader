@@ -27,6 +27,7 @@
 #include "TextureReplacement.h"
 
 #define TOMAPSTRING(a) { a, #a }
+#define LOGTEX 0
 
 using namespace std;
 
@@ -638,6 +639,9 @@ static bool replace_pvm(const string& path, NJS_TEXLIST* texlist, unordered_map<
 		texlist->textures[i].texaddr = reinterpret_cast<Uint32>(texture);
 	}
 
+#if LOGTEX
+	PrintDebug("Loaded texture pack %s", path.c_str());
+#endif
 	return true;
 }
 
@@ -698,6 +702,9 @@ static bool replace_pvmx(const string& path, ifstream& file, NJS_TEXLIST* texlis
 		texlist->textures[i].texaddr = reinterpret_cast<Uint32>(texture);
 	}
 
+#if LOGTEX
+	PrintDebug("Loaded PVMX %s", path.c_str());
+#endif
 	return true;
 }
 
@@ -777,6 +784,9 @@ static bool replace_pak(const string& path, const string& oldpath, ifstream& fil
 		texlist->textures[i].texaddr = reinterpret_cast<Uint32>(texture);
 	}
 
+#if LOGTEX
+	PrintDebug("Loaded PAK %s", path.c_str());
+#endif
 	return true;
 }
 
@@ -972,6 +982,9 @@ int __cdecl LoadPRSTextures_r(NJS_TEXLIST* texlist, const char* filename)
 	if (LoadPRSTextures.Original(texlist, filename))
 	{
 		ReplacePVMTexs(replaced, texlist, &SomeBuffer, replacements, false);
+#if LOGTEX
+		PrintDebug("Loaded PRS %s", replaced.c_str());
+#endif
 		return true;
 	}
 	return false;
@@ -987,6 +1000,9 @@ int __cdecl LoadEventPRSTextures_r(NJS_TEXLIST* texlist, const char* filename, v
 	if (LoadEventPRSTextures.Original(texlist, filename, buffer))
 	{
 		ReplacePVMTexs(replaced, texlist, buffer, replacements, false);
+#if LOGTEX
+		PrintDebug("Loaded PRS %s", replaced.c_str());
+#endif
 		return true;
 	}
 	return false;
