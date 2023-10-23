@@ -472,6 +472,7 @@ const char* FileMap::replaceFile(const char* lpFileName, int& modIndex) const
 
 	// File was not replaced by a mod.
 	// Return the filename as-is.
+	modIndex = 0;
 	return lpFileName;
 }
 
