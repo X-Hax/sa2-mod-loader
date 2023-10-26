@@ -178,10 +178,7 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 		if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
 			if (!_stricmp(data.cFileName, "prs"))
-			{
 				scanPRSFolder_int(srcPath, srcLen, modIdx);
-				continue;
-			}
 			// Recursively scan this directory.
 			const string newSrcPath = srcPath + '\\' + string(data.cFileName);
 			scanFolder_int(newSrcPath, srcLen, modIdx);
