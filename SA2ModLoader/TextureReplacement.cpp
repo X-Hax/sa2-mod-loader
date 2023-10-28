@@ -737,7 +737,7 @@ static bool replace_pak(const string& path, const string& oldpath, ifstream& fil
 
 		transform(pvm_name.begin(), pvm_name.end(), pvm_name.begin(), ::tolower);
 
-		auto infent = pak.find(pvm_name + "\\" + pvm_name + ".inf");
+		infent = pak.find(pvm_name + "\\" + pvm_name + ".inf");
 		if (!infent)
 			return false;
 	}
