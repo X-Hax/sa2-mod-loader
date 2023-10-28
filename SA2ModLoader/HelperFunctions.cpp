@@ -2,6 +2,7 @@
 #include "SA2ModLoader.h"
 #include "DebugText.h"
 #include "TextureReplacement.h"
+#include "FileSystem.h"
 using namespace std;
 
 extern unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
@@ -177,18 +178,18 @@ void ClearMission23EndPositionList(unsigned char character)
 }
 
 extern const char* mainsavepath;
-static const char* GetMainSavePath()
+const char* GetMainSavePath()
 {
 	return mainsavepath;
 }
 
 extern const char* chaosavepath;
-static const char* GetChaoSavePath()
+const char* GetChaoSavePath()
 {
 	return chaosavepath;
 }
 
-static void HookExport(LPCSTR exportName, const void* newdata)
+void HookExport(LPCSTR exportName, const void* newdata)
 {
 	intptr_t hModule = (intptr_t) * *datadllhandle;
 	ULONG ulSize = 0;
@@ -224,7 +225,16 @@ const char* __cdecl GetReplaceablePath(const char* path)
 
 void _ReplaceFile(const char* src, const char* dst)
 {
-	sadx_fileMap.addReplaceFile(src, dst);
+	string orig = sadx_fileMap.normalizePath(src);
+	string mod = sadx_fileMap.normalizePath(dst);
+	sadx_fileMap.addReplaceFile(orig, mod);
+	auto i = orig.find("\\prs\\");
+	if (i != string::npos)
+	{
+		orig.erase(i, 4);
+		ReplaceFileExtension(orig, ".prs");
+		sadx_fileMap.addReplaceFile(orig, mod);
+	}
 }
 
 void SetWindowTitle(const wchar_t* title)
