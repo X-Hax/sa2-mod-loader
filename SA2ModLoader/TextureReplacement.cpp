@@ -979,15 +979,15 @@ int __cdecl LoadPRSTextures_r(NJS_TEXLIST* texlist, const char* filename)
 	unordered_map<string, TexReplaceData> replacements;
 	GetReplaceTextures(pathbuf, replacements);
 
-	if (LoadPRSTextures.Original(texlist, filename))
+	if (LoadPRSTextures.Original(texlist, filename) == 1)
 	{
 		ReplacePVMTexs(replaced, texlist, &SomeBuffer, replacements, false);
 #if LOGTEX
 		PrintDebug("Loaded PRS %s", replaced.c_str());
 #endif
-		return true;
+		return 1;
 	}
-	return false;
+	return -1;
 }
 
 int __cdecl LoadEventPRSTextures_r(NJS_TEXLIST* texlist, const char* filename, void* buffer)
@@ -997,15 +997,15 @@ int __cdecl LoadEventPRSTextures_r(NJS_TEXLIST* texlist, const char* filename, v
 	unordered_map<string, TexReplaceData> replacements;
 	GetReplaceTextures(filename, replacements);
 
-	if (LoadEventPRSTextures.Original(texlist, filename, buffer))
+	if (LoadEventPRSTextures.Original(texlist, filename, buffer) == 1)
 	{
 		ReplacePVMTexs(replaced, texlist, buffer, replacements, false);
 #if LOGTEX
 		PrintDebug("Loaded PRS %s", replaced.c_str());
 #endif
-		return true;
+		return 1;
 	}
-	return false;
+	return -1;
 }
 
 #pragma endregion
