@@ -752,12 +752,6 @@ class _##NAME##_t \
 public: \
 	typedef RETURN_TYPE(*PointerType)ARGS; \
  \
-	~_##NAME##_t() \
-	{ \
-		if (ishooked) \
-			Unhook(); \
-	} \
- \
 	RETURN_TYPE operator()ARGS \
 	{ \
 		return wrapper##ARGNAMES; \
@@ -782,23 +776,15 @@ public: \
 		ishooked = true; \
 	} \
  \
-	void Unhook() \
-	{ \
-		if (!ishooked) \
-			throw new std::exception("Attempted to unhook function that wasn't hooked!"); \
-		WriteData(getptr(), origdata, 5); \
-		ishooked = false; \
-	} \
- \
 	RETURN_TYPE Original##ARGS \
 	{ \
 		if (ishooked) \
 		{ \
 			uint8_t hookdata[5]; \
 			memcpy(hookdata, getptr(), 5); \
-			WriteData(getptr(), origdata, 5); \
+			memcpy(getptr(), origdata, 5); \
 			RETURN_TYPE retval = wrapper##ARGNAMES; \
-			WriteData(getptr(), hookdata, 5); \
+			memcpy(getptr(), hookdata, 5); \
 			return retval; \
 		} \
 		else \
@@ -822,12 +808,6 @@ class _##NAME##_t \
 { \
 public: \
 	typedef void (*PointerType)ARGS; \
- \
-	~_##NAME##_t() \
-	{ \
-		if (ishooked) \
-			Unhook(); \
-	} \
  \
 	void operator()ARGS \
 	{ \
@@ -853,23 +833,15 @@ public: \
 		ishooked = true; \
 	} \
  \
-	void Unhook() \
-	{ \
-		if (!ishooked) \
-			throw new std::exception("Attempted to unhook function that wasn't hooked!"); \
-		WriteData(getptr(), origdata, 5); \
-		ishooked = false; \
-	} \
- \
 	void Original##ARGS \
 	{ \
 		if (ishooked) \
 		{ \
 			uint8_t hookdata[5]; \
 			memcpy(hookdata, getptr(), 5); \
-			WriteData(getptr(), origdata, 5); \
+			memcpy(getptr(), origdata, 5); \
 			wrapper##ARGNAMES; \
-			WriteData(getptr(), hookdata, 5); \
+			memcpy(getptr(), hookdata, 5); \
 		} \
 		else \
 			wrapper##ARGNAMES; \
