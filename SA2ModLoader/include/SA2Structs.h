@@ -53,6 +53,7 @@ struct CameraParam;
 using ObjectFuncPtr = void(__cdecl*)(ObjectMaster*);
 using TaskFuncPtr = void(__cdecl*)(task*);
 using CameraFuncPtr = void(__cdecl*)(CameraInfo*, CameraParam*);
+using ModelFuncPtr = void(__cdecl*)(NJS_OBJECT*);
 
 // All structs should be packed.
 #pragma pack(push, 1)
@@ -1264,7 +1265,9 @@ struct SonicCharObj2
 	char gap35E[8];
 	__int16 SomersaultTime;
 	__int16 SpindashCounter;
-	char field_36A[14];
+	char field_36A[6];
+	int FlameRingPulse;
+	int BounceBraceletPulse;
 	NJS_VECTOR SpineJigglePos;
 	NJS_VECTOR LightDashPos;
 	JiggleInfo* SpineJiggle;
@@ -1688,18 +1691,72 @@ struct EmeManObj2
 struct KnucklesCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[560];
+	char field_1BC[40];
+	NJS_POINT3 righthand_vec0;
+	NJS_POINT3 lefthand_vec0;
+	NJS_POINT3 righthand_vec1;
+	NJS_POINT3 lefthand_vec1;
+	NJS_POINT3 rightfoot_vec0;
+	NJS_POINT3 leftfoot_vec0;
+	NJS_POINT3 head_vec0;
+	NJS_POINT3 head_vec1;
+	NJS_POINT3 head_vec2;
+	char field_23C[48];
+	NJS_POINT3 righthand_pos0;
+	NJS_POINT3 lefthand_pos0;
+	NJS_POINT3 righthand_pos1;
+	NJS_POINT3 lefthand_pos1;
+	NJS_POINT3 rightfoot_pos;
+	NJS_POINT3 leftfoot_pos;
+	NJS_POINT3 head0_pos;
+	NJS_POINT3 head1_pos;
+	NJS_POINT3 bodycenter_pos;
+	char field_2D8[214];
+	__int16 WingAction;
+	int WingAnimID;
+	int WingAnimID2;
+	float WingFloat;
+	char field_3BC[4];
+	NJS_VECTOR SomeVector;
+	NJS_VECTOR TorsoJigglePos;
+	NJS_VECTOR HeadJigglePos;
+	JiggleInfo* HeadJiggle;
+	JiggleInfo* LowerTorsoJiggle;
+	JiggleInfo* UpperTorsoJiggle;
 	NJS_TEXLIST *TextureList;
 	NJS_TEXLIST *EffectTextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
-	char field_400[32];
+	NJS_MOTION *WingMotion;
+	char field_404[12];
+	NJS_MOTION *WingShapeMotion;
+	char field_414[12];
 };
 
 struct EggmanCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[416];
+	char field_1BC[40];
+	NJS_POINT3 righthand_vec0;
+	NJS_POINT3 lefthand_vec0;
+	NJS_POINT3 righthand_vec1;
+	NJS_POINT3 lefthand_vec1;
+	NJS_POINT3 rightfoot_vec0;
+	NJS_POINT3 leftfoot_vec0;
+	NJS_POINT3 head_vec0;
+	NJS_POINT3 head_vec1;
+	NJS_POINT3 bodycenter_vec;
+	char field_23C[48];
+	NJS_POINT3 righthand_pos0;
+	NJS_POINT3 lefthand_pos0;
+	NJS_POINT3 righthand_pos1;
+	NJS_POINT3 lefthand_pos1;
+	NJS_POINT3 rightfoot_pos;
+	NJS_POINT3 leftfoot_pos;
+	NJS_POINT3 head0_pos;
+	NJS_POINT3 head1_pos;
+	NJS_POINT3 bodycenter_pos;
+	char field_2D8[136];
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
@@ -1708,26 +1765,30 @@ struct EggmanCharObj2
 struct MechEggmanCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[124];
-	float field_23C;
-	char field_240[4];
-	float field_244;
-	int field_248;
-	char field_24C[8];
-	float field_254;
-	float field_258;
-	float field_25C;
-	char field_260[120];
-	float field_2D8;
-	float field_2DC;
-	float field_2E0;
-	float field_2E4;
-	float field_2E8;
-	float field_2EC;
-	float field_2F0;
-	float field_2F4;
-	float field_2F8;
-	char field_2FC[96];
+	char field_1BC[40];
+	NJS_POINT3 meleeweapon_vec;
+	char field_1F4[12];
+	NJS_POINT3 rightfoot_vec;
+	NJS_POINT3 leftfoot_vec;
+	NJS_POINT3 mechtorsotop0_vec;
+	char field_224[12];
+	NJS_POINT3 mechtorsobottom_vec;
+	NJS_POINT3 blasterbarrel_vec;
+	NJS_POINT3 shot_vec;
+	NJS_POINT3 lockonlaser_vec;
+	NJS_POINT3 mechtorsotop1_vec;
+	NJS_POINT3 meleeweapon_pos;
+	char field_278[36];
+	NJS_POINT3 rightfoot_pos;
+	NJS_POINT3 leftfoot_pos;
+	NJS_POINT3 mechtorsotop0_pos;
+	char field_2C0[12];
+	NJS_POINT3 mechtorsobottom_pos;
+	NJS_POINT3 blasterbarrel_pos;
+	NJS_POINT3 shot_pos;
+	NJS_POINT3 lockonlaser_pos;
+	NJS_POINT3 mechtorsotop1_pos;
+	char field_308[84];
 	char field_35C;
 	char field_35D;
 	char field_35E;
@@ -1741,20 +1802,27 @@ struct MechEggmanCharObj2
 	__int16 field_36C;
 	__int16 field_36E;
 	char field_370[4];
-	float field_374;
-	char field_378[8];
+	float rockettimer;
+	float field_378;
+	char field_37C[4];
 	int field_380;
 	char field_384[12];
 	float field_390;
 	float field_394;
 	float field_398;
 	int field_39C;
-	char field_3A0[132];
-	int field_424;
-	int field_428;
-	int field_42C;
-	int field_430;
-	int field_434;
+	NJS_POINT3 rockets_pos;
+	char field_3AC[60];
+	NJS_POINT3 rockets_vec;
+	NJS_POINT3 leftcalf_vec;
+	NJS_POINT3 rightcalf_vec;
+	NJS_POINT3 leftcalf_pos;
+	NJS_POINT3 rightcalf_pos;
+	Angle BlasterAimAngle;
+	Angle MechTorsoTopAimAngle;
+	int LaserBlasterPulse;
+	int CannonUpgradeRecoil;
+	int BlasterBarrelRecoil;
 	float field_438;
 	float field_43C;
 	float field_440;
@@ -1797,7 +1865,29 @@ struct TailsCharObj2
 struct SuperSonicCharObj2
 {
 	CharObj2Base base;
-	char field_1BC[432];
+	char field_1BC[40];
+	NJS_POINT3 righthand_vec0;
+	NJS_POINT3 lefthand_vec0;
+	NJS_POINT3 righthand_vec1;
+	NJS_POINT3 lefthand_vec1;
+	NJS_POINT3 rightfoot_vec0;
+	NJS_POINT3 leftfoot_vec0;
+	NJS_POINT3 head_vec0;
+	NJS_POINT3 head_vec1;
+	NJS_POINT3 bodycenter_vec;
+	char field_23C[48];
+	NJS_POINT3 righthand_pos0;
+	NJS_POINT3 lefthand_pos0;
+	NJS_POINT3 righthand_pos1;
+	NJS_POINT3 lefthand_pos1;
+	NJS_POINT3 rightfoot_pos;
+	NJS_POINT3 leftfoot_pos;
+	NJS_POINT3 head0_pos;
+	NJS_POINT3 head1_pos;
+	NJS_POINT3 bodycenter_pos;
+	char field_2D8[136];
+	NJS_VECTOR SpineJigglePos;
+	JiggleInfo *SpineJiggle;
 	NJS_TEXLIST *TextureList;
 	ModelIndex *ModelList;
 	AnimationIndex *MotionList;
@@ -2250,20 +2340,28 @@ struct TextureAnimData
 	int field_14[4];
 };
 
-struct ModelTextureAnimation1
+struct ModelTextureAnimationArray1
 {
 	NJS_OBJECT* Model;
 	TextureAnimData* texanim;
 	int field_8;
 };
 
-struct ModelTextureAnimation2
+struct ModelTextureAnimationArray2
 {
 	int Type;
 	NJS_OBJECT* Model;
 	TextureAnimData* texanim;
 	int field_C;
 	int field_10;
+};
+
+struct ModelTextureAnimationArray3
+{
+	NJS_OBJECT* Model;
+	TextureAnimData* texanim;
+	int field_8;
+	int field_C;
 };
 
 struct ControlShadowCharObj2
@@ -2764,6 +2862,24 @@ struct CharaObjectData
 	float anonymous_13;
 };
 
+struct VersusIntroData
+{
+	int IntroAnimID;
+	NJS_MOTION* IntroCamera;
+	float field_8;
+	int NeutralIntroVoice;
+	int WinningIntroVoice;
+	int LosingIntroVoice;
+};
+
+struct IdleVoiceArray
+{
+	char Character;
+	char Level;
+	__int16 Voice1;
+	__int16 Voice2;
+};
+
 struct KartSpecialInfo
 {
 	int ID;
@@ -2831,6 +2947,15 @@ struct KartPhysics
 	float DriftSpeedThreshold;
 	float Unk2;
 	float TopSpeed;
+};
+
+struct KartDownloadData
+{
+	KartPhysics physics;
+	NJS_VECTOR field_28;
+	NJS_VECTOR field_34;
+	int field_40;
+	char MusicTrack;
 };
 
 struct ChaoMotionTableEntry
