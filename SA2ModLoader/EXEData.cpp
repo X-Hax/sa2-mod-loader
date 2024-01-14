@@ -361,7 +361,7 @@ static void ProcessModelINI(const IniGroup* group, const wstring& mod_dir)
 	else
 	{
 		NJS_OBJECT* object = (NJS_OBJECT*)(strtol((group->getString("address")).c_str(), nullptr, 16) + 0x400000);
-		if (object->chunkmodel != nullptr)
+		if (object->chunkmodel != nullptr && newobject -> chunkmodel != nullptr)
 		{
 			*object->chunkmodel = *newobject->chunkmodel;
 		}
