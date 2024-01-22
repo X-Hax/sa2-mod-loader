@@ -3,6 +3,7 @@
 #include "DebugText.h"
 #include "TextureReplacement.h"
 #include "FileSystem.h"
+#include "InterpolationFixes.h"
 using namespace std;
 
 extern unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
@@ -330,6 +331,16 @@ uint16_t RegisterVoice(const char* fileJP, const char* fileEN)
 	return voicenum++;
 }
 
+void PushInterpolationFix()
+{
+	interpolation::push();
+}
+
+void PopInterpolationFix()
+{
+	interpolation::pop();
+}
+
 extern LoaderSettings loaderSettings;
 
 HelperFunctions helperFunctions = {
@@ -357,4 +368,6 @@ HelperFunctions helperFunctions = {
 	&modList,
 	&RegisterVoice,
 	&ReplaceTexture,
+	&PushInterpolationFix,
+	&PopInterpolationFix,
 };

@@ -1,8 +1,17 @@
 #include "stdafx.h"
 #include <cmath> 
+#include "FunctionHook.h"
+#include "InterpolationFixes.h"
 
 // Euler/Quat conversions: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
 // Quat lerping: https://stackoverflow.com/a/46187052
+
+FunctionHook<void, const NJS_MKEY_A*, Uint32, Float, Angle3*> LinearMotionA_t(0x42DF60);
+
+namespace interpolation
+{
+	bool enabled = false;
+}
 
 void NinjaAngleToQuaternion(NJS_QUATERNION* q, Rotation* ang)
 {
@@ -81,7 +90,7 @@ void nlerpQuaternion(NJS_QUATERNION* q, NJS_QUATERNION* a, NJS_QUATERNION* b, Fl
 	unitQuaternion(q);
 }
 
-const int sub_42C2C0Ptr = 0x42C2C0;
+const intptr_t sub_42C2C0Ptr = 0x42C2C0;
 void _nuGetMotionLinearKeys(void* a2, int a1, int a3, float a4, void** a5, void** a6, float* a7) {
 	__asm {
 		mov esi, a2
@@ -98,7 +107,12 @@ void _nuGetMotionLinearKeys(void* a2, int a1, int a3, float a4, void** a5, void*
 
 void __cdecl LinearMotionA_r(const NJS_MKEY_A* key, Uint32 nbkeys, Float frame, Angle3* dst)
 {
-	Float			rate1;
+	if (!interpolation::enabled)
+	{
+		return LinearMotionA_t.Original(key, nbkeys, frame, dst);
+	}
+
+	Float rate1;
 	NJS_MKEY_A* key1;
 	NJS_MKEY_A* key2;
 
@@ -121,7 +135,17 @@ void __cdecl LinearMotionA_r(const NJS_MKEY_A* key, Uint32 nbkeys, Float frame, 
 	QuaternionToNinjaAngle(dst, &r);
 }
 
-void init_interpolationAnimFixes()
+void interpolation::push()
 {
-	WriteJump((void*)0x42DF60, LinearMotionA_r);
+	interpolation::enabled = true;
+}
+
+void interpolation::pop()
+{
+	interpolation::enabled = false;
+}
+
+void interpolation::init()
+{
+	LinearMotionA_t.Hook(LinearMotionA_r);
 }

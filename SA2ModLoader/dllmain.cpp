@@ -27,7 +27,6 @@
 #include "CrashDump.h"
 #include "window.h"
 #include "direct3d.h"
-#include "Interpolation.h"
 #include "TextureReplacement.h"
 #include <shlobj.h>
 #include <TextConv.hpp>
@@ -1129,8 +1128,6 @@ void __cdecl InitMods(void)
 
 	if (loaderSettings.EnableBass)
 		Init_AudioBassHook();
-
-	//init_interpolationAnimFixes(); //disabled for now since it is not fully functional 
 
 	if (loaderSettings.DebugCrashLog)
 		initCrashDump();
