@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 #include "UsercallFunctionHandler.h"
-#include "util.h"
 using std::string;
 using std::vector;
 

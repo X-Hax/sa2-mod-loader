@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="CrashDump.h" />
     <ClInclude Include="DDS.h" />
     <ClInclude Include="DebugText.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="EXEData.h" />
     <ClInclude Include="include\FunctionHook.h" />
     <ClInclude Include="Interpolation.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="FileReplacement.h" />
@@ -119,10 +121,10 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="testspawn.h" />
     <ClInclude Include="TextureReplacement.h" />
-    <ClInclude Include="util.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="CrashDump.cpp" />
     <ClCompile Include="direct3d.cpp" />
     <ClCompile Include="DLLData.cpp" />
