@@ -32,6 +32,7 @@
 #include <TextConv.hpp>
 #include "json.hpp"
 #include "config.h"
+#include "InterpolationFixes.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -1110,6 +1111,8 @@ void __cdecl InitMods(void)
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC\\event");
 	
 	ApplyPatches();
+	//init interpol fix for helperfunctions
+	interpolation::init();
 
 	// Map of files to replace.
 	// This is done with a second map instead of sadx_fileMap directly
