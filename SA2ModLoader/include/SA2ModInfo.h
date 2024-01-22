@@ -71,6 +71,7 @@ struct LoaderSettings
 	int TestSpawnRotation;
 	int TestSpawnEvent;
 	int TestSpawnSaveID;
+	bool EnableBass;
 };
 
 struct ModDependency

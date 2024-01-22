@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include "UsercallFunctionHandler.h"
+#include "util.h"
 using std::string;
 using std::vector;
 
@@ -105,7 +106,55 @@ void* ReleaseSoundEffects_r() {
 	return sub_437E90();
 }
 
-void Init_AudioBassHook() {
+//Following order for the BASS dlls is REALLY important, NEVER touch it or BASS will FAIL to load.
+const std::wstring bassDLLs[] =
+{
+	L"bass.dll",
+	L"libatrac9.dll",
+	L"libcelt-0061.dll",
+	L"libcelt-0110.dll",
+	L"libg719_decode.dll",
+	L"libmpg123-0.dll",
+	L"libspeex-1.dll",
+	L"libvorbis.dll",
+	L"avutil-vgmstream-57.dll",
+	L"avcodec-vgmstream-59.dll",
+	L"avformat-vgmstream-59.dll",
+	L"jansson.dll",
+	L"swresample-vgmstream-4.dll",
+	L"bass_vgmstream.dll",
+};
+
+extern std::wstring extLibPath;
+void Init_AudioBassHook() 
+{
+	std::wstring bassFolder = extLibPath + L"BASS\\";
+
+	// If the file doesn't exist, assume it's in the game folder like with the old Manager
+	if (!FileExists(bassFolder + L"bass.dll"))
+		bassFolder = L"";
+
+	bool bassDLL = false;
+
+	for (uint8_t i = 0; i < LengthOfArray(bassDLLs); i++)
+	{
+		std::wstring fullPath = bassFolder + bassDLLs[i];
+		bassDLL = LoadLibrary(fullPath.c_str());
+	}
+
+	if (bassDLL)
+	{
+		PrintDebug("Loaded Bass DLLs dependencies\n");
+	}
+	else
+	{
+		PrintDebug("Failed to load bass DLL dependencies\n");
+		MessageBox(nullptr, L"Error loading BASS.\n\n"
+			L"Make sure the Mod Loader is installed properly.",
+			L"BASS Load Error", MB_OK | MB_ICONERROR);
+		return;
+	}
+
 	WriteCall((void*)0x435511, ReleaseSoundEffects_r);
 	BassInit_r();
 	GenerateUsercallHook(PlayVoice_r, rEAX, (intptr_t)PlayVoicePtr, rEDX, stack4);

@@ -29,6 +29,8 @@
 #include "direct3d.h"
 #include "Interpolation.h"
 #include "TextureReplacement.h"
+#include <shlobj.h>
+#include <TextConv.hpp>
 
 using namespace std;
 
@@ -359,6 +361,26 @@ char *ShiftJISToUTF8(char *shiftjis)
 	WideCharToMultiByte(CP_UTF8, 0, wcs, -1, utf8, cbMbs, NULL, NULL);
 	delete[] wcs;
 	return utf8;
+}
+
+//used to get external lib location and extra config
+std::wstring appPath;
+std::wstring extLibPath;
+
+void SetAppPathConfig(std::wstring gamepath)
+{
+	appPath = gamepath + L"\\SAManager\\"; // Account for portable
+	extLibPath = appPath + L"extlib\\";
+	WCHAR appDataLocalPath[MAX_PATH];
+	if (!Exists(appPath))
+	{
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalPath)))
+		{
+			appPath = appDataLocalPath;
+			appPath += L"\\SAManager\\";
+			extLibPath = appPath + L"extlib\\";
+		}
+	}
 }
 
 bool dbgConsole, dbgFile, dbgScreen;
@@ -1014,11 +1036,24 @@ void __cdecl InitMods(void)
 	}
 	unique_ptr<IniFile> ini(new IniFile(f_ini));
 	fclose(f_ini);
-	char pathbuf[MAX_PATH];
-	GetModuleFileNameA(NULL, pathbuf, MAX_PATH);
-	string exefilename = pathbuf;
-	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
-	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
+	// Get sonic.exe's path and filename.
+	wchar_t pathbuf[MAX_PATH];
+	GetModuleFileName(nullptr, pathbuf, MAX_PATH);
+	wstring exepath(pathbuf);
+	wstring exefilename;
+	string::size_type slash_pos = exepath.find_last_of(L"/\\");
+	if (slash_pos != string::npos)
+	{
+		exefilename = exepath.substr(slash_pos + 1);
+		if (slash_pos > 0)
+			exepath = exepath.substr(0, slash_pos);
+	}
+
+	// Convert the EXE filename to lowercase.
+	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::towlower);
+	// Get path for Mod Manager settings and libraries
+	SetAppPathConfig(exepath);
+
 	const IniGroup *setgrp = ini->getGroup("");
 
 	loaderSettings.DebugConsole = setgrp->getBool("DebugConsole");
@@ -1051,6 +1086,7 @@ void __cdecl InitMods(void)
 	loaderSettings.TestSpawnRotation = setgrp->getInt("TestSpawnRotation");
 	loaderSettings.TestSpawnEvent = setgrp->getInt("TestSpawnEvent");
 	loaderSettings.TestSpawnSaveID = setgrp->getInt("TestSpawnSaveID");
+	loaderSettings.EnableBass = setgrp->getBool("EnableBass", true);
 
 	direct3d::init();
 
@@ -1129,7 +1165,9 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\MPB", 0);
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
-	Init_AudioBassHook();
+	if (loaderSettings.EnableBass)
+		Init_AudioBassHook();
+
 	//init_interpolationAnimFixes(); //disabled for now since it is not fully functional 
 
 	if (loaderSettings.DebugCrashLog)
@@ -1253,14 +1291,17 @@ void __cdecl InitMods(void)
 		// Check if a custom EXE is required.
 		if (modinfo->hasKeyNonEmpty("EXEFile"))
 		{
-			string modexe = modinfo->getString("EXEFile");
-			transform(modexe.begin(), modexe.end(), modexe.begin(), ::tolower);
+			wstring modexe = modinfo->getWString("EXEFile");
+			transform(modexe.begin(), modexe.end(), modexe.begin(), ::towlower);
 
 			// Are we using the correct EXE?
-			if (modexe.compare(exefilename) != 0)
+			if (modexe != exefilename)
 			{
-				const char *msg = ("Mod \"" + modinfo->getString("Name") + "\" should be run from \"" + modexe + "\", but you are running \"" + exefilename + "\".\n\nContinue anyway?").c_str();
-				if (MessageBoxA(NULL, msg, "SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
+				wchar_t msg[4096];
+				swprintf(msg, LengthOfArray(msg),
+					L"Mod \"%s\" should be run from \"%s\", but you are running \"%s\".\n\n"
+					L"Continue anyway?", mod_name.c_str(), modexe.c_str(), exefilename.c_str());
+				if (MessageBox(nullptr, msg, L"SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
 					ExitProcess(1);
 			}
 		}
@@ -1269,8 +1310,8 @@ void __cdecl InitMods(void)
 		if (modinfo->hasKeyNonEmpty("DLLFile"))
 		{
 			// Prepend the mod directory.
-			string dll_filename = mod_dirA + '\\' + modinfo->getString("DLLFile");
-			HMODULE module = LoadLibraryA(dll_filename.c_str());
+			wstring dll_filename = mod_dir + L'\\' + modinfo->getWString("DLLFile");
+			HMODULE module = LoadLibrary(dll_filename.c_str());
 
 			if (module == nullptr)
 			{
@@ -1278,6 +1319,15 @@ void __cdecl InitMods(void)
 				LPSTR buffer;
 				size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 					NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buffer, 0, NULL);
+
+				bool allocated = (size != 0);
+
+				if (!allocated)
+				{
+					static const char fmterr[] = "Unable to format error message.";
+					buffer = const_cast<LPSTR>(fmterr);
+					size = LengthOfArray(fmterr) - 1;
+				}
 
 				string message(buffer, size);
 				LocalFree(buffer);
