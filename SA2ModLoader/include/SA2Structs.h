@@ -1692,15 +1692,13 @@ struct KnucklesCharObj2
 {
 	CharObj2Base base;
 	char field_1BC[40];
-	NJS_POINT3 righthand_vec0;
-	NJS_POINT3 lefthand_vec0;
-	NJS_POINT3 righthand_vec1;
-	NJS_POINT3 lefthand_vec1;
-	NJS_POINT3 rightfoot_vec0;
-	NJS_POINT3 leftfoot_vec0;
+	NJS_POINT3 righthand_vec;
+	NJS_POINT3 lefthand_vec;
+	NJS_POINT3 rightfoot_vec;
+	NJS_POINT3 leftfoot_vec;
 	NJS_POINT3 head_vec0;
 	NJS_POINT3 head_vec1;
-	NJS_POINT3 head_vec2;
+	NJS_POINT3 bodycenter_vec;
 	char field_23C[48];
 	NJS_POINT3 righthand_pos0;
 	NJS_POINT3 lefthand_pos0;
@@ -1737,12 +1735,10 @@ struct EggmanCharObj2
 {
 	CharObj2Base base;
 	char field_1BC[40];
-	NJS_POINT3 righthand_vec0;
-	NJS_POINT3 lefthand_vec0;
-	NJS_POINT3 righthand_vec1;
-	NJS_POINT3 lefthand_vec1;
-	NJS_POINT3 rightfoot_vec0;
-	NJS_POINT3 leftfoot_vec0;
+	NJS_POINT3 righthand_vec;
+	NJS_POINT3 lefthand_vec;
+	NJS_POINT3 rightfoot_vec;
+	NJS_POINT3 leftfoot_vec;
 	NJS_POINT3 head_vec0;
 	NJS_POINT3 head_vec1;
 	NJS_POINT3 bodycenter_vec;
@@ -1866,12 +1862,10 @@ struct SuperSonicCharObj2
 {
 	CharObj2Base base;
 	char field_1BC[40];
-	NJS_POINT3 righthand_vec0;
-	NJS_POINT3 lefthand_vec0;
-	NJS_POINT3 righthand_vec1;
-	NJS_POINT3 lefthand_vec1;
-	NJS_POINT3 rightfoot_vec0;
-	NJS_POINT3 leftfoot_vec0;
+	NJS_POINT3 righthand_vec;
+	NJS_POINT3 lefthand_vec;
+	NJS_POINT3 rightfoot_vec;
+	NJS_POINT3 leftfoot_vec;
 	NJS_POINT3 head_vec0;
 	NJS_POINT3 head_vec1;
 	NJS_POINT3 bodycenter_vec;
