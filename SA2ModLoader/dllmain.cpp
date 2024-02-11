@@ -1110,7 +1110,7 @@ void __cdecl InitMods(void)
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC");
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC\\event");
 	
-	ApplyPatches();
+	ApplyPatches(&loaderSettings);
 	//init interpol fix for helperfunctions
 	interpolation::init();
 

@@ -161,22 +161,29 @@ void ParticleGXEnd()
 }
 #pragma endregion
 
-void ApplyPatches()
+void ApplyPatches(LoaderSettings* loaderSettings)
 {
 	// Expand chunk model vertex buffer from 8192 to 32768 verts
-	*(void**)0x25EFE48 = calloc(1, 0x100004);
+	if (loaderSettings->ExtendVertexBuffer)
+		*(void**)0x25EFE48 = calloc(1, 0x100004);
 
 	// Fix env map condition bug in chDrawCnk
-	WriteData<6>((char*)0x0056DE7D, (char)0x90);
+	if (loaderSettings->EnvMapFix)
+		WriteData<6>((char*)0x0056DE7D, (char)0x90);
 
-	// Fix the screen fade
-	WriteJump((void*)ScreenFadePtr, ScreenFade_r);
+	// Fix screen flickering during victory pose. 
+	if (loaderSettings->ScreenFadeFix)
+		WriteJump((void*)ScreenFadePtr, ScreenFade_r);
 
 	// Fix City Escape car bug on intel iGPUs caused by NaN float position
-	GenerateUsercallHook(CalcCarPath_r, rEAX, 0x5DE0B0, rECX, rEDX, rEAX, stack4, stack4, stack4, stack4);
+	if (loaderSettings->CECarFix)
+		GenerateUsercallHook(CalcCarPath_r, rEAX, 0x5DE0B0, rECX, rEDX, rEAX, stack4, stack4, stack4, stack4);
 	
 	// Fix particle draw calls missing normals
-	WriteJump((void*)0x4915E9, ParticleGXEnd);
-	WriteCall((void*)0x491B90, ParticleGXEnd);
-	WriteCall((void*)0x4917EE, ParticleGXEnd);
+	if (loaderSettings->ParticlesFix)
+	{
+		WriteJump((void*)0x4915E9, ParticleGXEnd);
+		WriteCall((void*)0x491B90, ParticleGXEnd);
+		WriteCall((void*)0x4917EE, ParticleGXEnd);
+	}
 }

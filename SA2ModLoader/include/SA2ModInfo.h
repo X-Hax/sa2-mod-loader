@@ -72,6 +72,11 @@ struct LoaderSettings
 	int TestSpawnEvent;
 	int TestSpawnSaveID;
 	bool EnableBass;
+	bool ExtendVertexBuffer;
+	bool EnvMapFix;
+	bool ScreenFadeFix;
+	bool CECarFix;
+	bool ParticlesFix;
 };
 
 struct ModDependency

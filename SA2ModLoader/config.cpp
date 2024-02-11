@@ -81,7 +81,14 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 
 		// Patches settings
 		json json_patches = json_config["Patches"];
-		loaderSettings->FramerateLimiter = json_sound.value("FramerateLimiter", true);
+		loaderSettings->FramerateLimiter = json_patches.value("FramerateLimiter", true);
+		loaderSettings->DisableExitPrompt = json_patches.value("DisableExitPrompt", true);
+		loaderSettings->SyncLoad = json_patches.value("SyncLoad", true);
+		loaderSettings->ExtendVertexBuffer = json_patches.value("ExtendVertexBuffer", true);
+		loaderSettings->EnvMapFix = json_patches.value("EnvMapFix", true);
+		loaderSettings->ScreenFadeFix = json_patches.value("ScreenFadeFix", true);
+		loaderSettings->CECarFix = json_patches.value("CECarFix", true);
+		loaderSettings->ParticlesFix = json_patches.value("ParticlesFix", true);
 
 		// Debug settings
 		json json_debug = json_config["DebugSettings"];

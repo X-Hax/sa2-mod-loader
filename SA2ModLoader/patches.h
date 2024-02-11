@@ -1,3 +1,3 @@
 #pragma once
 
-void ApplyPatches();
+void ApplyPatches(LoaderSettings* loaderSettings);
