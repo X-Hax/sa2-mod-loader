@@ -90,7 +90,7 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		loaderSettings->DebugFile = json_debug.value("EnableDebugFile", false);
 		loaderSettings->DebugCrashLog = json_debug.value("EnableDebugCrashLog", true);
 
-		// Testspawn settings (These don't really belong in testspawn imo - PkR)
+		// Testspawn settings 
 		json json_testspawn = json_config["TestSpawn"];
 		loaderSettings->TextLanguage = json_testspawn.value("GameTextLanguage", 1);
 		loaderSettings->VoiceLanguage = json_testspawn.value("GameVoiceLanguage", 1);
