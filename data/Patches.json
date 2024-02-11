@@ -1,0 +1,44 @@
+{
+  "Patches": [
+    {
+      "Name": "FramerateLimiter",
+      "Author": "SF94 and Kell",
+      "Category": "Graphics"
+    },
+    {
+      "Name": "DisableExitPrompt",
+      "Author": "Kell",
+      "Category": "System"
+    },
+    {
+      "Name": "SyncLoad",
+      "Author": "MainMemory",
+      "Category": "System"
+    },
+    {
+      "Name": "ExtendVertexBuffer",
+      "Author": "MainMemory",
+      "Category": "System"
+    },
+    {
+      "Name": "EnvMapFix",
+      "Author": "Kell",
+      "Category": "Graphics"
+    },
+    {
+      "Name": "ScreenFadeFix",
+      "Author": "MainMemory",
+      "Category": "Graphics"
+    },
+    {
+      "Name": "CECarFix",
+      "Author": "Kell",
+      "Category": "Graphics"
+    },
+    {
+      "Name": "ParticlesFix",
+      "Author": "Kell",
+      "Category": "Graphics"
+    }
+  ]
+}
