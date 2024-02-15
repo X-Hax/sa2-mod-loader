@@ -161,6 +161,11 @@ void ParticleGXEnd()
 }
 #pragma endregion
 
+void SyncLoad(void (*a1)(void*), void* a2)
+{
+	a1(a2);
+}
+
 void ApplyPatches(LoaderSettings* loaderSettings)
 {
 	// Expand chunk model vertex buffer from 8192 to 32768 verts
@@ -170,6 +175,12 @@ void ApplyPatches(LoaderSettings* loaderSettings)
 	// Fix env map condition bug in chDrawCnk
 	if (loaderSettings->EnvMapFix)
 		WriteData<6>((char*)0x0056DE7D, (char)0x90);
+
+	if (loaderSettings->SyncLoad)
+	{
+		WriteJump((void*)0x428470, SyncLoad);
+		WriteJump((void*)0x428740, SyncLoad);
+	}
 
 	// Fix screen flickering during victory pose. 
 	if (loaderSettings->ScreenFadeFix)

@@ -71,7 +71,6 @@ struct LoaderSettings
 	int TestSpawnRotation;
 	int TestSpawnEvent;
 	int TestSpawnSaveID;
-	bool EnableBass;
 	bool ExtendVertexBuffer;
 	bool EnvMapFix;
 	bool ScreenFadeFix;

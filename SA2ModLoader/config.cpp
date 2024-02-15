@@ -75,9 +75,6 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		loaderSettings->ResizableWindow = json_graphics.value("EnableResizableWindow", true);
 		loaderSettings->MaintainAspectRatio = json_graphics.value("MaintainAspectRatio", false);
 
-		// Sound settings
-		json json_sound = json_config["Sound"];
-		loaderSettings->EnableBass = json_sound.value("EnableBassMusic", true);
 
 		// Patches settings
 		json json_patches = json_config["Patches"];
@@ -155,7 +152,6 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		loaderSettings->TestSpawnRotation = setgrp->getInt("TestSpawnRotation");
 		loaderSettings->TestSpawnEvent = setgrp->getInt("TestSpawnEvent");
 		loaderSettings->TestSpawnSaveID = setgrp->getInt("TestSpawnSaveID");
-		loaderSettings->EnableBass = setgrp->getBool("EnableBass", true);
 
 		for (unsigned int i = 1; i <= 999; i++)
 		{

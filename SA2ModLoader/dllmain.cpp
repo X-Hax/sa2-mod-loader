@@ -984,10 +984,6 @@ extern "C"
 	}
 }
 
-void SyncLoad(void (*a1)(void*), void* a2)
-{
-	a1(a2);
-}
 
 static vector<string>& split(const string& s, char delim, vector<string>& elems)
 {
@@ -1057,12 +1053,6 @@ void __cdecl InitMods(void)
 		direct3d::enable_frame_limiter();
 	}
 
-	if (loaderSettings.SyncLoad)
-	{
-		WriteJump((void*)0x428470, SyncLoad);
-		WriteJump((void*)0x428740, SyncLoad);
-	}
-
 	if (loaderSettings.DebugConsole)
 	{
 		AllocConsole();
@@ -1129,8 +1119,7 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\MPB", 0);
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
-	if (loaderSettings.EnableBass)
-		Init_AudioBassHook();
+	Init_AudioBassHook();
 
 	if (loaderSettings.DebugCrashLog)
 		initCrashDump();
