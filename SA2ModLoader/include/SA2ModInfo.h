@@ -76,6 +76,7 @@ struct LoaderSettings
 	bool ScreenFadeFix;
 	bool CECarFix;
 	bool ParticlesFix;
+	bool KeepAspectWhenResizing;
 };
 
 struct ModDependency
