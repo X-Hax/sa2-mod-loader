@@ -75,6 +75,7 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		loaderSettings->ResizableWindow = json_graphics.value("EnableResizableWindow", true);
 		loaderSettings->MaintainAspectRatio = json_graphics.value("MaintainAspectRatio", false);	
 		loaderSettings->KeepAspectWhenResizing = json_graphics.value("KeepAspectWhenResizing", false);
+		loaderSettings->SkipIntro = json_graphics.value("SkipIntro", false);
 
 
 		// Patches settings
