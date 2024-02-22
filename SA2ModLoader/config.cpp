@@ -63,9 +63,10 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 
 		// Graphics settings
 		json json_graphics = json_config["Graphics"];
+
+		const uint8_t BFOWTF = json_graphics.value("ScreenMode", 1);
+		loaderSettings->ScreenMode = BFOWTF;
 		loaderSettings->ScreenNum = json_graphics.value("SelectedScreen", 0);
-		loaderSettings->BorderlessWindow = json_graphics.value("BorderlessWindow", false);
-		loaderSettings->FullScreen = json_graphics.value("FullScreen", true);
 		loaderSettings->HorizontalResolution = json_graphics.value("HorizontalResolution", 640);
 		loaderSettings->VerticalResolution = json_graphics.value("VerticalResolution", 480);
 		loaderSettings->PauseWhenInactive = json_graphics.value("EnablePauseOnInactive", true);

@@ -77,6 +77,7 @@ struct LoaderSettings
 	bool CECarFix;
 	bool ParticlesFix;
 	bool KeepAspectWhenResizing;
+	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window); 
 };
 
 struct ModDependency

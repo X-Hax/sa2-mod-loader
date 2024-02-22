@@ -310,16 +310,28 @@ static BOOL CALLBACK GetMonitorSize(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lp
 	return TRUE;
 }
 
+enum screenmodes { window_mode, borderless_mode, custom_mode, fullscreen_mode };
+
 void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 {
-	if (IS_FULLSCREEN)
+	const uint8_t screenMode = settings.ScreenMode;
+
+	if (screenMode >= fullscreen_mode)
 	{
+		IS_FULLSCREEN = TRUE;
 		return;
 	}
 
-	customWindowSize = settings.CustomWindowSize;
+	if (screenMode >= screenmodes::borderless_mode)
+	{
+		windowedFullscreen = true;
+		windowResize = false;
+
+		if (screenMode == screenmodes::custom_mode)
+			customWindowSize = true;
+	}
+
 	windowResize = settings.ResizableWindow && !customWindowSize;
-	windowedFullscreen = settings.BorderlessWindow;
 	maintainAspectRatio = settings.MaintainAspectRatio;
 	windowWrapper = maintainAspectRatio || (windowedFullscreen && customWindowSize);
 	screenNum = settings.ScreenNum;
