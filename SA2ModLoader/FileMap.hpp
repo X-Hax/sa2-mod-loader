@@ -48,6 +48,12 @@ public:
 	void addReplaceFile(const std::string& origFile, const std::string& modFile);
 
 	/**
+	 * Remove a file replacement.
+	 * @param file Filename.
+	 */
+	void FileMap::unreplaceFile(const std::string& file);
+
+	/**
 	* Swap two files.
 	* @param fileA First filename.
 	* @param fileB Second filename.

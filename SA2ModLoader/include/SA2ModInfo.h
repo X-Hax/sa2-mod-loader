@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 11;
+static const int ModLoaderVer = 12;
 
 struct PatchInfo
 {
@@ -258,6 +258,10 @@ struct HelperFunctions
 	// Replaces an individual texture from a GVM file with an image file.
 	// Requires version >= 11.
 	void(__cdecl* ReplaceTexture)(const char* gvm_name, const char* tex_name, const char* file_path, uint32_t gbix, uint32_t width, uint32_t height);
+
+	// Removes any file replacements for the specified file.
+	// Requires version >= 12.
+	void(__cdecl* UnreplaceFile)(const char* file);
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);

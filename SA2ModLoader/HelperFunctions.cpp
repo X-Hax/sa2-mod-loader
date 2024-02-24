@@ -330,6 +330,11 @@ uint16_t RegisterVoice(const char* fileJP, const char* fileEN)
 	return voicenum++;
 }
 
+void UnreplaceFile(const char* file)
+{
+	sadx_fileMap.unreplaceFile(file);
+}
+
 extern LoaderSettings loaderSettings;
 
 HelperFunctions helperFunctions = {
@@ -357,4 +362,5 @@ HelperFunctions helperFunctions = {
 	&modList,
 	&RegisterVoice,
 	&ReplaceTexture,
+	&UnreplaceFile,
 };
