@@ -3,6 +3,8 @@
 #include "DebugText.h"
 #include "TextureReplacement.h"
 #include "FileSystem.h"
+#include "InterpolationFixes.h"
+
 using namespace std;
 
 extern unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
@@ -335,6 +337,16 @@ void UnreplaceFile(const char* file)
 	sadx_fileMap.unreplaceFile(file);
 }
 
+void PushInterpolationFix()
+{
+	interpolation::push();
+}
+
+void PopInterpolationFix()
+{
+	interpolation::pop();
+}
+
 extern LoaderSettings loaderSettings;
 
 HelperFunctions helperFunctions = {
@@ -363,4 +375,6 @@ HelperFunctions helperFunctions = {
 	&RegisterVoice,
 	&ReplaceTexture,
 	&UnreplaceFile,
+	&PushInterpolationFix,
+	&PopInterpolationFix,
 };
