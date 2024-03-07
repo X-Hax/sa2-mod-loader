@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29230.47
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SA2ModLoader", "SA2ModLoader\SA2ModLoader.vcxproj", "{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManagerCommon", "mod-loader-common\ModManagerCommon\ModManagerCommon.csproj", "{4A480502-79B5-4E1E-8D67-16C514BB13CD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{16CD3F5E-52B1-4EAD-AF19-2C533CE508EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpgradeTool", "UpgradeTool\UpgradeTool.csproj", "{BA2F1C16-4790-4663-80FB-1C87EA8A021D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,11 +42,13 @@ Global
 		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|x86.ActiveCfg = Release|Win32
 		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|x86.Build.0 = Release|Win32
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Debug|Any CPU.Build.0 = Debug|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Debug|x86.ActiveCfg = Debug|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Debug|x86.Build.0 = Debug|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Release|Any CPU.ActiveCfg = Release|x86
+		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Release|Any CPU.Build.0 = Release|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Release|Mixed Platforms.Build.0 = Release|x86
 		{8B980BC2-ED9C-4BBD-930F-28171EC82BA9}.Release|x86.ActiveCfg = Release|x86
@@ -81,6 +85,18 @@ Global
 		{4A480502-79B5-4E1E-8D67-16C514BB13CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4A480502-79B5-4E1E-8D67-16C514BB13CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{4A480502-79B5-4E1E-8D67-16C514BB13CD}.Release|x86.Build.0 = Release|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Debug|x86.Build.0 = Debug|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Release|x86.ActiveCfg = Release|Any CPU
+		{BA2F1C16-4790-4663-80FB-1C87EA8A021D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
