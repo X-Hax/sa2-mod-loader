@@ -3879,4 +3879,11 @@ struct PAKTexInf
 	Uint32 fSurfaceFlags;
 };
 
+struct CreditsEntry
+{
+    int Type;
+    float A, R, G, B;
+    const char* Text;
+};
+
 #pragma pack(pop)

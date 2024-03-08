@@ -1022,6 +1022,36 @@ static void ProcessKartPhysicsDataINI(const IniGroup* group, const wstring& mod_
 	delete inidata;
 }
 
+static void ProcessCreditsTextListINI(const IniGroup* group, const wstring& mod_dir)
+{
+	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	wchar_t filename[MAX_PATH];
+	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+		mod_dir.c_str(), group->getWString("filename").c_str());
+	const IniFile* const data = new IniFile(filename);
+	vector<CreditsEntry> seqs;
+	for (unsigned int i = 0; i < 999; i++)
+	{
+		char key[8];
+		snprintf(key, sizeof(key), "%u", i);
+		if (!data->hasGroup(key)) break;
+		const IniGroup* seqdata = data->getGroup(key);
+		CreditsEntry entry{};
+		entry.Type = seqdata->getInt("Type");
+		entry.A = seqdata->getFloat("TextColorA");
+		entry.R = seqdata->getFloat("TextColorR");
+		entry.G = seqdata->getFloat("TextColorG");
+		entry.B = seqdata->getFloat("TextColorB");
+		entry.Text = strdup(UTF8toSJIS(seqdata->getString("Text")).c_str());
+		seqs.push_back(entry);
+	}
+	delete data;
+	auto numents = seqs.size();
+	CreditsEntry* list = new CreditsEntry[numents];
+	arrcpy(list, seqs.data(), numents);
+	ProcessPointerList(group->getString("pointer"), list);
+}
+
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
 static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "landtable", ProcessLandTableINI },
@@ -1050,7 +1080,8 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 	{ "physicsdata", ProcessPhysicsDataINI },
 	{ "kartcourse", ProcessKartCourseINI },
 	{ "kartphysics", ProcessKartPhysicsDataINI },
-	//{ "cutscenevoicearray", ProcessCutsceneVoiceListINI }
+	//{ "cutscenevoicearray", ProcessCutsceneVoiceListINI },
+	{ "creditstextlist", ProcessCreditsTextListINI }
 };
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
