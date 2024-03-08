@@ -1024,32 +1024,34 @@ static void ProcessKartPhysicsDataINI(const IniGroup* group, const wstring& mod_
 
 static void ProcessCreditsTextListINI(const IniGroup* group, const wstring& mod_dir)
 {
-	if (!group->hasKeyNonEmpty("filename") || !group->hasKeyNonEmpty("pointer")) return;
+	if (!group->hasKeyNonEmpty("filename")) return;
 	wchar_t filename[MAX_PATH];
 	swprintf(filename, LengthOfArray(filename), L"%s\\%s",
 		mod_dir.c_str(), group->getWString("filename").c_str());
+	unsigned int length = group->getInt("length");
 	const IniFile* const data = new IniFile(filename);
-	vector<CreditsEntry> seqs;
-	for (unsigned int i = 0; i < 999; i++)
+	auto addr = (CreditsEntry*)group->getIntRadix("address", 16);
+
+	if (addr == nullptr)
+	{
+		return;
+	}
+
+	addr = (CreditsEntry*)((intptr_t)addr + 0x400000);
+	for (unsigned int i = 0; i < length; i++)
 	{
 		char key[8];
 		snprintf(key, sizeof(key), "%u", i);
 		if (!data->hasGroup(key)) break;
 		const IniGroup* seqdata = data->getGroup(key);
-		CreditsEntry entry{};
-		entry.Type = seqdata->getInt("Type");
-		entry.A = seqdata->getFloat("TextColorA");
-		entry.R = seqdata->getFloat("TextColorR");
-		entry.G = seqdata->getFloat("TextColorG");
-		entry.B = seqdata->getFloat("TextColorB");
-		entry.Text = strdup(UTF8toSJIS(seqdata->getString("Text")).c_str());
-		seqs.push_back(entry);
+		addr->Type = seqdata->getInt("Type");
+		addr->A = seqdata->getFloat("TextColorA");
+		addr->R = seqdata->getFloat("TextColorR");
+		addr->G = seqdata->getFloat("TextColorG");
+		addr->B = seqdata->getFloat("TextColorB");
+		addr->Text = strdup(UTF8toSJIS(seqdata->getString("Text")).c_str());
 	}
 	delete data;
-	auto numents = seqs.size();
-	CreditsEntry* list = new CreditsEntry[numents];
-	arrcpy(list, seqs.data(), numents);
-	ProcessPointerList(group->getString("pointer"), list);
 }
 
 typedef void(__cdecl *exedatafunc_t)(const IniGroup *group, const wstring &mod_dir);
