@@ -1050,6 +1050,7 @@ static void ProcessCreditsTextListINI(const IniGroup* group, const wstring& mod_
 		addr->G = seqdata->getFloat("TextColorG");
 		addr->B = seqdata->getFloat("TextColorB");
 		addr->Text = strdup(UTF8toSJIS(seqdata->getString("Text")).c_str());
+		++addr;
 	}
 	delete data;
 }
