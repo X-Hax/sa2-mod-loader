@@ -28,7 +28,7 @@ namespace UpgradeTool
 			"sonicrmm"
 		};
 
-		const string updatePath = "mods/.updates";
+		string updatePath = "mods/.updates";
 		public string datadllorigpath = @"resource\gd_PC\DLL\Win32\Data_DLL_orig.dll";
 		public string datadllpath = @"resource\gd_PC\DLL\Win32\Data_DLL.dll";
 		public const string managerName = "SA2 Mod Manager";
@@ -122,44 +122,31 @@ namespace UpgradeTool
 
 		private async void button1_Click(object sender, EventArgs e)
 		{
-
 			try
 			{
-
 				var NewManagerPath = CleanPath(GetNewManagerPath());
 
 				if (File.Exists(NewManagerPath))
 				{
 					var msg = MessageBox.Show("It looks like you already have the new SA Mod Manager installed." +
-						"\n\nDo you want to continue anyway?", "SA Mod Manager found", MessageBoxButtons.YesNo);
+	"\n\nDo you want to install the last update of it and continue the migration? (Recommended).", "SA Mod Manager found", MessageBoxButtons.YesNo);
 
-					if (msg != DialogResult.Yes)
+					if (msg == DialogResult.Yes)
 					{
 						NewManagerPath = Path.GetFullPath(NewManagerPath); //cleanup
-						string gameDirectory = Program.FindGameDirectory(AppDomain.CurrentDomain.BaseDirectory, Program.exeName);
 						string managerFolder = Path.GetDirectoryName(NewManagerPath);
-						var startInfo = new ProcessStartInfo
+						updatePath = managerFolder;
+
+						try
 						{
-							FileName = NewManagerPath,
-							Arguments = $"vanillaUpdate \"{Path.GetFullPath(gameDirectory)}\"",
-							UseShellExecute = true,
-							WorkingDirectory = managerFolder,
-						};
-						Process.Start(startInfo);
-						UninstallOldModLoader(Path.GetFullPath(gameDirectory));
-						Close();
-						return;
+							File.Delete(NewManagerPath);
+						}
+						catch { }
 					}
 				}
 
 				var wc = new HttpClient();
-				var release = await GetLatestReleaseNewManager(wc);
-
-				if (release == null)
-				{
-					release = Environment.Is64BitOperatingSystem ? "https://github.com/X-Hax/SA-Mod-Manager/releases/latest/download/release_x64.zip" : "https://github.com/X-Hax/SA-Mod-Manager/releases/latest/download/release_x86.zip";
-				}
-
+				var release = await GetLatestReleaseNewManager(wc) ?? (Environment.Is64BitOperatingSystem ? "https://github.com/X-Hax/SA-Mod-Manager/releases/latest/download/release_x64.zip" : "https://github.com/X-Hax/SA-Mod-Manager/releases/latest/download/release_x86.zip");
 				DialogResult result = DialogResult.OK;
 				do
 				{
