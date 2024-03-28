@@ -125,23 +125,26 @@ namespace UpgradeTool
 			try
 			{
 				var NewManagerPath = CleanPath(GetNewManagerPath());
+				string gameDirectory = Program.FindGameDirectory(AppDomain.CurrentDomain.BaseDirectory, Program.exeName);
 
-				if (File.Exists(NewManagerPath))
+				if (File.Exists(NewManagerPath) && string.IsNullOrEmpty(gameDirectory) == false)
 				{
 					var msg = MessageBox.Show("It looks like you already have the new SA Mod Manager installed." +
-	"\n\nDo you want to install the last update of it and continue the migration? (Recommended).", "SA Mod Manager found", MessageBoxButtons.YesNo);
+	"\n\nDo you want to cleanup the old files and finish the migration? (Recommended).", "SA Mod Manager found", MessageBoxButtons.YesNo);
 
 					if (msg == DialogResult.Yes)
 					{
 						NewManagerPath = Path.GetFullPath(NewManagerPath); //cleanup
-						string managerFolder = Path.GetDirectoryName(NewManagerPath);
-						updatePath = managerFolder;
-
-						try
+						var startInfo = new ProcessStartInfo
 						{
-							File.Delete(NewManagerPath);
-						}
-						catch { }
+							FileName = NewManagerPath,
+							Arguments = $"clearLegacy \"{gameDirectory}\"",
+							UseShellExecute = true,
+							WorkingDirectory = Path.GetDirectoryName(NewManagerPath),
+						};
+						Process.Start(startInfo);
+						Close();
+						return;
 					}
 				}
 
@@ -170,7 +173,6 @@ namespace UpgradeTool
 				using (var dlg2 = new WPFDownloadDialog(release, updatePath))
 					if (dlg2.ShowDialog(this) == DialogResult.OK)
 					{
-						string gameDirectory = Program.FindGameDirectory(AppDomain.CurrentDomain.BaseDirectory, Program.exeName);
 						UninstallOldModLoader(gameDirectory);
 						Close();
 					}
