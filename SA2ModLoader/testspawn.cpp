@@ -8,6 +8,7 @@ using std::wstring;
 using std::unordered_map;
 bool testSpawnCutscene = false;
 bool testSpawnLvl = false;
+FunctionHook<void> LifeIconTex_t(0x44E4C0);
 
 static wstring trim(const wstring& s)
 {
@@ -174,6 +175,17 @@ static void LoadMenuButtonsTex()
 	MenuButtonImage = LoadPNG(buffer);
 }
 
+static void LifeIconTexStuff()
+{
+	if (MainCharObj2[0] == nullptr)
+		return;
+
+	if (MainCharObj2[0]->CharID2 == Characters_SuperSonic || MainCharObj2[0]->CharID2 == Characters_DarkChaoWalker)
+		return;
+
+	LifeIconTex_t.Original();
+}
+
 static void SetAltCharacter(uint8_t id) {
 
 	switch (id)
@@ -247,6 +259,10 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 
 			// NOP. Prevents CurrentCharacter from being overwritten.
 			WriteData<10>(reinterpret_cast<void*>(0x4395F3), 0x90u);
+
+			LifeIconTex_t.Hook(LifeIconTexStuff);
+
+		
 		}
 		else if (!wcscmp(argv[i], L"--player2") || !wcscmp(argv[i], L"-p2"))
 		{

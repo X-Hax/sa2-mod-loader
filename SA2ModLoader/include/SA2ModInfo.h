@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 12;
+static const int ModLoaderVer = 13;
 
 struct PatchInfo
 {
@@ -71,6 +71,13 @@ struct LoaderSettings
 	int TestSpawnRotation;
 	int TestSpawnEvent;
 	int TestSpawnSaveID;
+	bool ExtendVertexBuffer;
+	bool EnvMapFix;
+	bool ScreenFadeFix;
+	bool CECarFix;
+	bool ParticlesFix;
+	bool KeepAspectWhenResizing;
+	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window); 
 };
 
 struct ModDependency
@@ -262,6 +269,18 @@ struct HelperFunctions
 	// Removes any file replacements for the specified file.
 	// Requires version >= 12.
 	void(__cdecl* UnreplaceFile)(const char* file);
+	/**
+	* @brief Push Interpolation fix for animations.
+	*
+	* Use this at the beginning of a display function and please disable it at the end after so it doesn't run for all animations in the game.
+	* Requires version >= 13.
+	*
+	*/
+	void(__cdecl* PushInterpolationFix)();
+
+	// Disable interpolation fix for animations, use it at the end of a display function.
+	// Requires version >= 13.
+	void(__cdecl* PopInterpolationFix)();
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);

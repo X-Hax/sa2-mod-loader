@@ -16,6 +16,12 @@
     <Filter Include="Header Files\include">
       <UniqueIdentifier>{81f04c87-0e83-4a7a-b148-4e555a95ff7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Patches">
+      <UniqueIdentifier>{9fa0b75d-87a3-4ec7-a3e3-169b1f4c7a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Patches">
+      <UniqueIdentifier>{efd04e08-c328-487b-b499-25664f498883}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -54,9 +60,6 @@
     <ClInclude Include="EXEData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="patches.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="testspawn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,9 +96,6 @@
     <ClInclude Include="include\FunctionHook.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
-    <ClInclude Include="Interpolation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pvmx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -104,6 +104,18 @@
     </ClInclude>
     <ClInclude Include="DDS.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="patches.h">
+      <Filter>Header Files\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="InterpolationFixes.h">
+      <Filter>Header Files\Patches</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +132,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EXEData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="patches.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="testspawn.cpp">
@@ -149,9 +158,6 @@
     <ClCompile Include="direct3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InterpolationFixes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HelperFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -160,6 +166,15 @@
     </ClCompile>
     <ClCompile Include="TextureReplacement.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InterpolationFixes.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches.cpp">
+      <Filter>Source Files\Patches</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

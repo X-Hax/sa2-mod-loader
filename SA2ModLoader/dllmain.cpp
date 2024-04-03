@@ -27,11 +27,15 @@
 #include "CrashDump.h"
 #include "window.h"
 #include "direct3d.h"
-#include "Interpolation.h"
 #include "TextureReplacement.h"
+#include <shlobj.h>
+#include <TextConv.hpp>
+#include "json.hpp"
+#include "config.h"
+#include "InterpolationFixes.h"
 
 using namespace std;
-
+using json = nlohmann::json;
 const string resourcedir = "resource\\gd_pc\\";
 static wstring borderimg = L"mods\\Border.png";
 
@@ -359,6 +363,26 @@ char *ShiftJISToUTF8(char *shiftjis)
 	WideCharToMultiByte(CP_UTF8, 0, wcs, -1, utf8, cbMbs, NULL, NULL);
 	delete[] wcs;
 	return utf8;
+}
+
+//used to get external lib location and extra config
+std::wstring appPath;
+std::wstring extLibPath;
+
+void SetAppPathConfig(std::wstring gamepath)
+{
+	appPath = gamepath + L"\\SAManager\\"; // Account for portable
+	extLibPath = appPath + L"extlib\\";
+	WCHAR appDataLocalPath[MAX_PATH];
+	if (!Exists(appPath))
+	{
+		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalPath)))
+		{
+			appPath = appDataLocalPath;
+			appPath += L"\\SAManager\\";
+			extLibPath = appPath + L"extlib\\";
+		}
+	}
 }
 
 bool dbgConsole, dbgFile, dbgScreen;
@@ -960,19 +984,6 @@ extern "C"
 	}
 }
 
-void SyncLoad(void (*a1)(void*), void* a2)
-{
-	a1(a2);
-}
-
-char inilangs[] {
-	Language_English,
-	Language_German,
-	Language_Spanish,
-	Language_French,
-	Language_Italian,
-	Language_Japanese
-};
 
 static vector<string>& split(const string& s, char delim, vector<string>& elems)
 {
@@ -1006,63 +1017,33 @@ void __cdecl InitMods(void)
 		ExitProcess(1);
 	}
 	HookTheAPI();
-	FILE *f_ini = _wfopen(L"mods\\SA2ModLoader.ini", L"r");
-	if (!f_ini)
-	{
-		MessageBox(NULL, L"mods\\SA2ModLoader.ini could not be read!", L"SA2 Mod Loader", MB_ICONWARNING);
-		return;
-	}
-	unique_ptr<IniFile> ini(new IniFile(f_ini));
-	fclose(f_ini);
-	char pathbuf[MAX_PATH];
-	GetModuleFileNameA(NULL, pathbuf, MAX_PATH);
-	string exefilename = pathbuf;
-	exefilename = exefilename.substr(exefilename.find_last_of("/\\") + 1);
-	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::tolower);
-	const IniGroup *setgrp = ini->getGroup("");
 
-	loaderSettings.DebugConsole = setgrp->getBool("DebugConsole");
-	loaderSettings.DebugScreen = setgrp->getBool("DebugScreen");
-	loaderSettings.DebugFile = setgrp->getBool("DebugFile");
-	loaderSettings.DebugCrashLog = setgrp->getBool("DebugCrashLog", true);
-	loaderSettings.PauseWhenInactive = setgrp->getBool("PauseWhenInactive", true);
-	loaderSettings.DisableExitPrompt = setgrp->getBool("DisableExitPrompt");
-	loaderSettings.ScreenNum = setgrp->getInt("ScreenNum", 1);
-	loaderSettings.BorderlessWindow = setgrp->getBool("BorderlessWindow");
-	loaderSettings.FullScreen = setgrp->getBool("FullScreen");
-	loaderSettings.SkipIntro = setgrp->getBool("SkipIntro");
-	loaderSettings.SyncLoad = setgrp->getBool("SyncLoad", true);
-	loaderSettings.HorizontalResolution = setgrp->getInt("HorizontalResolution", 640);
-	loaderSettings.VerticalResolution = setgrp->getInt("VerticalResolution", 480);
-	loaderSettings.VoiceLanguage = setgrp->getInt("VoiceLanguage", 1);
-	loaderSettings.TextLanguage = inilangs[setgrp->getInt("TextLanguage", 0)];
-	loaderSettings.CustomWindowSize = setgrp->getBool("CustomWindowSize");
-	loaderSettings.WindowWidth = setgrp->getInt("WindowWidth", 640);
-	loaderSettings.WindowHeight = setgrp->getInt("WindowHeight", 480);
-	loaderSettings.ResizableWindow = setgrp->getBool("ResizableWindow");
-	loaderSettings.MaintainAspectRatio = setgrp->getBool("MaintainAspectRatio");
-	loaderSettings.FramerateLimiter = setgrp->getBool("FramerateLimiter");
-	loaderSettings.TestSpawnLevel = setgrp->getInt("TestSpawnLevel");
-	loaderSettings.TestSpawnCharacter = setgrp->getInt("TestSpawnCharacter");
-	loaderSettings.TestSpawnPositionEnabled = setgrp->getBool("TestSpawnPositionEnabled");
-	loaderSettings.TestSpawnX = setgrp->getInt("TestSpawnX");
-	loaderSettings.TestSpawnY = setgrp->getInt("TestSpawnY");
-	loaderSettings.TestSpawnZ = setgrp->getInt("TestSpawnZ");
-	loaderSettings.TestSpawnRotation = setgrp->getInt("TestSpawnRotation");
-	loaderSettings.TestSpawnEvent = setgrp->getInt("TestSpawnEvent");
-	loaderSettings.TestSpawnSaveID = setgrp->getInt("TestSpawnSaveID");
+
+	// Get sonic2app.exe's path and filename.
+	wchar_t pathbuf[MAX_PATH];
+	GetModuleFileName(nullptr, pathbuf, MAX_PATH);
+	wstring exepath(pathbuf);
+	wstring exefilename;
+	string::size_type slash_pos = exepath.find_last_of(L"/\\");
+	if (slash_pos != string::npos)
+	{
+		exefilename = exepath.substr(slash_pos + 1);
+		if (slash_pos > 0)
+			exepath = exepath.substr(0, slash_pos);
+	}
+
+	// Convert the EXE filename to lowercase.
+	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::towlower);
+	// Get path for Mod Manager settings and libraries
+	SetAppPathConfig(exepath);
+
+	LoadModLoaderSettings(&loaderSettings, appPath);
 
 	direct3d::init();
 
 	if (loaderSettings.FramerateLimiter)
 	{
 		direct3d::enable_frame_limiter();
-	}
-
-	if (loaderSettings.SyncLoad)
-	{
-		WriteJump((void*)0x428470, SyncLoad);
-		WriteJump((void*)0x428740, SyncLoad);
 	}
 
 	if (loaderSettings.DebugConsole)
@@ -1112,7 +1093,9 @@ void __cdecl InitMods(void)
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC");
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC\\event");
 	
-	ApplyPatches();
+	ApplyPatches(&loaderSettings);
+	//init interpol fix for helperfunctions
+	interpolation::init();
 
 	// Map of files to replace.
 	// This is done with a second map instead of sadx_fileMap directly
@@ -1130,40 +1113,47 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
 	Init_AudioBassHook();
-	//init_interpolationAnimFixes(); //disabled for now since it is not fully functional 
 
 	if (loaderSettings.DebugCrashLog)
 		initCrashDump();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
-	vector<std::pair<string, string>> errors;
+	vector<std::pair<wstring, wstring>> errors;
 
 	string _mainsavepath, _chaosavepath;
 
 	// It's mod loading time!
-	PrintDebug("Loading mods...");
-	char key[8];
-	for (int i = 1; i <= 999; i++)
+	PrintDebug("Loading mods...\n");
+	// Mod list
+	for (unsigned int i = 1; i <= GetModCount(); i++)
 	{
-		sprintf_s(key, "Mod%d", i);
-		if (!setgrp->hasKey(key))
-			break;
-		const string mod_dirA = "mods\\" + setgrp->getString(key);
-		const wstring mod_dir = L"mods\\" + setgrp->getWString(key);
-		const string mod_inifile = mod_dirA + "\\mod.ini";
-		FILE *f_mod_ini = fopen(mod_inifile.c_str(), "r");
+		std::string mod_fname = GetModName(i);
+
+		int count_m = MultiByteToWideChar(CP_UTF8, 0, mod_fname.c_str(), mod_fname.length(), NULL, 0);
+		std::wstring mod_fname_w(count_m, 0);
+		MultiByteToWideChar(CP_UTF8, 0, mod_fname.c_str(), mod_fname.length(), &mod_fname_w[0], count_m);
+
+		const string mod_dirA = "mods\\" + mod_fname;
+		const wstring mod_dir = L"mods\\" + mod_fname_w;
+		const wstring mod_inifile = mod_dir + L"\\mod.ini";
+
+		FILE* f_mod_ini = _wfopen(mod_inifile.c_str(), L"r");
+
 		if (!f_mod_ini)
 		{
-			PrintDebug("Could not open file mod.ini in \"mods\\%s\".\n", mod_dirA.c_str());
-			errors.push_back(std::pair<string, string>(mod_dirA, "mod.ini missing"));
+			PrintDebug("Could not open file mod.ini in \"%s\".\n", mod_dirA.c_str());
+			errors.emplace_back(mod_dir, L"mod.ini missing");
 			continue;
 		}
 		unique_ptr<IniFile> ini_mod(new IniFile(f_mod_ini));
 		fclose(f_mod_ini);
 
-		const IniGroup *modinfo = ini_mod->getGroup("");
-		const string mod_name = modinfo->getString("Name");
-		PrintDebug("%d. %s\n", i, mod_name.c_str());
+		const IniGroup* const modinfo = ini_mod->getGroup("");
+
+		const string mod_nameA = modinfo->getString("Name");
+		const wstring mod_name = modinfo->getWString("Name");
+
+		PrintDebug("%u. %s\n", i, mod_nameA.c_str());
 
 		vector<ModDependency> moddeps;
 
@@ -1181,7 +1171,7 @@ void __cdecl InitMods(void)
 		memcpy(deparr, moddeps.data(), moddeps.size() * sizeof(ModDependency));
 
 		Mod modinf = {
-			_strdup(mod_name.c_str()),
+			_strdup(mod_nameA.c_str()),
 			_strdup(modinfo->getString("Author").c_str()),
 			_strdup(modinfo->getString("Description").c_str()),
 			_strdup(modinfo->getString("Version").c_str()),
@@ -1253,14 +1243,17 @@ void __cdecl InitMods(void)
 		// Check if a custom EXE is required.
 		if (modinfo->hasKeyNonEmpty("EXEFile"))
 		{
-			string modexe = modinfo->getString("EXEFile");
-			transform(modexe.begin(), modexe.end(), modexe.begin(), ::tolower);
+			wstring modexe = modinfo->getWString("EXEFile");
+			transform(modexe.begin(), modexe.end(), modexe.begin(), ::towlower);
 
 			// Are we using the correct EXE?
-			if (modexe.compare(exefilename) != 0)
+			if (modexe != exefilename)
 			{
-				const char *msg = ("Mod \"" + modinfo->getString("Name") + "\" should be run from \"" + modexe + "\", but you are running \"" + exefilename + "\".\n\nContinue anyway?").c_str();
-				if (MessageBoxA(NULL, msg, "SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
+				wchar_t msg[4096];
+				swprintf(msg, LengthOfArray(msg),
+					L"Mod \"%s\" should be run from \"%s\", but you are running \"%s\".\n\n"
+					L"Continue anyway?", mod_name.c_str(), modexe.c_str(), exefilename.c_str());
+				if (MessageBox(nullptr, msg, L"SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
 					ExitProcess(1);
 			}
 		}
@@ -1269,21 +1262,31 @@ void __cdecl InitMods(void)
 		if (modinfo->hasKeyNonEmpty("DLLFile"))
 		{
 			// Prepend the mod directory.
-			string dll_filename = mod_dirA + '\\' + modinfo->getString("DLLFile");
-			HMODULE module = LoadLibraryA(dll_filename.c_str());
+			wstring dll_filename = mod_dir + L'\\' + modinfo->getWString("DLLFile");
+			HMODULE module = LoadLibrary(dll_filename.c_str());
 
 			if (module == nullptr)
 			{
 				DWORD error = GetLastError();
-				LPSTR buffer;
-				size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-					NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buffer, 0, NULL);
+				LPWSTR buffer;
+				size_t size = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+					nullptr, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), (LPWSTR)&buffer, 0, nullptr);
+				bool allocated = (size != 0);
 
-				string message(buffer, size);
-				LocalFree(buffer);
+				if (!allocated)
+				{
+					static const wchar_t fmterr[] = L"Unable to format error message.";
+					buffer = const_cast<LPWSTR>(fmterr);
+					size = LengthOfArray(fmterr) - 1;
+				}
+				wstring message(buffer, size);
+				if (allocated)
+					LocalFree(buffer);
 
-				PrintDebug("Failed loading mod DLL \"%s\": %s\n", dll_filename.c_str(), message.c_str());
-				errors.push_back(std::pair<string, string>(mod_name, "DLL error - " + message));
+				const string dll_filenameA = UTF16toMBS(dll_filename, CP_ACP);
+				const string messageA = UTF16toMBS(message, CP_ACP);
+				PrintDebug("Failed loading mod DLL \"%s\": %s\n", dll_filenameA.c_str(), messageA.c_str());
+				errors.emplace_back(mod_name, L"DLL error - " + message);
 			}
 			else
 			{
@@ -1359,8 +1362,9 @@ void __cdecl InitMods(void)
 				}
 				else
 				{
-					PrintDebug("File \"%s\" is not a valid mod file.\n", dll_filename.c_str());
-					errors.push_back(std::pair<string, string>(mod_name, "Not a valid mod file."));
+					const string dll_filenameA = UTF16toMBS(dll_filename, CP_ACP);
+					PrintDebug("File \"%s\" is not a valid mod file.\n", dll_filenameA.c_str());
+					errors.emplace_back(mod_name, L"Not a valid mod file.");
 				}
 			}
 		}
@@ -1411,13 +1415,19 @@ void __cdecl InitMods(void)
 
 	if (!errors.empty())
 	{
-		std::stringstream message;
-		message << "The following mods didn't load correctly:" << std::endl;
+		std::wstringstream message;
+		message << L"The following mods didn't load correctly:" << std::endl;
 
 		for (auto& i : errors)
+		{
 			message << std::endl << i.first << ": " << i.second;
+		}
 
-		MessageBoxA(nullptr, message.str().c_str(), "Mods failed to load", MB_OK | MB_ICONERROR);
+		MessageBox(nullptr, message.str().c_str(), L"Mods failed to load", MB_OK | MB_ICONERROR);
+
+		// Clear the errors vector to free memory.
+		errors.clear();
+		errors.shrink_to_fit();
 	}
 
 	// Replace filenames. ("ReplaceFiles")

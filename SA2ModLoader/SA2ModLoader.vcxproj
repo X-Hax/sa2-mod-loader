@@ -14,6 +14,7 @@
     <ProjectGuid>{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SA2ModLoader</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -63,6 +64,7 @@
       </ModuleDefinitionFile>
       <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;gdiplus.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\extlib\bass</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>bass.dll;bass_vgmstream.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -85,9 +87,11 @@
       </ModuleDefinitionFile>
       <AdditionalDependencies>dbghelp.lib;bass.lib;bass_vgmstream.lib;Shlwapi.lib;gdiplus.lib;$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(DXSDK_DIR)Lib\x86\d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\extlib\bass</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>bass.dll;bass_vgmstream.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="CrashDump.h" />
     <ClInclude Include="DDS.h" />
     <ClInclude Include="DebugText.h" />
@@ -96,7 +100,8 @@
     <ClInclude Include="Events.h" />
     <ClInclude Include="EXEData.h" />
     <ClInclude Include="include\FunctionHook.h" />
-    <ClInclude Include="Interpolation.h" />
+    <ClInclude Include="InterpolationFixes.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="FileReplacement.h" />
@@ -119,6 +124,7 @@
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="CrashDump.cpp" />
     <ClCompile Include="direct3d.cpp" />
     <ClCompile Include="DLLData.cpp" />
