@@ -1017,14 +1017,7 @@ void __cdecl InitMods(void)
 		ExitProcess(1);
 	}
 	HookTheAPI();
-	FILE *f_ini = _wfopen(L"mods\\SA2ModLoader.ini", L"r");
-	if (!f_ini)
-	{
-		MessageBox(NULL, L"mods\\SA2ModLoader.ini could not be read!", L"SA2 Mod Loader", MB_ICONWARNING);
-		return;
-	}
-	unique_ptr<IniFile> ini(new IniFile(f_ini));
-	fclose(f_ini);
+
 
 	// Get sonic2app.exe's path and filename.
 	wchar_t pathbuf[MAX_PATH];
