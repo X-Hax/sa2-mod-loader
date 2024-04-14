@@ -274,6 +274,10 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		else if (!wcscmp(argv[i], L"--event") || !wcscmp(argv[i], L"-e"))
 		{
 			((StoryEntry*)0x173A5E0)->Events[0] = static_cast<int16_t>(_wtoi(argv[++i]));
+			if (((StoryEntry*)0x173A5E0)->Events[0] == 428)
+				helperFunctions.ReplaceFile("resource\\gd_PC\\event\\e0428_m.sfd", "resource\\gd_PC\\e0428_m.sfd");
+			if (((StoryEntry*)0x173A5E0)->Events[0] == 609)
+				helperFunctions.ReplaceFile("resource\\gd_PC\\event\\e0609_m.sfd", "resource\\gd_PC\\e0609_m.sfd");
 			testSpawnCutscene = true;
 		}
 		else if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))
