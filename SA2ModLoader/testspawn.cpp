@@ -217,6 +217,7 @@ static void SetAltCharacter(uint8_t id) {
 	}
 }
 
+static StartPosition gTestSpawnStartPos;
 void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 {
 	int argc = 0;
@@ -224,6 +225,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 
 
 	uint8_t alt = 0;
+	bool posEdited = false;
 	
 	for (int i = 1; i < argc; i++)
 	{
@@ -302,13 +304,25 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 
 			NJS_VECTOR pos = { std::stof(argv[++i]), std::stof(argv[++i]), std::stof(argv[++i]) };
 
-			StartPosition position = {
-				CurrentLevel,
-				0, 0, 0,		// YRot
-				pos, pos, pos	// Position
-			};
+			gTestSpawnStartPos.Level = CurrentLevel;
+			gTestSpawnStartPos.Position1P = pos;
+			gTestSpawnStartPos.PositionP1 = pos;
+			gTestSpawnStartPos.PositionP2 = pos;
 
-			helperFunctions.RegisterStartPosition(CurrentCharacter, position);
+			posEdited = true;
+		}
+		else if (!wcscmp(argv[i], L"--rotation") || !wcscmp(argv[i], L"-r"))
+		{
+			if (!posEdited)
+			{
+				MessageBoxA(nullptr, "Insufficient arguments for parameter: --rotation.\n"
+					"--position must be specified before --rotation.",
+					"Insufficient arguments", MB_OK);
+
+				continue;
+			}
+
+			gTestSpawnStartPos.Rotation1P = static_cast<int16_t>(_wtoi(argv[++i]));	
 		}
 		else if (!wcscmp(argv[i], L"--savenum") || !wcscmp(argv[i], L"-s"))
 		{
@@ -325,6 +339,9 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 			PrintDebug("Loading Mission: %d\n", MissionNum);
 		}
 	}
+
+	if (posEdited)
+		helperFunctions.RegisterStartPosition(CurrentCharacter, gTestSpawnStartPos);
 
 	LocalFree(argv);
 }
