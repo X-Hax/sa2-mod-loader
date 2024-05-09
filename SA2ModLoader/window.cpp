@@ -314,31 +314,39 @@ enum screenmodes { window_mode, borderless_mode, custom_mode, fullscreen_mode };
 
 void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 {
-	const uint8_t screenMode = settings.ScreenMode;
-
-	if (screenMode >= fullscreen_mode)
+	if (IS_FULLSCREEN)
 	{
-		IS_FULLSCREEN = TRUE;
 		return;
 	}
 
-	if (screenMode >= screenmodes::borderless_mode)
+	switch (settings.ScreenMode)
 	{
+	case window_mode:
+		windowedFullscreen = false;
+		windowResize = settings.ResizableWindow;
+		customWindowSize = false;
+		break;
+	case borderless_mode:
 		windowedFullscreen = true;
+		windowResize = settings.ResizableWindow;
+		customWindowSize = false;
+		break;
+	case custom_mode:
+		windowedFullscreen = false;
 		windowResize = false;
-
-		if (screenMode == screenmodes::custom_mode)
-			customWindowSize = true;
+		customWindowSize = true;
+		customWindowWidth = settings.WindowWidth;
+		customWindowHeight = settings.WindowHeight;
+		break;
+	default:
+		return;
 	}
 
-	windowResize = settings.ResizableWindow && !customWindowSize;
 	maintainAspectRatio = settings.MaintainAspectRatio;
 	windowWrapper = maintainAspectRatio || (windowedFullscreen && customWindowSize);
 	screenNum = settings.ScreenNum;
 	disableExitPrompt = settings.DisableExitPrompt;
 	pauseWhenInactive = settings.PauseWhenInactive;
-	customWindowWidth = settings.WindowWidth;
-	customWindowHeight = settings.WindowHeight;
 
 	// Replace the default window procedure
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
