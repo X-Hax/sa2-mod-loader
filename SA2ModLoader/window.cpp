@@ -348,7 +348,7 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		return;
 	}
 
-	windowWrapper = maintainAspectRatio || windowedFullscreen || customWindowSize;
+	windowWrapper = maintainAspectRatio;
 
 	// Replace the default window procedure
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
