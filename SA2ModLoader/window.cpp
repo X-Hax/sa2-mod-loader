@@ -114,8 +114,8 @@ static void update_innerwindow(int w, int h)
 	}
 	else if (customWindowSize)
 	{
-		innerWidth = MainUserConfig->data.Width;
-		innerHeight = MainUserConfig->data.Height;
+		innerWidth = customWindowWidth;
+		innerHeight = customWindowHeight;
 	}
 	else
 	{
@@ -315,7 +315,9 @@ enum screenmodes { window_mode, borderless_mode, custom_mode, fullscreen_mode };
 void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 {
 	if (IS_FULLSCREEN)
+	{
 		return;
+	}
 
 	maintainAspectRatio = settings.KeepAspectWhenResizing;
 	windowResize = settings.ResizableWindow;
@@ -332,8 +334,6 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 	case borderless_mode:
 		windowedFullscreen = true;
 		customWindowSize = false;
-
-		maintainAspectRatio = true;	// Required for the inner window to scale to the outer window, does not alter the render resolution.
 		break;
 	case custom_mode:
 		windowedFullscreen = false;
@@ -342,14 +342,13 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		customWindowHeight = settings.WindowHeight;
 
 		// Forced Settings
-		maintainAspectRatio = true;	// Required for the inner window to scale to the outer window, does not alter the render resolution.
-		windowResize = false;		// Must be false because we do not currently update the inner window with the outer window when a resize occurs.
+		windowResize = false; // Must be false because we do not currently update the inner window with the outer window when a resize occurs in this mode.
 		break;
 	default:
 		return;
 	}
 
-	windowWrapper = maintainAspectRatio || windowedFullscreen || customWindowSize;
+	windowWrapper = maintainAspectRatio;
 
 	// Replace the default window procedure
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
