@@ -332,6 +332,8 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 	case borderless_mode:
 		windowedFullscreen = true;
 		customWindowSize = false;
+
+		maintainAspectRatio = true;	// Required for the inner window to scale to the outer window, does not alter the render resolution.
 		break;
 	case custom_mode:
 		windowedFullscreen = false;
