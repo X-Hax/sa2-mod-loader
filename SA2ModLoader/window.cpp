@@ -319,34 +319,36 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		return;
 	}
 
+	maintainAspectRatio = settings.KeepAspectWhenResizing ? false : true;	// When this toggle is enabled, maintaining the aspect should be disabled.
+	windowResize = settings.ResizableWindow;
+	screenNum = settings.ScreenNum;
+	disableExitPrompt = settings.DisableExitPrompt;
+	pauseWhenInactive = settings.PauseWhenInactive;
+
 	switch (settings.ScreenMode)
 	{
 	case window_mode:
 		windowedFullscreen = false;
-		windowResize = settings.ResizableWindow;
 		customWindowSize = false;
 		break;
 	case borderless_mode:
 		windowedFullscreen = true;
-		windowResize = settings.ResizableWindow;
 		customWindowSize = false;
 		break;
 	case custom_mode:
 		windowedFullscreen = false;
-		windowResize = false;
 		customWindowSize = true;
 		customWindowWidth = settings.WindowWidth;
 		customWindowHeight = settings.WindowHeight;
+
+		// Forced Settings
+		windowResize = false; // Must be false because we do not currently update the inner window with the outer window when a resize occurs in this mode.
 		break;
 	default:
 		return;
 	}
 
-	maintainAspectRatio = settings.MaintainAspectRatio;
-	windowWrapper = maintainAspectRatio || (windowedFullscreen && customWindowSize);
-	screenNum = settings.ScreenNum;
-	disableExitPrompt = settings.DisableExitPrompt;
-	pauseWhenInactive = settings.PauseWhenInactive;
+	windowWrapper = maintainAspectRatio || windowedFullscreen || customWindowSize;
 
 	// Replace the default window procedure
 	WriteJump(reinterpret_cast<void*>(0x00401810), WndProc_Hook);
