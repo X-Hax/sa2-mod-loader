@@ -9,7 +9,7 @@ using std::wstring;
 using std::vector;
 using std::unique_ptr;
 
-wstring currentProfilePath; // Used for crash dumps
+std::wstring currentProfilePath; // Used for crash dumps
 vector<std::string> ModList;
 
 std::string GetModName(int index)

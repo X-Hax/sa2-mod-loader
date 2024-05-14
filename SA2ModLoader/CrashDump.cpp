@@ -4,6 +4,12 @@
 #include <direct.h>
 #include <Psapi.h>
 #include <shlwapi.h>
+#include <time.h>
+#include "config.h"
+#include <filesystem>  // For std::filesystem on C++17 and above
+#include <iostream>
+#include <iomanip>
+
 
 using namespace std;
 
@@ -26,28 +32,29 @@ static const string getErrorMSG(intptr_t address)
 	return crashes_addresses_map.find(address)->second; //return a custom error message if the address is known
 }
 
-void CopyAndRename_ModLoaderIni()
+void CopyAndRename_SA2LoaderProfile()
 {
-	char timeStr[255];
-	time_t t = time(NULL);
+	std::time_t t = std::time(nullptr);
 	tm tM;
 	localtime_s(&tM, &t);
-	strftime(timeStr, 255, "_%d_%m_%Y_%H_%M_%S", &tM);
-	char tmp[256];
-	string directory = _getcwd(tmp, 256);
 
-	const string quote = "\"";
-	string fullLine = "xcopy " + quote + directory + "\\mods\\SA2ModLoader.ini" + quote + " " + quote + directory + "\\CrashDump" + quote;
-	int copyState = system(fullLine.c_str());
+	// Format the time string
+	std::wstringstream oss;
+	oss << std::put_time(&tM, L"%m_%d_%Y_%H_%M_%S");
+	std::wstring timeStr = oss.str();
 
-	if (copyState != -1) {
-		string rename = "ren " + quote + directory + "\\CrashDump\\SA2ModLoader.ini" + quote + " " + quote + "ModList" + timeStr + ".ini" + quote;
-		system(rename.c_str());
-		PrintDebug("CrashDump: Successfully copied SA2ModLoader.ini to the CrashDump Folder.\n");
-	}
-	else
+	std::filesystem::path directory = std::filesystem::current_path();
+	std::filesystem::path sourcePath = currentProfilePath;
+	std::filesystem::path destinationPath = directory / L"CrashDump" / (L"ModList_" + timeStr + L".json");
+
+	try 
 	{
-		PrintDebug("CrashDump: Failed to copy SA2ModLoader.ini to the Crash Dump Folder.\n");
+		std::filesystem::copy_file(sourcePath, destinationPath, std::filesystem::copy_options::overwrite_existing);
+		PrintDebug("CrashDump: Successfully copied and renamed SA2 Profile.\n");
+	}
+	catch (const std::exception& e) 
+	{
+		PrintDebug("CrashDump: Failed to copy and rename SA2 Profile. Error: %s\n", e.what());
 	}
 }
 
@@ -142,8 +149,8 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 			fullMsg += errorCommon + "\n"; //add the common error message if it exists
 		}
 
-		fullMsg += "A minidump has been created in your SA2 folder.\n";
-		CopyAndRename_ModLoaderIni(); //copy ModLoaderIni file to the Crash Dump folder so we know what mod and cheat were used
+		fullMsg += "\nA crash dump and a mod list have been added to your game's CrashDumps folder.\n\nIf you want to report this crash, please include the dump (.dmp file) and the mod list (.json file) in your report.\n";
+		CopyAndRename_SA2LoaderProfile(); //copy JSON Profile file to the Crash Dump folder so we know what mods and cheat were used
 		string text = "Crash Address: " + address + "\n";
 		PrintDebug("\nFault module name: %s \n", dllName.c_str());
 		PrintDebug(text.c_str());
@@ -155,15 +162,6 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-void CheckCrashMod()
-{
-	HMODULE Mod = GetModuleHandle(L"CrashMod");
-
-	if (Mod)
-	{
-		MessageBoxA(0, "SA2 Crash Mod has been detected, this mod is now deprecated.\nPlease uninstall Crash Mod.", "Potential Conflict", MB_ICONWARNING);
-	}
-}
 
 void initCrashDump()
 {

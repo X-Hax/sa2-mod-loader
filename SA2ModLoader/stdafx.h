@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <deque>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <list>
 #include <memory>
