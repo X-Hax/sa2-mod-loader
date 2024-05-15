@@ -1089,17 +1089,20 @@ static const unordered_map<string, exedatafunc_t> exedatafuncmap = {
 
 void ProcessEXEData(const wchar_t *filename, const wstring &mod_dir)
 {
-	const IniFile *const exedata = new IniFile(filename);
-	for (auto iter = exedata->cbegin(); iter != exedata->cend(); ++iter)
+	if (FileExists(filename))
 	{
-		if (iter->first.empty()) continue;
-		IniGroup *group = iter->second;
-		auto typestr = group->getString("type");
-		auto type = exedatafuncmap.find(typestr);
-		if (type != exedatafuncmap.end())
-			type->second(group, mod_dir);
-		else
-			PrintDebug("Handler for INI data type \"%s\" not found!", typestr.c_str());
+		const IniFile* const exedata = new IniFile(filename);
+		for (auto iter = exedata->cbegin(); iter != exedata->cend(); ++iter)
+		{
+			if (iter->first.empty()) continue;
+			IniGroup* group = iter->second;
+			auto typestr = group->getString("type");
+			auto type = exedatafuncmap.find(typestr);
+			if (type != exedatafuncmap.end())
+				type->second(group, mod_dir);
+			else
+				PrintDebug("Handler for INI data type \"%s\" not found!", typestr.c_str());
+		}
+		delete exedata;
 	}
-	delete exedata;
 }

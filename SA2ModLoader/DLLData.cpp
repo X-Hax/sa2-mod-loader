@@ -11,6 +11,7 @@
 #include "AnimationFile.h"
 #include "DLLData.h"
 #include <DbgHelp.h>
+#include <FileSystem.h>
 
 using std::unordered_map;
 using std::vector;
@@ -552,6 +553,9 @@ static unordered_map<string, dllexportinfo> dllexports;
 
 void ProcessDLLData(const wchar_t* filename, const wstring& mod_dir)
 {
+	if (!FileExists(filename))
+		return;
+
 	auto dlldata = new IniFile(filename);
 	IniGroup* group;
 
