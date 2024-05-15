@@ -63,7 +63,6 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 
 		// Graphics settings
 		json json_graphics = json_config["Graphics"];
-
 		const uint8_t BFOWTF = json_graphics.value("ScreenMode", 1);
 		loaderSettings->ScreenMode = BFOWTF;
 		loaderSettings->ScreenNum = json_graphics.value("SelectedScreen", 0);
@@ -77,7 +76,7 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		loaderSettings->MaintainAspectRatio = json_graphics.value("MaintainAspectRatio", false);	
 		loaderSettings->KeepAspectWhenResizing = json_graphics.value("KeepAspectWhenResizing", false);	// TODO: Update this with a comment regarding the new display name.
 		loaderSettings->SkipIntro = json_graphics.value("SkipIntro", false);
-
+		loaderSettings->DisableBorderImage = json_graphics.value("DisableBorderImage", false);
 
 		// Patches settings
 		json json_patches = json_config["Patches"];

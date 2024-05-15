@@ -31,6 +31,7 @@ static bool disableExitPrompt = false;
 static bool pauseWhenInactive = true;
 static bool maintainAspectRatio = true;
 static bool windowWrapper = false;
+static bool disableBorderImage = false;
 static double targetAspectRatio = 4 / 3;
 static int customWindowWidth = 640;
 static int customWindowHeight = 480;
@@ -319,6 +320,7 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 	screenNum = settings.ScreenNum;
 	disableExitPrompt = settings.DisableExitPrompt;
 	pauseWhenInactive = settings.PauseWhenInactive;
+	disableBorderImage = settings.DisableBorderImage;
 
 	switch (settings.ScreenMode)
 	{
@@ -419,7 +421,7 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		}
 
 		// Try to load the border image
-		if (FileExists(borderimg))
+		if (!disableBorderImage && FileExists(borderimg))
 		{
 			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 			ULONG_PTR gdiplusToken;
