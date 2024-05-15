@@ -224,11 +224,6 @@ static LRESULT CALLBACK WndProc_Resizable(HWND handle, UINT Msg, WPARAM wParam, 
 		exit(0);
 		break;
 	case WM_SIZE:
-		if (customWindowSize)
-		{
-			break;
-		}
-
 		if (IS_FULLSCREEN || g_pRenderDevice == nullptr)
 		{
 			return 0;
@@ -319,7 +314,7 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		return;
 	}
 
-	maintainAspectRatio = settings.KeepAspectWhenResizing ? false : true;	// When this toggle is enabled, maintaining the aspect should be disabled.
+	maintainAspectRatio = !settings.KeepAspectWhenResizing;	// When this toggle is enabled, maintaining the aspect should be disabled.
 	windowResize = settings.ResizableWindow;
 	screenNum = settings.ScreenNum;
 	disableExitPrompt = settings.DisableExitPrompt;
@@ -340,9 +335,6 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		customWindowSize = true;
 		customWindowWidth = settings.WindowWidth;
 		customWindowHeight = settings.WindowHeight;
-
-		// Forced Settings
-		windowResize = false; // Must be false because we do not currently update the inner window with the outer window when a resize occurs in this mode.
 		break;
 	default:
 		return;
