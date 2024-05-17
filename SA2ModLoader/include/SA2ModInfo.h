@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 13;
+static const int ModLoaderVer = 14;
 
 struct PatchInfo
 {
@@ -78,8 +78,8 @@ struct LoaderSettings
 	bool ParticlesFix;
 	bool KeepAspectWhenResizing; // Deprecated, use StretchToWindow
 	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window);
-	bool DisableBorderImage;
-	bool StretchToWindow;
+	bool DisableBorderImage; // Requires version >= 14.
+	bool StretchToWindow; // Stretch content to the window instead of respecting aspect ratio. Requires version >= 14.
 };
 
 struct ModDependency
