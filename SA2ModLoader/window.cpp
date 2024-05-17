@@ -18,11 +18,12 @@ VoidFunc(StopInputs, 0x439060);
 static std::vector<RECT> screenBounds;
 static int screenNum = 1;
 
-static RECT   last_rect = {};
-static float  last_width = 0.0f;
-static float  last_height = 0.0f;
-static DWORD  last_style = 0;
-static DWORD  last_exStyle = 0;
+static RECT     last_rect = {};
+static int      last_horizontal_resolution = 0;
+static int      last_vertical_resolution = 0;
+static DWORD    last_style = 0;
+static DWORD    last_exStyle = 0;
+static HMONITOR last_monitor = 0;
 
 static bool customWindowSize = false;
 static bool windowResize = false;
@@ -43,65 +44,12 @@ static int innerHeight = 480;
 
 auto PrintExitPrompt = GenerateUsercallWrapper<int(__cdecl*)(HWND hwnd)>(rEAX, 0x4015F0, rEDI);
 
-static void enable_fullscreen_mode(HWND handle)
-{
-	IS_FULLSCREEN = true;
-
-	// Backup windowed mode information
-	last_width = HorizontalResolution;
-	last_height = VerticalResolution;
-
-	GetWindowRect(handle, &last_rect);
-
-	last_style = GetWindowLongA(handle, GWL_STYLE);
-	last_exStyle = GetWindowLongA(handle, GWL_EXSTYLE);
-
-	// Set to borderless fullscreen
-	auto rect = screenBounds[screenNum == 0 ? 0 : screenNum - 1];
-	SetWindowPos(handle, nullptr, rect.left, rect.top, rect.right, rect.bottom, SWP_FRAMECHANGED);
-	SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-	SetWindowLongA(handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
-
-	while (ShowCursor(FALSE) > 0);
-}
-
-static void enable_windowed_mode(HWND handle)
-{
-	IS_FULLSCREEN = false;
-
-	// Restore windowed mode information
-	SetWindowLongA(handle, GWL_STYLE, last_style);
-	SetWindowLongA(handle, GWL_EXSTYLE, last_exStyle);
-
-	auto width = last_rect.right - last_rect.left;
-	auto height = last_rect.bottom - last_rect.top;
-
-	if (width <= 0 || height <= 0)
-	{
-		last_rect = {};
-
-		last_rect.right = 640;
-		last_rect.bottom = 480;
-
-		AdjustWindowRectEx(&last_rect, last_style, false, last_exStyle);
-
-		width = last_rect.right - last_rect.left;
-		height = last_rect.bottom - last_rect.top;
-	}
-
-	// Restore windowed mode
-	SetWindowPos(handle, HWND_NOTOPMOST, last_rect.left, last_rect.top, width, height, SWP_FRAMECHANGED);
-
-	while (ShowCursor(TRUE) < 0);
-}
-
 static void update_innerwindow(int w, int h)
 {
 	if (maintainAspectRatio)
 	{
 		auto w_ = customWindowSize ? customWindowWidth : w;
 		auto h_ = customWindowSize ? customWindowHeight : h;
-
 		if (w > h * targetAspectRatio)
 		{
 			innerWidth = static_cast<int>(h_ * targetAspectRatio);
@@ -112,19 +60,22 @@ static void update_innerwindow(int w, int h)
 			innerWidth = w_;
 			innerHeight = static_cast<int>(w_ / targetAspectRatio);
 		}
-	}
-	else if (customWindowSize)
-	{
-		innerWidth = customWindowWidth;
-		innerHeight = customWindowHeight;
+		SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
 	}
 	else
 	{
-		innerWidth = w;
-		innerHeight = h;
+		if (customWindowSize)
+		{
+			innerWidth = customWindowWidth;
+			innerHeight = customWindowHeight;
+		}
+		else
+		{
+			innerWidth = w;
+			innerHeight = h;
+		}
+		SetWindowPos(innerWindow, HWND_TOP, 0, 0, innerWidth, innerHeight, 0);
 	}
-
-	SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
 }
 
 static void change_resolution(int w, int h, BOOL windowed)
@@ -142,22 +93,74 @@ static void change_resolution(int w, int h, BOOL windowed)
 	direct3d::change_resolution(w, h, windowed);
 }
 
+static void enable_fullscreen_mode(HWND handle)
+{
+	IS_FULLSCREEN = true;
+
+	// Backup windowed position and style
+	last_horizontal_resolution = static_cast<int>(HorizontalResolution);
+	last_vertical_resolution = static_cast<int>(VerticalResolution);
+	GetWindowRect(handle, &last_rect);
+	last_style = GetWindowLongA(handle, GWL_STYLE);
+	last_exStyle = GetWindowLongA(handle, GWL_EXSTYLE);
+
+	// Get screen coordinates of current screen or default screen if it fails
+	RECT* rect;
+	HMONITOR hmonitor = MonitorFromWindow(MainWindowHandle, MONITOR_DEFAULTTONEAREST);
+	MONITORINFO mi;
+	mi.cbSize = sizeof(MONITORINFO);
+	if (hmonitor && GetMonitorInfoW(hmonitor, &mi))
+	{
+		rect = &mi.rcMonitor;
+	}
+	else
+	{
+		rect = &screenBounds[max(screenNum - 1, 0)];
+	}
+	last_monitor = hmonitor;
+
+	const int width = abs(rect->right - rect->left);
+	const int height = abs(rect->bottom - rect->top);
+
+	// Set resolution to new window size
+	change_resolution(width, height, true);
+
+	// Apply new position and style
+	SetWindowLongA(handle, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+	SetWindowLongA(handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+	SetWindowPos(handle, nullptr, rect->left, rect->top, width, height, SWP_FRAMECHANGED);
+
+	while (ShowCursor(FALSE) > 0);
+}
+
+static void enable_windowed_mode(HWND handle)
+{
+	IS_FULLSCREEN = false;
+
+	// Restore windowed style
+	SetWindowLongA(handle, GWL_STYLE, last_style);
+	SetWindowLongA(handle, GWL_EXSTYLE, last_exStyle);
+
+	const int width = abs(last_rect.right - last_rect.left);
+	const int height = abs(last_rect.bottom - last_rect.top);
+
+	// Restore resolution
+	change_resolution(last_horizontal_resolution, last_vertical_resolution, false);
+
+	// Restore windowed position and resolution
+	SetWindowPos(handle, HWND_NOTOPMOST, last_rect.left, last_rect.top, width, height, SWP_FRAMECHANGED);
+
+	while (ShowCursor(TRUE) < 0);
+}
+
 static void swap_window_mode(HWND handle)
 {
 	if (!IS_FULLSCREEN && g_pRenderDevice->m_pDeviceCreator->m_D3DPP.Windowed)
 	{
 		enable_fullscreen_mode(handle);
-
-		const auto& rect = screenBounds[screenNum == 0 ? 0 : screenNum - 1];
-
-		const auto w = rect.right - rect.left;
-		const auto h = rect.bottom - rect.top;
-
-		change_resolution(w, h, true);
 	}
 	else
 	{
-		change_resolution(static_cast<int>(last_width), static_cast<int>(last_height), false);
 		enable_windowed_mode(handle);
 	}
 }
@@ -241,7 +244,6 @@ static LRESULT CALLBACK WndProc_Resizable(HWND handle, UINT Msg, WPARAM wParam, 
 
 			change_resolution(w, h, false);
 		}
-
 		break;
 	case WM_ACTIVATE:
 		Activate(wParam != FALSE);
@@ -446,10 +448,15 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		// If the user can swap to windowed mode, set return window information
 		if (windowResize)
 		{
-			last_width = HorizontalResolution;
-			last_height = VerticalResolution;
+			int lw = screenW / 2;
+			int lh = screenH / 2;
+			int lx = screenX + (screenW - lw) / 2;
+			int ly = screenY + (screenH - lh) / 2;
+			last_horizontal_resolution = lw;
+			last_vertical_resolution = lh;
 			last_style = dwStyle;
-			last_rect = { x, y, x + w, y + h };
+			last_rect = { lx, ly, lx + lw, ly + lh };
+			AdjustWindowRectEx(&last_rect, last_style, false, last_exStyle);
 		}
 
 		// Apply fake fullscreen
