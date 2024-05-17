@@ -50,15 +50,15 @@ static void update_innerwindow(int w, int h)
 	{
 		auto w_ = customWindowSize ? customWindowWidth : w;
 		auto h_ = customWindowSize ? customWindowHeight : h;
-		if (w > h * targetAspectRatio)
+		if (w > (int)(round((double)h * targetAspectRatio)))
 		{
-			innerWidth = static_cast<int>(h_ * targetAspectRatio);
+			innerWidth = (int)(round((double)h_ * targetAspectRatio));
 			innerHeight = h_;
 		}
 		else
 		{
 			innerWidth = w_;
-			innerHeight = static_cast<int>(w_ / targetAspectRatio);
+			innerHeight = (int)(round((double)w_ / targetAspectRatio));
 		}
 		SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
 	}
