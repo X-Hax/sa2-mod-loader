@@ -59,7 +59,7 @@ struct LoaderSettings
 	int WindowWidth;
 	int WindowHeight;
 	bool ResizableWindow;
-	bool MaintainAspectRatio;
+	bool MaintainAspectRatio; // Deprecated, use StretchToWindow
 	bool FramerateLimiter;
 	int TestSpawnLevel;
 	int TestSpawnCharacter;
@@ -76,9 +76,10 @@ struct LoaderSettings
 	bool ScreenFadeFix;
 	bool CECarFix;
 	bool ParticlesFix;
-	bool KeepAspectWhenResizing;
+	bool KeepAspectWhenResizing; // Deprecated, use StretchToWindow
 	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window);
 	bool DisableBorderImage;
+	bool StretchToWindow;
 };
 
 struct ModDependency

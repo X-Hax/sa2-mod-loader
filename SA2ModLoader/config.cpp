@@ -72,9 +72,9 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		loaderSettings->CustomWindowSize = json_graphics.value("EnableCustomWindow", false);
 		loaderSettings->WindowWidth = json_graphics.value("CustomWindowWidth", 640);
 		loaderSettings->WindowHeight = json_graphics.value("CustomWindowHeight", 480);
-		loaderSettings->ResizableWindow = json_graphics.value("EnableResizableWindow", true);
-		loaderSettings->MaintainAspectRatio = json_graphics.value("MaintainAspectRatio", false);	
-		loaderSettings->KeepAspectWhenResizing = json_graphics.value("KeepAspectWhenResizing", false);	// TODO: Update this with a comment regarding the new display name.
+		loaderSettings->ResizableWindow = json_graphics.value("EnableResizableWindow", true);	
+		loaderSettings->StretchToWindow = json_graphics.value("StretchToWindow", false);
+		loaderSettings->MaintainAspectRatio = loaderSettings->KeepAspectWhenResizing = !loaderSettings->StretchToWindow;
 		loaderSettings->SkipIntro = json_graphics.value("SkipIntro", false);
 		loaderSettings->DisableBorderImage = json_graphics.value("DisableBorderImage", false);
 

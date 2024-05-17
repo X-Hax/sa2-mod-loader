@@ -315,7 +315,7 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		return;
 	}
 
-	maintainAspectRatio = !settings.KeepAspectWhenResizing;	// When this toggle is enabled, maintaining the aspect should be disabled.
+	maintainAspectRatio = !settings.StretchToWindow;
 	windowResize = settings.ResizableWindow;
 	screenNum = settings.ScreenNum;
 	disableExitPrompt = settings.DisableExitPrompt;
