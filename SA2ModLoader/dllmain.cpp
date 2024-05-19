@@ -1318,25 +1318,6 @@ void __cdecl InitMods(void)
 
 		ModIniProcessFilesCheck(ini_mod.get(), i, filereplaces, fileswaps);
 
-
-		//basic Mod Config, includes file replacement without custom code
-		int dirs = ini_mod->getInt("Config", "IncludeDirCount", -1);
-		if (dirs != -1)
-		{
-			for (uint16_t md = 0; md < dirs; md++)
-			{
-				auto incDirPath = ini_mod->getString("Config", "IncludeDir" + std::to_string(md));
-				const string modIncDir = mod_dirA + "\\" + incDirPath;
-				const wstring modIncDirW = mod_dir + L"\\" + ini_mod->getWString("Config", "IncludeDir" + std::to_string(md));
-				if (DirectoryExists(modIncDir))
-				{
-					PrintDebug("Mod Config: use path: '%s'\n", modIncDir.c_str());
-					Mod_CheckAndReplaceFiles(modIncDir, i);
-					HandleOtherModIniContent(modinfo, modIncDirW, modIncDir);
-				}
-			}
-		}
-
 		// Check for gd_pc replacements
 		Mod_CheckAndReplaceFiles(mod_dirA, i);
 
@@ -1473,6 +1454,25 @@ void __cdecl InitMods(void)
 	
 		if (modinfo->hasKeyNonEmpty("WindowTitle"))
 			helperFunctions.SetWindowTitle(modinfo->getWString("WindowTitle").c_str());
+
+
+		//basic Mod Config, includes file replacement without custom code
+		int dirs = ini_mod->getInt("Config", "IncludeDirCount", -1);
+		if (dirs != -1)
+		{
+			for (uint16_t md = 0; md < dirs; md++)
+			{
+				auto incDirPath = ini_mod->getString("Config", "IncludeDir" + std::to_string(md));
+				const string modIncDir = mod_dirA + "\\" + incDirPath;
+				const wstring modIncDirW = mod_dir + L"\\" + ini_mod->getWString("Config", "IncludeDir" + std::to_string(md));
+				if (DirectoryExists(modIncDir))
+				{
+					PrintDebug("Mod Config: use path: '%s'\n", modIncDir.c_str());
+					Mod_CheckAndReplaceFiles(modIncDir, i);
+					HandleOtherModIniContent(modinfo, modIncDirW, modIncDir);
+				}
+			}
+		}
 
 		modlist.push_back(modinf);
 	}
