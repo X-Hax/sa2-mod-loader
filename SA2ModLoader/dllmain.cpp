@@ -1249,8 +1249,6 @@ void __cdecl InitMods(void)
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<wstring, wstring>> errors;
 
-	string _mainsavepath, _chaosavepath;
-
 	// It's mod loading time!
 	PrintDebug("Loading mods...\n");
 	// Mod list
