@@ -33,6 +33,7 @@
 #include "json.hpp"
 #include "config.h"
 #include "InterpolationFixes.h"
+#include "UsercallFunctionHandler.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -117,9 +118,12 @@ FunctionPointer(void, sub_7A5974, (void*), 0x7A5974);
 DataPointer(int, dword_1A55800, 0x1A55800);
 DataPointer(int, dword_1AF191C, 0x1AF191C);
 DataPointer(void*, dword_1AF1918, 0x1AF1918);
+
+UsercallFunc(ModelIndex*, LoadMDLFile_t, (const char* filename), (filename), 0x459590, rEAX, rEAX);
+
 ModelIndex* __cdecl LoadMDLFile_ri(const char* filename)
 {
-	ModelIndex* result;
+	ModelIndex* result = nullptr;
 	char dir[MAX_PATH];
 	PathCombineA(dir, resourcedir.c_str(), filename);
 	PathRemoveExtensionA(dir);
@@ -127,150 +131,80 @@ ModelIndex* __cdecl LoadMDLFile_ri(const char* filename)
 	char combinedpath[MAX_PATH];
 	PathCombineA(combinedpath, dir, fn);
 	PathAddExtensionA(combinedpath, ".ini");
+
 	const char* repfn = sadx_fileMap.replaceFile(combinedpath);
-	if (PathFileExistsA(repfn))
+
+	if (PathFileExistsA(repfn) == false)
+		return LoadMDLFile_t.Original((char*)filename);
+
+
+	FILE* f_mod_ini = fopen(repfn, "r");
+	unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
+	fclose(f_mod_ini);
+	const IniGroup* indexes = ini->getGroup("");
+	strncpy_s(dir, repfn, MAX_PATH);
+	PathRemoveFileSpecA(dir);
+	WIN32_FIND_DATAA data;
+	HANDLE hfind = FindFirstFileA((string(dir) + "\\*.sa2mdl").c_str(), &data);
+
+	if (hfind == INVALID_HANDLE_VALUE)
+		return LoadMDLFile_t.Original((char*)filename);
+
+	list<ModelInfo> files;
+	vector<ModelIndex> modelindexes;
+
+	sub_4297F0();
+
+	do
 	{
-		FILE* f_mod_ini = fopen(repfn, "r");
-		unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
-		fclose(f_mod_ini);
-		const IniGroup* indexes = ini->getGroup("");
-		strncpy_s(dir, repfn, MAX_PATH);
-		PathRemoveFileSpecA(dir);
-		WIN32_FIND_DATAA data;
-		HANDLE hfind = FindFirstFileA((string(dir) + "\\*.sa2mdl").c_str(), &data);
-		if (hfind == INVALID_HANDLE_VALUE)
-			goto defaultmodelload;
-		list<ModelInfo> files;
-		vector<ModelIndex> modelindexes;
-		sub_4297F0();
-		do
+		PathCombineA(combinedpath, dir, data.cFileName);
+		ModelInfo modelfile(combinedpath);
+		files.push_back(modelfile);
+		markobjswapped(modelfile.getmodel());
+		for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
 		{
-			PathCombineA(combinedpath, dir, data.cFileName);
-			ModelInfo modelfile(combinedpath);
-			files.push_back(modelfile);
-			markobjswapped(modelfile.getmodel());
-			for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
+			void* found = modelfile.getdata(i->second);
+			if (found != nullptr)
 			{
-				void* found = modelfile.getdata(i->second);
-				if (found != nullptr)
-				{
-					int ind = stoi(i->first);
-					ModelIndex index = { ind, (NJS_OBJECT*)found };
-					if (ind >= 0 && ind < 532 && !CharacterModels[ind].Model)
-						CharacterModels[ind] = index;
-					modelindexes.push_back(index);
-				}
+				int ind = stoi(i->first);
+				ModelIndex index = { ind, (NJS_OBJECT*)found };
+				if (ind >= 0 && ind < 532 && !CharacterModels[ind].Model)
+					CharacterModels[ind] = index;
+				modelindexes.push_back(index);
 			}
-		} while (FindNextFileA(hfind, &data) != 0);
-		FindClose(hfind);
-		ModelIndex endmarker = { -1, (NJS_OBJECT*)-1 };
-		modelindexes.push_back(endmarker);
-		result = new ModelIndex[modelindexes.size()];
-		memcpy(result, modelindexes.data(), sizeof(ModelIndex) * modelindexes.size());
-		modelfiles[result] = files;
-		goto end;
-	}
+		}
+	} while (FindNextFileA(hfind, &data) != 0);
+	FindClose(hfind);
+	ModelIndex endmarker = { -1, (NJS_OBJECT*)-1 };
+	modelindexes.push_back(endmarker);
+	result = new ModelIndex[modelindexes.size()];
+	memcpy(result, modelindexes.data(), sizeof(ModelIndex) * modelindexes.size());
+	modelfiles[result] = files;
 
-defaultmodelload:
-	int v3; // edx@3
-	int v5; // edi@5
-	unsigned int v6; // eax@5
-	unsigned int v7; // edi@5
-	int v8; // edi@6
-	ModelIndex* v9; // eax@7
-	signed int v10; // edx@8
-	NJS_OBJECT* v11; // ecx@11
-	NJS_OBJECT* v12; // ecx@15
-	void* v13; // eax@21
-	int v14; // ebx@21
-	int v15; // edi@21
-
-	result = (ModelIndex*)LoadPRSFile(filename);
-	if (result)
+	--dword_1A55800;
+	if (dword_1AF191C)
 	{
-		sub_4297F0();
-		v3 = 0;
-		if (result->Index != -1)
+		auto v13 = dword_1AF1918;
+		auto v14 = *((DWORD*)dword_1AF1918 + 1);
+		auto v15 = *((DWORD*)dword_1AF1918 + 1);
+		if (!*(BYTE*)(v14 + 21))
 		{
-			ModelIndex* v4 = result;
 			do
 			{
-				v5 = v4->Index;
-				v6 = (unsigned int)v4->Model;
-				v4->Index = (((v4->Index << 16) | v4->Index & 0xFF00) << 8) | ((((unsigned int)v4->Index >> 16) | v5 & 0xFF0000) >> 8);
-				v7 = v6;
-				++v3;
-				v4->Model = (NJS_OBJECT*)((((v6 << 16) | (unsigned __int16)(v6 & 0xFF00)) << 8) | (((v6 >> 16) | v7 & 0xFF0000) >> 8));
-				v4 = &result[v3];
-			} while (result[v3].Index != -1);
-		}
-		v8 = 0;
-		if (result->Index != -1)
-		{
-			v9 = result;
-			do
-			{
-				v10 = v9->Index;
-				if (v9->Index >= 0 && v10 < 532 && !CharacterModels[v10].Model)
-				{
-					v11 = v9->Model;
-					if (v11 && (unsigned int)v11 <= (unsigned int)result)
-					{
-						v11 = (NJS_OBJECT*)((DWORD)result + (DWORD)v11);
-						v9->Model = v11;
-					}
-					CharacterModels[v10].Model = v11;
-				}
-				v12 = v9->Model;
-				if (v12)
-				{
-					if ((unsigned int)v12 <= (unsigned int)result)
-					{
-						v12 = (NJS_OBJECT*)((DWORD)result + (DWORD)v12);
-						v9->Model = v12;
-					}
-					sub_48FA80(v12, result);
-				}
-				++v8;
-				v9 = &result[v8];
-			} while (result[v8].Index != -1);
-		}
-	end:
-		--dword_1A55800;
-		if (dword_1AF191C)
-		{
+				sub_419FC0(*(void**)(v15 + 8));
+				v15 = *(DWORD*)v15;
+				sub_7A5974((void*)v14);
+				v14 = v15;
+			} while (!*(BYTE*)(v15 + 21));
 			v13 = dword_1AF1918;
-			v14 = *((DWORD*)dword_1AF1918 + 1);
-			v15 = *((DWORD*)dword_1AF1918 + 1);
-			if (!*(BYTE*)(v14 + 21))
-			{
-				do
-				{
-					sub_419FC0(*(void**)(v15 + 8));
-					v15 = *(DWORD*)v15;
-					sub_7A5974((void*)v14);
-					v14 = v15;
-				} while (!*(BYTE*)(v15 + 21));
-				v13 = dword_1AF1918;
-			}
-			*((DWORD*)v13 + 1) = (DWORD)v13;
-			dword_1AF191C = 0;
-			*(DWORD*)dword_1AF1918 = (DWORD)dword_1AF1918;
-			*((DWORD*)dword_1AF1918 + 2) = (DWORD)dword_1AF1918;
 		}
+		*((DWORD*)v13 + 1) = (DWORD)v13;
+		dword_1AF191C = 0;
+		*(DWORD*)dword_1AF1918 = (DWORD)dword_1AF1918;
+		*((DWORD*)dword_1AF1918 + 2) = (DWORD)dword_1AF1918;
 	}
-	return result;
-}
 
-__declspec(naked) void LoadMDLFile_r()
-{
-	__asm
-	{
-		push eax
-		call LoadMDLFile_ri
-		add esp, 4
-		ret
-	}
+	return result;
 }
 
 void __cdecl ReleaseMDLFile_ri(ModelIndex* a1)
@@ -292,8 +226,7 @@ void __cdecl ReleaseMDLFile_ri(ModelIndex* a1)
 	}
 	else
 	{
-		*((DWORD*)a1 - 1) = 0x89ABCDEFu;
-		MemoryManager->Deallocate((AllocatedMem*)a1 - 4, "..\\..\\src\\file_ctl.c", 1091);
+		FreeMemory((int*)a1, (char*)"..\\..\\src\\file_ctl.c", 1091);
 	}
 }
 
@@ -1204,7 +1137,7 @@ void __cdecl InitMods(void)
 	DWORD oldprot;
 	VirtualProtect((void*)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
 
-	WriteJump((void*)LoadMDLFilePtr, LoadMDLFile_r);
+	LoadMDLFile_t.Hook(LoadMDLFile_ri);
 	WriteJump((void*)ReleaseMDLFilePtr, ReleaseMDLFile_r);
 	WriteData((char*)0x435A44, (char)0x90u);
 	WriteCall((void*)0x435A45, FindFirstCSBFileA);
@@ -1449,7 +1382,7 @@ void __cdecl InitMods(void)
 		}
 
 		HandleOtherModIniContent(modinfo, mod_dir, mod_dirA);
-	
+
 		if (modinfo->hasKeyNonEmpty("WindowTitle"))
 			helperFunctions.SetWindowTitle(modinfo->getWString("WindowTitle").c_str());
 

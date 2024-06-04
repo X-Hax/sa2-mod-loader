@@ -4771,3 +4771,17 @@ static inline void PoseEffectMan_Load(int a1, int a2)
 		add esp, 4
 	}
 }
+
+
+// void __usercall FreeMemory(int idk@<eax>, char *path@<edx>, int size@<ecx>)
+static const void* const FreeMemoryPtr = (void*)0x77DF80;
+static inline void FreeMemory(int* idk, char* path, int _size)
+{
+	__asm
+	{
+		mov ecx, [_size]
+		mov edx, [path]
+		mov eax, [idk]
+		call[FreeMemoryPtr]
+	}
+}
