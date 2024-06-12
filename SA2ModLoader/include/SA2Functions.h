@@ -4782,6 +4782,6 @@ static inline void FreeMemory(int* idk, char* path, int _size)
 		mov ecx, [_size]
 		mov edx, [path]
 		mov eax, [idk]
-		call[FreeMemoryPtr]
+		call FreeMemoryPtr
 	}
 }
