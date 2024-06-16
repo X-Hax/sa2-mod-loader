@@ -1568,6 +1568,12 @@ struct LevelRankTimes
 	MinSec ARank;
 };
 
+struct Mission4TimeLimits
+{
+	char Level;
+	MinSec TimeLimit;
+};
+
 struct BlackMarketItem
 {
 	ChaoItemCategory Category;
@@ -2005,6 +2011,44 @@ struct EnemyData
 	EnemyMotionData motiondata; // For EnemySetMotion, pobj and plactptr necessary
 };
 
+struct TextureAnimData
+{
+	int Type;
+	int SpeedControls;
+	int SpeedDivider;
+	float* field_C;
+	short* UVData;
+	short* field_14;
+	short* field_18;
+	NJS_CNK_MODEL* field_1C;
+	short field_20;
+	short field_22;
+};
+
+struct ModelTextureAnimationArray1
+{
+	NJS_OBJECT* Model;
+	TextureAnimData* texanim;
+	int field_8;
+};
+
+struct ModelTextureAnimationArray2
+{
+	int Type;
+	NJS_OBJECT* Model;
+	TextureAnimData* texanim;
+	int field_C;
+	int field_10;
+};
+
+struct ModelTextureAnimationArray3
+{
+	NJS_OBJECT* Model;
+	TextureAnimData* texanim;
+	int field_8;
+	int field_C;
+};
+
 struct CutsceneTexAnimIDs
 {
 	int TexID;
@@ -2080,7 +2124,7 @@ struct ReflectionData
 struct BigCameoData
 {
 	NJS_OBJECT	*Model;
-	NJS_MOTION	*AnimationArray;
+	NJS_MOTION	**AnimationArray;
 	int			AnimationCount;
 	int			Unk;
 };
@@ -2092,7 +2136,7 @@ struct CutsceneEntityData
 	NJS_MOTION		*ShapeMotion;
 	NJS_OBJECT		*GCModel;
 	NJS_OBJECT		*ShadowModel;
-	int				Unk;
+	TextureAnimData *Texanim;
 	NJS_POINT3		Position;
 	int				Flags;
 	int				DisplayLayer;
@@ -2124,6 +2168,16 @@ struct EventFileHeader
 	CutsceneTexAnim		*texanimData;
 	int					shadowControl;
 };
+struct EventParticlePulse
+{
+	int scale;
+	int speed;
+};
+struct EventParticleAnimControl
+{
+	EventParticlePulse* data;
+	int count;
+};
 
 struct EventSubtitleData
 {
@@ -2145,11 +2199,11 @@ struct EventAudioData
 struct EventScreenEffectData
 {
 	int FrameStart;
-	byte Type;
+	char Type;
 	char field_5[3];
 	NJS_COLOR Color;
-	byte Fade;
-	byte field_D;
+	char Fade;
+	char field_D;
 	__int16 TexID;
 	int VisibleTime;
 	__int16 PosX;
@@ -2162,8 +2216,8 @@ struct EventScreenEffectData
 struct EventParticleData
 {
 	int FrameStart;
-	byte Type;
-	byte MotionID;
+	char Type;
+	char MotionID;
 	__int16 field_6;
 	float Setting1;
 	float Setting2;
@@ -2212,8 +2266,8 @@ struct EventVideoData
 	__int16 PosX;
 	__int16 PosY;
 	float Depth;
-	byte OverlayType;
-	byte OverlayTexID;
+	char OverlayType;
+	char OverlayTexID;
 	__int16 field_E;
 	char VideoName[48];
 };
@@ -2253,10 +2307,10 @@ struct MiniEventFile
 struct MiniEventEffects
 {
 	int FrameStart;
-	byte FadeType;
+	char FadeType;
 	char SFXEntry1;
 	char SFXEntry2;
-	byte field_7;
+	char field_7;
 	__int16 VoiceID;
 	char MusicData[16];
 	char JingleData[16];
@@ -2324,38 +2378,10 @@ struct MenuVoices
 	int Sonic;
 };
 
-struct TextureAnimData
+struct ActionWindowTextArray
 {
-	int Type;
-	int field_4;
-	int field_8;
-	int field_C;
-	short* UVData;
-	int field_14[4];
-};
-
-struct ModelTextureAnimationArray1
-{
-	NJS_OBJECT* Model;
-	TextureAnimData* texanim;
-	int field_8;
-};
-
-struct ModelTextureAnimationArray2
-{
-	int Type;
-	NJS_OBJECT* Model;
-	TextureAnimData* texanim;
-	int field_C;
-	int field_10;
-};
-
-struct ModelTextureAnimationArray3
-{
-	NJS_OBJECT* Model;
-	TextureAnimData* texanim;
-	int field_8;
-	int field_C;
+	int Action;
+	int TextID;
 };
 
 struct ControlShadowCharObj2
@@ -2508,6 +2534,24 @@ struct PDS_BASE
 	int field_28;
 	int field_2C;
 	int field_30;
+};
+
+struct LightData
+{
+	NJS_VECTOR direction;
+	float intensity;
+	float ambient;
+	NJS_VECTOR color;
+};
+
+struct LightGCData
+{
+	NJS_VECTOR direction;
+	NJS_VECTOR color;
+	NJS_VECTOR ambient;
+	int flags;
+	int field_28;
+	int field_2C;
 };
 
 struct FogData
@@ -2687,6 +2731,13 @@ struct MenuData
 	int field_10;
 	int field_14;
 	int field_18;
+};
+
+struct RewardScreen
+{
+	int* stringIDs;
+	int stringCount;
+	int congratulationsCheck;
 };
 
 struct DispWinnerAndContinue_Data
@@ -2943,11 +2994,18 @@ struct KartPhysics
 	float TopSpeed;
 };
 
+struct KartCPUStats
+{
+	float speed;
+	float variance;
+	float aggression;
+};
+
 struct KartDownloadData
 {
-	KartPhysics physics;
-	NJS_VECTOR field_28;
-	NJS_VECTOR field_34;
+	KartPhysics downloadPhysics;
+	KartCPUStats CPUDownloadStats;
+	KartCPUStats CPUNormalStats;
 	int field_40;
 	char MusicTrack;
 };

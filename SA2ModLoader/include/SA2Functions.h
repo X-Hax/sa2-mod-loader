@@ -117,6 +117,7 @@ ObjectFunc(CountDownTimerForTimeLimit2P, 0x451930);
 FunctionPointer(void, CountDownTimerForTimeLimit2P_Load, (char a1), 0x451B00);
 ObjectFunc(CountDownTimerForGameOver_DispDelay3, 0x451B70);
 ObjectFunc(CountDownTimerForGameOver, 0x451DF0);
+VoidFunc(setMissionTimeLimits, 0x451F00);
 ObjectFunc(execTotalBossScore, 0x452400);
 ObjectFunc(BossRushResults_DispDelay4, 0x4526D0);
 ObjectFunc(ResultTotalRings_DispDelay1, 0x452BB0);
