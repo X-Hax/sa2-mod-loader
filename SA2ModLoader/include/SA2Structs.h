@@ -3944,4 +3944,10 @@ struct CreditsEntry
     const char* Text;
 };
 
+struct MenuBackgrounds
+{
+	char* filename;
+	NJS_TEXLIST* texlist;
+};
+
 #pragma pack(pop)

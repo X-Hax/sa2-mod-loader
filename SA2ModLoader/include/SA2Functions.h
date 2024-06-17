@@ -1497,6 +1497,20 @@ static inline void SetShaders(int id)
 	}
 }
 
+// int __usercall@<eax>(char *a1@<ecx>)
+static const void* const LoadSingleSOCFilePtr = (void*)0x41D430;
+static inline int LoadSingleSOCFile(char* filename)
+{
+	int result;
+	__asm
+	{
+		mov eax, [filename]
+		call LoadSingleSOCFilePtr
+		mov result, eax
+	}
+	return result;
+}
+
 //void __usercall stSetBlendingMode(int dst@<edi>, int src@<esi>, Bool enable)
 static const void* const stSetBlendingMode_ptr = (void*)0x420480;
 static inline void stSetBlendingMode(NJD_COLOR_BLENDING src, NJD_COLOR_BLENDING dst, Bool enable)
@@ -2491,6 +2505,20 @@ static inline void AwardBarrier(int n)
 		mov eax, [n]
 		call AwardBarrierPtr
 	}
+}
+
+//NJS_OBJECT* __usercall DrawMiniEventModels@<eax>(int charID@<eax>)
+static const void* const DrawMiniEventModelsPtr = (void*)0x46F1E0;
+static inline NJS_OBJECT* DrawMiniEventModels(int charID)
+{
+	NJS_OBJECT* result;
+	__asm
+	{
+		mov eax, [charID]
+		call DrawMiniEventModelsPtr
+		mov result, eax
+	}
+	return result;
 }
 
 // void __usercall(int playerNum@<eax>, float amount)
