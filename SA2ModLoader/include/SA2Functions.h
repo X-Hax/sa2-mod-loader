@@ -117,6 +117,7 @@ ObjectFunc(CountDownTimerForTimeLimit2P, 0x451930);
 FunctionPointer(void, CountDownTimerForTimeLimit2P_Load, (char a1), 0x451B00);
 ObjectFunc(CountDownTimerForGameOver_DispDelay3, 0x451B70);
 ObjectFunc(CountDownTimerForGameOver, 0x451DF0);
+VoidFunc(setMissionTimeLimits, 0x451F00);
 ObjectFunc(execTotalBossScore, 0x452400);
 ObjectFunc(BossRushResults_DispDelay4, 0x4526D0);
 ObjectFunc(ResultTotalRings_DispDelay1, 0x452BB0);
@@ -1496,6 +1497,20 @@ static inline void SetShaders(int id)
 	}
 }
 
+// int __usercall@<eax>(char *a1@<ecx>)
+static const void* const LoadSingleSOCFilePtr = (void*)0x41D430;
+static inline int LoadSingleSOCFile(char* filename)
+{
+	int result;
+	__asm
+	{
+		mov eax, [filename]
+		call LoadSingleSOCFilePtr
+		mov result, eax
+	}
+	return result;
+}
+
 //void __usercall stSetBlendingMode(int dst@<edi>, int src@<esi>, Bool enable)
 static const void* const stSetBlendingMode_ptr = (void*)0x420480;
 static inline void stSetBlendingMode(NJD_COLOR_BLENDING src, NJD_COLOR_BLENDING dst, Bool enable)
@@ -2490,6 +2505,20 @@ static inline void AwardBarrier(int n)
 		mov eax, [n]
 		call AwardBarrierPtr
 	}
+}
+
+//NJS_OBJECT* __usercall DrawMiniEventModels@<eax>(int charID@<eax>)
+static const void* const DrawMiniEventModelsPtr = (void*)0x46F1E0;
+static inline NJS_OBJECT* DrawMiniEventModels(int charID)
+{
+	NJS_OBJECT* result;
+	__asm
+	{
+		mov eax, [charID]
+		call DrawMiniEventModelsPtr
+		mov result, eax
+	}
+	return result;
 }
 
 // void __usercall(int playerNum@<eax>, float amount)
@@ -4769,5 +4798,19 @@ static inline void PoseEffectMan_Load(int a1, int a2)
 		mov eax, [a1]
 		call PoseEffectMan_ptr
 		add esp, 4
+	}
+}
+
+
+// void __usercall FreeMemory(int idk@<eax>, char *path@<edx>, int size@<ecx>)
+static const void* const FreeMemoryPtr = (void*)0x77DF80;
+static inline void FreeMemory(int* idk, char* path, int _size)
+{
+	__asm
+	{
+		mov ecx, [_size]
+		mov edx, [path]
+		mov eax, [idk]
+		call FreeMemoryPtr
 	}
 }

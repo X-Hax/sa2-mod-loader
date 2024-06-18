@@ -33,6 +33,7 @@
 #include "json.hpp"
 #include "config.h"
 #include "InterpolationFixes.h"
+#include "UsercallFunctionHandler.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -59,7 +60,7 @@ __out HANDLE WINAPI FindFirstCSBFileA(__in  LPCSTR lpFileName, __out LPWIN32_FIN
 
 BOOL WINAPI FindNextCSBFileA(__in  HANDLE hFindFile, __out LPWIN32_FIND_DATAA lpFindFileData)
 {
-	itercont *iter = (itercont *)hFindFile;
+	itercont* iter = (itercont*)hFindFile;
 	++iter->cur;
 	if (iter->cur == iter->end)
 		return FALSE;
@@ -76,9 +77,9 @@ BOOL WINAPI FindCSBClose(__inout HANDLE hFindFile)
 	return TRUE;
 }
 
-unordered_map<ModelIndex *, list<ModelInfo>> modelfiles;
+unordered_map<ModelIndex*, list<ModelInfo>> modelfiles;
 
-void markobjswapped(NJS_OBJECT *obj)
+void markobjswapped(NJS_OBJECT* obj)
 {
 	while (obj)
 	{
@@ -111,173 +112,106 @@ void markobjswapped(NJS_OBJECT *obj)
 }
 
 VoidFunc(sub_4297F0, 0x4297F0);
-FunctionPointer(void, sub_48FA80, (NJS_OBJECT *, void *), 0x48FA80);
-StdcallFunctionPointer(void, sub_419FC0, (void *), 0x419FC0);
-FunctionPointer(void, sub_7A5974, (void *), 0x7A5974);
+FunctionPointer(void, sub_48FA80, (NJS_OBJECT*, void*), 0x48FA80);
+StdcallFunctionPointer(void, sub_419FC0, (void*), 0x419FC0);
+FunctionPointer(void, sub_7A5974, (void*), 0x7A5974);
 DataPointer(int, dword_1A55800, 0x1A55800);
 DataPointer(int, dword_1AF191C, 0x1AF191C);
-DataPointer(void *, dword_1AF1918, 0x1AF1918);
-ModelIndex *__cdecl LoadMDLFile_ri(const char *filename)
+DataPointer(void*, dword_1AF1918, 0x1AF1918);
+
+UsercallFunc(ModelIndex*, LoadMDLFile_t, (const char* filename), (filename), 0x459590, rEAX, rEAX);
+
+ModelIndex* __cdecl LoadMDLFile_ri(const char* filename)
 {
-	ModelIndex *result;
+	ModelIndex* result = nullptr;
 	char dir[MAX_PATH];
 	PathCombineA(dir, resourcedir.c_str(), filename);
 	PathRemoveExtensionA(dir);
-	char *fn = PathFindFileNameA(dir);
+	char* fn = PathFindFileNameA(dir);
 	char combinedpath[MAX_PATH];
 	PathCombineA(combinedpath, dir, fn);
 	PathAddExtensionA(combinedpath, ".ini");
-	const char *repfn = sadx_fileMap.replaceFile(combinedpath);
-	if (PathFileExistsA(repfn))
+
+	const char* repfn = sadx_fileMap.replaceFile(combinedpath);
+
+	if (PathFileExistsA(repfn) == false)
+		return LoadMDLFile_t.Original((char*)filename);
+
+
+	FILE* f_mod_ini = fopen(repfn, "r");
+	unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
+	fclose(f_mod_ini);
+	const IniGroup* indexes = ini->getGroup("");
+	strncpy_s(dir, repfn, MAX_PATH);
+	PathRemoveFileSpecA(dir);
+	WIN32_FIND_DATAA data;
+	HANDLE hfind = FindFirstFileA((string(dir) + "\\*.sa2mdl").c_str(), &data);
+
+	if (hfind == INVALID_HANDLE_VALUE)
+		return LoadMDLFile_t.Original((char*)filename);
+
+	list<ModelInfo> files;
+	vector<ModelIndex> modelindexes;
+
+	sub_4297F0();
+
+	do
 	{
-		FILE *f_mod_ini = fopen(repfn, "r");
-		unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
-		fclose(f_mod_ini);
-		const IniGroup *indexes = ini->getGroup("");
-		strncpy_s(dir, repfn, MAX_PATH);
-		PathRemoveFileSpecA(dir);
-		WIN32_FIND_DATAA data;
-		HANDLE hfind = FindFirstFileA((string(dir) + "\\*.sa2mdl").c_str(), &data);
-		if (hfind == INVALID_HANDLE_VALUE)
-			goto defaultmodelload;
-		list<ModelInfo> files;
-		vector<ModelIndex> modelindexes;
-		sub_4297F0();
-		do
+		PathCombineA(combinedpath, dir, data.cFileName);
+		ModelInfo modelfile(combinedpath);
+		files.push_back(modelfile);
+		markobjswapped(modelfile.getmodel());
+		for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
 		{
-			PathCombineA(combinedpath, dir, data.cFileName);
-			ModelInfo modelfile(combinedpath);
-			files.push_back(modelfile);
-			markobjswapped(modelfile.getmodel());
-			for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
+			void* found = modelfile.getdata(i->second);
+			if (found != nullptr)
 			{
-				void *found = modelfile.getdata(i->second);
-				if (found != nullptr)
-				{
-					int ind = stoi(i->first);
-					ModelIndex index = { ind, (NJS_OBJECT *)found };
-					if (ind >= 0 && ind < 532 && !CharacterModels[ind].Model)
-						CharacterModels[ind] = index;
-					modelindexes.push_back(index);
-				}
+				int ind = stoi(i->first);
+				ModelIndex index = { ind, (NJS_OBJECT*)found };
+				if (ind >= 0 && ind < 532 && !CharacterModels[ind].Model)
+					CharacterModels[ind] = index;
+				modelindexes.push_back(index);
 			}
-		} while (FindNextFileA(hfind, &data) != 0);
-		FindClose(hfind);
-		ModelIndex endmarker = { -1, (NJS_OBJECT *)-1 };
-		modelindexes.push_back(endmarker);
-		result = new ModelIndex[modelindexes.size()];
-		memcpy(result, modelindexes.data(), sizeof(ModelIndex) * modelindexes.size());
-		modelfiles[result] = files;
-		goto end;
-	}
+		}
+	} while (FindNextFileA(hfind, &data) != 0);
+	FindClose(hfind);
+	ModelIndex endmarker = { -1, (NJS_OBJECT*)-1 };
+	modelindexes.push_back(endmarker);
+	result = new ModelIndex[modelindexes.size()];
+	memcpy(result, modelindexes.data(), sizeof(ModelIndex) * modelindexes.size());
+	modelfiles[result] = files;
 
-defaultmodelload:
-	int v3; // edx@3
-	int v5; // edi@5
-	unsigned int v6; // eax@5
-	unsigned int v7; // edi@5
-	int v8; // edi@6
-	ModelIndex *v9; // eax@7
-	signed int v10; // edx@8
-	NJS_OBJECT *v11; // ecx@11
-	NJS_OBJECT *v12; // ecx@15
-	void *v13; // eax@21
-	int v14; // ebx@21
-	int v15; // edi@21
-
-	result = (ModelIndex *)LoadPRSFile(filename);
-	if (result)
+	--dword_1A55800;
+	if (dword_1AF191C)
 	{
-		sub_4297F0();
-		v3 = 0;
-		if (result->Index != -1)
+		auto v13 = dword_1AF1918;
+		auto v14 = *((DWORD*)dword_1AF1918 + 1);
+		auto v15 = *((DWORD*)dword_1AF1918 + 1);
+		if (!*(BYTE*)(v14 + 21))
 		{
-			ModelIndex *v4 = result;
 			do
 			{
-				v5 = v4->Index;
-				v6 = (unsigned int)v4->Model;
-				v4->Index = (((v4->Index << 16) | v4->Index & 0xFF00) << 8) | ((((unsigned int)v4->Index >> 16) | v5 & 0xFF0000) >> 8);
-				v7 = v6;
-				++v3;
-				v4->Model = (NJS_OBJECT *)((((v6 << 16) | (unsigned __int16)(v6 & 0xFF00)) << 8) | (((v6 >> 16) | v7 & 0xFF0000) >> 8));
-				v4 = &result[v3];
-			} while (result[v3].Index != -1);
-		}
-		v8 = 0;
-		if (result->Index != -1)
-		{
-			v9 = result;
-			do
-			{
-				v10 = v9->Index;
-				if (v9->Index >= 0 && v10 < 532 && !CharacterModels[v10].Model)
-				{
-					v11 = v9->Model;
-					if (v11 && (unsigned int)v11 <= (unsigned int)result)
-					{
-						v11 = (NJS_OBJECT *)((DWORD)result + (DWORD)v11);
-						v9->Model = v11;
-					}
-					CharacterModels[v10].Model = v11;
-				}
-				v12 = v9->Model;
-				if (v12)
-				{
-					if ((unsigned int)v12 <= (unsigned int)result)
-					{
-						v12 = (NJS_OBJECT *)((DWORD)result + (DWORD)v12);
-						v9->Model = v12;
-					}
-					sub_48FA80(v12, result);
-				}
-				++v8;
-				v9 = &result[v8];
-			} while (result[v8].Index != -1);
-		}
-	end:
-		--dword_1A55800;
-		if (dword_1AF191C)
-		{
+				sub_419FC0(*(void**)(v15 + 8));
+				v15 = *(DWORD*)v15;
+				sub_7A5974((void*)v14);
+				v14 = v15;
+			} while (!*(BYTE*)(v15 + 21));
 			v13 = dword_1AF1918;
-			v14 = *((DWORD *)dword_1AF1918 + 1);
-			v15 = *((DWORD *)dword_1AF1918 + 1);
-			if (!*(BYTE *)(v14 + 21))
-			{
-				do
-				{
-					sub_419FC0(*(void **)(v15 + 8));
-					v15 = *(DWORD *)v15;
-					sub_7A5974((void *)v14);
-					v14 = v15;
-				} while (!*(BYTE *)(v15 + 21));
-				v13 = dword_1AF1918;
-			}
-			*((DWORD *)v13 + 1) = (DWORD)v13;
-			dword_1AF191C = 0;
-			*(DWORD *)dword_1AF1918 = (DWORD)dword_1AF1918;
-			*((DWORD *)dword_1AF1918 + 2) = (DWORD)dword_1AF1918;
 		}
+		*((DWORD*)v13 + 1) = (DWORD)v13;
+		dword_1AF191C = 0;
+		*(DWORD*)dword_1AF1918 = (DWORD)dword_1AF1918;
+		*((DWORD*)dword_1AF1918 + 2) = (DWORD)dword_1AF1918;
 	}
+
 	return result;
 }
 
-__declspec(naked) void LoadMDLFile_r()
-{
-	__asm
-	{
-		push eax
-		call LoadMDLFile_ri
-		add esp, 4
-		ret
-	}
-}
-
-void __cdecl ReleaseMDLFile_ri(ModelIndex *a1)
+void __cdecl ReleaseMDLFile_ri(ModelIndex* a1)
 {
 	if (a1->Index != -1)
 	{
-		ModelIndex *v1 = a1;
+		ModelIndex* v1 = a1;
 		do
 		{
 			if (v1->Index >= 0 && v1->Index < 532 && CharacterModels[v1->Index].Model == v1->Model)
@@ -292,8 +226,7 @@ void __cdecl ReleaseMDLFile_ri(ModelIndex *a1)
 	}
 	else
 	{
-		*((DWORD *)a1 - 1) = 0x89ABCDEFu;
-		MemoryManager->Deallocate((AllocatedMem *)a1 - 4, "..\\..\\src\\file_ctl.c", 1091);
+		FreeMemory((int*)a1, (char*)"..\\..\\src\\file_ctl.c", 1091);
 	}
 }
 
@@ -351,15 +284,15 @@ void HookTheAPI()
 	HookImport(GetModuleHandle(NULL), "Kernel32.dll", GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "CreateFileA"), (PROC)MyCreateFileA);
 }
 
-char *ShiftJISToUTF8(char *shiftjis)
+char* ShiftJISToUTF8(char* shiftjis)
 {
 	int cchWcs = MultiByteToWideChar(932, 0, shiftjis, -1, NULL, 0);
 	if (cchWcs <= 0) return nullptr;
-	wchar_t *wcs = new wchar_t[cchWcs];
+	wchar_t* wcs = new wchar_t[cchWcs];
 	MultiByteToWideChar(932, 0, shiftjis, -1, wcs, cchWcs);
 	int cbMbs = WideCharToMultiByte(CP_UTF8, 0, wcs, -1, NULL, 0, NULL, NULL);
 	if (cbMbs <= 0) { delete[] wcs; return nullptr; }
-	char *utf8 = new char[cbMbs];
+	char* utf8 = new char[cbMbs];
 	WideCharToMultiByte(CP_UTF8, 0, wcs, -1, utf8, cbMbs, NULL, NULL);
 	delete[] wcs;
 	return utf8;
@@ -388,14 +321,14 @@ void SetAppPathConfig(std::wstring gamepath)
 bool dbgConsole, dbgFile, dbgScreen;
 ofstream dbgstr;
 uint32_t saveedx;
-int __cdecl SA2DebugOutput(const char *Format, ...)
+int __cdecl SA2DebugOutput(const char* Format, ...)
 {
 	__asm { mov saveedx, edx }
 	va_list ap;
 	va_start(ap, Format);
 	int length = vsnprintf(NULL, 0, Format, ap) + 1;
 	va_end(ap);
-	char *buf = new char[length];
+	char* buf = new char[length];
 	va_start(ap, Format);
 	length = vsnprintf(buf, length, Format, ap);
 	va_end(ap);
@@ -405,7 +338,7 @@ int __cdecl SA2DebugOutput(const char *Format, ...)
 		debug_text::DisplayGameDebug(buf);
 	if (dbgFile && dbgstr.good())
 	{
-		char *utf8 = ShiftJISToUTF8(buf);
+		char* utf8 = ShiftJISToUTF8(buf);
 		dbgstr << utf8 << "\n";
 		delete[] utf8;
 	}
@@ -437,7 +370,7 @@ void ScanCSBFolder(string path, int length)
 					newpath = resourcedir + newpath;
 				}
 				transform(newpath.begin(), newpath.end(), newpath.begin(), ::tolower);
-				unordered_set<string> *files;
+				unordered_set<string>* files;
 				if (csbfilemap.find(newpath) == csbfilemap.cend())
 					csbfilemap[newpath] = files = new unordered_set<string>();
 				else
@@ -458,7 +391,7 @@ void ScanCSBFolder(string path, int length)
 unordered_map<unsigned char, unordered_map<short, StartPosition>> StartPositions;
 bool StartPositionsModified;
 
-struct startposdata { unsigned char character; const StartPosition *positions; };
+struct startposdata { unsigned char character; const StartPosition* positions; };
 
 const startposdata startposaddrs[] = {
 	{ Characters_Sonic, SonicStartArray },
@@ -478,15 +411,15 @@ void InitializeStartPositionLists()
 	for (unsigned int i = 0; i < LengthOfArray(startposaddrs); i++)
 	{
 		StartPositions[startposaddrs[i].character] = unordered_map<short, StartPosition>();
-		unordered_map<short, StartPosition> &newlist = StartPositions[startposaddrs[i].character];
+		unordered_map<short, StartPosition>& newlist = StartPositions[startposaddrs[i].character];
 		for (const StartPosition* origlist = startposaddrs[i].positions; origlist->Level != LevelIDs_Invalid; ++origlist)
 			newlist[origlist->Level] = *origlist;
 	}
 }
 
-int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *rotation)
+int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR* position, Rotation* rotation)
 {
-	ObjectMaster *v1 = MainCharacter[playerNum];
+	ObjectMaster* v1 = MainCharacter[playerNum];
 	if (position)
 	{
 		position->z = 0.0;
@@ -501,8 +434,8 @@ int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *
 	}
 	if (v1)
 	{
-		CharObj2Base *v4 = MainCharObj2[playerNum];
-		StartPosition *v5;
+		CharObj2Base* v4 = MainCharObj2[playerNum];
+		StartPosition* v5;
 		if (v4)
 		{
 			auto iter = StartPositions.find(v4->CharID);
@@ -529,7 +462,7 @@ int __cdecl LoadStartPosition_ri(int playerNum, NJS_VECTOR *position, Rotation *
 			rotation->y = *(&v5->Rotation1P + v6);
 		if (position)
 		{
-			NJS_VECTOR *v8 = &(&v5->Position1P)[v6];
+			NJS_VECTOR* v8 = &(&v5->Position1P)[v6];
 			position->x = v8->x;
 			position->y = v8->y;
 			position->z = v8->z;
@@ -560,7 +493,7 @@ static void __declspec(naked) LoadStartPosition_r()
 unordered_map<unsigned char, unordered_map<short, LevelEndPosition>> _2PIntroPositions;
 bool _2PIntroPositionsModified;
 
-struct endposdata { unsigned char character; const LevelEndPosition *positions; };
+struct endposdata { unsigned char character; const LevelEndPosition* positions; };
 
 const endposdata _2pintroposaddrs[] = {
 	{ Characters_Sonic, Sonic2PIntroArray },
@@ -579,11 +512,11 @@ void Initialize2PIntroPositionLists()
 {
 	for (unsigned int i = 0; i < LengthOfArray(_2pintroposaddrs); i++)
 	{
-		const LevelEndPosition * origlist = _2pintroposaddrs[i].positions;
+		const LevelEndPosition* origlist = _2pintroposaddrs[i].positions;
 		_2PIntroPositions[_2pintroposaddrs[i].character] = unordered_map<short, LevelEndPosition>();
 		if (origlist == nullptr)
 			continue;
-		unordered_map<short, LevelEndPosition> &newlist = _2PIntroPositions[_2pintroposaddrs[i].character];
+		unordered_map<short, LevelEndPosition>& newlist = _2PIntroPositions[_2pintroposaddrs[i].character];
 		for (; origlist->Level != LevelIDs_Invalid; ++origlist)
 			newlist[origlist->Level] = *origlist;
 	}
@@ -591,11 +524,11 @@ void Initialize2PIntroPositionLists()
 
 VoidFunc(sub_434CD0, 0x434CD0);
 DataArray(char, byte_1DE4664, 0x1DE4664, 2);
-DataPointer(void *, off_1DE95E0, 0x1DE95E0);
+DataPointer(void*, off_1DE95E0, 0x1DE95E0);
 
 // signed int __usercall@<eax>(int a1@<eax>, NJS_VECTOR *a2@<ecx>, char a3)
-static const void *const sub_46DC70Ptr = (void*)0x46DC70;
-static inline signed int sub_46DC70(int a1, NJS_VECTOR *a2, char a3)
+static const void* const sub_46DC70Ptr = (void*)0x46DC70;
+static inline signed int sub_46DC70(int a1, NJS_VECTOR* a2, char a3)
 {
 	signed int result;
 	__asm
@@ -613,13 +546,13 @@ static inline signed int sub_46DC70(int a1, NJS_VECTOR *a2, char a3)
 
 void __cdecl Load2PIntroPos_ri(int playerNum)
 {
-	ObjectMaster *v1 = MainCharacter[playerNum];
-	EntityData1 *v4;
-	NJS_VECTOR *v8;
+	ObjectMaster* v1 = MainCharacter[playerNum];
+	EntityData1* v4;
+	NJS_VECTOR* v8;
 	if (v1)
 	{
 		v4 = v1->Data1.Entity;
-		CharObj2Base *v3 = MainCharObj2[playerNum];
+		CharObj2Base* v3 = MainCharObj2[playerNum];
 		if (v3)
 		{
 			auto iter = _2PIntroPositions.find(v3->CharID);
@@ -628,13 +561,13 @@ void __cdecl Load2PIntroPos_ri(int playerNum)
 				auto iter2 = iter->second.find(CurrentLevel);
 				if (iter2 != iter->second.cend())
 				{
-					LevelEndPosition *v5 = &iter2->second;
+					LevelEndPosition* v5 = &iter2->second;
 					int v6 = playerNum != 0;
 					v4->Rotation.y = *(&v5->Mission2YRotation + v6);
-					NJS_VECTOR *v12 = &(&v5->Mission2Position)[v6];
+					NJS_VECTOR* v12 = &(&v5->Mission2Position)[v6];
 					v4->Position = *v12;
 					v8 = &v4->Position;
-					*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
+					*((int*)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
 					v3->SurfaceInfo.BottomSurfaceDist = v4->Position.y - 10.0f;
 					goto LABEL_16;
 				}
@@ -651,8 +584,8 @@ LABEL_16:
 	v4->Collision->CollisionArray->push |= 0x70u;
 	MainCharObj2[playerNum]->CurrentSurfaceFlags = (SurfaceFlags)0;
 	byte_1DE4664[playerNum & 1] = *(char*)0x1DE4660;
-	CharObj2Base *v9 = MainCharObj2[playerNum];
-	float *v10 = (float *)*(&off_1DE95E0 + playerNum);
+	CharObj2Base* v9 = MainCharObj2[playerNum];
+	float* v10 = (float*)*(&off_1DE95E0 + playerNum);
 	if (v9)
 	{
 		v9->Speed.z = 0.0;
@@ -698,11 +631,11 @@ void InitializeEndPositionLists()
 {
 	for (unsigned int i = 0; i < LengthOfArray(endposaddrs); i++)
 	{
-		const StartPosition * origlist = endposaddrs[i].positions;
+		const StartPosition* origlist = endposaddrs[i].positions;
 		EndPositions[endposaddrs[i].character] = unordered_map<short, StartPosition>();
 		if (origlist == nullptr)
 			continue;
-		unordered_map<short, StartPosition> &newlist = EndPositions[endposaddrs[i].character];
+		unordered_map<short, StartPosition>& newlist = EndPositions[endposaddrs[i].character];
 		for (; origlist->Level != LevelIDs_Invalid; ++origlist)
 			newlist[origlist->Level] = *origlist;
 	}
@@ -713,13 +646,13 @@ int __cdecl LoadEndPosition_Mission23_ri(int playerNum);
 void __cdecl LoadEndPosition_ri(int playerNum)
 {
 	int v1; // edi
-	ObjectMaster *v2; // esi
-	CharObj2Base *v3; // eax
-	EntityData1 *v4; // esi
-	StartPosition *v5; // eax
+	ObjectMaster* v2; // esi
+	CharObj2Base* v3; // eax
+	EntityData1* v4; // esi
+	StartPosition* v5; // eax
 	int v6; // edx
-	NJS_VECTOR *v7; // ecx
-	NJS_VECTOR *v9; // eax
+	NJS_VECTOR* v7; // ecx
+	NJS_VECTOR* v9; // eax
 	float v10; // ST14_4
 
 	v1 = playerNum;
@@ -756,7 +689,7 @@ void __cdecl LoadEndPosition_ri(int playerNum)
 					v4->Rotation.z = 0;
 					v4->Rotation.x = 0;
 					v4->Rotation.y = *(&v5->Rotation1P + v6);
-					*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
+					*((int*)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
 					v9 = &v5->Position1P + v6;
 					v4->Position.x = v9->x;
 					v7 = &v4->Position;
@@ -776,7 +709,7 @@ void __cdecl LoadEndPosition_ri(int playerNum)
 		v7 = &v4->Position;
 		v4->Position.y = 0.0;
 		v4->Position.x = 0.0;
-		*((int *)*(&off_1DE95E0 + playerNum) + 7) = 0;
+		*((int*)*(&off_1DE95E0 + playerNum) + 7) = 0;
 	LABEL_27:
 		sub_46DC70(v1, v7, 0);
 		v4->Collision->CollisionArray->push |= 0x70u;
@@ -822,11 +755,11 @@ void InitializeMission23EndPositionLists()
 {
 	for (unsigned int i = 0; i < LengthOfArray(endposaddrs); i++)
 	{
-		const LevelEndPosition * origlist = m23endposaddrs[i].positions;
+		const LevelEndPosition* origlist = m23endposaddrs[i].positions;
 		Mission23EndPositions[m23endposaddrs[i].character] = unordered_map<short, LevelEndPosition>();
 		if (origlist == nullptr)
 			continue;
-		unordered_map<short, LevelEndPosition> &newlist = Mission23EndPositions[m23endposaddrs[i].character];
+		unordered_map<short, LevelEndPosition>& newlist = Mission23EndPositions[m23endposaddrs[i].character];
 		for (; origlist->Level != LevelIDs_Invalid; ++origlist)
 			newlist[origlist->Level] = *origlist;
 	}
@@ -837,11 +770,11 @@ int __cdecl LoadEndPosition_Mission23_ri(int playerNum)
 	int v1; // edi
 	__int16 v2; // bp
 	int v3; // edx
-	EntityData1 *v4; // esi
-	LevelEndPosition *v5; // eax
+	EntityData1* v4; // esi
+	LevelEndPosition* v5; // eax
 	int v7; // edi
-	NJS_VECTOR *v9; // eax
-	NJS_VECTOR *v10; // ecx
+	NJS_VECTOR* v9; // eax
+	NJS_VECTOR* v10; // ecx
 	float v11; // ST14_4
 
 	v1 = playerNum;
@@ -885,7 +818,7 @@ LABEL_13:
 	v4->Rotation.z = 0;
 	v4->Rotation.x = 0;
 	v4->Rotation.y = *(&v5->Mission2YRotation + v3);
-	*((int *)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
+	*((int*)*(&off_1DE95E0 + playerNum) + 7) = v4->Rotation.y;
 	v9 = &v5->Mission2Position + v3;
 	v4->Position.x = v9->x;
 	v10 = &v4->Position;
@@ -934,8 +867,8 @@ void sub_434CD0_r() {
 	return sub_434CD0();
 }
 
-const char *mainsavepath = "resource/gd_PC/SAVEDATA";
-const char *chaosavepath = "resource/gd_PC/SAVEDATA";
+const char* mainsavepath = "resource/gd_PC/SAVEDATA";
+const char* chaosavepath = "resource/gd_PC/SAVEDATA";
 extern HelperFunctions helperFunctions;
 
 bool IsPathExist(const string& s);
@@ -1006,8 +939,125 @@ static vector<string> split(const string& s, char delim)
 	return elems;
 }
 
+static void Mod_CheckAndReplaceFiles(const string mod_dirA, const uint16_t i)
+{
+
+	string sysfol = mod_dirA + "\\gd_pc";
+	transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
+	if (DirectoryExists(sysfol))
+	{
+		sadx_fileMap.scanFolder(sysfol, i);
+		ScanCSBFolder(sysfol + "\\mlt", sysfol.length() + 1);
+		ScanCSBFolder(sysfol + "\\mpb", sysfol.length() + 1);
+		ScanCSBFolder(sysfol + "\\event\\mlt", sysfol.length() + 1);
+	}
+
+	const string modTexDir = mod_dirA + "\\textures";
+	if (DirectoryExists(modTexDir))
+		sadx_fileMap.scanTextureFolder(modTexDir, i);
+
+	const string modRepTexDir = mod_dirA + "\\replacetex";
+	if (DirectoryExists(modRepTexDir))
+		ScanTextureReplaceFolder(modRepTexDir, i);
+}
+
+static void ModIniProcessFilesCheck(IniFile* ini_mod, const int i, unordered_map<string, string>& filereplaces, vector<std::pair<string, string>>& fileswaps)
+{
+	if (ini_mod->hasGroup("IgnoreFiles"))
+	{
+		const IniGroup* group = ini_mod->getGroup("IgnoreFiles");
+		auto data = group->data();
+		for (const auto& iter : *data)
+		{
+			sadx_fileMap.addIgnoreFile(iter.first, i);
+			PrintDebug("Ignored file: %s\n", iter.first.c_str());
+		}
+	}
+
+	if (ini_mod->hasGroup("ReplaceFiles"))
+	{
+		const IniGroup* group = ini_mod->getGroup("ReplaceFiles");
+		auto data = group->data();
+		for (const auto& iter : *data)
+		{
+			filereplaces[FileMap::normalizePath(iter.first)] =
+				FileMap::normalizePath(iter.second);
+		}
+	}
+
+	if (ini_mod->hasGroup("SwapFiles"))
+	{
+		const IniGroup* group = ini_mod->getGroup("SwapFiles");
+		auto data = group->data();
+		for (const auto& iter : *data)
+		{
+			fileswaps.emplace_back(FileMap::normalizePath(iter.first),
+				FileMap::normalizePath(iter.second));
+		}
+	}
+}
+
+//todo convert to wstring
+static string _mainsavepath, _chaosavepath;
+static bool saveRedirectFound, chaosaveredirectFound = false;
+wstring iconPathName;
+string windowTitle;
+static void HandleOtherModIniContent(const IniGroup* const modinfo, const wstring& mod_dir, const string mod_dirA)
+{
+	// Check if the mod has EXE data replacements.
+	if (modinfo->hasKeyNonEmpty("EXEData"))
+	{
+		wchar_t filename[MAX_PATH];
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+			mod_dir.c_str(), modinfo->getWString("EXEData").c_str());
+		ProcessEXEData(filename, mod_dir);
+	}
+
+	// Check if the mod has DLL data replacements.
+	if (modinfo->hasKeyNonEmpty("DLLData"))
+	{
+		wchar_t filename[MAX_PATH];
+		swprintf(filename, LengthOfArray(filename), L"%s\\%s",
+			mod_dir.c_str(), modinfo->getWString("DLLData").c_str());
+		ProcessDLLData(filename, mod_dir);
+	}
+
+	if (modinfo->getBool("RedirectMainSave")) {
+		_mainsavepath = mod_dirA + "\\SAVEDATA";
+
+		if (!IsPathExist(_mainsavepath))
+		{
+			_mkdir(_mainsavepath.c_str());
+		}
+	}
+
+	if (modinfo->getBool("RedirectChaoSave")) {
+		_chaosavepath = mod_dirA + "\\SAVEDATA";
+
+		if (!IsPathExist(_chaosavepath))
+		{
+			_mkdir(_chaosavepath.c_str());
+		}
+	}
+
+	if (modinfo->hasKeyNonEmpty("BorderImage"))
+		borderimg = mod_dir + L'\\' + modinfo->getWString("BorderImage");
+
+	if (modinfo->getBool("SetExeIcon"))
+	{
+		const wstring mod_icon = mod_dir + L"\\mod.ico";
+
+		if (FileExists(mod_icon))
+		{
+			iconPathName = mod_icon.c_str();
+			PrintDebug("Setting icon from mod folder: %s\n", mod_dir.c_str());
+		}
+	}
+}
+
 LoaderSettings loaderSettings = {};
 std::vector<Mod> modlist;
+
 void __cdecl InitMods(void)
 {
 	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -1022,9 +1072,9 @@ void __cdecl InitMods(void)
 	if (!f_ini)
 	{
 		f_ini = _wfopen(L"mods\\SA2ModLoader.ini", L"w"); //Create dummy loader ini file so it won't crash with old mods that use it.
-		
+
 		if (f_ini)
-			fclose(f_ini);		
+			fclose(f_ini);
 	}
 	else
 	{
@@ -1085,10 +1135,10 @@ void __cdecl InitMods(void)
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
 	DWORD oldprot;
-	VirtualProtect((void *)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
+	VirtualProtect((void*)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
 
-	WriteJump((void *)LoadMDLFilePtr, LoadMDLFile_r);
-	WriteJump((void *)ReleaseMDLFilePtr, ReleaseMDLFile_r);
+	LoadMDLFile_t.Hook(LoadMDLFile_ri);
+	WriteJump((void*)ReleaseMDLFilePtr, ReleaseMDLFile_r);
 	WriteData((char*)0x435A44, (char)0x90u);
 	WriteCall((void*)0x435A45, FindFirstCSBFileA);
 	WriteData((char*)0x435BD6, (char)0x90u);
@@ -1104,7 +1154,7 @@ void __cdecl InitMods(void)
 
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC");
 	sadx_fileMap.scanPRSFolder("resource\\gd_PC\\event");
-	
+
 	ApplyPatches(&loaderSettings);
 	//init interpol fix for helperfunctions
 	interpolation::init();
@@ -1131,8 +1181,6 @@ void __cdecl InitMods(void)
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<wstring, wstring>> errors;
-
-	string _mainsavepath, _chaosavepath;
 
 	// It's mod loading time!
 	PrintDebug("Loading mods...\n");
@@ -1198,59 +1246,11 @@ void __cdecl InitMods(void)
 			}
 		};
 
-		if (ini_mod->hasGroup("IgnoreFiles"))
-		{
-			const IniGroup *group = ini_mod->getGroup("IgnoreFiles");
-			auto data = group->data();
-			for (unordered_map<string, string>::const_iterator iter = data->begin();
-				iter != data->end(); ++iter)
-			{
-				sadx_fileMap.addIgnoreFile(iter->first, i);
-				PrintDebug("Ignored file: %s\n", iter->first.c_str());
-			}
-		}
 
-		if (ini_mod->hasGroup("ReplaceFiles"))
-		{
-			const IniGroup *group = ini_mod->getGroup("ReplaceFiles");
-			auto data = group->data();
-			for (unordered_map<string, string>::const_iterator iter = data->begin();
-				iter != data->end(); ++iter)
-			{
-				filereplaces[FileMap::normalizePath(iter->first)] =
-					FileMap::normalizePath(iter->second);
-			}
-		}
-
-		if (ini_mod->hasGroup("SwapFiles"))
-		{
-			const IniGroup* group = ini_mod->getGroup("SwapFiles");
-			auto data = group->data();
-			for (const auto& iter : *data)
-			{
-				fileswaps.emplace_back(FileMap::normalizePath(iter.first),
-					FileMap::normalizePath(iter.second));
-			}
-		}
+		ModIniProcessFilesCheck(ini_mod.get(), i, filereplaces, fileswaps);
 
 		// Check for gd_pc replacements
-		string sysfol = mod_dirA + "\\gd_pc";
-		transform(sysfol.begin(), sysfol.end(), sysfol.begin(), ::tolower);
-		if (DirectoryExists(sysfol))
-		{
-			sadx_fileMap.scanFolder(sysfol, i);
-			ScanCSBFolder(sysfol + "\\mlt", sysfol.length() + 1);
-			ScanCSBFolder(sysfol + "\\mpb", sysfol.length() + 1);
-			ScanCSBFolder(sysfol + "\\event\\mlt", sysfol.length() + 1);
-		}
-
-		const string modTexDir = mod_dirA + "\\textures";
-		if (DirectoryExists(modTexDir))
-			sadx_fileMap.scanTextureFolder(modTexDir, i);
-
-		const string modRepTexDir = mod_dirA + "\\replacetex";
-		if (DirectoryExists(modRepTexDir))
-			ScanTextureReplaceFolder(modRepTexDir, i);
+		Mod_CheckAndReplaceFiles(mod_dirA, i);
 
 		// Check if a custom EXE is required.
 		if (modinfo->hasKeyNonEmpty("EXEFile"))
@@ -1302,7 +1302,7 @@ void __cdecl InitMods(void)
 			}
 			else
 			{
-				const ModInfo *info = (ModInfo *)GetProcAddress(module, "SA2ModInfo");
+				const ModInfo* info = (ModInfo*)GetProcAddress(module, "SA2ModInfo");
 				if (info)
 				{
 					modinf.DLLHandle = module;
@@ -1381,44 +1381,29 @@ void __cdecl InitMods(void)
 			}
 		}
 
-		// Check if the mod has EXE data replacements.
-		if (modinfo->hasKeyNonEmpty("EXEData"))
+		HandleOtherModIniContent(modinfo, mod_dir, mod_dirA);
+
+		if (modinfo->hasKeyNonEmpty("WindowTitle"))
+			helperFunctions.SetWindowTitle(modinfo->getWString("WindowTitle").c_str());
+
+
+		//basic Mod Config, includes file replacement without custom code
+		int dirs = ini_mod->getInt("Config", "IncludeDirCount", -1);
+		if (dirs != -1)
 		{
-			wchar_t filename[MAX_PATH];
-			swprintf(filename, LengthOfArray(filename), L"%s\\%s",
-				mod_dir.c_str(), modinfo->getWString("EXEData").c_str());
-			ProcessEXEData(filename, mod_dir);
-		}
-
-		// Check if the mod has DLL data replacements.
-		if (modinfo->hasKeyNonEmpty("DLLData"))
-		{
-			wchar_t filename[MAX_PATH];
-			swprintf(filename, LengthOfArray(filename), L"%s\\%s",
-				mod_dir.c_str(), modinfo->getWString("DLLData").c_str());
-			ProcessDLLData(filename, mod_dir);
-		}
-
-		if (modinfo->getBool("RedirectMainSave")) {
-			_mainsavepath = mod_dirA + "\\SAVEDATA";
-
-			if (!IsPathExist(_mainsavepath))
+			for (uint16_t md = 0; md < dirs; md++)
 			{
-				_mkdir(_mainsavepath.c_str());
+				auto incDirPath = ini_mod->getString("Config", "IncludeDir" + std::to_string(md));
+				const string modIncDir = mod_dirA + "\\" + incDirPath;
+				const wstring modIncDirW = mod_dir + L"\\" + ini_mod->getWString("Config", "IncludeDir" + std::to_string(md));
+				if (DirectoryExists(modIncDir))
+				{
+					PrintDebug("Mod Config: use path: '%s'\n", modIncDir.c_str());
+					Mod_CheckAndReplaceFiles(modIncDir, i);
+					HandleOtherModIniContent(modinfo, modIncDirW, modIncDir);
+				}
 			}
 		}
-
-		if (modinfo->getBool("RedirectChaoSave")) {
-			_chaosavepath = mod_dirA + "\\SAVEDATA";
-
-			if (!IsPathExist(_chaosavepath))
-			{
-				_mkdir(_chaosavepath.c_str());
-			}
-		}
-
-		if (modinfo->hasKeyNonEmpty("BorderImage"))
-			borderimg = mod_dir + L'\\' + modinfo->getWString("BorderImage");
 
 		modlist.push_back(modinf);
 	}
@@ -1458,72 +1443,70 @@ void __cdecl InitMods(void)
 	TestSpawnCheckArgs(helperFunctions);
 
 	if (StartPositionsModified)
-		WriteJump((void *)LoadStartPositionPtr, LoadStartPosition_r);
+		WriteJump((void*)LoadStartPositionPtr, LoadStartPosition_r);
 	if (_2PIntroPositionsModified)
-		WriteJump((void *)Load2PIntroPosPtr, Load2PIntroPos_r);
+		WriteJump((void*)Load2PIntroPosPtr, Load2PIntroPos_r);
 	if (EndPositionsModified)
-		WriteJump((void *)LoadEndPositionPtr, LoadEndPosition_r);
+		WriteJump((void*)LoadEndPositionPtr, LoadEndPosition_r);
 	if (Mission23EndPositionsModified)
-		WriteJump((void *)LoadEndPosition_Mission23Ptr, LoadEndPosition_Mission23_r);
+		WriteJump((void*)LoadEndPosition_Mission23Ptr, LoadEndPosition_Mission23_r);
 
 	if (!_mainsavepath.empty())
 	{
-		char *buf = new char[_mainsavepath.size() + 1];
+		char* buf = new char[_mainsavepath.size() + 1];
 		strncpy(buf, _mainsavepath.c_str(), _mainsavepath.size() + 1);
 		mainsavepath = buf;
 		string tmp = "./" + _mainsavepath + "/SONIC2B__S%02d";
 		buf = new char[tmp.size() + 1];
 		strncpy(buf, tmp.c_str(), tmp.size() + 1);
-		WriteData((char **)0x445312, buf);
-		WriteData((char **)0x689684, buf);
-		WriteData((char **)0x689AA9, buf);
-		WriteData((char **)0x689D22, buf);
-		WriteData((char **)0x689D4D, buf);
+		WriteData((char**)0x445312, buf);
+		WriteData((char**)0x689684, buf);
+		WriteData((char**)0x689AA9, buf);
+		WriteData((char**)0x689D22, buf);
+		WriteData((char**)0x689D4D, buf);
 		tmp = "./" + _mainsavepath + "/SONIC2B__D%02d";
 		buf = new char[tmp.size() + 1];
 		strncpy(buf, tmp.c_str(), tmp.size() + 1);
-		WriteData((char **)0x445332, buf);
+		WriteData((char**)0x445332, buf);
 		tmp = "./" + _mainsavepath + "/SONIC2B__S01";
 		buf = new char[tmp.size() + 1];
 		strncpy(buf, tmp.c_str(), tmp.size() + 1);
-		WriteData((char **)0x445317, buf);
-		WriteData((char **)0x689689, buf);
-		WriteData((char **)0x689AAE, buf);
-		WriteData((char **)0x689D27, buf);
-		WriteData((char **)0x689D52, buf);
-		WriteData((char **)0x173D070, buf);
+		WriteData((char**)0x445317, buf);
+		WriteData((char**)0x689689, buf);
+		WriteData((char**)0x689AAE, buf);
+		WriteData((char**)0x689D27, buf);
+		WriteData((char**)0x689D52, buf);
+		WriteData((char**)0x173D070, buf);
 		tmp = "./" + _mainsavepath + "/SONIC2B__D01";
 		buf = new char[tmp.size() + 1];
 		strncpy(buf, tmp.c_str(), tmp.size() + 1);
-		WriteData((char **)0x445337, buf);
-		WriteData((char **)0x173D07C, buf);
+		WriteData((char**)0x445337, buf);
+		WriteData((char**)0x173D07C, buf);
 	}
 
 	if (!_chaosavepath.empty())
 	{
-		char *buf = new char[_chaosavepath.size() + 1];
+		char* buf = new char[_chaosavepath.size() + 1];
 		strncpy(buf, _chaosavepath.c_str(), _chaosavepath.size() + 1);
 		chaosavepath = buf;
 		string tmp = "./" + _chaosavepath + "/SONIC2B__ALF";
 		buf = new char[tmp.size() + 1];
 		strncpy(buf, tmp.c_str(), tmp.size() + 1);
-		WriteData((char **)0x457027, buf);
-		WriteData((char **)0x52DE84, buf);
-		WriteData((char **)0x52DF48, buf);
-		WriteData((char **)0x52E063, buf);
-		WriteData((char **)0x52E2A8, buf);
-		WriteData((char **)0x52FEC7, buf);
-		WriteData((char **)0x5323A1, buf);
-		WriteData((char **)0x5323B5, buf);
-		WriteData((char **)0x5324A2, buf);
-		WriteData((char **)0x53257E, buf);
-		WriteData((char **)0x532595, buf);
-		WriteData((char **)0x532672, buf);
+		WriteData((char**)0x457027, buf);
+		WriteData((char**)0x52DE84, buf);
+		WriteData((char**)0x52DF48, buf);
+		WriteData((char**)0x52E063, buf);
+		WriteData((char**)0x52E2A8, buf);
+		WriteData((char**)0x52FEC7, buf);
+		WriteData((char**)0x5323A1, buf);
+		WriteData((char**)0x5323B5, buf);
+		WriteData((char**)0x5324A2, buf);
+		WriteData((char**)0x53257E, buf);
+		WriteData((char**)0x532595, buf);
+		WriteData((char**)0x532672, buf);
 	}
 
 	PrintDebug("Mod loading finished.");
-
-	CheckCrashMod();
 
 	ifstream patches_str("mods\\Patches.dat", ifstream::binary);
 	if (patches_str.is_open())
@@ -1644,8 +1627,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		transform(sa2dir.begin(), sa2dir.end(), sa2dir.begin(), ::tolower);
 		sa2dir += "\\";
 		sadx_fileMap.setSA2Dir(sa2dir);
-		WriteJump((void *)0x0077DD5C, InitMods);
-		WriteJump((void *)0x0077DD43, InitMods);
+		WriteJump((void*)0x0077DD5C, InitMods);
+		WriteJump((void*)0x0077DD43, InitMods);
 		break;
 	case DLL_PROCESS_DETACH:
 	case DLL_THREAD_ATTACH:

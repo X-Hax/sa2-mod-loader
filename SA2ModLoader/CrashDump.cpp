@@ -4,8 +4,17 @@
 #include <direct.h>
 #include <Psapi.h>
 #include <shlwapi.h>
+#include <time.h>
+#include "config.h"
+#include <filesystem>  // For std::filesystem on C++17 and above
+#include <iostream>
+#include <iomanip>
+
 
 using namespace std;
+
+const string eyeTrackCrash = "The game failed to load the Eyes tracker for the character. If you are making a skin mod, this usually means the hierarchy of your character is wrong.\n\nAlso make sure to NOT rename or delete the bones.";
+const string jiggleCrash = "The game failed to load the Jiggle function of the character (quills, tail physics etc.).\nIf you are making a skin mod, you should disable the jiggle for this character using a DLL mod.";
 
 static const unordered_map<intptr_t, string> crashes_addresses_map = {
 	{ 0x42C304, "Animation error: the game failed to play one or more animations."  },
@@ -13,8 +22,33 @@ static const unordered_map<intptr_t, string> crashes_addresses_map = {
 	{ 0x459851, "Animation error: the game failed to load the motion file of a character."  },
 	{ 0x46A1CA, "Animation error: the game failed to play a character animation."  },
 	{ 0x42EF3A, "Draw Model error: the game failed to draw a model.\nIf you are making a character mod, this might be the jiggle.\nDisable the jiggle or make the head mesh 100% weighted to the head bone."  },
-	{ 0x4765B1, "The game failed to load the eyes tracker to the character. Did you forget to assign the head and eyes to the ini file?"}
 };
+
+struct addressRange
+{
+	intptr_t start = 0;
+	intptr_t end = 0;
+	string crashMsg = "";
+};
+
+static const addressRange Range_Addresses_list[] =
+{
+	{ 0x476530, 0x476692, eyeTrackCrash },
+	{ 0x447580, 0x447907, jiggleCrash} ,
+};
+
+static const string GetRangeAddressesCrash(const intptr_t address)
+{
+	for (uint8_t i = 0; i < LengthOfArray(Range_Addresses_list); i++)
+	{
+		if (address >= Range_Addresses_list[i].start && address <= Range_Addresses_list[i].end)
+		{
+			return Range_Addresses_list[i].crashMsg;
+		}
+	}
+
+	return "NULL";
+}
 
 static const string getErrorMSG(intptr_t address)
 {
@@ -26,28 +60,52 @@ static const string getErrorMSG(intptr_t address)
 	return crashes_addresses_map.find(address)->second; //return a custom error message if the address is known
 }
 
-void CopyAndRename_ModLoaderIni()
+void SetErrorMessage(string& fullMsg, const string address, const string dllName, const intptr_t crashID)
 {
-	char timeStr[255];
-	time_t t = time(NULL);
-	tm tM;
-	localtime_s(&tM, &t);
-	strftime(timeStr, 255, "_%d_%m_%Y_%H_%M_%S", &tM);
-	char tmp[256];
-	string directory = _getcwd(tmp, 256);
+	string errorCommon = getErrorMSG(crashID); //get error message if the crash address is common
+	fullMsg = "SA2 has crashed at " + address + " (" + dllName + ").\n";
 
-	const string quote = "\"";
-	string fullLine = "xcopy " + quote + directory + "\\mods\\SA2ModLoader.ini" + quote + " " + quote + directory + "\\CrashDump" + quote;
-	int copyState = system(fullLine.c_str());
-
-	if (copyState != -1) {
-		string rename = "ren " + quote + directory + "\\CrashDump\\SA2ModLoader.ini" + quote + " " + quote + "ModList" + timeStr + ".ini" + quote;
-		system(rename.c_str());
-		PrintDebug("CrashDump: Successfully copied SA2ModLoader.ini to the CrashDump Folder.\n");
+	if (errorCommon != "NULL")
+	{
+		fullMsg += "\n" + errorCommon + "\n"; //add the common error message if it exists
 	}
 	else
 	{
-		PrintDebug("CrashDump: Failed to copy SA2ModLoader.ini to the Crash Dump Folder.\n");
+		//if the crash isn't in the list, check if it's a common crash from addresses from a whole function...
+		auto charcrash = GetRangeAddressesCrash(crashID);
+
+		if (charcrash != "NULL")
+		{
+			fullMsg += "\n" + charcrash + "\n";
+		}
+	}
+
+	fullMsg += "\nA crash dump and a mod list have been added to your game's CrashDumps folder.\n\nIf you want to report this crash, please include the dump (.dmp file) and the mod list (.json file) in your report.\n";
+}
+
+void CopyAndRename_SA2LoaderProfile()
+{
+	std::time_t t = std::time(nullptr);
+	tm tM;
+	localtime_s(&tM, &t);
+
+	// Format the time string
+	std::wstringstream oss;
+	oss << std::put_time(&tM, L"%m_%d_%Y_%H_%M_%S");
+	std::wstring timeStr = oss.str();
+
+	std::filesystem::path directory = std::filesystem::current_path();
+	std::filesystem::path sourcePath = currentProfilePath;
+	std::filesystem::path destinationPath = directory / L"CrashDump" / (L"ModList_" + timeStr + L".json");
+
+	try 
+	{
+		std::filesystem::copy_file(sourcePath, destinationPath, std::filesystem::copy_options::overwrite_existing);
+		PrintDebug("CrashDump: Successfully copied and renamed SA2 Profile.\n");
+	}
+	catch (const std::exception& e) 
+	{
+		PrintDebug("CrashDump: Failed to copy and rename SA2 Profile. Error: %s\n", e.what());
 	}
 }
 
@@ -135,35 +193,20 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 			}
 		}
 
-		string errorCommon = getErrorMSG(crashID); //get error message if the crash address is common
-		string fullMsg = "SA2 has crashed at " + address + " (" + dllName + ").\n";
-
-		if (errorCommon != "NULL") {
-			fullMsg += errorCommon + "\n"; //add the common error message if it exists
-		}
-
-		fullMsg += "A minidump has been created in your SA2 folder.\n";
-		CopyAndRename_ModLoaderIni(); //copy ModLoaderIni file to the Crash Dump folder so we know what mod and cheat were used
+		string fullMsg = "";
+		SetErrorMessage(fullMsg, address, dllName, crashID);
+		CopyAndRename_SA2LoaderProfile(); //copy JSON Profile file to the Crash Dump folder so we know what mods and cheat were used
 		string text = "Crash Address: " + address + "\n";
 		PrintDebug("\nFault module name: %s \n", dllName.c_str());
 		PrintDebug(text.c_str());
 
 		PrintDebug("Crash Dump Done.\n");
-		MessageBoxA(0, fullMsg.c_str(), "SA2 ERROR", MB_ICONERROR);
+		MessageBoxA(0, fullMsg.c_str(), "SA2 Has Crashed", MB_ICONERROR);
 	}
 
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
-void CheckCrashMod()
-{
-	HMODULE Mod = GetModuleHandle(L"CrashMod");
-
-	if (Mod)
-	{
-		MessageBoxA(0, "SA2 Crash Mod has been detected, this mod is now deprecated.\nPlease uninstall Crash Mod.", "Potential Conflict", MB_ICONWARNING);
-	}
-}
 
 void initCrashDump()
 {

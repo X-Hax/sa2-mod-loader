@@ -129,7 +129,7 @@ enum KartCourseIDs
 	KartCourse_Route101,
 	KartCourse_Route280,
 	KartCourse_Beginner,
-	KartCourse_Intermediate,
+	KartCourse_Standard,
 	KartCourse_Expert,
 	KartCourse_Download
 };
