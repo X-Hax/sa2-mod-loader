@@ -34,8 +34,6 @@ static bool maintainAspectRatio = true;
 static bool windowWrapper = false;
 static bool disableBorderImage = false;
 static double targetAspectRatio = 4 / 3;
-static int customWindowWidth = 640;
-static int customWindowHeight = 480;
 
 static Gdiplus::Bitmap* backgroundImage = nullptr;
 static HWND innerWindow = NULL;
@@ -48,32 +46,22 @@ static void update_innerwindow(int w, int h)
 {
 	if (maintainAspectRatio)
 	{
-		auto w_ = customWindowSize ? customWindowWidth : w;
-		auto h_ = customWindowSize ? customWindowHeight : h;
 		if (w > (int)(round((double)h * targetAspectRatio)))
 		{
-			innerWidth = (int)(round((double)h_ * targetAspectRatio));
-			innerHeight = h_;
+			innerWidth = (int)(round((double)h * targetAspectRatio));
+			innerHeight = h;
 		}
 		else
 		{
-			innerWidth = w_;
-			innerHeight = (int)(round((double)w_ / targetAspectRatio));
+			innerWidth = w;
+			innerHeight = (int)(round((double)w / targetAspectRatio));
 		}
 		SetWindowPos(innerWindow, HWND_TOP, (w - innerWidth) / 2, (h - innerHeight) / 2, innerWidth, innerHeight, 0);
 	}
 	else
 	{
-		if (customWindowSize)
-		{
-			innerWidth = customWindowWidth;
-			innerHeight = customWindowHeight;
-		}
-		else
-		{
-			innerWidth = w;
-			innerHeight = h;
-		}
+		innerWidth = w;
+		innerHeight = h;
 		SetWindowPos(innerWindow, HWND_TOP, 0, 0, innerWidth, innerHeight, 0);
 	}
 }
@@ -90,7 +78,11 @@ static void change_resolution(int w, int h, BOOL windowed)
 		h = innerHeight;
 	}
 
-	direct3d::change_resolution(w, h, windowed);
+	// Original resolution should not change in custom window mode
+	if (!customWindowSize)
+	{
+		direct3d::change_resolution(w, h, windowed);
+	}
 }
 
 static void enable_fullscreen_mode(HWND handle)
@@ -147,7 +139,7 @@ static void enable_windowed_mode(HWND handle)
 	// Restore resolution
 	change_resolution(last_horizontal_resolution, last_vertical_resolution, false);
 
-	// Restore windowed position and resolution
+	// Restore windowed position
 	SetWindowPos(handle, HWND_NOTOPMOST, last_rect.left, last_rect.top, width, height, SWP_FRAMECHANGED);
 
 	while (ShowCursor(TRUE) < 0);
@@ -337,8 +329,6 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 	case custom_mode:
 		windowedFullscreen = false;
 		customWindowSize = true;
-		customWindowWidth = settings.WindowWidth;
-		customWindowHeight = settings.WindowHeight;
 		break;
 	default:
 		return;
