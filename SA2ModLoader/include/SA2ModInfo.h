@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 13;
+static const int ModLoaderVer = 14;
 
 struct PatchInfo
 {
@@ -59,7 +59,7 @@ struct LoaderSettings
 	int WindowWidth;
 	int WindowHeight;
 	bool ResizableWindow;
-	bool MaintainAspectRatio;
+	bool MaintainAspectRatio; // Deprecated, use StretchToWindow
 	bool FramerateLimiter;
 	int TestSpawnLevel;
 	int TestSpawnCharacter;
@@ -76,8 +76,10 @@ struct LoaderSettings
 	bool ScreenFadeFix;
 	bool CECarFix;
 	bool ParticlesFix;
-	bool KeepAspectWhenResizing;
-	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window); 
+	bool KeepAspectWhenResizing; // Deprecated, use StretchToWindow
+	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window);
+	bool DisableBorderImage; // Requires version >= 14.
+	bool StretchToWindow; // Stretch content to the window instead of respecting aspect ratio. Requires version >= 14.
 };
 
 struct ModDependency
