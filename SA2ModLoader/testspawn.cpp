@@ -217,7 +217,20 @@ static void SetAltCharacter(uint8_t id) {
 	}
 }
 
+VoidFunc(sub_6897D0, 0x6897D0);
+VoidFunc(sub_444A90, 0x444A90);
 static StartPosition gTestSpawnStartPos;
+static bool setSaveOnce = false;
+void TSLoadSave_r()
+{
+	if (!setSaveOnce)
+	{
+		ProbablyLoadsSave(0);
+		setSaveOnce = true;
+	}
+	InitCurrentLevelAndScreenCount();
+}
+
 void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 {
 	int argc = 0;
@@ -327,7 +340,11 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		else if (!wcscmp(argv[i], L"--savenum") || !wcscmp(argv[i], L"-s"))
 		{
 			SetWorkingSave(_wtoi(argv[++i]));
+			sub_6897D0();
 			ProbablyLoadsSave(0);
+			sub_444A90();
+			WriteCall((void*)0x43A9A1, TSLoadSave_r);
+		
 		}
 		else if (!wcscmp(argv[i], L"--chaoarea"))
 		{
