@@ -300,3 +300,13 @@ writenop 0043ED8A 4
 writenop 0043EDA5 4
 Author Sora
 Category Miscellaneous
+Description Show powerups up like Magnetic Barrier during Victory Screen.
+
+Patch "All Events Skippable"
+writenop 005FB603 2
+writenop 005FB60B 2
+writenop 005FB613 2
+writenop 005FB61B 2
+Author Sora
+Category Cutscene
+Description SA2 doesn't allow some events to be skipped like Hero Story ending and Shadow sacrifice, this code fixes that.
