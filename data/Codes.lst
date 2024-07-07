@@ -310,3 +310,15 @@ writenop 005FB61B 2
 Author Sora
 Category Cutscene
 Description SA2 doesn't allow some events to be skipped like Hero Story ending and Shadow sacrifice, this code fixes that.
+
+Code "Press B to Somersault"
+ifmask32 1DEFC08 0x02
+	write16 723E19 0x217E
+else
+	ifmask32 1DEFC08 0x400
+		writenop 723E19 2
+	endif
+endif
+Author Hyper & MainMemory
+Category Miscellaneous
+Description Decouples Somersault from the X button and registers it only on the B button, preventing it from interrupting quick Spin Dash charges. Recommended with Reduce Spin Dash Delay.
