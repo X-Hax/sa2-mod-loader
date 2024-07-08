@@ -34,6 +34,7 @@
 #include "config.h"
 #include "InterpolationFixes.h"
 #include "UsercallFunctionHandler.h"
+#include "AnimationFile.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -238,6 +239,127 @@ __declspec(naked) void ReleaseMDLFile_r()
 		call ReleaseMDLFile_ri
 		add esp, 4
 		ret
+	}
+}
+
+
+unordered_map<AnimationIndex*, list<AnimationFile>> animfiles;
+
+void markanimswapped(NJS_MOTION* mtn)
+{
+	IsByteswapped(&mtn->mdata);
+	IsByteswapped(&mtn->inp_fn);
+	IsByteswapped(&mtn->nbFrame);
+	IsByteswapped(&mtn->type);
+}
+
+UsercallFunc(AnimationIndex*, LoadMTNFile_t, (const char* filename), (filename), 0x459740, rEAX, rEAX);
+UsercallFuncVoid(sub_48FC40, (NJS_MOTION* anim, void* address, int count), (anim, address, count), 0x48FC40, rEAX, stack4, stack4);
+FunctionPointer(void, sub_5FCF10, (NJS_MOTION* a1), 0x5FCF10);
+AnimationIndex* LoadMTNFile_r(const char* filename)
+{
+	AnimationIndex* result = nullptr;
+	char dir[MAX_PATH];
+	PathCombineA(dir, resourcedir.c_str(), filename);
+	PathRemoveExtensionA(dir);
+	char* fn = PathFindFileNameA(dir);
+	char combinedpath[MAX_PATH];
+	PathCombineA(combinedpath, dir, fn);
+	PathAddExtensionA(combinedpath, ".ini");
+
+	const char* repfn = sadx_fileMap.replaceFile(combinedpath);
+
+	if (PathFileExistsA(repfn) == false)
+		return LoadMTNFile_t.Original((char*)filename);
+
+	FILE* f_mod_ini = fopen(repfn, "r");
+	unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
+	fclose(f_mod_ini);
+	const IniGroup* indexes = ini->getGroup("");
+	strncpy_s(dir, repfn, MAX_PATH);
+	PathRemoveFileSpecA(dir);
+	WIN32_FIND_DATAA data;
+	HANDLE hfind = FindFirstFileA((string(dir) + "\\*.saanim").c_str(), &data);
+
+	if (hfind == INVALID_HANDLE_VALUE)
+		return LoadMTNFile_t.Original((char*)filename);
+
+	list<AnimationFile> files;
+	vector<AnimationIndex> animindexes;
+
+	do
+	{
+		PathCombineA(combinedpath, dir, data.cFileName);
+		AnimationFile animfile(combinedpath);
+		files.push_back(animfile);
+		markanimswapped(animfile.getmotion());
+
+		for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
+		{
+			void* found = animfile.getdata(i->second);
+			if (found != nullptr)
+			{	
+				int ind = stoi(i->first);
+				AnimationIndex index = { ind, animfile.getmodelcount(), (NJS_MOTION*)found };
+
+				if (ind >= 0 && ind < 300 && !CharacterAnimations[ind].Animation)
+					CharacterAnimations[ind] = index;
+
+				animindexes.push_back(index);
+			}
+		}
+	} while (FindNextFileA(hfind, &data) != 0);
+	FindClose(hfind);
+
+	AnimationIndex endmarker = { -1, -1, (NJS_MOTION*)-1 };
+	animindexes.push_back(endmarker);
+	result = new AnimationIndex[animindexes.size()];
+	memcpy(result, animindexes.data(), sizeof(AnimationIndex) * animindexes.size());
+	animfiles[result] = files;
+
+	return result;
+}
+
+void __cdecl ReleaseMTNFile_ri(AnimationIndex* anim)
+{
+	int index = 0;
+
+	if (anim->Index != 0xFFFF)
+	{
+		auto curAnim = anim;
+
+		do
+		{
+			auto curIndex = curAnim->Index;
+
+			if (curAnim->Index >= 0 && curIndex < 300 && CharacterAnimations[curIndex].Animation == curAnim->Animation)
+			{
+				CharacterAnimations[curAnim->Index].Animation = 0;
+				CharacterAnimations[curAnim->Index].Count = 0;
+			}
+			curAnim = &anim[++index];
+		} while (curAnim->Index != 0xFFFF);
+	}
+
+	if (animfiles.find(anim) != animfiles.cend())
+	{
+		animfiles.erase(anim);
+		delete[] anim;
+	}
+	else
+	{
+		FreeMemory((int*)anim, (char*)"..\\..\\src\\file_ctl.c", 1091);
+	}
+}
+
+static void __declspec(naked) ReleaseAnimASM()
+{
+	__asm
+	{
+		push esi 
+		call ReleaseMTNFile_ri
+		pop esi 
+		retn
 	}
 }
 
@@ -1138,7 +1260,9 @@ void __cdecl InitMods(void)
 	VirtualProtect((void*)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
 
 	LoadMDLFile_t.Hook(LoadMDLFile_ri);
-	WriteJump((void*)ReleaseMDLFilePtr, ReleaseMDLFile_r);
+	LoadMTNFile_t.Hook(LoadMTNFile_r);
+	WriteJump((void*)ReleaseMDLFilePtr, ReleaseMDLFile_r);	
+	WriteJump((void*)UnloadAnimPtr, ReleaseAnimASM);
 	WriteData((char*)0x435A44, (char)0x90u);
 	WriteCall((void*)0x435A45, FindFirstCSBFileA);
 	WriteData((char*)0x435BD6, (char)0x90u);
