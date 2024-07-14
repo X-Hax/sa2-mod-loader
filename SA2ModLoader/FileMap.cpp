@@ -1,5 +1,5 @@
 /**
- * SADX Mod Loader
+ * SA2 Mod Loader
  * File remapper.
  */
 
@@ -178,7 +178,7 @@ void FileMap::scanFolder_int(const string& srcPath, int srcLen, int modIdx)
 	do
 	{
 		// NOTE: This will hide *all* files starting with '.'.
-		// SADX doesn't use any files starting with '.',
+		// SA2 doesn't use any files starting with '.',
 		// so this won't cause any problems.
 		if (data.cFileName[0] == '.')
 		{
@@ -231,7 +231,7 @@ void FileMap::scanPRSFolder_int(const string& srcPath, int srcLen, int modIdx)
 	do
 	{
 		// NOTE: This will hide *all* files starting with '.'.
-		// SADX doesn't use any files starting with '.',
+		// SA2 doesn't use any files starting with '.',
 		// so this won't cause any problems.
 		if (data.cFileName[0] == '.')
 		{
@@ -305,7 +305,7 @@ void FileMap::scanTextureFolder(const string& srcPath, int modIndex)
 	do
 	{
 		// NOTE: This will hide *all* files starting with '.'.
-		// SADX doesn't use any files starting with '.',
+		// SA2 doesn't use any files starting with '.',
 		// so this won't cause any problems.
 		if (data.cFileName[0] == '.')
 		{
@@ -366,7 +366,7 @@ void FileMap::scanTextureFolder(const string& srcPath, int modIndex)
 	do
 	{
 		// NOTE: This will hide *all* files starting with '.'.
-		// SADX doesn't use any files starting with '.',
+		// SA2 doesn't use any files starting with '.',
 		// so this won't cause any problems.
 		if (data.cFileName[0] == '.')
 		{

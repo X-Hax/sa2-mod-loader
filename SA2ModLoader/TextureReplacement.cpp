@@ -108,7 +108,7 @@ void ScanTextureReplaceFolder(const string& srcPath, int modIndex)
 	do
 	{
 		// NOTE: This will hide *all* files starting with '.'.
-		// SADX doesn't use any files starting with '.',
+		// SA2 doesn't use any files starting with '.',
 		// so this won't cause any problems.
 		if (data.cFileName[0] == '.')
 		{

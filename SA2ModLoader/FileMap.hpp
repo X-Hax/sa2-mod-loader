@@ -1,5 +1,5 @@
 /**
- * SADX Mod Loader
+ * SA2 Mod Loader
  * File remapper.
  */
 
