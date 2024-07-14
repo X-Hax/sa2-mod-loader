@@ -35,6 +35,7 @@
 #include "InterpolationFixes.h"
 #include "UsercallFunctionHandler.h"
 #include "AnimationFile.h"
+#include "ModelReplacement.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -78,290 +79,6 @@ BOOL WINAPI FindCSBClose(__inout HANDLE hFindFile)
 	return TRUE;
 }
 
-unordered_map<ModelIndex*, list<ModelInfo>> modelfiles;
-
-void markobjswapped(NJS_OBJECT* obj)
-{
-	while (obj)
-	{
-		IsByteswapped(&obj->evalflags);
-		IsByteswapped(&obj->model);
-		IsByteswapped(&obj->pos[0]);
-		IsByteswapped(&obj->pos[1]);
-		IsByteswapped(&obj->pos[2]);
-		IsByteswapped(&obj->ang[0]);
-		IsByteswapped(&obj->ang[1]);
-		IsByteswapped(&obj->ang[2]);
-		IsByteswapped(&obj->scl[0]);
-		IsByteswapped(&obj->scl[1]);
-		IsByteswapped(&obj->scl[2]);
-		IsByteswapped(&obj->child);
-		IsByteswapped(&obj->sibling);
-		if (obj->chunkmodel)
-		{
-			IsByteswapped(&obj->chunkmodel->vlist);
-			IsByteswapped(&obj->chunkmodel->plist);
-			IsByteswapped(&obj->chunkmodel->center.x);
-			IsByteswapped(&obj->chunkmodel->center.y);
-			IsByteswapped(&obj->chunkmodel->center.z);
-			IsByteswapped(&obj->chunkmodel->r);
-		}
-		if (obj->child)
-			markobjswapped(obj->child);
-		obj = obj->sibling;
-	}
-}
-
-VoidFunc(sub_4297F0, 0x4297F0);
-FunctionPointer(void, sub_48FA80, (NJS_OBJECT*, void*), 0x48FA80);
-StdcallFunctionPointer(void, sub_419FC0, (void*), 0x419FC0);
-FunctionPointer(void, sub_7A5974, (void*), 0x7A5974);
-DataPointer(int, dword_1A55800, 0x1A55800);
-DataPointer(int, dword_1AF191C, 0x1AF191C);
-DataPointer(void*, dword_1AF1918, 0x1AF1918);
-
-UsercallFunc(ModelIndex*, LoadMDLFile_t, (const char* filename), (filename), 0x459590, rEAX, rEAX);
-
-ModelIndex* __cdecl LoadMDLFile_ri(const char* filename)
-{
-	ModelIndex* result = nullptr;
-	char dir[MAX_PATH];
-	PathCombineA(dir, resourcedir.c_str(), filename);
-	PathRemoveExtensionA(dir);
-	char* fn = PathFindFileNameA(dir);
-	char combinedpath[MAX_PATH];
-	PathCombineA(combinedpath, dir, fn);
-	PathAddExtensionA(combinedpath, ".ini");
-
-	const char* repfn = sadx_fileMap.replaceFile(combinedpath);
-
-	if (PathFileExistsA(repfn) == false)
-		return LoadMDLFile_t.Original((char*)filename);
-
-
-	FILE* f_mod_ini = fopen(repfn, "r");
-	unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
-	fclose(f_mod_ini);
-	const IniGroup* indexes = ini->getGroup("");
-	strncpy_s(dir, repfn, MAX_PATH);
-	PathRemoveFileSpecA(dir);
-	WIN32_FIND_DATAA data;
-	HANDLE hfind = FindFirstFileA((string(dir) + "\\*.sa2mdl").c_str(), &data);
-
-	if (hfind == INVALID_HANDLE_VALUE)
-		return LoadMDLFile_t.Original((char*)filename);
-
-	list<ModelInfo> files;
-	vector<ModelIndex> modelindexes;
-
-	sub_4297F0();
-
-	do
-	{
-		PathCombineA(combinedpath, dir, data.cFileName);
-		ModelInfo modelfile(combinedpath);
-		files.push_back(modelfile);
-		markobjswapped(modelfile.getmodel());
-		for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
-		{
-			void* found = modelfile.getdata(i->second);
-			if (found != nullptr)
-			{
-				int ind = stoi(i->first);
-				ModelIndex index = { ind, (NJS_OBJECT*)found };
-				if (ind >= 0 && ind < 532 && !CharacterModels[ind].Model)
-					CharacterModels[ind] = index;
-				modelindexes.push_back(index);
-			}
-		}
-	} while (FindNextFileA(hfind, &data) != 0);
-	FindClose(hfind);
-	ModelIndex endmarker = { -1, (NJS_OBJECT*)-1 };
-	modelindexes.push_back(endmarker);
-	result = new ModelIndex[modelindexes.size()];
-	memcpy(result, modelindexes.data(), sizeof(ModelIndex) * modelindexes.size());
-	modelfiles[result] = files;
-
-	--dword_1A55800;
-	if (dword_1AF191C)
-	{
-		auto v13 = dword_1AF1918;
-		auto v14 = *((DWORD*)dword_1AF1918 + 1);
-		auto v15 = *((DWORD*)dword_1AF1918 + 1);
-		if (!*(BYTE*)(v14 + 21))
-		{
-			do
-			{
-				sub_419FC0(*(void**)(v15 + 8));
-				v15 = *(DWORD*)v15;
-				sub_7A5974((void*)v14);
-				v14 = v15;
-			} while (!*(BYTE*)(v15 + 21));
-			v13 = dword_1AF1918;
-		}
-		*((DWORD*)v13 + 1) = (DWORD)v13;
-		dword_1AF191C = 0;
-		*(DWORD*)dword_1AF1918 = (DWORD)dword_1AF1918;
-		*((DWORD*)dword_1AF1918 + 2) = (DWORD)dword_1AF1918;
-	}
-
-	return result;
-}
-
-void __cdecl ReleaseMDLFile_ri(ModelIndex* a1)
-{
-	if (a1->Index != -1)
-	{
-		ModelIndex* v1 = a1;
-		do
-		{
-			if (v1->Index >= 0 && v1->Index < 532 && CharacterModels[v1->Index].Model == v1->Model)
-				CharacterModels[v1->Index].Model = 0;
-			++v1;
-		} while (v1->Index != -1);
-	}
-	if (modelfiles.find(a1) != modelfiles.cend())
-	{
-		modelfiles.erase(a1);
-		delete[] a1;
-	}
-	else
-	{
-		FreeMemory((int*)a1, (char*)"..\\..\\src\\file_ctl.c", 1091);
-	}
-}
-
-__declspec(naked) void ReleaseMDLFile_r()
-{
-	__asm
-	{
-		push esi
-		call ReleaseMDLFile_ri
-		add esp, 4
-		ret
-	}
-}
-
-
-unordered_map<AnimationIndex*, list<AnimationFile>> animfiles;
-
-void markanimswapped(NJS_MOTION* mtn)
-{
-	IsByteswapped(&mtn->mdata);
-	IsByteswapped(&mtn->inp_fn);
-	IsByteswapped(&mtn->nbFrame);
-	IsByteswapped(&mtn->type);
-}
-
-UsercallFunc(AnimationIndex*, LoadMTNFile_t, (const char* filename), (filename), 0x459740, rEAX, rEAX);
-UsercallFuncVoid(sub_48FC40, (NJS_MOTION* anim, void* address, int count), (anim, address, count), 0x48FC40, rEAX, stack4, stack4);
-FunctionPointer(void, sub_5FCF10, (NJS_MOTION* a1), 0x5FCF10);
-AnimationIndex* LoadMTNFile_r(const char* filename)
-{
-	AnimationIndex* result = nullptr;
-	char dir[MAX_PATH];
-	PathCombineA(dir, resourcedir.c_str(), filename);
-	PathRemoveExtensionA(dir);
-	char* fn = PathFindFileNameA(dir);
-	char combinedpath[MAX_PATH];
-	PathCombineA(combinedpath, dir, fn);
-	PathAddExtensionA(combinedpath, ".ini");
-
-	const char* repfn = sadx_fileMap.replaceFile(combinedpath);
-
-	if (PathFileExistsA(repfn) == false)
-		return LoadMTNFile_t.Original((char*)filename);
-
-	FILE* f_mod_ini = fopen(repfn, "r");
-	unique_ptr<IniFile> ini(new IniFile(f_mod_ini));
-	fclose(f_mod_ini);
-	const IniGroup* indexes = ini->getGroup("");
-	strncpy_s(dir, repfn, MAX_PATH);
-	PathRemoveFileSpecA(dir);
-	WIN32_FIND_DATAA data;
-	HANDLE hfind = FindFirstFileA((string(dir) + "\\*.saanim").c_str(), &data);
-
-	if (hfind == INVALID_HANDLE_VALUE)
-		return LoadMTNFile_t.Original((char*)filename);
-
-	list<AnimationFile> files;
-	vector<AnimationIndex> animindexes;
-
-	do
-	{
-		PathCombineA(combinedpath, dir, data.cFileName);
-		AnimationFile animfile(combinedpath);
-		files.push_back(animfile);
-		markanimswapped(animfile.getmotion());
-
-		for (auto i = indexes->cbegin(); i != indexes->cend(); i++)
-		{
-			void* found = animfile.getdata(i->second);
-			if (found != nullptr)
-			{	
-				int ind = stoi(i->first);
-				AnimationIndex index = { ind, animfile.getmodelcount(), (NJS_MOTION*)found };
-
-				if (ind >= 0 && ind < 300 && !CharacterAnimations[ind].Animation)
-					CharacterAnimations[ind] = index;
-
-				animindexes.push_back(index);
-			}
-		}
-	} while (FindNextFileA(hfind, &data) != 0);
-	FindClose(hfind);
-
-	AnimationIndex endmarker = { -1, -1, (NJS_MOTION*)-1 };
-	animindexes.push_back(endmarker);
-	result = new AnimationIndex[animindexes.size()];
-	memcpy(result, animindexes.data(), sizeof(AnimationIndex) * animindexes.size());
-	animfiles[result] = files;
-
-	return result;
-}
-
-void __cdecl ReleaseMTNFile_ri(AnimationIndex* anim)
-{
-	int index = 0;
-
-	if (anim->Index != 0xFFFF)
-	{
-		auto curAnim = anim;
-
-		do
-		{
-			auto curIndex = curAnim->Index;
-
-			if (curAnim->Index >= 0 && curIndex < 300 && CharacterAnimations[curIndex].Animation == curAnim->Animation)
-			{
-				CharacterAnimations[curAnim->Index].Animation = 0;
-				CharacterAnimations[curAnim->Index].Count = 0;
-			}
-			curAnim = &anim[++index];
-		} while (curAnim->Index != 0xFFFF);
-	}
-
-	if (animfiles.find(anim) != animfiles.cend())
-	{
-		animfiles.erase(anim);
-		delete[] anim;
-	}
-	else
-	{
-		FreeMemory((int*)anim, (char*)"..\\..\\src\\file_ctl.c", 1091);
-	}
-}
-
-static void __declspec(naked) ReleaseAnimASM()
-{
-	__asm
-	{
-		push esi 
-		call ReleaseMTNFile_ri
-		pop esi 
-		retn
-	}
-}
 
 void HookImport(const HMODULE hModule, LPCSTR moduleName, const PROC pActualFunction, const PROC pNewFunction)
 {
@@ -978,6 +695,16 @@ static void __declspec(naked) LoadEndPosition_Mission23_r()
 	}
 }
 
+void BuildIniPath(char* dir, char* combinedpath, const char* filename)
+{
+	PathCombineA(dir, resourcedir.c_str(), filename);
+	PathRemoveExtensionA(dir);
+	char* fn = PathFindFileNameA(dir);
+
+	PathCombineA(combinedpath, dir, fn);
+	PathAddExtensionA(combinedpath, ".ini");
+}
+
 bool isGameLoaded = false;
 void sub_434CD0_r() {
 
@@ -1080,7 +807,11 @@ static void Mod_CheckAndReplaceFiles(const string mod_dirA, const uint16_t i)
 
 	const string modRepTexDir = mod_dirA + "\\replacetex";
 	if (DirectoryExists(modRepTexDir))
-		ScanTextureReplaceFolder(modRepTexDir, i);
+		ScanTextureReplaceFolder(modRepTexDir, i);	
+	
+	const string modRepMdlDir = mod_dirA + "\\replacemdl";
+	if (DirectoryExists(modRepMdlDir))
+		mdlpack::ScanModelReplaceFolder(modRepMdlDir, i);
 }
 
 static void ModIniProcessFilesCheck(IniFile* ini_mod, const int i, unordered_map<string, string>& filereplaces, vector<std::pair<string, string>>& fileswaps)
@@ -1253,16 +984,13 @@ void __cdecl InitMods(void)
 	VoiceLanguage = loaderSettings.VoiceLanguage;
 
 	texpack::init();
+	mdlpack::init();
 
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
 	DWORD oldprot;
 	VirtualProtect((void*)0x87342C, 0xA3BD4, PAGE_WRITECOPY, &oldprot);
 
-	LoadMDLFile_t.Hook(LoadMDLFile_ri);
-	LoadMTNFile_t.Hook(LoadMTNFile_r);
-	WriteJump((void*)ReleaseMDLFilePtr, ReleaseMDLFile_r);	
-	WriteJump((void*)UnloadAnimPtr, ReleaseAnimASM);
 	WriteData((char*)0x435A44, (char)0x90u);
 	WriteCall((void*)0x435A45, FindFirstCSBFileA);
 	WriteData((char*)0x435BD6, (char)0x90u);
