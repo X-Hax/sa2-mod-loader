@@ -120,6 +120,9 @@
     <ClInclude Include="ModelReplacement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MotionReplacement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -180,6 +183,9 @@
       <Filter>Source Files\Patches</Filter>
     </ClCompile>
     <ClCompile Include="ModelReplacement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MotionReplacement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

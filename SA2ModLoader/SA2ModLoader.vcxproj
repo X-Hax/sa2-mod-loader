@@ -106,6 +106,7 @@
     <ClInclude Include="InterpolationFixes.h" />
     <ClInclude Include="json.hpp" />
     <ClInclude Include="ModelReplacement.h" />
+    <ClInclude Include="MotionReplacement.h" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="FileMap.hpp" />
     <ClInclude Include="FileReplacement.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="HelperFunctions.cpp" />
     <ClCompile Include="InterpolationFixes.cpp" />
     <ClCompile Include="ModelReplacement.cpp" />
+    <ClCompile Include="MotionReplacement.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="FileMap.cpp" />
     <ClCompile Include="FileReplacement.cpp" />

@@ -36,6 +36,7 @@
 #include "UsercallFunctionHandler.h"
 #include "AnimationFile.h"
 #include "ModelReplacement.h"
+#include "MotionReplacement.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -812,6 +813,10 @@ static void Mod_CheckAndReplaceFiles(const string mod_dirA, const uint16_t i)
 	const string modRepMdlDir = mod_dirA + "\\replacemdl";
 	if (DirectoryExists(modRepMdlDir))
 		mdlpack::ScanModelReplaceFolder(modRepMdlDir, i);
+
+	const string modRepMtnDir = mod_dirA + "\\replacemtn";
+	if (DirectoryExists(modRepMtnDir))
+		mtnpack::ScanMotionReplaceFolder(modRepMtnDir, i);
 }
 
 static void ModIniProcessFilesCheck(IniFile* ini_mod, const int i, unordered_map<string, string>& filereplaces, vector<std::pair<string, string>>& fileswaps)
@@ -985,6 +990,7 @@ void __cdecl InitMods(void)
 
 	texpack::init();
 	mdlpack::init();
+	mtnpack::init();
 
 	// Unprotect the .rdata section.
 	// TODO: Get .rdata address and length dynamically.
