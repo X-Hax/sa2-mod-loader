@@ -8,6 +8,7 @@ using std::wstring;
 using std::unordered_map;
 bool testSpawnCutscene = false;
 bool testSpawnLvl = false;
+bool useTestSpawn = false;
 FunctionHook<void> LifeIconTex_t(0x44E4C0);
 
 static wstring trim(const wstring& s)
@@ -361,4 +362,6 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		helperFunctions.RegisterStartPosition(CurrentCharacter, gTestSpawnStartPos);
 
 	LocalFree(argv);
+
+	useTestSpawn = testSpawnCutscene || testSpawnLvl;
 }

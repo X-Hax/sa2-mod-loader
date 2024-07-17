@@ -721,8 +721,6 @@ const char* mainsavepath = "resource/gd_PC/SAVEDATA";
 const char* chaosavepath = "resource/gd_PC/SAVEDATA";
 extern HelperFunctions helperFunctions;
 
-bool IsPathExist(const string& s);
-
 // Backward compatibility exports
 // Remove when it is safe to assume that no mod are using these.
 extern "C"
@@ -883,7 +881,7 @@ static void HandleOtherModIniContent(const IniGroup* const modinfo, const wstrin
 	if (modinfo->getBool("RedirectMainSave")) {
 		_mainsavepath = mod_dirA + "\\SAVEDATA";
 
-		if (!IsPathExist(_mainsavepath))
+		if (!DirectoryExists(_mainsavepath))
 		{
 			_mkdir(_mainsavepath.c_str());
 		}
@@ -892,7 +890,7 @@ static void HandleOtherModIniContent(const IniGroup* const modinfo, const wstrin
 	if (modinfo->getBool("RedirectChaoSave")) {
 		_chaosavepath = mod_dirA + "\\SAVEDATA";
 
-		if (!IsPathExist(_chaosavepath))
+		if (!DirectoryExists(_chaosavepath))
 		{
 			_mkdir(_chaosavepath.c_str());
 		}
