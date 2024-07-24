@@ -322,3 +322,9 @@ endif
 Author Hyper & MainMemory
 Category Miscellaneous
 Description Decouples Somersault from the X button and registers it only on the B button, preventing it from interrupting quick Spin Dash charges. Recommended with Reduce Spin Dash Delay.
+
+Patch "Replace Chaos Drives with Minimals"
+writejump 0047ADBC 0x47ADCB
+Author Kell
+Category Miscellaneous
+Description Enemies will loot a Minimal bubble instead of a Chaos Drive
