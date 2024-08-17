@@ -328,3 +328,9 @@ writejump 0047ADBC 0x47ADCB
 Author Kell
 Category Miscellaneous
 Description Enemies will loot a Minimal bubble instead of a Chaos Drive
+
+Patch "Disable High Speed Music"
+writenop 0046E072 5
+Author Hyper
+Description Disables the music that plays when acquiring the high speed power-up.
+Category Audio
