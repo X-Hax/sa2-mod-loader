@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34322.80
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34931.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SA2ModLoader", "SA2ModLoader\SA2ModLoader.vcxproj", "{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -17,42 +17,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Debug|x86.ActiveCfg = Debug|Win32
 		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Debug|x86.Build.0 = Debug|Win32
-		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|Any CPU.ActiveCfg = Release|Win32
-		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|x86.ActiveCfg = Release|Win32
 		{3BF5C1B2-E3A4-43E7-9C2A-E445810834DE}.Release|x86.Build.0 = Release|Win32
-		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Debug|x86.ActiveCfg = Debug|Win32
 		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Debug|x86.Build.0 = Debug|Win32
-		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Release|Any CPU.ActiveCfg = Release|Win32
-		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Release|x86.ActiveCfg = Release|Win32
 		{83C0F6B3-2297-4A14-98D6-F9C3E99192CE}.Release|x86.Build.0 = Release|Win32
-		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Debug|x86.ActiveCfg = Debug|Win32
 		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Debug|x86.Build.0 = Debug|Win32
-		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Release|Any CPU.ActiveCfg = Release|Win32
-		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Release|x86.ActiveCfg = Release|Win32
 		{EC0293F5-4BCF-46B2-8133-18CAEA141C5B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
