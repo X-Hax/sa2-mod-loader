@@ -90,7 +90,8 @@
       <DelayLoadDLLs>bass.dll;bass_vgmstream.dll</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
-      <Command>copy /b /y "$(SolutionDir)bin\SA2ModLoader.dll" "$(SolutionDir)extlib\SA2ModLoader.dll"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
