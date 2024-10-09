@@ -26,7 +26,7 @@ Patch "Disable Lives Bonus"
 writenop 0044CEA6 5
 Author MainMemory
 Category Cheats
-Description Gaining 1-ups will not increase the both player's total lives.
+Description Gaining 1-ups will not increase both player's total lives.
 
 Code "Low Time"
 write8 0174AFDB 0 x2
@@ -65,6 +65,7 @@ ifmask32 01DEFC08 0x10
 endif
 Author MainMemory
 Category Cheats
+Description Allows the player to massively grow to a set scale.
 
 Code "D-Pad Up to Grow"
 ifmask32 01DEFC08 0x10
@@ -72,6 +73,7 @@ ifmask32 01DEFC08 0x10
 endif
 Author MainMemory
 Category Miscellaneous
+Description Allows the player to grow to a set scale.
 
 Code "D-Pad Right for Normal Size"
 ifmask32 01DEFC08 0x80
@@ -79,6 +81,7 @@ ifmask32 01DEFC08 0x80
 endif
 Author MainMemory
 Category Miscellaneous
+Description Reverts the player to the default scale.
 
 Code "D-Pad Down for Mini Size"
 ifmask32 01DEFC08 0x20
@@ -86,6 +89,7 @@ ifmask32 01DEFC08 0x20
 endif
 Author MainMemory
 Category Miscellaneous
+Description Allows the player to shrink to a set scale.
 
 Code "D-Pad Down to Shrink"
 ifmask32 01DEFC08 0x20
@@ -93,6 +97,7 @@ ifmask32 01DEFC08 0x20
 endif
 Author MainMemory
 Category Cheats
+Description Allows the player to shrink to a set scale.
 
 Code "D-Pad Left to Disappear"
 ifmask32 01DEFC08 0x40
@@ -100,6 +105,7 @@ ifmask32 01DEFC08 0x40
 endif
 Author MainMemory
 Category Cheats
+Description Allows the player to be microscopically small.
 
 Code "Size Modifier"
 ifeqfloat r0 0
