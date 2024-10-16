@@ -887,7 +887,11 @@ int __cdecl LoadPAKTextures_r(const char* filename, NJS_TEXLIST* texlist)
 
 static void ReplacePVMTexs(const string& filename, NJS_TEXLIST* texlist, const void* pvmdata, unordered_map<string, TexReplaceData>& replacements, bool mipmap)
 {
-	unsigned short flags = _byteswap_ushort(((const unsigned short*)pvmdata)[4]);
+	// normally this would need to be byteswapped because it's in big endian
+	// however, the game seemingly already byteswaps it permanently by the time we get here
+	// byteswap code at sonic2app @ 0x0042FC88
+	const unsigned short flags = ((const unsigned short*)pvmdata)[4];
+	
 	int entrysize = 2;
 	if (flags & 1) // global index
 		entrysize += 4;
