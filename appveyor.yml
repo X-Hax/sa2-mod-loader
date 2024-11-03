@@ -11,7 +11,7 @@ platform: x86
 before_build:
 - cmd: git submodule update --init --recursive
 build:
-  project: SADXModLoader.sln
+  project: SA2ModLoader.sln
   verbosity: minimal
 after_build:
 - cmd: >-
