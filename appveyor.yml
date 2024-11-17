@@ -27,6 +27,8 @@ after_build:
 
     copy C:\projects\sa2-mod-loader\extlib\bass\*.dll C:\sa2mm\extlib\BASS\    
 
+    echo | set /p dummyName="%APPVEYOR_BUILD_VERSION%" > "C:\sa2mm\sa2mlver.txt"
+
     7z a C:\projects\sa2-mod-loader\bin\SA2ModLoader.7z C:\sa2mm\*
 artifacts:
 - path: bin\SA2ModLoader.7z
