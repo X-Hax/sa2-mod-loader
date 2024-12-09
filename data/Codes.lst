@@ -382,3 +382,41 @@ writenop 0046E495 5
 Author Hyper
 Description Disables the music that plays when acquiring the invincibility power-up.
 Category Audio
+
+Patch "Fix Metal Sonic Bounce Attack Crash"
+write8 A1A9C8 0xC
+write8 A1A9CA 0xA2
+write8 A1A9CB 0x1
+Author End User
+Description Replaces the invalid data used for Metal Sonic's Bounce Attack action, allowing him to use the Bounce Attack with the Have All Upgrades cheats.
+Category Miscellaneous
+
+Patch "Fix Chaos Zero's Attack Aura"
+;Chaos stand attack finisher aura fix
+write8 7296DD 0x3
+write8 7296DE 0x5
+write8 7296E2 0x74
+;Chaos run attack finisher aura fix
+write8 72976F 0x3
+write8 729770 0x5
+write8 729774 0x74
+;Chaos punch attack aura fix
+write8 729545 0x3
+write8 729546 0x5
+write8 729549 0x74
+Author End User
+Description Adjusts the checks used when determining where the hunting-type characters' attack auras should be placed, fixing an error where Chaos' auras are assigned to his feet.
+Category Miscellaneous
+
+Patch "Disable Fire Somersault Effects"
+writejump 7599D0 0x6FE430
+writejump 757810 0x6FE430
+Author End User
+Description Disables the Fire Somersault draw routine. This code is necessary when combining the Have All Upgrades cheats with Amy and Metal Sonic without mods that address this issue.
+Category Miscellaneous
+
+Patch "Fix Chao Walker Cannon Upgrade Crash"
+write8 75D914 0x3
+Author End User
+Description Replaces the check used when drawing the upgraded cannon shots. This fixes a crash with the Chao Walkers when using the Have All Upgrades cheats without mods that address this issue.
+Category Miscellaneous
