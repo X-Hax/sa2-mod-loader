@@ -420,3 +420,7 @@ write8 75D914 0x3
 Author End User
 Description Replaces the check used when drawing the upgraded cannon shots. This fixes a crash with the Chao Walkers when using the Have All Upgrades cheats without mods that address this issue.
 Category Miscellaneous
+
+Patch "Always Load 2P Layout"
+writenop 488FAB 6
+Author MainMemory
