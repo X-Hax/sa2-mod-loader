@@ -31,10 +31,36 @@ char inilangs[]{
 	Language_Japanese
 };
 
+void DisplaySettingsLoadError(wstring gamePath, wstring appPath, wstring errorFile)
+{
+	wstring gamepatherror = L"\n\nGame path: " + gamePath;
+	wstring appdataerror = L"\n\nManager data path: " + appPath;
+	wstring missingerror = L"\n\nThe following file was missing: " + errorFile;
+	wstring error = L"Mod Loader settings could not be read. Please run the Mod Manager, save settings and try again." + gamepatherror + appdataerror + missingerror;
+	MessageBox(nullptr, error.c_str(), L"SA2 Mod Loader", MB_ICONERROR);
+	OnExit(0, 0, 0);
+	ExitProcess(0);
+}
+
+
 void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 {
+	std::wstring profileFolderName = L"SA2\\";
+	std::wstring profilesPath = appPath + profileFolderName + L"Profiles.json";
 
-	std::wstring profilesPath = appPath + L"\\SA2\\Profiles.json";
+	if (!Exists(profilesPath))
+	{
+		profileFolderName = L"profiles\\";
+		profilesPath = appPath + profileFolderName + L"Profiles.json";
+
+		if (!Exists(profilesPath)) 	// Warn the player if the profiles file doesn't exist
+		{
+			DisplaySettingsLoadError(appPath, appPath, profilesPath);
+			return;
+		}
+
+	}
+
 	// If the profiles path exists, assume SA Mod Manager
 	if (Exists(profilesPath))
 	{
@@ -56,8 +82,8 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath)
 		MultiByteToWideChar(CP_UTF8, 0, profname.c_str(), profname.length(), &profname_w[0], count);
 
 		// Load the current profile
-		currentProfilePath = appPath + L"\\SA2\\" + profname_w;
-		std::ifstream ifs_p(appPath + L"\\SA2\\" + profname_w);
+		currentProfilePath = appPath + profileFolderName + profname_w;
+		std::ifstream ifs_p(appPath + profileFolderName + profname_w);
 		json json_config = json::parse(ifs_p);
 		int settingsVersion = json_config.value("SettingsVersion", 0);
 

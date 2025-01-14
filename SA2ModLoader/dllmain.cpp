@@ -310,11 +310,17 @@ void SetAppPathConfig(std::wstring gamepath)
 	WCHAR appDataLocalPath[MAX_PATH];
 	if (!Exists(appPath))
 	{
-		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalPath)))
+		appPath = gamepath + L"\\mods\\.modloader\\";
+		extLibPath = appPath + L"extlib\\";
+
+		if (!Exists(appPath))
 		{
-			appPath = appDataLocalPath;
-			appPath += L"\\SAManager\\";
-			extLibPath = appPath + L"extlib\\";
+			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalPath)))
+			{
+				appPath = appDataLocalPath;
+				appPath += L"\\SAManager\\";
+				extLibPath = appPath + L"extlib\\";
+			}
 		}
 	}
 }
