@@ -303,23 +303,53 @@ char* ShiftJISToUTF8(char* shiftjis)
 std::wstring appPath;
 std::wstring extLibPath;
 
-void SetAppPathConfig(std::wstring gamepath)
+void SetAppPathConfig(std::wstring exepath)
 {
-	appPath = gamepath + L"\\SAManager\\"; // Account for portable
-	extLibPath = appPath + L"extlib\\";
-	WCHAR appDataLocalPath[MAX_PATH];
-	if (!Exists(appPath))
-	{
-		appPath = gamepath + L"\\mods\\.modloader\\";
-		extLibPath = appPath + L"extlib\\";
+	// Get path for Mod Loader settings and libraries, normally located in 'Sonic Adventure 2\mods\.modloader'
 
-		if (!Exists(appPath))
+	appPath = exepath + L"\\mods\\.modloader\\";
+	extLibPath = appPath + L"extlib\\";
+	wstring profilesPath = appPath + L"profiles\\Profiles.json"; // Only used in the first check and the error message
+
+	// Success
+	if (Exists(profilesPath))
+		return;
+
+	// If Profiles.json isn't found, assume the old paths system
+	else
+	{
+		// Check 'Sonic Adventure 2\SAManager' (portable mode) first
+		wstring checkProfilesPath = exepath + L"\\SAManager\\SA2\\Profiles.json";
+		if (Exists(checkProfilesPath))
 		{
-			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalPath)))
+			appPath = exepath + L"\\SAManager\\";
+			extLibPath = appPath + L"extlib\\";
+			return;
+		}
+		// If 'checkProfilesPath' doesn't exist either, assume the settings are in 'AppData\Local\SAManager'
+		else
+		{
+			WCHAR appDataLocalBuf[MAX_PATH];
+			// Get the LocalAppData folder and check if it has the profiles json
+			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalBuf)))
 			{
-				appPath = appDataLocalPath;
-				appPath += L"\\SAManager\\";
-				extLibPath = appPath + L"extlib\\";
+				wstring appDataLocalPath(appDataLocalBuf);
+				checkProfilesPath = appDataLocalPath + L"\\SAManager\\SA2\\Profiles.json";
+				if (Exists(checkProfilesPath))
+				{
+					appPath = appDataLocalPath + L"\\SAManager\\";
+					extLibPath = appPath + L"extlib\\";
+					return;
+				}
+				// If it still can't be found, display an error message
+				else
+					DisplaySettingsLoadError(exepath, appPath, profilesPath);
+			}
+			else
+			{
+				MessageBox(nullptr, L"Unable to retrieve local AppData path.", L"SADX Mod Loader", MB_ICONERROR);
+				OnExit(0, 0, 0);
+				ExitProcess(0);
 			}
 		}
 	}
@@ -1104,7 +1134,7 @@ void __cdecl InitMods(void)
 	// Get path for Mod Manager settings and libraries
 	SetAppPathConfig(exepath);
 
-	LoadModLoaderSettings(&loaderSettings, appPath);
+	LoadModLoaderSettings(&loaderSettings, appPath, exepath);
 
 	direct3d::init();
 

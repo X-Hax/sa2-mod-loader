@@ -1,6 +1,7 @@
 #pragma once
 
-void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath);
+void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath, std::wstring gamePath);
+void DisplaySettingsLoadError(std::wstring gamePath, std::wstring appPath, std::wstring errorFile);
 int GetModCount();
 std::string GetModName(int index);
 
