@@ -300,7 +300,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		{
 			if (testSpawnLvl == false)
 			{
-				MessageBoxA(nullptr, "Insufficient arguments for parameter: --position.\n"
+				MessageBoxA(MainWindowHandle, "Insufficient arguments for parameter: --position.\n"
 					"--level must be specified before --position.",
 					"Insufficient arguments", MB_OK);
 
@@ -309,7 +309,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 
 			if (i + 3 >= argc)
 			{
-				MessageBoxA(nullptr, "Insufficient arguments for parameter: --position.\n"
+				MessageBoxA(MainWindowHandle, "Insufficient arguments for parameter: --position.\n"
 					"All 3 components (X, Y, Z) of the spawn position must be provided. Default spawn point will be used.",
 					"Insufficient arguments", MB_OK);
 
@@ -329,7 +329,7 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		{
 			if (!posEdited)
 			{
-				MessageBoxA(nullptr, "Insufficient arguments for parameter: --rotation.\n"
+				MessageBoxA(MainWindowHandle, "Insufficient arguments for parameter: --rotation.\n"
 					"--position must be specified before --rotation.",
 					"Insufficient arguments", MB_OK);
 

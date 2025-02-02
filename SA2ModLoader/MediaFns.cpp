@@ -129,7 +129,7 @@ void Init_AudioBassHook()
 	else
 	{
 		PrintDebug("Failed to load bass DLL dependencies\n");
-		MessageBox(nullptr, L"Error loading BASS.\n\n"
+		MessageBox(MainWindowHandle, L"Error loading BASS.\n\n"
 			L"Make sure the Mod Loader is installed properly.",
 			L"BASS Load Error", MB_OK | MB_ICONERROR);
 		return;

@@ -347,7 +347,7 @@ void SetAppPathConfig(std::wstring exepath)
 			}
 			else
 			{
-				MessageBox(nullptr, L"Unable to retrieve local AppData path.", L"SADX Mod Loader", MB_ICONERROR);
+				MessageBox(MainWindowHandle, L"Unable to retrieve local AppData path.", L"SADX Mod Loader", MB_ICONERROR);
 				OnExit(0, 0, 0);
 				ExitProcess(0);
 			}
@@ -1098,7 +1098,7 @@ void __cdecl InitMods(void)
 	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
 	if (!**datadllhandle)
 	{
-		MessageBox(NULL, L"Data_DLL_orig.dll could not be loaded!\n\nSA2 will now proceed to abruptly exit.", L"SA2 Mod Loader", MB_ICONERROR);
+		MessageBox(MainWindowHandle, L"Data_DLL_orig.dll could not be loaded!\n\nSA2 will now proceed to abruptly exit.", L"SA2 Mod Loader", MB_ICONERROR);
 		ExitProcess(1);
 	}
 	HookTheAPI();
@@ -1300,7 +1300,7 @@ void __cdecl InitMods(void)
 				swprintf(msg, LengthOfArray(msg),
 					L"Mod \"%s\" should be run from \"%s\", but you are running \"%s\".\n\n"
 					L"Continue anyway?", mod_name.c_str(), modexe.c_str(), exefilename.c_str());
-				if (MessageBox(nullptr, msg, L"SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
+				if (MessageBox(MainWindowHandle, msg, L"SA2 Mod Loader", MB_ICONWARNING | MB_YESNO) == IDNO)
 					ExitProcess(1);
 			}
 		}
@@ -1455,7 +1455,7 @@ void __cdecl InitMods(void)
 			message << std::endl << i.first << ": " << i.second;
 		}
 
-		MessageBox(nullptr, message.str().c_str(), L"Mods failed to load", MB_OK | MB_ICONERROR);
+		MessageBox(MainWindowHandle, message.str().c_str(), L"Mods failed to load", MB_OK | MB_ICONERROR);
 
 		// Clear the errors vector to free memory.
 		errors.clear();

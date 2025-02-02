@@ -391,7 +391,7 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 	PrintDebug(text.c_str());
 
 	PrintDebug("Crash Dump Done.\n");
-	MessageBoxA(0, fullMsg.c_str(), "SA2 Error", MB_ICONERROR);
+	MessageBoxA(MainWindowHandle, fullMsg.c_str(), "SA2 Error", MB_ICONERROR);
 	ShellExecute(NULL, L"open", curCrashDumpFolder.c_str(), NULL, NULL, SW_SHOW);
 
 	return EXCEPTION_EXECUTE_HANDLER;

@@ -37,7 +37,7 @@ void DisplaySettingsLoadError(wstring gamePath, wstring appPath, wstring errorFi
 	wstring appdataerror = L"\n\nManager data path: " + appPath;
 	wstring missingerror = L"\n\nThe following file was missing: " + errorFile;
 	wstring error = L"Mod Loader settings could not be read. Please run the Mod Manager, save settings and try again." + gamepatherror + appdataerror + missingerror;
-	MessageBox(nullptr, error.c_str(), L"SA2 Mod Loader", MB_ICONERROR);
+	MessageBox(MainWindowHandle, error.c_str(), L"SA2 Mod Loader", MB_ICONERROR);
 	OnExit(0, 0, 0);
 	ExitProcess(0);
 }
