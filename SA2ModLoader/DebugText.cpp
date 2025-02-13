@@ -5,10 +5,14 @@
 #include "SA2ModLoader.h"
 #include "magic.h"
 #include "DebugText.h"
+#include <string>
+
+using namespace std;
 
 VoidFunc(sub_429070, 0x429070);
 VoidFunc(sub_4293B0, 0x4293B0);
 VoidFunc(sub_44C260, 0x44C260);
+bool Exists(const string& path);
 
 namespace debug_text
 {
@@ -560,7 +564,9 @@ namespace debug_text
 
 		LPD3DXBUFFER pUIShaderBuffer;
 
-		if (FAILED(D3DXCompileShaderFromFileA("mods\\DebugTextShader.hlsl", nullptr, nullptr, "main", "vs_3_0", 0, &pUIShaderBuffer, nullptr, nullptr)))
+		bool newpath = Exists("mods\\.modloader\\DebugTextShader.hlsl");
+
+		if (FAILED(D3DXCompileShaderFromFileA(newpath ? "mods\\.modloader\\DebugTextShader.hlsl" : "mods\\DebugTextShader.hlsl", nullptr, nullptr, "main", "vs_3_0", 0, &pUIShaderBuffer, nullptr, nullptr)))
 		{
 			return;
 		}
@@ -570,7 +576,9 @@ namespace debug_text
 			return;
 		}
 
-		if (FAILED(D3DXCreateTextureFromFileA(g_pRenderDevice->m_pD3DDevice, "mods\\DebugFontTexture.dds", &texture)))
+		newpath = Exists("mods\\.modloader\\DebugFontTexture.dds");
+
+		if (FAILED(D3DXCreateTextureFromFileA(g_pRenderDevice->m_pD3DDevice, newpath ? "mods\\.modloader\\DebugFontTexture.dds" : "mods\\DebugFontTexture.dds", &texture)))
 		{
 			return;
 		}

@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 14;
+static const int ModLoaderVer = 15;
 
 struct PatchInfo
 {
@@ -80,6 +80,8 @@ struct LoaderSettings
 	int ScreenMode; // Window Mode (Windowed, Fullscreen, Borderless Fullscren, or Custom Window);
 	bool DisableBorderImage; // Requires version >= 14.
 	bool StretchToWindow; // Stretch content to the window instead of respecting aspect ratio. Requires version >= 14.
+	// Paths
+	std::wstring ExtLibPath; // Location of the 'extlib' folder; requires version >= 15
 };
 
 struct ModDependency

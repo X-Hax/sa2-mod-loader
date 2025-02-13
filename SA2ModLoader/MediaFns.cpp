@@ -106,8 +106,7 @@ void* ReleaseSoundEffects_r() {
 }
 
 
-extern std::wstring extLibPath;
-void Init_AudioBassHook()
+void Init_AudioBassHook(std::wstring extLibPath)
 {
 	std::wstring bassFolder = extLibPath + L"BASS\\";
 

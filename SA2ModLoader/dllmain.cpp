@@ -39,7 +39,7 @@
 using namespace std;
 using json = nlohmann::json;
 const string resourcedir = "resource\\gd_pc\\";
-static wstring borderimg = L"mods\\Border.png";
+static wstring borderimg = L"mods\\.modloader\\Border.png";
 
 unordered_map<string, unordered_set<string>*> csbfilemap;
 struct itercont { unordered_set<string>::const_iterator cur; unordered_set<string>::const_iterator end; };
@@ -297,62 +297,6 @@ char* ShiftJISToUTF8(char* shiftjis)
 	WideCharToMultiByte(CP_UTF8, 0, wcs, -1, utf8, cbMbs, NULL, NULL);
 	delete[] wcs;
 	return utf8;
-}
-
-//used to get external lib location and extra config
-std::wstring appPath;
-std::wstring extLibPath;
-
-void SetAppPathConfig(std::wstring exepath)
-{
-	// Get path for Mod Loader settings and libraries, normally located in 'Sonic Adventure 2\mods\.modloader'
-
-	appPath = exepath + L"\\mods\\.modloader\\";
-	extLibPath = appPath + L"extlib\\";
-	wstring profilesPath = appPath + L"profiles\\Profiles.json"; // Only used in the first check and the error message
-
-	// Success
-	if (Exists(profilesPath))
-		return;
-
-	// If Profiles.json isn't found, assume the old paths system
-	else
-	{
-		// Check 'Sonic Adventure 2\SAManager' (portable mode) first
-		wstring checkProfilesPath = exepath + L"\\SAManager\\SA2\\Profiles.json";
-		if (Exists(checkProfilesPath))
-		{
-			appPath = exepath + L"\\SAManager\\";
-			extLibPath = appPath + L"extlib\\";
-			return;
-		}
-		// If 'checkProfilesPath' doesn't exist either, assume the settings are in 'AppData\Local\SAManager'
-		else
-		{
-			WCHAR appDataLocalBuf[MAX_PATH];
-			// Get the LocalAppData folder and check if it has the profiles json
-			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalBuf)))
-			{
-				wstring appDataLocalPath(appDataLocalBuf);
-				checkProfilesPath = appDataLocalPath + L"\\SAManager\\SA2\\Profiles.json";
-				if (Exists(checkProfilesPath))
-				{
-					appPath = appDataLocalPath + L"\\SAManager\\";
-					extLibPath = appPath + L"extlib\\";
-					return;
-				}
-				// If it still can't be found, display an error message
-				else
-					DisplaySettingsLoadError(exepath, appPath, profilesPath);
-			}
-			else
-			{
-				MessageBox(MainWindowHandle, L"Unable to retrieve local AppData path.", L"SADX Mod Loader", MB_ICONERROR);
-				OnExit(0, 0, 0);
-				ExitProcess(0);
-			}
-		}
-	}
 }
 
 bool dbgConsole, dbgFile, dbgScreen;
@@ -1131,10 +1075,8 @@ void __cdecl InitMods(void)
 
 	// Convert the EXE filename to lowercase.
 	transform(exefilename.begin(), exefilename.end(), exefilename.begin(), ::towlower);
-	// Get path for Mod Manager settings and libraries
-	SetAppPathConfig(exepath);
 
-	LoadModLoaderSettings(&loaderSettings, appPath, exepath);
+	LoadModLoaderSettings(&loaderSettings, exepath);
 
 	direct3d::init();
 
@@ -1209,13 +1151,17 @@ void __cdecl InitMods(void)
 	ScanCSBFolder("resource\\gd_PC\\MPB", 0);
 	ScanCSBFolder("resource\\gd_PC\\event\\MLT", 0);
 
-	Init_AudioBassHook();
+	Init_AudioBassHook(loaderSettings.ExtLibPath);
 
 	if (loaderSettings.DebugCrashLog)
 		initCrashDump();
 
 	vector<std::pair<ModInitFunc, string>> initfuncs;
 	vector<std::pair<wstring, wstring>> errors;
+
+	// Old path failsafe for Border.png
+	if (!Exists(borderimg))
+		borderimg = L"mods\\Border.png";
 
 	// It's mod loading time!
 	PrintDebug("Loading mods...\n");
@@ -1543,7 +1489,8 @@ void __cdecl InitMods(void)
 
 	PrintDebug("Mod loading finished.");
 
-	ifstream patches_str("mods\\Patches.dat", ifstream::binary);
+	bool patches_new = Exists("mods\\.modloader\\Patches.dat");
+	ifstream patches_str(patches_new ? "mods\\.modloader\\Patches.dat" : "mods\\Patches.dat", ifstream::binary);
 	if (patches_str.is_open())
 	{
 		CodeParser patchParser;
@@ -1554,21 +1501,20 @@ void __cdecl InitMods(void)
 		{
 			int codecount_header;
 			patches_str.read((char*)&codecount_header, sizeof(codecount_header));
-			PrintDebug("Loading %d patches...\n", codecount_header);
 			patches_str.seekg(0);
 			int codecount = patchParser.readCodes(patches_str);
 			if (codecount >= 0)
 			{
-				PrintDebug("Loaded %d patches.\n", codecount);
+				PrintDebug("[Codes] Loaded %d patch-type codes with %d instructions.\n", codecount_header, codecount);
 				patchParser.processCodeList();
 			}
 			else
 			{
-				PrintDebug("ERROR loading patches: ");
+				PrintDebug("[Codes] ERROR loading patches: ");
 				switch (codecount)
 				{
 				case -EINVAL:
-					PrintDebug("Patch file is not in the correct format.\n");
+					PrintDebug("Code file Patches.dat is not in the correct format.\n");
 					break;
 				default:
 					PrintDebug("%s\n", strerror(-codecount));
@@ -1578,12 +1524,13 @@ void __cdecl InitMods(void)
 		}
 		else
 		{
-			PrintDebug("Patch file is not in the correct format.\n");
+			PrintDebug("[Codes] Code file Patches.dat is not in the correct format.\n");
 		}
 		patches_str.close();
 	}
 
-	ifstream codes_str("mods\\Codes.dat", ifstream::binary);
+	bool codes_new = Exists("mods\\.modloader\\Codes.dat");
+	ifstream codes_str(codes_new ? "mods\\.modloader\\Codes.dat" : "mods\\Codes.dat", ifstream::binary);
 	if (codes_str.is_open())
 	{
 		static const char codemagic[6] = { 'c', 'o', 'd', 'e', 'v', '5' };
@@ -1593,21 +1540,20 @@ void __cdecl InitMods(void)
 		{
 			int codecount_header;
 			codes_str.read((char*)&codecount_header, sizeof(codecount_header));
-			PrintDebug("Loading %d codes...\n", codecount_header);
 			codes_str.seekg(0);
 			int codecount = codeParser.readCodes(codes_str);
 			if (codecount >= 0)
 			{
-				PrintDebug("Loaded %d codes.\n", codecount);
+				PrintDebug("[Codes] Loaded %d regular codes with %d instructions.\n", codecount_header, codecount);
 				codeParser.processCodeList();
 			}
 			else
 			{
-				PrintDebug("ERROR loading codes: ");
+				PrintDebug("[Codes] ERROR loading codes: ");
 				switch (codecount)
 				{
 				case -EINVAL:
-					PrintDebug("Code file is not in the correct format.\n");
+					PrintDebug("Code file Codes.dat is not in the correct format.\n");
 					break;
 				default:
 					PrintDebug("%s\n", strerror(-codecount));
@@ -1617,7 +1563,7 @@ void __cdecl InitMods(void)
 		}
 		else
 		{
-			PrintDebug("Code file is not in the correct format.\n");
+			PrintDebug("[Codes] Code file Codes.dat is not in the correct format.\n");
 		}
 		codes_str.close();
 	}
