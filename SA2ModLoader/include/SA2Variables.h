@@ -985,7 +985,7 @@ DataPointer(TailsCharObj2*, MilesCO2Extern, 0x1A521EC);
 DataArray(NJS_VECTOR, TreePos, 0x1366B30, 30);
 DataPointer(float, landColRadius, 0x171CAA4); //default to 400, increased during Chao Race and kart levels.
 //shaders
-DataPointer(char, LightIndex, 0x01DE4664);
+DataArray(char, LightIndex, 0x01DE4664, 2);
 DataPointer(char, LightIndexBackupMaybe, 0x01DE4400);
 DataArray(Light, Lights, 0x01DE4280, 12);
 DataArray(LightGC, LightsGC, 0x01DE4420, 12);

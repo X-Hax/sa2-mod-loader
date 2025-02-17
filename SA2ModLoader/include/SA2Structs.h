@@ -1718,7 +1718,7 @@ struct KnucklesCharObj2
 	char field_2D8[214];
 	__int16 WingAction;
 	int WingAnimID;
-	int WingAnimID2;
+	float DigPos;
 	float WingFloat;
 	char field_3BC[4];
 	NJS_VECTOR SomeVector;
@@ -3942,6 +3942,12 @@ struct CreditsEntry
     int Type;
     float A, R, G, B;
     const char* Text;
+};
+
+struct CreditsList
+{
+	CreditsEntry* Entries;
+	int Count;
 };
 
 struct MenuBackgrounds
