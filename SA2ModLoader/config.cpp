@@ -2,6 +2,7 @@
 #include "json.hpp"
 #include "IniFile.hpp"
 #include "FileSystem.h"
+#include <ShlObj.h>
 
 using json = nlohmann::json;
 using std::string;
@@ -11,7 +12,6 @@ using std::unique_ptr;
 
 std::wstring currentProfilePath; // Used for crash dumps
 vector<std::string> ModList;
-vector<std::string> GamePatchList;
 
 std::string GetModName(int index)
 {
@@ -32,63 +32,63 @@ char inilangs[]{
 	Language_Japanese
 };
 
-void DisplaySettingsLoadError(wstring gamePath, wstring appPath, wstring errorFile)
+void DisplaySettingsLoadError(wstring file)
 {
-	wstring gamepatherror = L"\n\nGame path: " + gamePath;
-	wstring appdataerror = L"\n\nManager data path: " + appPath;
-	wstring missingerror = L"\n\nThe following file was missing: " + errorFile;
-	wstring error = L"Mod Loader settings could not be read. Please run the Mod Manager, save settings and try again." + gamepatherror + appdataerror + missingerror;
-	MessageBox(MainWindowHandle, error.c_str(), L"SA2 Mod Loader", MB_ICONERROR);
+	wstring error = L"Mod Loader settings could not be read. Please run the Mod Manager, save settings and try again.\n\nThe following file was missing: " + file;
+	MessageBox(nullptr, error.c_str(), L"SA2 Mod Loader", MB_ICONERROR);
 	OnExit(0, 0, 0);
 	ExitProcess(0);
 }
 
-// List of game patches that may be using the old system
-std::string LegacyGamePatchList[] =
+void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath)
 {
-	"FramerateLimiter",
-	"DisableExitPrompt",
-	"SyncLoad",
-	"ExtendVertexBuffer",
-	"EnvMapFix",
-	"ScreenFadeFix",
-	"CECarFix",
-	"ParticlesFix",
-};
+	// Get paths for Mod Loader settings and libraries, normally located in 'Sonic Adventure 2\mods\.modloader'
 
-bool IsGamePatchEnabled(const char* patchName)
-{
-	return (std::find(std::begin(GamePatchList), std::end(GamePatchList), patchName) != std::end(GamePatchList));
-}
+	wstring loaderDataPath = gamePath + L"\\mods\\.modloader\\";
+	loaderSettings->ExtLibPath = loaderDataPath + L"extlib\\";
+	wstring profilesFolderPath = loaderDataPath + L"profiles\\";
+	wstring profilesJsonPath = profilesFolderPath + L"Profiles.json";
 
-void ListGamePatches()
-{
-	PrintDebug("Enabling %d game patches:\n", GamePatchList.size());
-	for (std::string s : GamePatchList)
+	// If Profiles.json isn't found, assume the old paths system
+	if (!Exists(profilesJsonPath))
 	{
-		PrintDebug("Enabled game patch: %s\n", s.c_str());
-	}
-}
-
-void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath, std::wstring gamePath)
-{
-	std::wstring profileFolderName = L"profiles\\";
-	std::wstring profilesPath = appPath + profileFolderName + L"Profiles.json";
-
-	if (!Exists(profilesPath)) // If Profiles.json doesn't exist, assume the old paths system that adds "SA2" instead of "profiles"
-	{
-		profileFolderName = L"SA2\\";
-		profilesPath = appPath + profileFolderName + L"Profiles.json";
-
-		// If that doesn't exist either, display an error and quit
-		if (!Exists(profilesPath))
+		// Check 'Sonic Adventure 2\SAManager\SA2' (portable mode) first
+		profilesJsonPath = gamePath + L"\\SAManager\\SA2\\Profiles.json";
+		if (Exists(profilesJsonPath))
 		{
-			DisplaySettingsLoadError(gamePath, appPath, profilesPath);
+			loaderDataPath = gamePath + L"\\SAManager\\";
 		}
+		// If that doesn't exist either, assume the settings are in 'AppData\Local\SAManager'
+		else
+		{
+			WCHAR appDataLocalBuf[MAX_PATH];
+			// Get the LocalAppData folder and check if it has the profiles json
+			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataLocalBuf)))
+			{
+				wstring appDataLocalPath(appDataLocalBuf);
+				profilesJsonPath = appDataLocalPath + L"\\SAManager\\SA2\\Profiles.json";
+				if (Exists(profilesJsonPath))
+				{
+					loaderDataPath = appDataLocalPath + L"\\SAManager\\";
+				}
+				// If it still can't be found, display an error message
+				else
+					DisplaySettingsLoadError(gamePath + L"\\mods\\.modloader\\Profiles.json");
+			}
+			else
+			{
+				MessageBox(nullptr, L"Unable to retrieve local AppData path.", L"SA2 Mod Loader", MB_ICONERROR);
+				OnExit(0, 0, 0);
+				ExitProcess(0);
+			}
+		}
+		// If Profiles.json was found, set old paths
+		loaderSettings->ExtLibPath = loaderDataPath + L"extlib\\";
+		profilesFolderPath = loaderDataPath + L"SA2\\";
 	}
 
 	// Load profiles JSON file
-	std::ifstream ifs(profilesPath);
+	std::ifstream ifs(profilesJsonPath);
 	json json_profiles = json::parse(ifs);
 	ifs.close();
 
@@ -105,7 +105,12 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath,
 	MultiByteToWideChar(CP_UTF8, 0, profname.c_str(), profname.length(), &profname_w[0], count);
 
 	// Load the current profile
-	currentProfilePath = appPath + profileFolderName + profname_w;
+	currentProfilePath = profilesFolderPath + profname_w;
+	if (!Exists(currentProfilePath))
+	{
+		DisplaySettingsLoadError(currentProfilePath);
+	}
+
 	std::ifstream ifs_p(currentProfilePath);
 	json json_config = json::parse(ifs_p);
 	int settingsVersion = json_config.value("SettingsVersion", 0);
@@ -127,27 +132,16 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath,
 	loaderSettings->SkipIntro = json_graphics.value("SkipIntro", false);
 	loaderSettings->DisableBorderImage = json_graphics.value("DisableBorderImage", false);
 
-	// Game Patches settings (for compatibility)
-	if (json_config.contains("Patches"))
-	{
-		json json_oldpatches = json_config["Patches"];
-		loaderSettings->FramerateLimiter = json_oldpatches.value("FramerateLimiter", true);
-		loaderSettings->DisableExitPrompt = json_oldpatches.value("DisableExitPrompt", true);
-		loaderSettings->SyncLoad = json_oldpatches.value("SyncLoad", true);
-		loaderSettings->ExtendVertexBuffer = json_oldpatches.value("ExtendVertexBuffer", true);
-		loaderSettings->EnvMapFix = json_oldpatches.value("EnvMapFix", true);
-		loaderSettings->ScreenFadeFix = json_oldpatches.value("ScreenFadeFix", true);
-		loaderSettings->CECarFix = json_oldpatches.value("CECarFix", true);
-		loaderSettings->ParticlesFix = json_oldpatches.value("ParticlesFix", true);
-		// Add old game patches to the new system
-		for (int p = 0; p < LengthOfArray(LegacyGamePatchList); p++)
-		{
-			if (json_oldpatches.value(LegacyGamePatchList[p], false)) // Old game patches are stored in the json regardless of whether they are enabled or not
-			{
-				GamePatchList.push_back(LegacyGamePatchList[p]);
-			}
-		}
-	}
+	// Patches settings
+	json json_patches = json_config["Patches"];
+	loaderSettings->FramerateLimiter = json_patches.value("FramerateLimiter", true);
+	loaderSettings->DisableExitPrompt = json_patches.value("DisableExitPrompt", true);
+	loaderSettings->SyncLoad = json_patches.value("SyncLoad", true);
+	loaderSettings->ExtendVertexBuffer = json_patches.value("ExtendVertexBuffer", true);
+	loaderSettings->EnvMapFix = json_patches.value("EnvMapFix", true);
+	loaderSettings->ScreenFadeFix = json_patches.value("ScreenFadeFix", true);
+	loaderSettings->CECarFix = json_patches.value("CECarFix", true);
+	loaderSettings->ParticlesFix = json_patches.value("ParticlesFix", true);
 
 	// Debug settings
 	json json_debug = json_config["DebugSettings"];
@@ -161,16 +155,6 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath,
 	loaderSettings->TextLanguage = json_testspawn.value("GameTextLanguage", 1);
 	loaderSettings->VoiceLanguage = json_testspawn.value("GameVoiceLanguage", 1);
 
-	// Game Patches (current system)
-	json json_patches = json_config["EnabledGamePatches"];
-	for (unsigned int i = 1; i <= json_patches.size(); i++)
-	{
-		std::string patch_name = json_patches.at(i - 1);
-		// Check if it isn't on the list already (legacy patches can be there)
-		if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
-		GamePatchList.push_back(patch_name);
-	}
-
 	// Mods
 	json json_mods = json_config["EnabledMods"];
 	for (unsigned int i = 1; i <= json_mods.size(); i++)
@@ -178,6 +162,4 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath,
 		std::string mod_fname = json_mods.at(i - 1);
 		ModList.push_back(mod_fname);
 	}
-
-
 }

@@ -409,6 +409,10 @@ void PatchWindow(const LoaderSettings& settings, std::wstring& borderimg)
 		// If a mod changed the border image path to something invalid, restore normal path
 		if (!FileExists(borderimg))
 		{
+			borderimg = L"mods\\.modloader\\Border_Default.png";
+		}
+		if (!FileExists(borderimg))
+		{
 			borderimg = L"mods\\Border_Default.png";
 		}
 
