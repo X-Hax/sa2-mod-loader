@@ -2,6 +2,7 @@
 #include "SA2ModLoader.h"
 #include "UsercallFunctionHandler.h"
 #include "patches.h"
+#include "config.h"
 
 #pragma region Car Fix
 static const void* const loc_5E3D90 = (void*)0x5E3D90;
@@ -169,29 +170,29 @@ void SyncLoad(void (*a1)(void*), void* a2)
 void ApplyPatches(LoaderSettings* loaderSettings)
 {
 	// Expand chunk model vertex buffer from 8192 to 32768 verts
-	if (loaderSettings->ExtendVertexBuffer)
+	if (loaderSettings->ExtendVertexBuffer || IsGamePatchEnabled("ExtendVertexBuffer"))
 		*(void**)0x25EFE48 = calloc(1, 0x100004);
 
 	// Fix env map condition bug in chDrawCnk
-	if (loaderSettings->EnvMapFix)
+	if (loaderSettings->EnvMapFix || IsGamePatchEnabled("EnvMapFix"))
 		WriteData<6>((char*)0x0056DE7D, (char)0x90);
 
-	if (loaderSettings->SyncLoad)
+	if (loaderSettings->SyncLoad || IsGamePatchEnabled("SyncLoad"))
 	{
 		WriteJump((void*)0x428470, SyncLoad);
 		WriteJump((void*)0x428740, SyncLoad);
 	}
 
 	// Fix screen flickering during victory pose. 
-	if (loaderSettings->ScreenFadeFix)
+	if (loaderSettings->ScreenFadeFix || IsGamePatchEnabled("ScreenFadeFix"))
 		WriteJump((void*)ScreenFadePtr, ScreenFade_r);
 
 	// Fix City Escape car bug on intel iGPUs caused by NaN float position
-	if (loaderSettings->CECarFix)
+	if (loaderSettings->CECarFix || IsGamePatchEnabled("CECarFix"))
 		GenerateUsercallHook(CalcCarPath_r, rEAX, 0x5DE0B0, rECX, rEDX, rEAX, stack4, stack4, stack4, stack4);
 	
 	// Fix particle draw calls missing normals
-	if (loaderSettings->ParticlesFix)
+	if (loaderSettings->ParticlesFix || IsGamePatchEnabled("ParticlesFix"))
 	{
 		WriteJump((void*)0x4915E9, ParticleGXEnd);
 		WriteCall((void*)0x491B90, ParticleGXEnd);

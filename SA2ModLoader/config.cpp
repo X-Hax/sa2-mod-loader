@@ -196,13 +196,19 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath
 	loaderSettings->VoiceLanguage = json_testspawn.value("GameVoiceLanguage", 1);
 
 	// Game Patches (current system)
-	json json_patches = json_config["EnabledGamePatches"];
-	for (unsigned int i = 1; i <= json_patches.size(); i++)
+	if (json_config.contains("EnabledGamePatches"))
 	{
-		std::string patch_name = json_patches.at(i - 1);
-		// Check if it isn't on the list already (legacy patches can be there)
-		if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
-		GamePatchList.push_back(patch_name);
+		json json_patches = json_config["EnabledGamePatches"];
+		for (unsigned int i = 1; i <= json_patches.size(); i++)
+		{
+			std::string patch_name = json_patches.at(i - 1);
+			// Check if it isn't on the list already (legacy patches can be there)
+			if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
+			GamePatchList.push_back(patch_name);
+		}
+
+		loaderSettings->FramerateLimiter = IsGamePatchEnabled("FramerateLimiter");
+		loaderSettings->DisableExitPrompt = IsGamePatchEnabled("DisableExitPrompt");
 	}
 
 	// Mods
