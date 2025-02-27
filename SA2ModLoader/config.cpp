@@ -12,6 +12,7 @@ using std::unique_ptr;
 
 std::wstring currentProfilePath; // Used for crash dumps
 vector<std::string> ModList;
+vector<std::string> GamePatchList;
 
 std::string GetModName(int index)
 {
@@ -38,6 +39,33 @@ void DisplaySettingsLoadError(wstring file)
 	MessageBox(nullptr, error.c_str(), L"SA2 Mod Loader", MB_ICONERROR);
 	OnExit(0, 0, 0);
 	ExitProcess(0);
+}
+
+// List of game patches that may be using the old system
+std::string LegacyGamePatchList[] =
+{
+	"FramerateLimiter",
+	"DisableExitPrompt",
+	"SyncLoad",
+	"ExtendVertexBuffer",
+	"EnvMapFix",
+	"ScreenFadeFix",
+	"CECarFix",
+	"ParticlesFix",
+};
+
+bool IsGamePatchEnabled(const char* patchName)
+{
+	return (std::find(std::begin(GamePatchList), std::end(GamePatchList), patchName) != std::end(GamePatchList));
+}
+
+void ListGamePatches()
+{
+	PrintDebug("Enabling %d game patches:\n", GamePatchList.size());
+	for (std::string s : GamePatchList)
+	{
+		PrintDebug("Enabled game patch: %s\n", s.c_str());
+	}
 }
 
 void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath)
@@ -111,6 +139,7 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath
 		DisplaySettingsLoadError(currentProfilePath);
 	}
 
+
 	std::ifstream ifs_p(currentProfilePath);
 	json json_config = json::parse(ifs_p);
 	int settingsVersion = json_config.value("SettingsVersion", 0);
@@ -132,16 +161,27 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath
 	loaderSettings->SkipIntro = json_graphics.value("SkipIntro", false);
 	loaderSettings->DisableBorderImage = json_graphics.value("DisableBorderImage", false);
 
-	// Patches settings
-	json json_patches = json_config["Patches"];
-	loaderSettings->FramerateLimiter = json_patches.value("FramerateLimiter", true);
-	loaderSettings->DisableExitPrompt = json_patches.value("DisableExitPrompt", true);
-	loaderSettings->SyncLoad = json_patches.value("SyncLoad", true);
-	loaderSettings->ExtendVertexBuffer = json_patches.value("ExtendVertexBuffer", true);
-	loaderSettings->EnvMapFix = json_patches.value("EnvMapFix", true);
-	loaderSettings->ScreenFadeFix = json_patches.value("ScreenFadeFix", true);
-	loaderSettings->CECarFix = json_patches.value("CECarFix", true);
-	loaderSettings->ParticlesFix = json_patches.value("ParticlesFix", true);
+	// Game Patches settings (for compatibility)
+	if (json_config.contains("Patches"))
+	{
+		json json_oldpatches = json_config["Patches"];
+		loaderSettings->FramerateLimiter = json_oldpatches.value("FramerateLimiter", true);
+		loaderSettings->DisableExitPrompt = json_oldpatches.value("DisableExitPrompt", true);
+		loaderSettings->SyncLoad = json_oldpatches.value("SyncLoad", true);
+		loaderSettings->ExtendVertexBuffer = json_oldpatches.value("ExtendVertexBuffer", true);
+		loaderSettings->EnvMapFix = json_oldpatches.value("EnvMapFix", true);
+		loaderSettings->ScreenFadeFix = json_oldpatches.value("ScreenFadeFix", true);
+		loaderSettings->CECarFix = json_oldpatches.value("CECarFix", true);
+		loaderSettings->ParticlesFix = json_oldpatches.value("ParticlesFix", true);
+		// Add old game patches to the new system
+		for (int p = 0; p < LengthOfArray(LegacyGamePatchList); p++)
+		{
+			if (json_oldpatches.value(LegacyGamePatchList[p], false)) // Old game patches are stored in the json regardless of whether they are enabled or not
+			{
+				GamePatchList.push_back(LegacyGamePatchList[p]);
+			}
+		}
+	}
 
 	// Debug settings
 	json json_debug = json_config["DebugSettings"];
@@ -154,6 +194,16 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath
 	json json_testspawn = json_config["TestSpawn"];
 	loaderSettings->TextLanguage = json_testspawn.value("GameTextLanguage", 1);
 	loaderSettings->VoiceLanguage = json_testspawn.value("GameVoiceLanguage", 1);
+
+	// Game Patches (current system)
+	json json_patches = json_config["EnabledGamePatches"];
+	for (unsigned int i = 1; i <= json_patches.size(); i++)
+	{
+		std::string patch_name = json_patches.at(i - 1);
+		// Check if it isn't on the list already (legacy patches can be there)
+		if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
+		GamePatchList.push_back(patch_name);
+	}
 
 	// Mods
 	json json_mods = json_config["EnabledMods"];
