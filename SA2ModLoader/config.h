@@ -4,5 +4,6 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring appPath,
 void DisplaySettingsLoadError(std::wstring gamePath, std::wstring appPath, std::wstring errorFile);
 int GetModCount();
 std::string GetModName(int index);
+bool IsGamePatchEnabled(const char* patchName);
 
 extern std::wstring currentProfilePath;
