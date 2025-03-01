@@ -199,14 +199,31 @@ void LoadModLoaderSettings(LoaderSettings* loaderSettings, std::wstring gamePath
 	if (json_config.contains("EnabledGamePatches"))
 	{
 		json json_patches = json_config["EnabledGamePatches"];
-		for (unsigned int i = 1; i <= json_patches.size(); i++)
+		// If the patches list is in the '"Patch": true' format, use an object
+		if (json_patches.is_object())
 		{
-			std::string patch_name = json_patches.at(i - 1);
-			// Check if it isn't on the list already (legacy patches can be there)
-			if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
-			GamePatchList.push_back(patch_name);
+			for (json::iterator it = json_patches.begin(); it != json_patches.end(); ++it)
+			{
+				std::string patch_name = it.key();
+				if (it.value() == true)
+				{
+					// Check if it isn't on the list already (legacy patches can be there)
+					if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
+					GamePatchList.push_back(patch_name);
+				}
+			}
 		}
-
+		// If the patches list is in the '"Patch"' format, use an array
+		else
+		{
+			for (unsigned int i = 1; i <= json_patches.size(); i++)
+			{
+				std::string patch_name = json_patches.at(i - 1);
+				// Check if it isn't on the list already (legacy patches can be there)
+				if (std::find(std::begin(GamePatchList), std::end(GamePatchList), patch_name) == std::end(GamePatchList));
+				GamePatchList.push_back(patch_name);
+			}
+		}
 		loaderSettings->FramerateLimiter = IsGamePatchEnabled("FramerateLimiter");
 		loaderSettings->DisableExitPrompt = IsGamePatchEnabled("DisableExitPrompt");
 	}
