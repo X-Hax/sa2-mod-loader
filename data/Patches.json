@@ -1,44 +1,68 @@
 {
   "Patches": [
-    {
-      "Name": "FramerateLimiter",
-      "Author": "SF94 and Kell",
-      "Category": "Graphics"
-    },
-    {
-      "Name": "DisableExitPrompt",
-      "Author": "Kell",
-      "Category": "System"
-    },
-    {
-      "Name": "SyncLoad",
-      "Author": "MainMemory",
-      "Category": "System"
-    },
-    {
-      "Name": "ExtendVertexBuffer",
-      "Author": "MainMemory",
-      "Category": "System"
-    },
-    {
-      "Name": "EnvMapFix",
-      "Author": "Exant",
-      "Category": "Graphics"
-    },
-    {
-      "Name": "ScreenFadeFix",
-      "Author": "MainMemory",
-      "Category": "Graphics"
-    },
-    {
-      "Name": "CECarFix",
-      "Author": "Kell",
-      "Category": "Graphics"
-    },
-    {
-      "Name": "ParticlesFix",
-      "Author": "Kell",
-      "Category": "Graphics"
-    }
+	{
+		"Name": "FramerateLimiter",
+		"Author": "SF94 and Kell",
+		"Category": "Graphics",
+		"InternalName": "Limit Framerate",
+		"Description": "Limits the framerate to 60fps. This prevents the game from running double speed or faster when a monitor has a higher refresh rate than 60hz.",
+		"IsChecked": true
+	},
+	{
+		"Name": "DisableExitPrompt",
+		"Author": "Kell",
+		"Category": "System",
+		"InternalName": "Disable Exit Prompt",
+		"Description": "Disables the game's exit prompt from displaying when closing the game window.",
+		"IsChecked":  true
+	},
+	{
+		"Name": "SyncLoad",
+		"Author": "MainMemory",
+		"Category": "System",
+		"InternalName": "Synchronous File Loading",
+		"Description": "Loads files synchronously, speeding it up. It may improve stability on some systems.",
+		"IsChecked": true
+	},
+	{
+		"Name": "ExtendVertexBuffer",
+		"Author": "MainMemory",
+		"Category": "System",
+		"InternalName": "Extend Vertex Buffer for Models",
+		"Description": "Extends the vertex buffer for models to allow the use of higher vertex counts on models. Some mods may rely on this being enabled.",
+		"IsChecked": true
+	},
+	{
+		"Name": "EnvMapFix",
+		"Author": "Exant",
+		"Category": "Graphics",
+		"InternalName": "Fix Environment Mapping",
+		"Description": "Fixes environment map rendering.",
+		"IsChecked": true
+	},
+	{
+		"Name": "ScreenFadeFix",
+		"Author": "MainMemory",
+		"Category": "Graphics",
+		"InternalName": "Fix Screen Fade",
+		"Description": "Adjusts the Screen Fade on the result loading screen.",
+		"IsChecked": true
+	},
+	{
+		"Name": "CECarFix",
+		"Author": "Kell",
+		"Category": "Graphics",
+		"InternalName": "City Escape Car Fixes",
+		"Description": "Fixes an issue where the Trolley will sometimes appear over the player's head on some graphics chipsets/gpus, and where vehicles may not load correctly either.",
+		"IsChecked": true
+	},
+	{
+		"Name": "ParticlesFix",
+		"Author": "Kell",
+		"Category": "Graphics",
+		"InternalName": "Particle Rendering Fixes",
+		"Description": "Fixes particles failing to render on certain graphics chipsets/gpus.",
+		"IsChecked": true
+	}
   ]
 }
