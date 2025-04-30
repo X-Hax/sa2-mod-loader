@@ -181,5 +181,7 @@
     <None Include="cpp.hint">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="..\README.md" />
+    <None Include="..\appveyor.yml" />
   </ItemGroup>
 </Project>

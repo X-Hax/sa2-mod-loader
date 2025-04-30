@@ -33,6 +33,8 @@ after_build:
 artifacts:
 - path: bin\SA2ModLoader.7z
 
+- path: bin\SA2ModLoader.pdb
+
 before_deploy:
 - ps: |-
       if (!$env:APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED) {
@@ -44,6 +46,6 @@ deploy:
   description: $(APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED)
   auth_token:
     secure: 3U0hYOvkeEJsoN2b4U/c9RTDxjcj9txunvCbWfkg5qvOSB1qOnh4fnIE9EK5yAXi2m8RJMO4Zr/UqiVMB9CDPulfPRcJSJ83rsmh1EXBipUs4K/RQmQHaDG6UiiNQ1Xg
-  artifact: bin/SA2ModLoader.7z
+  artifact: bin/SA2ModLoader.7z,bin/SA2ModLoader.pdb
   on:
     branch: master
