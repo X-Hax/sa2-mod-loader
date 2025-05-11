@@ -127,15 +127,17 @@ ModelIndex* __cdecl LoadMDLFile_ri(const char* filename)
 	ModelIndex* result = nullptr;
 	char dir[MAX_PATH];
 	PathCombineA(dir, resourcedir.c_str(), filename);
+	int prsind = sadx_fileMap.getModIndex(dir);
 	PathRemoveExtensionA(dir);
 	char* fn = PathFindFileNameA(dir);
 	char combinedpath[MAX_PATH];
 	PathCombineA(combinedpath, dir, fn);
 	PathAddExtensionA(combinedpath, ".ini");
 
-	const char* repfn = sadx_fileMap.replaceFile(combinedpath);
+	int iniind = 0;
+	const char* repfn = sadx_fileMap.replaceFile(combinedpath, iniind);
 
-	if (PathFileExistsA(repfn) == false)
+	if (PathFileExistsA(repfn) == false || iniind < prsind)
 		return LoadMDLFile_t.Original((char*)filename);
 
 
