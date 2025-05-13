@@ -175,10 +175,6 @@ ModelIndex* __cdecl LoadMDLFile_ri(const char* filename)
 					CharacterModels[ind] = index;
 				modelindexes.push_back(index);
 			}
-			else
-			{
-				PrintDebug("Warning: no match found for %s (%s) in \"%s\".", i->second.c_str(), i->first.c_str(), repfn);
-			}
 		}
 	} while (FindNextFileA(hfind, &data) != 0);
 	FindClose(hfind);
