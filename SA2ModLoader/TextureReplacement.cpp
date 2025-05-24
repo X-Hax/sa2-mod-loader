@@ -708,6 +708,18 @@ static bool replace_pvmx(const string& path, ifstream& file, NJS_TEXLIST* texlis
 	return true;
 }
 
+const char* const keyboardTextureNames[] = {
+	"actionw02",
+	"ad_entrance01",
+	"add_odekake_menu_en",
+	"add_odekake_menu_ja",
+	"kin_ad_waku2",
+	"add_select_karate_en",
+	"add_select_karate_ja",
+	"add_select_race_en",
+	"add_select_race_ja",
+	"matome01"
+};
 /**
  * \brief Replaces the specified PVM with a texture pack PAK archive.
  * \param path The path to the PAK archive. Used for caching and error handling.
@@ -758,6 +770,16 @@ static bool replace_pak(const string& path, const string& oldpath, ifstream& fil
 		NJS_TEXMANAGE* texture = nullptr;
 		string lower = entnam;
 		transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+
+		if (!InputMode[0])
+			for (auto tn : keyboardTextureNames)
+				if (!lower.compare(tn))
+				{
+					lower.append("k");
+					strcat_s(entnam, "K");
+					break;
+				}
+
 		const auto& iter2 = replacements.find(lower);
 		if (iter2 != replacements.cend() && iter2->second.mod_index >= modIdx)
 			texture = load_texture(iter2->second.path, iter2->second, true);
