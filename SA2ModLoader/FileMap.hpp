@@ -44,8 +44,9 @@ public:
 	 * Add a file replacement.
 	 * @param origFile Original filename.
 	 * @param modFile Mod filename.
+	 * @param modIndex Optional mod index.
 	 */
-	void addReplaceFile(const std::string& origFile, const std::string& modFile);
+	void addReplaceFile(const std::string& origFile, const std::string& modFile, const int modIndex = INT_MAX);
 
 	/**
 	 * Remove a file replacement.
