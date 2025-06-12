@@ -286,6 +286,11 @@ struct HelperFunctions
 	// Requires version >= 13.
 	void(__cdecl* PopInterpolationFix)();
 
+	// Retrieves the index of the mod that replaced the file specified in the path.
+	// Returns 0 if the file wasn't replaced by a mod.
+	// Requires version >= 16.
+	int(__cdecl* GetFileModIndex)(const char* path);
+
 	// Replaces the source file with the destination file, with the specified mod index being used to determine the order of replacement.
 	// Requires version >= 16.
 	void(__cdecl* ReplaceFileAtIndex)(const char* src, const char* dst, int modIndex);
