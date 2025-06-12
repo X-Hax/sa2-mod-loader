@@ -239,6 +239,20 @@ void _ReplaceFile(const char* src, const char* dst)
 	}
 }
 
+void ReplaceFileAtIndex(const char* src, const char* dst, int modIndex)
+{
+	string orig = sadx_fileMap.normalizePath(src);
+	string mod = sadx_fileMap.normalizePath(dst);
+	sadx_fileMap.addReplaceFile(orig, mod, modIndex);
+	auto i = orig.find("\\prs\\");
+	if (i != string::npos)
+	{
+		orig.erase(i, 4);
+		ReplaceFileExtension(orig, ".prs");
+		sadx_fileMap.addReplaceFile(orig, mod, modIndex);
+	}
+}
+
 void SetWindowTitle(const wchar_t* title)
 {
 	if (MainWindowHandle)
@@ -379,4 +393,5 @@ HelperFunctions helperFunctions = {
 	&UnreplaceFile,
 	&PushInterpolationFix,
 	&PopInterpolationFix,
+	&ReplaceFileAtIndex
 };
