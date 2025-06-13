@@ -225,20 +225,6 @@ const char* __cdecl GetReplaceablePath(const char* path)
 	return sadx_fileMap.replaceFile(path);
 }
 
-void _ReplaceFile(const char* src, const char* dst)
-{
-	string orig = sadx_fileMap.normalizePath(src);
-	string mod = sadx_fileMap.normalizePath(dst);
-	sadx_fileMap.addReplaceFile(orig, mod);
-	auto i = orig.find("\\prs\\");
-	if (i != string::npos)
-	{
-		orig.erase(i, 4);
-		ReplaceFileExtension(orig, ".prs");
-		sadx_fileMap.addReplaceFile(orig, mod);
-	}
-}
-
 void ReplaceFileAtIndex(const char* src, const char* dst, int modIndex)
 {
 	string orig = sadx_fileMap.normalizePath(src);
@@ -257,6 +243,11 @@ void ReplaceFileAtIndex(const char* src, const char* dst, int modIndex)
 			sadx_fileMap.addReplaceFile(orig, mod, modIndex);
 		}
 	}
+}
+
+void _ReplaceFile(const char* src, const char* dst)
+{
+	ReplaceFileAtIndex(src, dst, INT_MAX);
 }
 
 int GetFileModIndex(const char* path) {
