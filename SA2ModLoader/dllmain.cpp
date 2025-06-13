@@ -1168,7 +1168,7 @@ void __cdecl InitMods(void)
 	// It's mod loading time!
 	PrintDebug("Loading mods...\n");
 	// Mod list
-	for (unsigned int i = 0; i <= GetModCount(); i++)
+	for (unsigned int i = 0; i < GetModCount(); i++)
 	{
 		std::string mod_fname = GetModName(i);
 
