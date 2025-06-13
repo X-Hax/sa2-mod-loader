@@ -1168,7 +1168,7 @@ void __cdecl InitMods(void)
 	// It's mod loading time!
 	PrintDebug("Loading mods...\n");
 	// Mod list
-	for (unsigned int i = 1; i <= GetModCount(); i++)
+	for (unsigned int i = 0; i < GetModCount(); i++)
 	{
 		std::string mod_fname = GetModName(i);
 
@@ -1196,7 +1196,7 @@ void __cdecl InitMods(void)
 		const string mod_nameA = modinfo->getString("Name");
 		const wstring mod_name = modinfo->getWString("Name");
 
-		PrintDebug("%u. %s\n", i, mod_nameA.c_str());
+		PrintDebug("%u. %s\n", i + 1, mod_nameA.c_str());
 
 		vector<ModDependency> moddeps;
 
