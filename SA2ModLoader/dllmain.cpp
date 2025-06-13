@@ -1196,7 +1196,7 @@ void __cdecl InitMods(void)
 		const string mod_nameA = modinfo->getString("Name");
 		const wstring mod_name = modinfo->getWString("Name");
 
-		PrintDebug("%u. %s\n", i, mod_nameA.c_str());
+		PrintDebug("%u. %s\n", i + 1, mod_nameA.c_str());
 
 		vector<ModDependency> moddeps;
 
