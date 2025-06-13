@@ -225,18 +225,34 @@ const char* __cdecl GetReplaceablePath(const char* path)
 	return sadx_fileMap.replaceFile(path);
 }
 
-void _ReplaceFile(const char* src, const char* dst)
+void ReplaceFileAtIndex(const char* src, const char* dst, int modIndex)
 {
 	string orig = sadx_fileMap.normalizePath(src);
 	string mod = sadx_fileMap.normalizePath(dst);
-	sadx_fileMap.addReplaceFile(orig, mod);
+
+	if (sadx_fileMap.getModIndex(orig.c_str()) <= modIndex) {
+		sadx_fileMap.addReplaceFile(orig, mod, modIndex);
+	}
+
 	auto i = orig.find("\\prs\\");
 	if (i != string::npos)
 	{
 		orig.erase(i, 4);
 		ReplaceFileExtension(orig, ".prs");
-		sadx_fileMap.addReplaceFile(orig, mod);
+		if (sadx_fileMap.getModIndex(orig.c_str()) <= modIndex) {
+			sadx_fileMap.addReplaceFile(orig, mod, modIndex);
+		}
 	}
+}
+
+void _ReplaceFile(const char* src, const char* dst)
+{
+	ReplaceFileAtIndex(src, dst, INT_MAX);
+}
+
+int GetFileModIndex(const char* path) {
+	string normalizedPath = sadx_fileMap.normalizePath(path);
+	return sadx_fileMap.getModIndex(normalizedPath.c_str());
 }
 
 void SetWindowTitle(const wchar_t* title)
@@ -379,4 +395,6 @@ HelperFunctions helperFunctions = {
 	&UnreplaceFile,
 	&PushInterpolationFix,
 	&PopInterpolationFix,
+	&GetFileModIndex,
+	&ReplaceFileAtIndex
 };
