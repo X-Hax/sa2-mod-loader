@@ -460,7 +460,7 @@ const char* FileMap::replaceFile(const char* lpFileName) const
 /**
  * Get a filename from the file replacement map.
  * @param[in] lpFileName Filename.
- * @param[out] modIndex Index of the mod that replaced a file, or 0 if no mod replaced it.
+ * @param[out] modIndex Index of the mod that replaced a file, or -1 if no mod replaced it.
  * @return Replaced filename, or original filename if not replaced by a mod.
  */
 const char* FileMap::replaceFile(const char* lpFileName, int& modIndex) const
@@ -479,14 +479,14 @@ const char* FileMap::replaceFile(const char* lpFileName, int& modIndex) const
 
 	// File was not replaced by a mod.
 	// Return the filename as-is.
-	modIndex = 0;
+	modIndex = -1;
 	return lpFileName;
 }
 
 /**
  * Get the index of the mod that replaced a given file.
  * @param lpFileName Filename.
- * @return Index of the mod that replaced a file, or 0 if no mod replaced it.
+ * @return Index of the mod that replaced a file, or -1 if no mod replaced it.
  */
 int FileMap::getModIndex(const char* lpFileName) const
 {
@@ -499,7 +499,7 @@ int FileMap::getModIndex(const char* lpFileName) const
 	}
 
 	// File was not replaced by a mod.
-	return 0;
+	return -1;
 }
 
 /**
