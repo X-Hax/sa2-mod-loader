@@ -1421,7 +1421,7 @@ void __cdecl InitMods(void)
 	}
 
 	for (unsigned int i = 0; i < initfuncs.size(); i++)
-		initfuncs[i].first(initfuncs[i].second.c_str(), helperFunctions);
+		initfuncs[i].first(initfuncs[i].second.c_str(), helperFunctions, i);
 
 	TestSpawnCheckArgs(helperFunctions);
 

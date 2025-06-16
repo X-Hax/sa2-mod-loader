@@ -296,14 +296,14 @@ struct HelperFunctions
 	void(__cdecl* ReplaceFileAtIndex)(const char* src, const char* dst, int modIndex);
 };
 
-typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);
+typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions, unsigned int modIndex);
 
 typedef void(__cdecl* ModEvent)();
 
 struct ModInfo
 {
 	int Version;
-	void(__cdecl* Init)(const char* path, const HelperFunctions& helperFunctions);
+	void(__cdecl* Init)(const char* path, const HelperFunctions& helperFunctions, unsigned int modIndex);
 	const PatchInfo* Patches;
 	int PatchCount;
 	const PointerInfo* Jumps;
