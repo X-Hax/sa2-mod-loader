@@ -70,8 +70,9 @@ void FileMap::addIgnoreFile(const string& ignoreFile, int modIdx)
  * Add a file replacement.
  * @param origFile Original filename.
  * @param modFile Mod filename.
+ * @param modIndex Optional mod index.
  */
-void FileMap::addReplaceFile(const std::string& origFile, const std::string& modFile)
+void FileMap::addReplaceFile(const std::string& origFile, const std::string& modFile, const int modIndex)
 {
 	string origFile_norm = normalizePath(origFile);
 	string modFile_norm = normalizePath(modFile);
@@ -87,7 +88,7 @@ void FileMap::addReplaceFile(const std::string& origFile, const std::string& mod
 	else
 	{
 		// Destination file is not already in the map.
-		setReplaceFile(origFile_norm, modFile_norm, INT_MAX);
+		setReplaceFile(origFile_norm, modFile_norm, modIndex);
 	}
 }
 

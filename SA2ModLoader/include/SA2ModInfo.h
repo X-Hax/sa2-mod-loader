@@ -8,7 +8,7 @@
 
 #include "SA2Structs.h"
 
-static const int ModLoaderVer = 15;
+static const int ModLoaderVer = 16;
 
 struct PatchInfo
 {
@@ -285,6 +285,15 @@ struct HelperFunctions
 	// Disable interpolation fix for animations, use it at the end of a display function.
 	// Requires version >= 13.
 	void(__cdecl* PopInterpolationFix)();
+
+	// Retrieves the index of the mod that replaced the file specified in the path.
+	// Returns 0 if the file wasn't replaced by a mod.
+	// Requires version >= 16.
+	int(__cdecl* GetFileModIndex)(const char* path);
+
+	// Replaces the source file with the destination file, with the specified mod index being used to determine the order of replacement.
+	// Requires version >= 16.
+	void(__cdecl* ReplaceFileAtIndex)(const char* src, const char* dst, int modIndex);
 };
 
 typedef void(__cdecl* ModInitFunc)(const char* path, const HelperFunctions& helperFunctions);
