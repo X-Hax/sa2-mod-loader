@@ -112,7 +112,7 @@ public:
 	/**
 	 * Get a filename from the file replacement map.
 	 * @param[in] lpFileName Filename.
-	 * @param[out] modIndex Index of the mod that replaced a file, or 0 if no mod replaced it.
+	 * @param[out] modIndex Index of the mod that replaced a file, or -1 if no mod replaced it.
 	 * @return Replaced filename, or original filename if not replaced by a mod.
 	 */
 	const char* replaceFile(const char* lpFileName, int& modIndex) const;
@@ -120,7 +120,7 @@ public:
 	/**
 	* Get the index of the mod that replaced a given file.
 	* @param lpFileName Filename.
-	* @return Index of the mod that replaced a file, or 0 if no mod replaced it.
+	* @return Index of the mod that replaced a file, or -1 if no mod replaced it.
 	*/
 	int getModIndex(const char* lpFileName) const;
 
