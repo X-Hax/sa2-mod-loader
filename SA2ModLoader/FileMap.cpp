@@ -75,10 +75,16 @@ void FileMap::addIgnoreFile(const string& ignoreFile, int modIdx)
 void FileMap::addReplaceFile(const std::string& origFile, const std::string& modFile, const int modIndex)
 {
 	string origFile_norm = normalizePath(origFile);
+
+	// Check if the source file is already being replaced, and reject the new replacement if the current index is higher.
+	auto iter = m_fileMap.find(origFile_norm);
+	if (iter != m_fileMap.end() && modIndex < iter->second.modIndex)
+		return;
+
 	string modFile_norm = normalizePath(modFile);
 
 	// Check if the destination file is being replaced.
-	auto iter = m_fileMap.find(modFile_norm);
+	iter = m_fileMap.find(modFile_norm);
 	if (iter != m_fileMap.end())
 	{
 		// Destination file is being replaced.
