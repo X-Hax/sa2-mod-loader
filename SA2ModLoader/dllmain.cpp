@@ -1039,6 +1039,13 @@ static void HandleOtherModIniContent(const IniGroup* const modinfo, const wstrin
 LoaderSettings loaderSettings = {};
 std::vector<Mod> modlist;
 
+struct ModInitData
+{
+	const std::string path;
+	const ModInitFunc func;
+	const unsigned int index;
+};
+
 void __cdecl InitMods(void)
 {
 	**datadllhandle = LoadLibrary(L".\\resource\\gd_PC\\DLL\\Win32\\Data_DLL_orig.dll");
@@ -1158,7 +1165,7 @@ void __cdecl InitMods(void)
 	if (loaderSettings.DebugCrashLog)
 		initCrashDump();
 
-	vector<std::pair<ModInitFunc, string>> initfuncs;
+	vector<ModInitData> initfuncs;
 	vector<std::pair<wstring, wstring>> errors;
 
 	// Old path failsafe for Border.png
@@ -1311,12 +1318,12 @@ void __cdecl InitMods(void)
 					}
 					if (info->Init)
 					{
-						initfuncs.push_back({ info->Init, mod_dirA });
+						initfuncs.push_back({ mod_dirA, info->Init, i });
 					}
 
 					const ModInitFunc init = (const ModInitFunc)GetProcAddress(module, "Init");
 					if (init)
-						initfuncs.push_back({ init, mod_dirA });
+						initfuncs.push_back({ mod_dirA, init, i });
 
 					const PatchList* patches = (const PatchList*)GetProcAddress(module, "Patches");
 					if (patches)
@@ -1420,8 +1427,8 @@ void __cdecl InitMods(void)
 		sadx_fileMap.swapFiles(fileswap.first, fileswap.second);
 	}
 
-	for (unsigned int i = 0; i < initfuncs.size(); i++)
-		initfuncs[i].first(initfuncs[i].second.c_str(), helperFunctions, i);
+	for (auto& initfunc : initfuncs)
+		initfunc.func(initfunc.path.c_str(), helperFunctions, initfunc.index);
 
 	TestSpawnCheckArgs(helperFunctions);
 
