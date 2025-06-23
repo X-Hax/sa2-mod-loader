@@ -119,9 +119,9 @@ void FileMap::swapFiles(const std::string& fileA, const std::string& fileB)
 	string fileB_norm = normalizePath(fileB);
 
 	string fileA_repl = fileB_norm;
-	int fileA_ind = 0;
+	int fileA_ind = -1;
 	string fileB_repl = fileA_norm;
-	int fileB_ind = 0;
+	int fileB_ind = -1;
 
 	// Check if the destination file is being replaced.
 	auto iter = m_fileMap.find(fileA_repl);
@@ -158,7 +158,7 @@ void FileMap::scanFolder(const string& srcPath, int modIdx)
 
 void FileMap::scanPRSFolder(const string& srcPath)
 {
-	scanPRSFolder_int(srcPath, srcPath.length() + 1, 0);
+	scanPRSFolder_int(srcPath, srcPath.length() + 1, -1);
 }
 
 /**
