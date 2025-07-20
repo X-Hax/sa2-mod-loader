@@ -113,7 +113,7 @@ static wstring GetCharName()
 	return L"";
 }
 
-static void SetErrorMessage(string& fullMsg, const string address, const string dllName, const intptr_t crashID, const string what)
+static void SetErrorMessage(string& fullMsg, const string address, const string dllName, const string modName, const intptr_t crashID, const string what)
 {
 	if (crashID == -1 && address == "")
 	{
@@ -128,6 +128,10 @@ static void SetErrorMessage(string& fullMsg, const string address, const string 
 	string errorCommon = getErrorMSG(crashID); //get error message if the crash address is common
 	fullMsg = "SA2 has crashed at " + address + " (" + dllName + ").\n";
 
+	if (modName != "")
+	{
+		fullMsg = fullMsg += "\nThe mod '" + modName + "' has caused the game to crash. It may be a bug in the mod or a compatibility issue with other enabled mods.\n";
+	}
 	if (errorCommon != "NULL")
 	{
 		fullMsg += "\n" + errorCommon + "\n"; //add the common error message if it exists
@@ -144,7 +148,7 @@ static void SetErrorMessage(string& fullMsg, const string address, const string 
 	}
 
 	if (dllName.find("Data_DLL") != std::string::npos)
-		fullMsg += "\nThis is a crash in the Mod Loader, if you are making a mod, there is a chance that you did something very wrong.";
+		fullMsg += "\nThis crash is in the Mod Loader. It can happen if a mod causes a critical error or if the game isn't installed correctly.";
 
 	fullMsg += "\nA crash dump, a mod list and a text file have been added to your game's CrashDumps folder.\n\nIf you want to report this crash, please include the dump (.dmp file), the mod list (.json file) and the info (.txt file) in your report.\n";
 }
@@ -225,13 +229,13 @@ static void CreateExtraInfoFile(wstring curCrashFolder, wstring timeStr, string 
 			else
 			{
 				if (i == 0)
-					outfile << "playerpwp pointer was null.";
+					outfile << "playerpwp pointer was null. (This doesn't mean this is the cause of the crash, it's just an information for debugging purpose.)";
 			}
 		}
 	}
 	else
 	{
-		outfile << "playertwp pointer was null.";
+		outfile << "playertwp pointer was null. (This doesn't mean this is the cause of the crash, it's just an information for debugging purpose.)";
 	}
 
 
@@ -357,6 +361,7 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 	intptr_t crashID = -1;
 	string address = "";
 	string dllName = "";
+	string modName = "";
 
 	if (info.ThreadId != NULL) 		//get crash address
 		crashID = (intptr_t)info.ExceptionPointers->ExceptionRecord->ExceptionAddress;
@@ -378,12 +383,16 @@ LONG WINAPI HandleException(struct _EXCEPTION_POINTERS* apExceptionInfo)
 			{
 				auto filename = PathFindFileNameA(path);
 				dllName = filename;
+				if (helperFunctions.Mods->find_by_dll(handle))
+				{
+					modName = helperFunctions.Mods->find_by_dll(handle)->Name;
+				}
 			}
 		}
 	}
 
 	string fullMsg = "";
-	SetErrorMessage(fullMsg, address, dllName, crashID, exception);
+	SetErrorMessage(fullMsg, address, dllName, modName, crashID, exception);
 	CopyAndRename_SA2LoaderProfile(curCrashDumpFolder, timeStr); //copy JSON Profile file to the Crash Dump folder so we know what mods and cheats were used
 	CreateExtraInfoFile(curCrashDumpFolder, timeStr, fullMsg); //add extra game info like variable states
 	string text = "Crash Address: " + address + "\n";
