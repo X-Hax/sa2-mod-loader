@@ -1099,6 +1099,7 @@ void __cdecl InitMods(void)
 		AllocConsole();
 		SetConsoleTitle(L"SA2 Mod Loader output");
 		freopen("CONOUT$", "wb", stdout);
+		SetForegroundWindow(MainWindowHandle);
 		dbgConsole = true;
 	}
 	dbgScreen = loaderSettings.DebugScreen;
