@@ -290,10 +290,13 @@ void TestSpawnCheckArgs(const HelperFunctions& helperFunctions)
 		else if (!wcscmp(argv[i], L"--event") || !wcscmp(argv[i], L"-e"))
 		{
 			((StoryEntry*)0x173A5E0)->Events[0] = static_cast<int16_t>(_wtoi(argv[++i]));
-			if (((StoryEntry*)0x173A5E0)->Events[0] == 428)
+			if (((StoryEntry*)0x173A5E0)->Events[0] == FMV_HERO_ENDING)
 				helperFunctions.ReplaceFile("resource\\gd_PC\\event\\e0428_m.sfd", "resource\\gd_PC\\e0428_m.sfd");
-			if (((StoryEntry*)0x173A5E0)->Events[0] == 609)
+			if (((StoryEntry*)0x173A5E0)->Events[0] == FMV_LAST_ARK)
 				helperFunctions.ReplaceFile("resource\\gd_PC\\event\\e0609_m.sfd", "resource\\gd_PC\\e0609_m.sfd");
+			((StoryEntry*)0x173A5E0)->Events[1] = E_NONE;
+			((StoryEntry*)0x173A5E0)->Events[2] = E_NONE;
+			((StoryEntry*)0x173A5E0)->Events[3] = E_NONE;
 			testSpawnCutscene = true;
 		}
 		else if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))

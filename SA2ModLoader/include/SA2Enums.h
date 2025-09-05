@@ -3464,20 +3464,23 @@ enum EVENT_IDS {
 	E_LAST_SACRIFICE = 208, // Shadow gives his life to save Earth. (E0208)
 	E_LAST_ENDING = 210, // "Sayonara, Shadow the Hedgehog..." | SA2 Ending. (E0210)
 
-	E_DC_INTRO = 250, // Orignal SA2 intro (E0250)
+	E_DC_INTRO = 350, // Orignal SA2 intro (E0350)
 	E_BATTLE_INTRO_JP = 360, // Japanese Battle intro. (E0360)
 	E_BATTLE_INTRO_ENG = 361, // English Battle intro. (E0361)
-	FMV_DC_INTRO = 401, // Video file version of the original SA2 intro.
-	FMV_PRISONISLAND = 409, // Prison Island explosion.
-	FMV_DAYX = 411, // Day X.
-	FMV_HERO_BLASTOFF = 420, // Hero Story version of the shuttle scene.
-	FMV_HERO_ENDING = 428, // ARK's Eclipse Cannon failure. Part of the Hero Story ending.
-	FMV_DARK_PREVIEW = 429, // Dark Story trailer.
-	FMV_LAST_PREVIEW = 430, // Last Story trailer.
-	FMV_DARK_BLASTOFF = 524, // Dark Story version of the shuttle scene.
-	FMV_HERO_PREVIEW = 532, // Hero Story trailer.
-	FMV_LAST_GERALD = 602, // Gerald Robotnik's message to humanity.
-	FMV_LAST_ARK = 609 // ARK is returned to its original position.
+
+	FMV_DC_INTRO = 401, // Video file version of the original SA2 intro. (E0401_M)
+	FMV_PRISONISLAND = 409, // Prison Island explosion. (E0409_M)
+	FMV_DAYX = 411, // Day X. (E0411_M)
+	FMV_HERO_BLASTOFF = 420, // Hero Story version of the shuttle scene. (E0420_M)
+	FMV_HERO_ENDING = 428, // ARK's Eclipse Cannon failure. Part of the Hero Story ending. (E0428_M)
+	FMV_DARK_PREVIEW = 429, // Dark Story trailer. (E0429_M)
+	FMV_LAST_PREVIEW = 430, // Last Story trailer. (E0430_M)
+	FMV_DARK_BLASTOFF = 524, // Dark Story version of the shuttle scene. (E0524_M)
+	FMV_HERO_PREVIEW = 532, // Hero Story trailer. (E0532_M)
+	FMV_LAST_GERALD = 602, // Gerald Robotnik's message to humanity. (E0602_M)
+	FMV_LAST_ARK = 609, // ARK is returned to its original position. (E0609_M)
+
+	E_NONE = -1	// Play no event.
 };
 
 /* Character Animation IDs
