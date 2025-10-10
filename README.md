@@ -2,14 +2,16 @@
 
 ## System Requirements
 
-To use SA2 Mod Loader, you must have:
-* Sonic Adventure 2 PC, 2012 Steam version
-* Windows 7 or later
-* [Visual C++ 2022 runtime (x86)](https://aka.ms/vs/17/release/vc_redist.x86.exe)
+> [!NOTE]
+> To use SA2 Mod Loader, you must have:
+> * [Sonic Adventure 2 PC, 2012 Steam version](https://store.steampowered.com/app/213610/Sonic_Adventure_2)
+> * Windows 7 or later
+> * [Visual C++ 2022 runtime (x86)](https://aka.ms/vs/17/release/vc_redist.x86.exe)
 
-To manage mods and edit settings, you also need the following:
-* [SA Mod Manager](https://github.com/X-Hax/SA-Mod-Manager)
-* .NET 8.0 Desktop runtime
+> [!IMPORTANT]
+> To manage mods and edit settings, you also need the following:
+> * [SA Mod Manager](https://github.com/X-Hax/SA-Mod-Manager)
+> * [.NET Desktop Runtime 8.0](https://dotnet.microsoft.com/fr-fr/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer)
 
 ## License
 
