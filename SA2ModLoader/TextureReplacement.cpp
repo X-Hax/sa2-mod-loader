@@ -886,9 +886,19 @@ static bool try_texture_pack(const char* filename, NJS_TEXLIST* texlist)
 	if (IsFile(replaced))
 	{
 		ifstream pvmx(replaced, ios::in | ios::binary);
-		if (pvmx::is_pvmx(pvmx))
-			return replace_pvmx(replaced, pvmx, texlist, replacements);
-		return PAKFile::is_pak(pvmx) && replace_pak(replaced, filename, pvmx, texlist, replacements);
+
+		if ( pvmx::is_pvmx(pvmx) && replace_pvmx(replaced, pvmx, texlist, replacements) )
+		{
+			return true;
+		}
+
+		if ( PAKFile::is_pak(pvmx) && replace_pak(replaced, filename, pvmx, texlist, replacements) )
+		{
+			PrintDebug("Warning! Reading file: ./resource/%sPRS/%s.pak", &BaseResourceFolder, filename);
+			return true;
+		}
+
+		return false;
 	}
 
 	// Otherwise it's probably a directory, so try loading it as a texture pack.
