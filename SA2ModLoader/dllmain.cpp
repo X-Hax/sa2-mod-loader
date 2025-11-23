@@ -1425,6 +1425,7 @@ void __cdecl InitMods(void)
 							{
 								incDirPath = group->second->getString(dirStr);
 								incDirPathW = group->second->getWString(dirStr);
+								break;
 							}
 						}
 
