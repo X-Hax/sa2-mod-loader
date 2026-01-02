@@ -167,11 +167,31 @@ void SyncLoad(void (*a1)(void*), void* a2)
 	a1(a2);
 }
 
+static void* syMalloc(int n)
+{
+	uint32_t* p_ = (uint32_t*) MemoryManager->Allocate(n + 4, nullptr, 0);
+
+	*p_ = 0x12345678;
+
+	return (void*) (p_ + 1);
+}
+
+DataPointer(void*, _nj_vertex_buf_    , 0x025EFE48);
+DataPointer(int  , _nj_vertex_buf_num_, 0x025EFE4C);
+
 void ApplyPatches(LoaderSettings* loaderSettings)
 {
 	// Expand chunk model vertex buffer from 8192 to 32768 verts
 	if (loaderSettings->ExtendVertexBuffer || IsGamePatchEnabled("ExtendVertexBuffer"))
-		*(void**)0x25EFE48 = calloc(1, 0x100004);
+	{
+		/*
+		*	Ninja bases the vertex number assuming 64 bytes per-vertex. Battle only uses 32 bytes
+		*	per-vertex, so we set the number to half as many as we actually want. In this case,
+		*	16k to get 32k vertex entries of space.
+		*/
+		_nj_vertex_buf_		= syMalloc( 64 * 0x4000 ); // sizeof(NJS_VERTEX_BUF) * 16'384
+		_nj_vertex_buf_num_	= 0x4000;
+	}
 
 	// Fix env map condition bug in chDrawCnk
 	if (loaderSettings->EnvMapFix || IsGamePatchEnabled("EnvMapFix"))
