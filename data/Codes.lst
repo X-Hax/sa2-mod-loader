@@ -330,6 +330,13 @@ Author Sora
 Category UI
 Description Disables the Omochao Loading Tips screens introduced in the HD ports.
 
+Code "Disable Kart Racing HUD"
+writenop 0061B120 5
+writenop 0061B7D3 5
+writenop 0061B87E 5
+Author Mars
+Category UI
+
 Patch "Disable Special Moves in 2P"
 write16 0044CEC5 0xE990
 write8 0046AA80 0xC3
