@@ -1036,6 +1036,19 @@ static void HandleOtherModIniContent(const IniGroup* const modinfo, const wstrin
 	}
 }
 
+static void ProcessModIncludeDir(const IniGroup* modinfo, int index, const string modDir, const wstring modDirW, const string incDirectory, const wstring incDirectoryW)
+{
+	const string modIncDir = modDir + "\\" + incDirectory;
+	const wstring modIncDirW = modDirW + L"\\" + incDirectoryW;
+	if (DirectoryExists(modIncDir))
+	{
+		PrintDebug("Mod Config: use path: '%s'\n", modIncDir.c_str());
+		Mod_CheckAndReplaceFiles(modIncDir, index);
+		HandleOtherModIniContent(modinfo, modIncDirW, modIncDir);
+	}
+}
+
+
 LoaderSettings loaderSettings = {};
 std::vector<Mod> modlist;
 
@@ -1382,20 +1395,53 @@ void __cdecl InitMods(void)
 			helperFunctions.SetWindowTitle(modinfo->getWString("WindowTitle").c_str());
 
 
-		//basic Mod Config, includes file replacement without custom code
-		int dirs = ini_mod->getInt("Config", "IncludeDirCount", -1);
-		if (dirs != -1)
+		// Check if mod has "Config" group.
+		if (ini_mod->hasGroup("Config"))
 		{
-			for (uint16_t md = 0; md < dirs; md++)
+			// Include Directory processing (aka Codeless Config)
+			int dirCount = ini_mod->getInt("Config", "IncludeDirCount", 0);
+
+			// If the Directory Count is anything higher than 0, we can proceed as there should be valid include directories.
+			if (dirCount > 0)
 			{
-				auto incDirPath = ini_mod->getString("Config", "IncludeDir" + std::to_string(md));
-				const string modIncDir = mod_dirA + "\\" + incDirPath;
-				const wstring modIncDirW = mod_dir + L"\\" + ini_mod->getWString("Config", "IncludeDir" + std::to_string(md));
-				if (DirectoryExists(modIncDir))
+				auto configpath = mod_dir + L"\\config.ini"; // Get the config.ini path and check if it exists.
+				if (FileExists(configpath))
 				{
-					PrintDebug("Mod Config: use path: '%s'\n", modIncDir.c_str());
-					Mod_CheckAndReplaceFiles(modIncDir, i);
-					HandleOtherModIniContent(modinfo, modIncDirW, modIncDir);
+					// Process from config.ini
+					std::unique_ptr<IniFile> configini = std::make_unique<IniFile>(configpath);
+
+					for (uint16_t d = 0; d < dirCount; d++)
+					{
+						// Retrieves defaults from mod.ini
+						string dirStr = "IncludeDir" + std::to_string(d);
+						string incDirPath = ini_mod->getString("Config", dirStr);
+						wstring incDirPathW = ini_mod->getWString("Config", dirStr);
+
+						// Loop through all groups in the config ini to check if the current IncludeDir key is present.
+						for (auto group = configini->begin(); group != configini->end(); group++)
+						{
+							// If the corresponding IncludeDir key is found, update the paths with the config ini info.
+							if (group->second->hasKey(dirStr))
+							{
+								incDirPath = group->second->getString(dirStr);
+								incDirPathW = group->second->getWString(dirStr);
+								break;
+							}
+						}
+
+						ProcessModIncludeDir(modinfo, i, mod_dirA, mod_dir, incDirPath, incDirPathW);
+					}
+				}
+				else
+				{
+					// Legacy processing if no config.ini is found.
+					for (uint16_t md = 0; md < dirCount; md++)
+					{
+						string dirStr = "IncludeDir" + std::to_string(md);
+						string incDirPath = ini_mod->getString("Config", dirStr);
+						wstring incDirPathW = ini_mod->getWString("Config", dirStr);
+						ProcessModIncludeDir(modinfo, i, mod_dirA, mod_dir, incDirPath, incDirPathW);
+					}
 				}
 			}
 		}
