@@ -130,7 +130,7 @@ static void SetErrorMessage(string& fullMsg, const string address, const string 
 
 	if (modName != "")
 	{
-		fullMsg = fullMsg += "\nThe mod '" + modName + "' has caused the game to crash. It may be a bug in the mod or a compatibility issue with other enabled mods.\n";
+		fullMsg = fullMsg += "\nThe following mod has crashed: '" + modName + "'. It may be a bug in the mod or a compatibility issue with other enabled mods.\n";
 	}
 	if (errorCommon != "NULL")
 	{
