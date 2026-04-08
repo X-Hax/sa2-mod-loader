@@ -11,7 +11,7 @@
 > [!IMPORTANT]
 > To manage mods and edit settings, you also need the following:
 > * [SA Mod Manager](https://github.com/X-Hax/SA-Mod-Manager)
-> * [.NET Desktop Runtime 8.0](https://dotnet.microsoft.com/fr-fr/download/dotnet/thank-you/runtime-desktop-8.0.10-windows-x64-installer)
+> * [.NET 8.0 x64 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&apphost_version=8.0.0&gui=true)
 
 ## License
 
