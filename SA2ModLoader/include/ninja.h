@@ -1030,8 +1030,6 @@ typedef struct{
 	Uint32 TextureSize;
 	Uint32 fSurfaceFlags;
 	Uint32 *pSurface;
-	Uint32 *pVirtual;
-	Uint32 *pPhysical;
 }NJS_TEXSURFACE;
 	
 typedef struct {
