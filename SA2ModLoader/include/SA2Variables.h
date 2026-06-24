@@ -811,6 +811,8 @@ DataPointer(ObjectMaster **, itemBoxManager_ptrs, 0x1AEFE98);
 DataPointer(ObjectMaster *, FogTaskExec_ptr, 0x1AEFEA0);
 DataPointer(FogData *, FogDataPtr, 0x1AEFEA4);
 DataPointer(ObjectMaster *, FogtaskManExec_ptr, 0x1AEFEB4);
+DataPointer(int, PauseHintActive, 0x1AEFF50);
+DataArray(char*, PauseHintTexts, 0x1AEFF54, 3);
 DataPointer(ObjectMaster *, PauseHintExec_ptr, 0x1AEFF60);
 DataPointer(ObjectMaster *, ChaoKeyTaskObj, 0x1AEFF64);
 DataPointer(ObjectMaster *, PosBar2PMan_ptr, 0x1AF0148);
