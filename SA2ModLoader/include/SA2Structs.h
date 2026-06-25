@@ -824,7 +824,8 @@ struct CharObj2Base
 	ObjectMaster* HoldTarget;
 	ObjectMaster* CurrentDyncolTask;
 	int field_A4;
-	char gapA8[16];
+	char gapA8[12];
+	void* MovementBuffer;
 	LoopHead* PathData;
 	NJS_MOTION** Animation;
 	PhysicsData PhysData;
@@ -871,7 +872,8 @@ struct playerwk
 	task* HoldTarget;
 	task* CurrentDyncolTask;
 	int field_A4;
-	char gapA8[16];
+	char gapA8[12];
+	void* MovementBuffer;
 	LoopHead* PathData;
 	NJS_MOTION** Animation;
 	player_parameter p;
