@@ -1368,7 +1368,8 @@ enum Actions
 	Action_ThrowMidair,
 	Action_ShakeTree,
 	Action_ShakeObject = 35,
-	Action_Bound = 38, // Caught by ghost or blue shot from GUN robot
+	Action_DeathTransition = 37, // queued up by kill player
+	Action_Bound, // Caught by ghost or blue shot from GUN robot
 	Action_LedgeGrab,
 	Action_StepUp = 40, // Stepping up to ledges
 	Action_Whistle = 42,
