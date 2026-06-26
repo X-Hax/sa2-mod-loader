@@ -4389,7 +4389,8 @@ enum ANIM_TRANSITIONS {
 	ANIM_CODE = 13 // Manually controlled in code (first frame otherwise)
 };
 
-enum RingGroupChildFlags {
-	RingGroupChildFlag_Active = 1,
-	RingGroupChildFlag_Collected = 2
+// For use with RingGroupChildState->State
+enum RingGroupChildStateFlags {
+	RingGroupChildStateFlag_Active = 1,
+	RingGroupChildStateFlag_Collected = 2
 };
