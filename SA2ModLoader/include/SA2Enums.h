@@ -4388,3 +4388,8 @@ enum ANIM_TRANSITIONS {
 	PLAYANIM_DIRECTIONAL_FAST = 12, // Directional input (fast)
 	ANIM_CODE = 13 // Manually controlled in code (first frame otherwise)
 };
+
+enum RingGroupChildFlags {
+	RingGroupChildFlag_Active = 1,
+	RingGroupChildFlag_Collected = 2
+};

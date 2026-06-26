@@ -3991,4 +3991,17 @@ struct EggQuartersPatrolBug
 	int field_B8;
 };
 
+#define RingGroupMaxRings 8
+
+struct RingGroupChildState {
+	int State;
+	ObjectMaster* Object;
+};
+
+// Cast ObjectMaster->EntityData2 to RingGroupWork for a group of rings object
+struct RingGroupWork {
+	RingGroupChildState Rings[RingGroupMaxRings];
+	NJS_POINT3 Positions[RingGroupMaxRings];
+};
+
 #pragma pack(pop)
