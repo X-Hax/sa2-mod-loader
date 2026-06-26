@@ -809,7 +809,7 @@ struct CharObj2Base
 	float Up;
 	char field_38[8];
 	float SomeMultiplier;
-	float StoredSpeed;
+	int field_44;
 	float MechHP;
 	NJS_POINT3 Eff;
 	NJS_POINT3 Acceleration;
@@ -857,7 +857,7 @@ struct playerwk
 	float Up;
 	char field_38[8];
 	float SomeMultiplier;
-	float StoredSpeed;
+	int field_44;
 	float MechHP;
 	NJS_POINT3 eff;
 	NJS_POINT3 acc;
