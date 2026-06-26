@@ -1007,6 +1007,7 @@ FunctionPointer(int, SpringA_Main, (int a1), 0x6C4480);
 ObjectFunc(SpringB_Main, 0x6C4E90);
 FunctionPointer(int, EFFOBJ0, (ObjectMaster* a1), 0x6C5570);
 FunctionPointer(signed int, RingLinearMain, (ObjectMaster* a1), 0x6C5ED0);
+ObjectFunc(RingGroupDelete, 0x6C6050);
 FunctionPointer(int, RingCircleMain, (ObjectMaster* a1), 0x6C6180);
 ObjectFunc(GoalRing_Main, 0x6C63C0);
 ObjectFunc(GoalRing_Delete, 0x6C65A0);
