@@ -4394,3 +4394,15 @@ enum RingGroupChildStateFlags {
 	RingGroupChildStateFlag_Active = 1,
 	RingGroupChildStateFlag_Collected = 2
 };
+
+enum SETObjectFlags : Uint16 {
+	SETObjectFlag_Loaded = 0x1,
+	SETObjectFlag_Unknown02 = 0x2,
+	SETObjectFlag_Unknown04 = 0x4,
+	SETObjectFlag_Unknown08 = 0x8,
+	SETObjectFlag_Unknown10 = 0x10,
+	SETObjectFlag_Unknown20 = 0x20,
+	SETObjectFlag_CheckpointTouched = 0x0040,
+	SETObjectFlag_Unknown4k = 0x4000,
+	SETObjectFlag_Respawn = 0x8000,
+};
