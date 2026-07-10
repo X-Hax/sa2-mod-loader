@@ -809,7 +809,7 @@ struct CharObj2Base
 	float Up;
 	char field_38[8];
 	float SomeMultiplier;
-	int field_44;
+	float StoredSpeed;
 	float MechHP;
 	NJS_POINT3 Eff;
 	NJS_POINT3 Acceleration;
@@ -824,7 +824,8 @@ struct CharObj2Base
 	ObjectMaster* HoldTarget;
 	ObjectMaster* CurrentDyncolTask;
 	int field_A4;
-	char gapA8[16];
+	char gapA8[12];
+	void* MovementBuffer;
 	LoopHead* PathData;
 	NJS_MOTION** Animation;
 	PhysicsData PhysData;
@@ -856,7 +857,7 @@ struct playerwk
 	float Up;
 	char field_38[8];
 	float SomeMultiplier;
-	int field_44;
+	float StoredSpeed;
 	float MechHP;
 	NJS_POINT3 eff;
 	NJS_POINT3 acc;
@@ -871,7 +872,8 @@ struct playerwk
 	task* HoldTarget;
 	task* CurrentDyncolTask;
 	int field_A4;
-	char gapA8[16];
+	char gapA8[12];
+	void* MovementBuffer;
 	LoopHead* PathData;
 	NJS_MOTION** Animation;
 	player_parameter p;
@@ -1654,11 +1656,8 @@ struct LoopHead
 
 struct EmeManThing
 {
-	char byte0;
-	char byte1;
-	char byte2;
-	char byte3;
-	NJS_VECTOR v;
+	int32_t id; // The ID of the emerald piece
+	NJS_VECTOR v; // The emerald's position
 };
 
 struct EmeManObj2
@@ -1668,30 +1667,24 @@ struct EmeManObj2
 	uint8_t byte2;
 	uint8_t HintCount;
 	uint8_t Status;
-	uint8_t byte5;
-	uint8_t byte6;
-	uint8_t byte7;
-	uint8_t byte8;
-	uint8_t byte9;
+	uint8_t EmeraldsSpawned;
+	uint8_t Slot1ArrayLen;
+	uint8_t Slot2ArrayLen;
+	uint8_t Slot3ArrayLen;
+	uint8_t EnemySlotArrayLen;
 	uint8_t byteA;
 	uint8_t byteB;
-	uint8_t byteC;
-	uint8_t byteD;
-	uint8_t fE[2];
-	NJS_VECTOR dword10;
-	uint8_t byte1C;
-	uint8_t byte1D;
-	uint8_t f1E[2];
-	uint32_t dword20;
-	uint32_t dword24;
-	uint32_t dword28;
-	EmeManThing byte2C[3];
-	EmeManThing *ptr_a;
-	EmeManThing *ptr_b;
-	EmeManThing *ptr_c;
-	EmeManThing *ptr_d;
-	uint32_t dword6C;
-	NJS_TEXLIST *TexList;
+	EmeManThing duplicate_emerald_1;
+	EmeManThing duplicate_emerald_2;
+	EmeManThing Piece1;
+	EmeManThing Piece2;
+	EmeManThing Piece3;
+	EmeManThing* Slot1Emeralds;
+	EmeManThing* Slot2Emeralds;
+	EmeManThing* Slot3Emeralds;
+	EmeManThing* EnemySlotEmeralds;
+	uint32_t timer;
+	NJS_TEXLIST* TexList;
 };
 
 struct KnucklesCharObj2
@@ -3954,6 +3947,61 @@ struct MenuBackgrounds
 {
 	char* filename;
 	NJS_TEXLIST* texlist;
+};
+
+struct CheckpointRespawnData
+{
+	short level;
+	short checkpointIndex;
+	char timerMinutes;
+	char timerSeconds;
+	char timerFrames;
+	char padding;
+	NJS_VECTOR position;
+	Rotation rotation;
+	int gravityAngleZ;
+	int gravityAngleX;
+	int stageRestartMode;
+};
+
+struct EggQuartersPatrolBug
+{
+	int index;
+	int state;
+	int nextState;
+	int stateSubTimer;
+	int stateTimer;
+	int cooldownTimer;
+	NJS_POINT3 initialPosition;
+	Rotation initialRotation;
+	NJS_POINT3 previousPosition;
+	int pathIndex;
+	float pathProgress;
+	int targetPitch;
+	int targetYaw;
+	int turnVelocity;
+	void* matrix;
+	char gap_54[0x4C];
+	int canFire;
+	void* radarHandle;
+	int isActive;
+	int isActiveInCurrentRoom;
+	void* shortLaserEffects;
+	void* longLaserEffects;
+	int field_B8;
+};
+
+#define RingGroupMaxRings 8
+
+struct RingGroupChildState {
+	int State;
+	ObjectMaster* Object;
+};
+
+// Cast ObjectMaster->EntityData2 to RingGroupWork for a group of rings object
+struct RingGroupWork {
+	RingGroupChildState Rings[RingGroupMaxRings];
+	NJS_POINT3 Positions[RingGroupMaxRings];
 };
 
 #pragma pack(pop)

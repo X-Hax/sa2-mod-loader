@@ -1368,7 +1368,8 @@ enum Actions
 	Action_ThrowMidair,
 	Action_ShakeTree,
 	Action_ShakeObject = 35,
-	Action_Bound = 38, // Caught by ghost or blue shot from GUN robot
+	Action_DeathTransition = 37, // queued up by kill player
+	Action_Bound, // Caught by ghost or blue shot from GUN robot
 	Action_LedgeGrab,
 	Action_StepUp = 40, // Stepping up to ledges
 	Action_Whistle = 42,
@@ -4386,4 +4387,22 @@ enum ANIM_TRANSITIONS {
 	PLAYANIM_DIRECTIONAL_NORMAL = 11, // Directional input (normal)
 	PLAYANIM_DIRECTIONAL_FAST = 12, // Directional input (fast)
 	ANIM_CODE = 13 // Manually controlled in code (first frame otherwise)
+};
+
+// For use with RingGroupChildState->State
+enum RingGroupChildStateFlags {
+	RingGroupChildStateFlag_Active = 1,
+	RingGroupChildStateFlag_Collected = 2
+};
+
+enum SETObjectFlags : Uint16 {
+	SETObjectFlag_Loaded = 0x1,
+	SETObjectFlag_Unknown02 = 0x2,
+	SETObjectFlag_Unknown04 = 0x4,
+	SETObjectFlag_Unknown08 = 0x8,
+	SETObjectFlag_Unknown10 = 0x10,
+	SETObjectFlag_Unknown20 = 0x20,
+	SETObjectFlag_CheckpointTouched = 0x0040,
+	SETObjectFlag_Unknown4k = 0x4000,
+	SETObjectFlag_Respawn = 0x8000,
 };
