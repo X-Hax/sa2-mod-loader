@@ -61,22 +61,30 @@ int __cdecl LoadEventPRSTextures_r(NJS_TEXLIST* texlist, const char* filename, v
 
 NJS_TEXMANAGE* GetCachedTexture(int gbix)
 {
-	auto v3 = FindCachedTextureIndex(gbix);
-	if (v3 == -1)
+	auto ix_man = FindCachedTextureIndex(gbix);
+
+	if ( ix_man == -1 )
 	{
-		v3 = FindFreeTextureIndex(gbix);
-	}
-	else
-	{
-		auto v4 = TexManageCache[v3].texsys;
-		auto v5 = reinterpret_cast<Magic::RenderCore::Texture*>(v4->texsurface.pSurface);
-		if (v5)
+		ix_man = FindFreeTextureIndex(gbix);
+
+		if ( ix_man == -1 )
 		{
-			v5->__vftable->Destructor(v5, 1);
-			v4->texsurface.pSurface = 0;
+			return nullptr;
 		}
 	}
-	return &TexManageCache[v3];
+	else // ix != -1
+	{
+		auto tsys = TexManageCache[ix_man].texsys;
+		auto ptex = reinterpret_cast<Magic::RenderCore::Texture*>(tsys->texsurface.pSurface);
+
+		if (ptex)
+		{
+			ptex->__vftable->Destructor(ptex, 1);
+			tsys->texsurface.pSurface = 0;
+		}
+	}
+
+	return &TexManageCache[ix_man];
 }
 
 void texpack::init()
@@ -1101,6 +1109,14 @@ void LoadTextureList_NoName_r(NJS_TEXLIST* texlist)
 			v2 = reinterpret_cast<NJS_TEXINFO*>(v1->filename);
 			v3 = v1->texaddr;
 			v13 = GetCachedTexture(v3);
+
+			if ( v13 == nullptr )
+			{
+				PrintDebug("njLoadTexture(): Failed to allocate global texture for gbix %u (likely exceeded max global texture limit)\n",
+						   v1->texaddr);
+				continue;
+			}
+
 			v13->texsys->texsurface.Type = v2->texsurface.Type;
 			v13->texsys->texsurface.BitDepth = 0;
 			if (v2->texsurface.Type)
