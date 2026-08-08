@@ -97,7 +97,7 @@ PAKFile::iterator PAKFile::end() const
 
 const PAKFile::Entry* PAKFile::find(std::string& name) const
 {
-	auto& entry = entries.find(name);
+	auto entry = entries.find(name);
 	if (entry == end())
 		return nullptr;
 	return &entry->second;
