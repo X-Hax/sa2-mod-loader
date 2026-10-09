@@ -883,13 +883,14 @@ static void ProcessStringINI(const IniGroup* group, const wstring& mod_dir)
 	uint8_t language = ParseLanguage(group->getString("language"));
 	ifstream fstr(filename);
 	string str;
+	int line = 0;
 	while (fstr.good())
 	{
 		string str2;
 		getline(fstr, str2);
-		if (str2[0] == '\r')
-			str2[0] = '\n';
+		if (line > 0) str.append("\n");
 		str.append(DecodeUTF8(str2, language));
+		line++;
 	}
 	fstr.close();
 	ProcessPointerList(group->getString("pointer"), _strdup(str.c_str()));
