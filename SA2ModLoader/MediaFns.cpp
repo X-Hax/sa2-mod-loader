@@ -15,175 +15,96 @@
 using std::string;
 using std::vector;
 
-#pragma region "BASS General"
-
-static HSTREAM voicechan[3];
-
-static Bool bassinit = FALSE;
-
+static  bool bassinit = false;
+static DWORD basschan = 0;
+static DWORD voicechan = 0;
 /**
  * Initialize media playback.
  */
+
 void BassInit_r()
 {
 	bassinit = !!BASS_Init(-1, 44100, 0, nullptr, nullptr);
 }
 
-void __stdcall onVoiceEnd(HSYNC handle, DWORD channel, DWORD data, void* user)
+static void __stdcall onVoiceEnd(HSYNC handle, DWORD channel, DWORD data, void* user)
 {
 	BASS_ChannelStop(channel);
 	BASS_StreamFree(channel);
-
-	for (int i = 0; i < 3; ++i)
-	{
-		if (voicechan[i] == channel)
-		{
-			voicechan[i] = NULL;
-		}
-	}
 }
-
-HSTREAM s2mlGetAudioFile(const char* filename, DWORD flags)
-{
-	HSTREAM stream;
-
-	stream = BASS_VGMSTREAM_StreamCreate(filename, flags);
-
-	if (!stream) stream = BASS_StreamCreateFile(false, filename, 0, 0, flags);
-
-	return stream;
-}
-
-void* ReleaseSoundEffects_r()
-{
-	bassinit = !BASS_Free();
-
-	return sub_437E90();
-}
-
-#pragma endregion
-
-#pragma region "Serif Replacement System"
 
 const bool (*sub_4430B0)(signed int a1, signed int a2) = GenerateUsercallWrapper<decltype(sub_4430B0)>(rEAX, 0x4430B0, rEAX, rEDX);
 DataPointer(void**, dword_1A55998, 0x1A55998);
-DataPointer(int, VoiceCount, 0x1A5599C);
-
-DataPointer(Sint32, VoiceVolume, 0x01A55990);
-
+DataPointer(int, dword_1A5599C, 0x1A5599C);
 signed int PlayVoice_r(int idk, int num)
 {
+	int v3; // edi
+	signed int v4; // esi
+	int v5; // eax
+
 	if (!VoicesEnabled)
 	{
 		return -1;
 	}
 
-	for (int i = 0; i < 3; ++i)
-	{
-		if (++VoiceCount >= 2)
-			VoiceCount = 0;
-
-		if (bassinit)
-		{
-			char path[MAX_PATH];
-			if (!VoiceLanguage)
-				sprintf_s(path, "resource\\gd_pc\\event_adx\\%04d.ahx", num);
-			else
-				sprintf_s(path, "resource\\gd_pc\\event_adx_e\\%04d.ahx", num);
-
-			const char* filename = sadx_fileMap.replaceFile(path);
-			if (FileExists(filename))
-			{
-				voicechan[VoiceCount] = s2mlGetAudioFile(filename, NULL);
-
-				if (voicechan[VoiceCount])
-				{
-					BASS_ChannelStop(voicechan[VoiceCount]);
-
-					BASS_ChannelPlay(voicechan[VoiceCount], true);
-
-					BASS_ChannelSetSync(voicechan[VoiceCount], BASS_SYNC_END, 0, onVoiceEnd, nullptr);
-					return VoiceCount;
-				}
-			}
-		}
-
-		// if audio doesn't exist in replacement folder, run the original logic
-		if (sub_4430B0(VoiceCount, (unsigned __int8)idk))
-		{
-			int v5 = (int)&dword_1A55998[7 * VoiceCount];
-			*(_DWORD*)(v5 + 40) = num;
-			*(char*)(v5 + 36) = 1;
-			*(char*)(v5 + 37) = idk;
-			return VoiceCount;
-		}
-	}
-	return -1;
-}
-
-UsercallFuncVoid(StopVoice, (Sint32 num), (num), 0x00443200, rEAX);
-
-Void hk_StopVoice(Sint32 num)
-{
 	if (bassinit)
 	{
-		BASS_ChannelStop(voicechan[num]);
-		BASS_StreamFree(voicechan[num]);
-		voicechan[num] = NULL;
-		return;
-	}
+		char path[MAX_PATH];
+		if (!VoiceLanguage)
+			sprintf_s(path, "resource\\gd_pc\\event_adx\\%04d.ahx", num);
+		else
+			sprintf_s(path, "resource\\gd_pc\\event_adx_e\\%04d.ahx", num);
 
-	StopVoice.Original(num);
-}
-
-FunctionHook<void>	StopAllVoices(0x004431B0);
-
-Void hk_StopAllVoices()
-{
-	for (int i = 0; i < 3; ++i)
-	{
-		if (voicechan[i])
+		const char* filename = sadx_fileMap.replaceFile(path);
+		if (FileExists(filename))
 		{
-			BASS_ChannelStop(voicechan[i]);
-			BASS_StreamFree(voicechan[i]);
-			voicechan[i] = NULL;
+			voicechan = BASS_VGMSTREAM_StreamCreate(filename, 0);
+
+			if (voicechan == 0)
+			{
+				voicechan = BASS_StreamCreateFile(false, filename, 0, 0, 0);
+			}
+
+			if (voicechan != 0)
+			{
+				BASS_ChannelPlay(voicechan, false);
+				BASS_ChannelSetSync(voicechan, BASS_SYNC_END, 0, onVoiceEnd, nullptr);
+				return 1;
+			}
 		}
 	}
 
-	StopAllVoices.Original();
-}
-
-FunctionHook<Void>	PauseVoices(0x00443250);
-
-Void hk_PauseVoices()
-{
-	for (int i = 0; i < 3; ++i)
+	v4 = dword_1A5599C;
+	v3 = 0;
+	while (1)
 	{
-		if (voicechan[i])
+		if (++v4 >= 2)
 		{
-			BASS_ChannelPause(voicechan[i]);
+			v4 = 0;
+		}
+		if (sub_4430B0(v4, (unsigned __int8)idk))
+		{
+			break;
+		}
+		if (++v3 >= 3)
+		{
+			dword_1A5599C = v4;
+			return -1;
 		}
 	}
-
-	PauseVoices.Original();
+	v5 = (int)&dword_1A55998[7 * v4];
+	*(_DWORD*)(v5 + 40) = num;
+	*(char*)(v5 + 36) = 1;
+	*(char*)(v5 + 37) = idk;
+	dword_1A5599C = v4;
+	return v4;
 }
 
-FunctionHook<Void>	UnpauseVoices(0x00443290);
-
-Void hk_UnpauseVoices()
-{
-	for (int i = 0; i < 3; ++i)
-	{
-		if (voicechan[i])
-		{
-			BASS_ChannelStart(voicechan[i]);
-		}
-	}
-
-	UnpauseVoices.Original();
+void* ReleaseSoundEffects_r() {
+	BASS_Free();
+	return sub_437E90();
 }
 
-#pragma endregion
 
 void Init_AudioBassHook(std::wstring extLibPath)
 {
@@ -214,14 +135,7 @@ void Init_AudioBassHook(std::wstring extLibPath)
 	}
 
 	WriteCall((void*)0x435511, ReleaseSoundEffects_r);
-
 	BassInit_r();
-
 	GenerateUsercallHook(PlayVoice_r, rEAX, (intptr_t)PlayVoicePtr, rEDX, stack4);
-	StopVoice.Hook(hk_StopVoice);
-	StopAllVoices.Hook(hk_StopAllVoices);
-	PauseVoices.Hook(hk_PauseVoices);
-	UnpauseVoices.Hook(hk_UnpauseVoices);
-
 	return;
 }
