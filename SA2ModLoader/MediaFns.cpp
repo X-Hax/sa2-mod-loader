@@ -37,9 +37,7 @@ void __stdcall onVoiceEnd(HSYNC handle, DWORD channel, DWORD data, void* user)
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i] == channel)
-		{
 			voicechan[i] = NULL;
-		}
 	}
 }
 
@@ -86,6 +84,7 @@ signed int PlayVoice_r(int idk, int num)
 		if (bassinit)
 		{
 			char path[MAX_PATH];
+
 			if (!VoiceLanguage)
 				sprintf_s(path, "resource\\gd_pc\\event_adx\\%04d.ahx", num);
 			else
@@ -94,12 +93,12 @@ signed int PlayVoice_r(int idk, int num)
 			const char* filename = sadx_fileMap.replaceFile(path);
 			if (FileExists(filename))
 			{
+				BASS_ChannelStop(voicechan[VoiceCount]);
+
 				voicechan[VoiceCount] = s2mlGetAudioFile(filename, NULL);
 
 				if (voicechan[VoiceCount])
 				{
-					BASS_ChannelStop(voicechan[VoiceCount]);
-
 					BASS_ChannelPlay(voicechan[VoiceCount], true);
 
 					BASS_ChannelSetSync(voicechan[VoiceCount], BASS_SYNC_END, 0, onVoiceEnd, nullptr);
@@ -125,7 +124,7 @@ UsercallFuncVoid(StopVoice, (Sint32 num), (num), 0x00443200, rEAX);
 
 Void hk_StopVoice(Sint32 num)
 {
-	if (bassinit)
+	if (voicechan[num])
 	{
 		BASS_ChannelStop(voicechan[num]);
 		BASS_StreamFree(voicechan[num]);
@@ -160,9 +159,7 @@ Void hk_PauseVoices()
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
-		{
 			BASS_ChannelPause(voicechan[i]);
-		}
 	}
 
 	PauseVoices.Original();
@@ -175,9 +172,7 @@ Void hk_UnpauseVoices()
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
-		{
 			BASS_ChannelPlay(voicechan[i], false);
-		}
 	}
 
 	UnpauseVoices.Original();
