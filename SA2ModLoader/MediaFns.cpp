@@ -156,26 +156,26 @@ FunctionHook<Void>	PauseVoices(0x00443250);
 
 Void hk_PauseVoices()
 {
+	PauseVoices.Original();
+
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
 			BASS_ChannelPause(voicechan[i]);
 	}
-
-	PauseVoices.Original();
 }
 
 FunctionHook<Void>	UnpauseVoices(0x00443290);
 
 Void hk_UnpauseVoices()
 {
+	UnpauseVoices.Original();
+
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
 			BASS_ChannelPlay(voicechan[i], false);
 	}
-
-	UnpauseVoices.Original();
 }
 
 #pragma endregion
@@ -215,8 +215,15 @@ void Init_AudioBassHook(std::wstring extLibPath)
 	GenerateUsercallHook(PlayVoice_r, rEAX, (intptr_t)PlayVoicePtr, rEDX, stack4);
 	StopVoice.Hook(hk_StopVoice);
 	StopAllVoices.Hook(hk_StopAllVoices);
-	PauseVoices.Hook(hk_PauseVoices);
-	UnpauseVoices.Hook(hk_UnpauseVoices);
+
+	WriteCall((void*)0x0043602C, hk_PauseVoices);
+	WriteCall((void*)0x0043A18D, hk_PauseVoices);
+	WriteCall((void*)0x0043A2E7, hk_PauseVoices);
+	WriteCall((void*)0x00442CAE, hk_PauseVoices);
+	
+	WriteCall((void*)0x00436071, hk_UnpauseVoices);
+	WriteCall((void*)0x00439B86, hk_UnpauseVoices);
+	WriteCall((void*)0x00442CEA, hk_UnpauseVoices);
 
 	return;
 }
