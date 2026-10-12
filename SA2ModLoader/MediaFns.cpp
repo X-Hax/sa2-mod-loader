@@ -152,53 +152,38 @@ Void hk_StopAllVoices()
 	StopAllVoices.Original();
 }
 
+Trampoline* t_PauseVoices = NULL;
+
 FunctionPointer(int, sub_7C30A0, (int a1, int a2), 0x7C30A0);
+
+VoidFunc(sub_443250, 0x443250);
 
 FunctionHook<Void>	PauseVoices(0x00443250);
 
 Void hk_PauseVoices()
 {
-	int* v5 = (int*)&dword_1A55998;
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
 			BASS_ChannelPause(voicechan[i]);
-
-		if (v5)
-		{
-			int v2 = *(_DWORD*)&v5[7 * i + 52];
-
-			if (v2)
-			{
-				sub_7C30A0(v2, 1);
-				*(char*)&v5[7 * i + 36] = 4;
-			}
-		}
 	}
+
+	auto original = reinterpret_cast<decltype(hk_PauseVoices)*>(t_PauseVoices->Target());
+
+	original();
 }
 
 FunctionHook<Void>	UnpauseVoices(0x00443290);
 
 Void hk_UnpauseVoices()
 {
-	int* v5 = (int*)&dword_1A55998;
-
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
 			BASS_ChannelPlay(voicechan[i], false);
-
-		if (v5)
-		{
-			int v2 = *(_DWORD*)&v5[7 * i + 52];
-
-			if (v2)
-			{
-				sub_7C30A0(v2, 0);
-				*(char*)&v5[7 * i + 36] = 1;
-			}
-		}
 	}
+
+	UnpauseVoices.Original();
 }
 
 #pragma endregion
@@ -239,7 +224,7 @@ void Init_AudioBassHook(std::wstring extLibPath)
 	StopVoice.Hook(hk_StopVoice);
 	StopAllVoices.Hook(hk_StopAllVoices);
 
-	PauseVoices.Hook(hk_PauseVoices);
+	t_PauseVoices = new Trampoline((int)sub_443250, (int)sub_443250 + 0x6, hk_PauseVoices);
 	UnpauseVoices.Hook(hk_UnpauseVoices);
 
 	return;
