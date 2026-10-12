@@ -152,16 +152,28 @@ Void hk_StopAllVoices()
 	StopAllVoices.Original();
 }
 
+FunctionPointer(int, sub_7C30A0, (int a1, int a2), 0x7C30A0);
+
 FunctionHook<Void>	PauseVoices(0x00443250);
 
 Void hk_PauseVoices()
 {
-	PauseVoices.Original();
-
+	int* v5 = (int*)&dword_1A55998;
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
 			BASS_ChannelPause(voicechan[i]);
+
+		if (v5)
+		{
+			int v2 = *(_DWORD*)&v5[7 * i + 52];
+
+			if (v2)
+			{
+				sub_7C30A0(v2, 1);
+				*(char*)&v5[7 * i + 36] = 4;
+			}
+		}
 	}
 }
 
@@ -169,12 +181,23 @@ FunctionHook<Void>	UnpauseVoices(0x00443290);
 
 Void hk_UnpauseVoices()
 {
-	UnpauseVoices.Original();
+	int* v5 = (int*)&dword_1A55998;
 
 	for (int i = 0; i < 3; ++i)
 	{
 		if (voicechan[i])
 			BASS_ChannelPlay(voicechan[i], false);
+
+		if (v5)
+		{
+			int v2 = *(_DWORD*)&v5[7 * i + 52];
+
+			if (v2)
+			{
+				sub_7C30A0(v2, 0);
+				*(char*)&v5[7 * i + 36] = 1;
+			}
+		}
 	}
 }
 
@@ -216,14 +239,8 @@ void Init_AudioBassHook(std::wstring extLibPath)
 	StopVoice.Hook(hk_StopVoice);
 	StopAllVoices.Hook(hk_StopAllVoices);
 
-	WriteCall((void*)0x0043602C, hk_PauseVoices);
-	WriteCall((void*)0x0043A18D, hk_PauseVoices);
-	WriteCall((void*)0x0043A2E7, hk_PauseVoices);
-	WriteCall((void*)0x00442CAE, hk_PauseVoices);
-	
-	WriteCall((void*)0x00436071, hk_UnpauseVoices);
-	WriteCall((void*)0x00439B86, hk_UnpauseVoices);
-	WriteCall((void*)0x00442CEA, hk_UnpauseVoices);
+	PauseVoices.Hook(hk_PauseVoices);
+	UnpauseVoices.Hook(hk_UnpauseVoices);
 
 	return;
 }
